@@ -60,7 +60,7 @@ public final class WeatherData {
             case 71: return "小雪"; case 73: return "中雪"; case 75: return "大雪"; case 77: return "米雪";
             case 80: return "小阵雨"; case 81: return "中阵雨"; case 82: return "大阵雨";
             case 85: return "小阵雪"; case 86: return "大阵雪";
-            case 95: return "小雷雨 / 中雷雨"; case 96: return "雷雨伴小冰雹"; case 99: return "雷雨伴大冰雹";
+            case 95: return "小或中雷雨"; case 96: return "雷雨伴小冰雹"; case 99: return "雷雨伴大冰雹";
             default: return "天气未知";
         }
     }

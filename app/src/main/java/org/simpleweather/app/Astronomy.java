@@ -120,6 +120,23 @@ public final class Astronomy {
         public final String name;public final double ra,dec,mag;
         Star(String n,double r,double d,double m){name=n;ra=r;dec=d;mag=m;}
     }
+    public static boolean isDipper(String n){return n.equals("天枢")||n.equals("天璇")||n.equals("天玑")||n.equals("天权")||n.equals("玉衡")||n.equals("开阳")||n.equals("摇光");}
+    /** Annual reference peaks and fixed approximate radiant coordinates (degrees).
+     * A radiant is a direction, not a physical star or a predicted meteor. */
+    public static final class Shower {
+        public final String name;public final MonthDay peak;public final double ra,dec;
+        Shower(String n,int month,int day,double r,double d){name=n;peak=MonthDay.of(month,day);ra=r;dec=d;}
+        public boolean activeOn(LocalDate date){
+            for(int year=date.getYear()-1;year<=date.getYear()+1;year++)
+                if(Math.abs(java.time.temporal.ChronoUnit.DAYS.between(peak.atYear(year),date))<=3)return true;
+            return false;
+        }
+        public LocalDate nextPeak(LocalDate date){LocalDate p=peak.atYear(date.getYear());return p.isBefore(date)?peak.atYear(date.getYear()+1):p;}
+    }
+    public static final Shower[] SHOWERS={
+        new Shower("象限仪座",1,4,230,49),new Shower("天琴座",4,22,278,34),new Shower("宝瓶座η",5,6,338,-1),new Shower("英仙座",8,12,48,58),
+        new Shower("猎户座",10,21,95,16),new Shower("狮子座",11,17,152,22),new Shower("双子座",12,14,112,33),new Shower("小熊座",12,22,217,76)
+    };
     public static final Star[] STARS={
         new Star("天狼星",101.287,-16.716,-1.46),new Star("老人星",95.988,-52.696,-.74),new Star("南门二",219.902,-60.834,-.27),new Star("大角星",213.915,19.182,-.05),new Star("织女星",279.235,38.784,.03),new Star("五车二",79.172,45.998,.08),new Star("参宿七",78.634,-8.202,.13),new Star("南河三",114.826,5.225,.34),new Star("参宿四",88.793,7.407,.5),new Star("水委一",24.429,-57.237,.46),new Star("牛郎星",297.696,8.868,.77),new Star("十字架二",186.65,-63.099,.76),new Star("毕宿五",68.98,16.509,.85),new Star("角宿一",201.298,-11.161,.98),new Star("心宿二",247.352,-26.432,1.06),new Star("北落师门",344.413,-29.622,1.16),new Star("天津四",310.358,45.28,1.25),new Star("轩辕十四",152.093,11.967,1.35),new Star("北极星",37.955,89.264,1.98),new Star("天枢",165.932,61.751,1.79),new Star("天璇",165.46,56.383,2.37),new Star("天玑",178.457,53.695,2.44),new Star("天权",183.857,57.033,3.31),new Star("玉衡",193.507,55.96,1.76),new Star("开阳",200.981,54.925,2.23),new Star("摇光",206.885,49.313,1.85)};
 }

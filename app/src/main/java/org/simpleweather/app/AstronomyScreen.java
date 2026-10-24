@@ -5,7 +5,6 @@ import android.view.*;
 import android.widget.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -25,9 +24,9 @@ final class AstronomyScreen {
         LinearLayout days=a.row();days.addView(a.button("-1天",false,()->change.accept(at.atZone(zone).minusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("设置时间",false,()->NumericInputs.dateTime(a,at.atZone(zone),change)),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("+1天",false,()->change.accept(at.atZone(zone).plusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(days);a.gap(a.body,16);
         observing();a.gap(a.body,16);
         LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);
-        Sky view=new Sky(a,at,city.latitude,city.longitude,hit->{selectedInfo.setText(hit.label+"\n高度角 "+String.format(Locale.ROOT,"%.1f°",hit.alt)+" · 方位角 "+String.format(Locale.ROOT,"%.1f°",hit.az)+" "+Astronomy.compass(hit.az)+"\n星等 "+String.format(Locale.ROOT,"%.2f",hit.mag));});
-        sky.addView(view,a.lp(-1,300));a.gap(sky,10);sky.addView(a.text("北在上、东在左。显示地平线上方的亮星、行星和太阳、月球；白天的星点仅为方位示意。点击星点查看详情。",12,a.MUTED,false));
-        a.gap(a.body,16);LinearLayout info=a.card();info.addView(a.text("星点信息",17,a.INK,true));a.gap(info,10);selectedInfo=a.text("点击星空中的亮星或行星查看方位角、高度角和星等。太阳、月球及北斗七星仅作图示。",13,a.MUTED,false);info.addView(selectedInfo);a.gap(a.body,16);
+        Sky view=new Sky(a,at,city.latitude,city.longitude,at.atZone(zone).toLocalDate(),hit->{selectedInfo.setText(hit.label+"\n高度角 "+String.format(Locale.ROOT,"%.1f°",hit.alt)+" · 方位角 "+String.format(Locale.ROOT,"%.1f°",hit.az)+" "+Astronomy.compass(hit.az)+"\n星等 "+String.format(Locale.ROOT,"%.2f",hit.mag));});
+        sky.addView(view,a.lp(-1,300));a.gap(sky,10);sky.addView(a.text("北在上、东在左。显示地平线上方的亮星、行星、日月及活跃流星雨辐射点（橙色十字圆环）；白天的星点仅为方位示意。点击亮星或行星查看详情。",12,a.MUTED,false));
+        a.gap(a.body,16);LinearLayout info=a.card();info.addView(a.text("星点信息",17,a.INK,true));a.gap(info,10);selectedInfo=a.text("点击星空中的亮星或行星查看方位角、高度角和星等。北斗七星固定显示但仅作图示。活跃流星雨显示辐射点。",13,a.MUTED,false);info.addView(selectedInfo);a.gap(a.body,16);
         positions();a.gap(a.body,16);events();a.gap(a.body,16);meteor();a.gap(a.body,16);
         a.gap(a.body,20);a.body.addView(a.text("日月、行星和星图为本地低精度天文估算，使用本地计算，不请求第三方天文服务；忽略地形遮挡、大气变化及部分轨道摄动，不用于测量或导航。流星雨日期为常年参考，活跃期按极大日前后3天。",12,a.MUTED,false));a.link(a.body,"计算公式与方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
     }
@@ -56,24 +55,28 @@ final class AstronomyScreen {
         LinearLayout c=a.card();c.addView(a.text("当天日月事件与曙暮光",17,a.INK,true));a.gap(c,14);LocalDate date=at.atZone(zone).toLocalDate();String[] labels={"日出 / 日落","民用曙光 / 暮光","航海曙光 / 暮光","天文曙光 / 暮光","月升 / 月落"};double[] alt={-.833,-6,-12,-18,-.3};
         for(int n=0;n<labels.length;n++){List<Astronomy.Event> events=Astronomy.crossings(date,zone,city.latitude,city.longitude,n==4,alt[n]);c.addView(a.text(labels[n],12,a.MUTED,false));a.gap(c,7);c.addView(a.text(event(events,true)+"  /  "+event(events,false),15,a.INK,true));a.gap(c,16);}c.addView(a.text("均为所选地区当地时间。高纬度可能出现整日无升落或无天文夜。霞光需结合云层与现场观察，不能据此保证火烧云。",11,a.MUTED,false));
     }
-    private static final String[][] RAIN_NAMES={{"象限仪座","01-04","230","49"},{"天琴座","04-22","278","34"},{"宝瓶座η","05-06","338","-1"},{"英仙座","08-12","48","58"},{"猎户座","10-21","95","16"},{"狮子座","11-17","152","22"},{"双子座","12-14","112","33"},{"小熊座","12-22","217","76"}};
     private void meteor(){
         LinearLayout c=a.card();c.addView(a.text("流星雨 · 极大日前后3天",17,a.INK,true));a.gap(c,12);LocalDate today=at.atZone(zone).toLocalDate();List<String> active=new ArrayList<>(),upcoming=new ArrayList<>();
-        for(String[] r:RAIN_NAMES){LocalDate peak=LocalDate.parse(today.getYear()+"-"+r[1]);long diff=ChronoUnit.DAYS.between(peak,today);if(Math.abs(diff)<=3){double[] h=Astronomy.horizontal(Double.parseDouble(r[2]),Double.parseDouble(r[3]),at,city.latitude,city.longitude);active.add(r[0]+" · 活跃期（极大日 "+r[1]+"）\n辐射点高度 "+String.format(Locale.ROOT,"%.1f°",h[0])+" · 方位 "+String.format(Locale.ROOT,"%.1f°",h[1])+" "+Astronomy.compass(h[1]));}else if(diff>=0&&upcoming.size()<4)upcoming.add(r[1]+"  "+r[0]);}
+        List<Astronomy.Shower> next=new ArrayList<>();
+        for(Astronomy.Shower m:Astronomy.SHOWERS){
+            if(m.activeOn(today)){double[] h=Astronomy.horizontal(m.ra,m.dec,at,city.latitude,city.longitude);active.add(m.name+" · 活跃期（参考极大日 "+m.peak.toString().substring(2)+"）\n辐射点高度 "+String.format(Locale.ROOT,"%.1f°",h[0])+" · 方位 "+String.format(Locale.ROOT,"%.1f°",h[1])+" "+Astronomy.compass(h[1]));}
+            else next.add(m);
+        }
+        next.sort(Comparator.comparing(m->m.nextPeak(today)));for(Astronomy.Shower m:next){if(upcoming.size()==4)break;upcoming.add(m.nextPeak(today).toString()+"  "+m.name);}
         if(!active.isEmpty()){c.addView(a.text("当前活跃流星雨",13,a.BLUE,true));a.gap(c,8);for(String item:active){c.addView(a.text(item,14,a.INK,false));a.gap(c,10);}}
         if(active.isEmpty()){c.addView(a.text("当前不在已列流星雨的活跃期。",13,a.MUTED,false));a.gap(c,8);}if(!upcoming.isEmpty()){c.addView(a.text("接近的极大日",13,a.MUTED,true));a.gap(c,8);for(String item:upcoming){c.addView(a.text(item,14,a.INK,false));a.gap(c,9);}}
         c.addView(a.text("辐射点为近似赤经/赤纬换算结果；每年的准确时刻、月光与可见区域不同，请查阅当年的 IMO 日历。",12,a.MUTED,false));a.link(c,"IMO · 年度流星雨日历","https://www.imo.net/resources/calendar/");
     }
     private static final class Hit {final String label;final double alt,az,mag;final float x,y;Hit(String n,double a,double z,double m,float xx,float yy){label=n;alt=a;az=z;mag=m;x=xx;y=yy;}}
     private static final class Sky extends View {
-        private final Instant at;private final double lat,lon;private final Paint p=new Paint(3);private final Consumer<Hit> select;private final List<Hit> hits=new ArrayList<>();
-        Sky(MainActivity a,Instant at,double lat,double lon,Consumer<Hit> select){super(a);this.at=at;this.lat=lat;this.lon=lon;this.select=select;setContentDescription("亮星、行星及日月方位的近似星图，北上东左");setClickable(true);}
+        private final Instant at;private final LocalDate localDate;private final double lat,lon;private final Paint p=new Paint(3);private final Consumer<Hit> select;private final List<Hit> hits=new ArrayList<>();
+        Sky(MainActivity a,Instant at,double lat,double lon,LocalDate localDate,Consumer<Hit> select){super(a);this.at=at;this.localDate=localDate;this.lat=lat;this.lon=lon;this.select=select;setContentDescription("亮星、行星及日月方位的近似星图，北上东左");setClickable(true);}
         @Override protected void onDraw(Canvas c){float cx=getWidth()/2f,cy=getHeight()/2f,r=Math.min(getWidth(),getHeight())*.42f;hits.clear();c.drawColor(0xFF13253D);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1);p.setColor(0xFF4D627A);for(int i=1;i<=3;i++)c.drawCircle(cx,cy,r*i/3,p);c.drawLine(cx-r,cy,cx+r,cy,p);c.drawLine(cx,cy-r,cx,cy+r,p);p.setStyle(Paint.Style.FILL);p.setTextSize(12*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(Paint.Align.CENTER);p.setColor(0xFFADC7E7);c.drawText("北",cx,cy-r-10,p);c.drawText("南",cx,cy+r+20,p);c.drawText("东",cx-r-15,cy+4,p);c.drawText("西",cx+r+15,cy+4,p);
-            for(Astronomy.Star s:Astronomy.STARS){if(!getContext().getSharedPreferences("toolbox",0).getBoolean("astro_star_"+s.name,true))continue;double[] h=Astronomy.horizontal(s.ra,s.dec,at,lat,lon);if(h[0]<0)continue;float[] xy=xy(cx,cy,r,h);p.setColor(0xFFE9F2FF);c.drawCircle(xy[0],xy[1],(float)Math.max(1.5,3-s.mag*.45),p);if(s.mag<1.5||s.name.equals("北极星")){p.setTextSize(10*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(xy[0]>cx+r*.6?Paint.Align.RIGHT:xy[0]<cx-r*.6?Paint.Align.LEFT:Paint.Align.CENTER);c.drawText(s.name,xy[0],xy[1]-7,p);}if(!isDipper(s.name))hits.add(new Hit(s.name,h[0],h[1],s.mag,xy[0],xy[1]));}
+            for(Astronomy.Star s:Astronomy.STARS){if(!Astronomy.isDipper(s.name)&&!getContext().getSharedPreferences("toolbox",0).getBoolean("astro_star_"+s.name,true))continue;double[] h=Astronomy.horizontal(s.ra,s.dec,at,lat,lon);if(h[0]<0)continue;float[] xy=xy(cx,cy,r,h);p.setColor(0xFFE9F2FF);c.drawCircle(xy[0],xy[1],(float)Math.max(1.5,3-s.mag*.45),p);if(s.mag<1.5||s.name.equals("北极星")){p.setTextSize(10*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(xy[0]>cx+r*.6?Paint.Align.RIGHT:xy[0]<cx-r*.6?Paint.Align.LEFT:Paint.Align.CENTER);c.drawText(s.name,xy[0],xy[1]-7,p);}if(!Astronomy.isDipper(s.name))hits.add(new Hit(s.name,h[0],h[1],s.mag,xy[0],xy[1]));}
             for(Astronomy.Planet planet:Astronomy.planets(at)){double[] h=Astronomy.planetPosition(planet,at,lat,lon);if(h[0]<0)continue;float[] xy=xy(cx,cy,r,h);p.setColor(0xFFFFD36B);c.drawCircle(xy[0],xy[1],5,p);p.setTextSize(10*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(Paint.Align.CENTER);c.drawText(planet.name,xy[0],xy[1]-8,p);hits.add(new Hit(planet.name,h[0],h[1],planet.magnitude,xy[0],xy[1]));}
+            for(Astronomy.Shower meteor:Astronomy.SHOWERS){if(!meteor.activeOn(localDate))continue;double[] h=Astronomy.horizontal(meteor.ra,meteor.dec,at,lat,lon);if(h[0]<0)continue;float[] xy=xy(cx,cy,r,h);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(2.2f);p.setColor(0xFFFF9B54);c.drawCircle(xy[0],xy[1],8,p);c.drawLine(xy[0]-11,xy[1],xy[0]+11,xy[1],p);c.drawLine(xy[0],xy[1]-11,xy[0],xy[1]+11,p);p.setStyle(Paint.Style.FILL);p.setTextSize(10*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(Paint.Align.CENTER);c.drawText(meteor.name+"流星雨",xy[0],xy[1]-12,p);}
             body(c,cx,cy,r,Astronomy.sunPosition(at,lat,lon),"太阳",0xFFFFCB67);body(c,cx,cy,r,Astronomy.moonPosition(at,lat,lon),"月球",0xFFBCD3FF);
         }
-        private boolean isDipper(String n){return n.equals("天枢")||n.equals("天璇")||n.equals("天玑")||n.equals("天权")||n.equals("玉衡")||n.equals("开阳")||n.equals("摇光");}
         @Override public boolean onTouchEvent(MotionEvent e){if(e.getAction()!=MotionEvent.ACTION_UP)return true;Hit best=null;float d=Float.MAX_VALUE;for(Hit h:hits){float dx=e.getX()-h.x,dy=e.getY()-h.y,dist=dx*dx+dy*dy;if(dist<d){d=dist;best=h;}}float threshold=32*getResources().getDisplayMetrics().density;if(best!=null&&d<=threshold*threshold){select.accept(best);performClick();}return true;}
         @Override public boolean performClick(){super.performClick();return true;}
         private float[] xy(float cx,float cy,float r,double[] h){double d=(90-h[0])/90*r,az=Math.toRadians(h[1]);return new float[]{cx-(float)(d*Math.sin(az)),cy-(float)(d*Math.cos(az))};}
