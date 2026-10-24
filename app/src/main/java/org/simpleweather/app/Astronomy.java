@@ -64,10 +64,17 @@ public final class Astronomy {
         double[] s=solarEcliptic(d); double[] earth={-s[0],-s[1],0};
         Planet[] out=new Planet[PLANET_ELEMENTS.length];
         for(int n=0;n<PLANET_ELEMENTS.length;n++){
-            double[] p=heliocentric(PLANET_ELEMENTS[n],d),x={p[0]+earth[0],p[1]+earth[1],p[2]};
+            // Convert heliocentric planet coordinates to geocentric coordinates:
+            // target minus Earth's heliocentric position (the previous build
+            // added the Earth vector, placing inner planets on the wrong side).
+            double[] p=heliocentric(PLANET_ELEMENTS[n],d),x={p[0]-earth[0],p[1]-earth[1],p[2]};
             double[] eq=equatorial(x[0],x[1],x[2],d); double geo=Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
-            double phaseFactor=PLANET_ELEMENTS[n].name.equals("水星")||PLANET_ELEMENTS[n].name.equals("金星")?0.25:0;
-            double mag=PLANET_ELEMENTS[n].base+5*Math.log10(Math.max(.01,p[3]*geo))+phaseFactor;
+            double dot=(-p[0])*(earth[0]-p[0])+(-p[1])*(earth[1]-p[1])+(-p[2])*(-p[2]);
+            double phase=Math.toDegrees(Math.acos(Math.max(-1,Math.min(1,dot/(p[3]*geo)))));
+            double mag=PLANET_ELEMENTS[n].base+5*Math.log10(Math.max(.01,p[3]*geo));
+            if(PLANET_ELEMENTS[n].name.equals("水星"))mag+=.038*phase-.000273*phase*phase+.000002*phase*phase*phase;
+            else if(PLANET_ELEMENTS[n].name.equals("金星"))mag+=.0009*phase+.000239*phase*phase-.00000065*phase*phase*phase;
+            else if(PLANET_ELEMENTS[n].name.equals("火星"))mag+=.016*phase;
             out[n]=new Planet(PLANET_ELEMENTS[n].name,eq[0],eq[1],geo,mag);
         }
         return out;
