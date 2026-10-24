@@ -39,43 +39,66 @@ public final class Astronomy {
         public final String name; public final double ra,dec, distance, magnitude;
         Planet(String n,double r,double d,double dist,double mag){name=n;ra=r;dec=d;distance=dist;magnitude=mag;}
     }
-    private static final class Elements {
-        final String name; final double N0,Nd,i0,id,w0,wd,a0,ad,e0,ed,M0,Md,base;
-        Elements(String n,double N,double Nday,double i,double iday,double w,double wday,double a,double aday,double e,double eday,double M,double Mday,double b){name=n;N0=N;Nd=Nday;i0=i;this.id=iday;w0=w;wd=wday;a0=a;ad=aday;e0=e;ed=eday;M0=M;Md=Mday;base=b;}
+    /** Approximate geocentric positions for the visible planets.
+     * This is the same JPL "Approximate Positions of the Major Planets" model
+     * used by the reference web implementation (valid approximately 1800-2050).
+     */
+    private static final class JplElements {
+        final String name,en; final double[] el,rt;
+        JplElements(String n,String e,double[] a,double[] r){name=n;en=e;el=a;rt=r;}
     }
-    private static final Elements[] PLANET_ELEMENTS={
-        new Elements("水星",48.3313,3.24587e-5,7.0047,5e-8,29.1241,1.01444e-5,.387098,0,.205635,5.59e-10,168.6562,4.0923344368,-.42),
-        new Elements("金星",76.6799,2.46590e-5,3.3946,2.75e-8,54.8910,1.38374e-5,.72333,0,.006773,-1.302e-9,48.0052,1.6021302244,-4.40),
-        new Elements("火星",49.5574,2.11081e-5,1.8497,-1.78e-8,286.5016,2.92961e-5,1.523688,0,0.093405,2.516e-9,18.6021,.5240207766,-1.52),
-        new Elements("木星",100.4542,2.76854e-5,1.3030,-1.557e-7,273.8777,1.64505e-5,5.20256,0,.048498,4.469e-9,19.8950,.0830853001,-9.40),
-        new Elements("土星",113.6634,2.38980e-5,2.4886,-1.081e-7,339.3939,2.97661e-5,9.55475,0,.055546,-9.499e-9,316.9670,.0334442282,-8.88),
-        new Elements("天王星",74.0005,1.3978e-5,.7733,1.9e-8,96.6612,3.0565e-5,19.18171,-1.55e-8,.047318,7.45e-9,142.5905,.011725806,-7.19),
-        new Elements("海王星",131.7806,3.0173e-5,1.7700,-2.55e-7,272.8461,-6.027e-6,30.05826,3.313e-8,.008606,2.15e-9,260.2471,.005995147,-6.87)
+    private static final JplElements EARTH = new JplElements("地球","Earth",
+        new double[]{1.00000261,.01671123,-.00001531,100.46457166,102.93768193,0},
+        new double[]{.00000562,-.00004392,-.01294668,35999.37244981,.32327364,0});
+    private static final JplElements[] PLANET_ELEMENTS={
+        new JplElements("水星","Mercury",new double[]{.38709927,.20563593,7.00497902,252.25032350,77.45779628,48.33076593},new double[]{.00000037,.00001906,-.00594749,149472.67411175,.16047689,-.12534081}),
+        new JplElements("金星","Venus",new double[]{.72333566,.00677672,3.39467605,181.97909950,131.60246718,76.67984255},new double[]{.00000390,-.00004107,-.00078890,58517.81538729,.00268329,-.27769418}),
+        new JplElements("火星","Mars",new double[]{1.52371034,.09339410,1.84969142,-4.55343205,-23.94362959,49.55953891},new double[]{.00001847,.00007882,-.00813131,19140.30268499,.44441088,-.29257343}),
+        new JplElements("木星","Jupiter",new double[]{5.20288700,.04838624,1.30439695,34.39644051,14.72847983,100.47390909},new double[]{-.00011607,-.00013253,-.00183714,3034.74612775,.21252668,.20469106}),
+        new JplElements("土星","Saturn",new double[]{9.53667594,.05386179,2.48599187,49.95424423,92.59887831,113.66242448},new double[]{-.00125060,-.00050991,.00193609,1222.49362201,-.41897216,-.28867794}),
+        new JplElements("天王星","Uranus",new double[]{19.18916464,.04725744,.77263783,313.23810451,170.95427630,74.01692503},new double[]{.00000198,-.00004397,-.00242939,428.48202785,.40805281,.04240589}),
+        new JplElements("海王星","Neptune",new double[]{30.06992276,.00859048,1.77004347,-55.12002969,44.96476227,131.78422574},new double[]{.00026291,.00005105,.00035372,218.45945325,-.32241464,-.00508664})
     };
-    private static double[] heliocentric(Elements q,double d){
-        double N=q.N0+q.Nd*d,i=q.i0+q.id*d,w=q.w0+q.wd*d,a=q.a0+q.ad*d,e=q.e0+q.ed*d,M=q.M0+q.Md*d;
-        double E=eccentric(M,e),xv=a*(cos(E)-e),yv=a*Math.sqrt(1-e*e)*sin(E),v=atan(yv,xv),r=Math.hypot(xv,yv);
-        double x=r*(cos(N)*cos(v+w)-sin(N)*sin(v+w)*cos(i));
-        double y=r*(sin(N)*cos(v+w)+cos(N)*sin(v+w)*cos(i));
-        double z=r*sin(v+w)*sin(i); return new double[]{x,y,z,r,q.base};
+    private static double julianDate(Instant time){return time.toEpochMilli()/86400000.0+2440587.5;}
+    /** JPL heliocentric ecliptic coordinates in AU, using Julian centuries from J2000. */
+    private static double[] jplHeliocentric(JplElements q,double T){
+        double a=q.el[0]+q.rt[0]*T,e=q.el[1]+q.rt[1]*T,I=q.el[2]+q.rt[2]*T;
+        double L=q.el[3]+q.rt[3]*T,w=q.el[4]+q.rt[4]*T,O=q.el[5]+q.rt[5]*T;
+        double M=norm(L-w);if(M>180)M-=360;
+        double E=eccentric(M,e),xp=a*(cos(E)-e),yp=a*Math.sqrt(1-e*e)*sin(E);
+        double wp=w-O,om=O,inc=I;
+        double x=(cos(wp)*cos(om)-sin(wp)*sin(om)*cos(inc))*xp-(sin(wp)*cos(om)+cos(wp)*sin(om)*cos(inc))*yp;
+        double y=(cos(wp)*sin(om)+sin(wp)*cos(om)*cos(inc))*xp-(sin(wp)*sin(om)-cos(wp)*cos(om)*cos(inc))*yp;
+        double z=sin(wp)*sin(inc)*xp+cos(wp)*sin(inc)*yp;
+        return new double[]{x,y,z,Math.sqrt(x*x+y*y+z*z)};
+    }
+    private static double planetMagnitude(String name,double r,double delta,double phase){
+        double base=5*Math.log10(r*delta),v;
+        if(name.equals("水星"))v=-.42+base+.0380*phase-.000273*phase*phase+.000002*phase*phase*phase;
+        else if(name.equals("金星"))v=-4.40+base+.0009*phase+.000239*phase*phase-.00000065*phase*phase*phase;
+        else if(name.equals("火星"))v=-1.52+base+.016*phase;
+        else if(name.equals("木星"))v=-9.40+base+.005*phase;
+        else if(name.equals("土星"))v=-8.88+base+.044*phase;
+        else if(name.equals("天王星"))v=-7.19+base+.0028*phase;
+        else if(name.equals("海王星"))v=-6.87+base+.0018*phase;
+        else v=-2+base;
+        return Double.isFinite(v)?v:Double.NaN;
     }
     public static Planet[] planets(Instant time){
-        double d=days(time); // Earth's heliocentric ecliptic position is the inverse of the solar vector.
-        double[] s=solarEcliptic(d); double[] earth={-s[0],-s[1],0};
+        double jd=julianDate(time),T=(jd-2451545.0)/36525.0;
+        double[] earth=jplHeliocentric(EARTH,T);
         Planet[] out=new Planet[PLANET_ELEMENTS.length];
         for(int n=0;n<PLANET_ELEMENTS.length;n++){
-            // Convert heliocentric planet coordinates to geocentric coordinates:
-            // target minus Earth's heliocentric position (the previous build
-            // added the Earth vector, placing inner planets on the wrong side).
-            double[] p=heliocentric(PLANET_ELEMENTS[n],d),x={p[0]-earth[0],p[1]-earth[1],p[2]};
-            double[] eq=equatorial(x[0],x[1],x[2],d); double geo=Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
-            double dot=(-p[0])*(earth[0]-p[0])+(-p[1])*(earth[1]-p[1])+(-p[2])*(-p[2]);
-            double phase=Math.toDegrees(Math.acos(Math.max(-1,Math.min(1,dot/(p[3]*geo)))));
-            double mag=PLANET_ELEMENTS[n].base+5*Math.log10(Math.max(.01,p[3]*geo));
-            if(PLANET_ELEMENTS[n].name.equals("水星"))mag+=.038*phase-.000273*phase*phase+.000002*phase*phase*phase;
-            else if(PLANET_ELEMENTS[n].name.equals("金星"))mag+=.0009*phase+.000239*phase*phase-.00000065*phase*phase*phase;
-            else if(PLANET_ELEMENTS[n].name.equals("火星"))mag+=.016*phase;
-            out[n]=new Planet(PLANET_ELEMENTS[n].name,eq[0],eq[1],geo,mag);
+            double[] p=jplHeliocentric(PLANET_ELEMENTS[n],T);
+            // Geocentric vector is target heliocentric position minus Earth's.
+            double x=p[0]-earth[0],y=p[1]-earth[1],z=p[2]-earth[2];
+            double delta=Math.sqrt(x*x+y*y+z*z);
+            double eps=23.43928-.0000004*(jd-2451545.0);
+            double ye=y*cos(eps)-z*sin(eps),ze=y*sin(eps)+z*cos(eps);
+            double ra=norm(atan(ye,x)),dec=atan(ze,Math.hypot(x,ye));
+            double r=p[3],cosPhase=(r*r+delta*delta-earth[3]*earth[3])/(2*r*delta);
+            double phase=Math.toDegrees(Math.acos(Math.max(-1,Math.min(1,cosPhase))));
+            out[n]=new Planet(PLANET_ELEMENTS[n].name,ra,dec,delta,planetMagnitude(PLANET_ELEMENTS[n].name,r,delta,phase));
         }
         return out;
     }

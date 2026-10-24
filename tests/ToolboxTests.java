@@ -43,7 +43,10 @@ public final class ToolboxTests {
         check(Astronomy.crossings(LocalDate.of(2024,6,21),ZoneId.of("Europe/Oslo"),69.65,18.96,false,-.833).isEmpty(),"Polar day has no fabricated sunrise or sunset");
         check(Astronomy.crossings(LocalDate.of(2024,12,21),ZoneId.of("Europe/Oslo"),69.65,18.96,false,-.833).isEmpty(),"Polar night has no fabricated sunrise or sunset");
         double polaris=Astronomy.horizontal(37.955,89.264,equinox,39.9,116.4)[0];check(Math.abs(polaris-39.9)<1,"Polaris altitude is near observer latitude");
-        double[] moon=Astronomy.moonPosition(full,39.9,116.4);check(Double.isFinite(moon[0])&&moon[0]>=-90&&moon[0]<=90&&moon[1]>=0&&moon[1]<360,"Moon altitude and azimuth remain valid");
+        double[] moon=Astronomy.moonPosition(full,39.9,116.4);check(Double.isFinite(moon[0])&&moon[0]>=-90&&moon[0]<=90&&moon[1]>=0&&moon[1]<360,"Moon altitude and azimuth remain valid");        Astronomy.Planet[] jpl=Astronomy.planets(Instant.parse("2026-10-25T00:00:00Z"));
+        double[] jplRa={227.296,205.422,137.556,145.634,9.748,62.604,2.260};
+        double[] jplDec={-20.719,-17.364,17.829,14.454,1.263,20.892,-.565};
+        for(int i=0;i<jpl.length;i++)check(Math.abs(jpl[i].ra-jplRa[i])<.02&&Math.abs(jpl[i].dec-jplDec[i])<.02,"JPL planet coordinates match reference for "+jpl[i].name);
         ScheduleModel customModel=new ScheduleModel();ScheduleModel.Course custom=new ScheduleModel.Course();custom.name="自定义课";custom.parity=3;custom.customWeeks.addAll(Arrays.asList(1,3,4,6));
         check(customModel.validateCourse(custom)==null,"Non-consecutive teaching weeks are accepted");customModel.put(custom);
         check(custom.runs(1)&&custom.runs(3)&&custom.runs(4)&&custom.runs(6)&&!custom.runs(2)&&!custom.runs(5),"Custom recurrence uses only selected weeks");

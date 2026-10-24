@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
         schedule=new ScheduleScreen(this);gps=new GpsScreen(this);
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         tab=preferences.getInt("last_tab",0);if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<5)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",5).apply();}},700);
+        if(preferences.getInt("seen_version",0)<6)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",6).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -224,7 +224,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.0.3",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · v1.0.4",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -261,7 +261,7 @@ public class MainActivity extends Activity {
         search.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int count,int after){}public void onTextChanged(CharSequence s,int start,int before,int count){searchVersion++;renderLocal(s.toString());}public void afterTextChanged(Editable e){}});
         search.setOnEditorActionListener((v,action,event)->{if(action==EditorInfo.IME_ACTION_SEARCH){searchOnline();return true;}return false;});
         renderLocal("");
-        gap(body,20);TextView credit=text("地区数据：GeoNames，经 Open-Meteo 提供 ↗\nCC BY 4.0 · 可搜索范围以数据源收录为准",11,MUTED,false);credit.setLineSpacing(dp(5),1);credit.setMinHeight(dp(48));tap(credit,Color.TRANSPARENT,8,()->open("https://www.geonames.org/"));body.addView(credit);
+        gap(body,20);TextView credit=text("地区数据：GeoNames，经 Open-Meteo 提供 ↗\r\nCC BY 4.0 · 可搜索范围以数据源收录为准",11,MUTED,false);credit.setLineSpacing(dp(5),1);credit.setMinHeight(dp(48));tap(credit,Color.TRANSPARENT,8,()->open("https://www.geonames.org/"));body.addView(credit);
     }
     private void renderLocal(String query) {
         results.removeAllViews();String q=query.trim();
@@ -302,16 +302,31 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",5).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",6).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationModeChanged(){gps.modeChanged();if(tab==2)switchTab(2);}
     void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast("未找到系统图片选择器");}}
     void resetBackground(){new java.io.File(getFilesDir(),"background.jpg").delete();background=null;refreshScreen();}
     void reloadBackground(){background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());refreshScreen();}
-    void updates(){LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));c.addView(text("1.0.3 · 天文与布局修复",19,INK,true));gap(c,12);c.addView(text("• 修复天文时间按钮重建页面时先回到顶部造成的闪屏，切换后保持原滚动位置。\n• 星图加入本地计算的水星、金星、火星、木星、土星、天王星和海王星，并显示行星星等。\n• 点击亮星或行星显示方位角、高度角和星等；新增亮星显示设置，北斗七星仍只作图示。\n• 流星雨按极大日前后3天标记活跃期并显示辐射点；来源与隐私链接、IMO链接框和常用地区卡片统一留白。\n• 厦门、台北调整到香港之前。",14,INK,false));gap(c,20);c.addView(text("1.0.1 · 自由布局与个性设置",19,INK,true));gap(c,12);c.addView(text("• 分级设置、背景选区与缩放、可选颜色描边。\n• 天气栏目和底部栏目可显隐排序，新增独立天气地图与天文栏目（默认隐藏）。\n• 定位可选 GPS 硬件或网络定位。\n• 课程支持自定义授课周与信息前缀，时间改为数字输入。\n• 改进天气图标、摄氏度、居中排版、图例与刷新提示。\n• 天文支持指定年月日时分、前后15分钟和前后一天，保留滚动位置并区分曙光暮光。\n• 更新隐私说明，移除极光功能。",14,INK,false));gap(c,20);c.addView(text("1.0.0 · 呆呆工具箱",19,INK,true));gap(c,12);c.addView(text("• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\n• 新增手动周课表、自定义节次、地点、老师与单双周。\n• 新增手机图片背景及遮罩调整。\n• 新增前台 GPS 经纬度、水平精度与状态。\n• 新增官方全国降水、温度和分区雷达网页。\n• 新增观星条件、星图、日月位置、月相和曙暮光。\n• 整理来源与隐私，Open-Meteo 入口放在一起。\n• 页脚改为“呆呆鸟使用Codex制作”。",14,INK,false));gap(c,20);c.addView(text("0.1.0-test · 简天气测试版",17,INK,true));gap(c,10);c.addView(text("早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。",14,MUTED,false));ScrollView s=new ScrollView(this);s.addView(c);new ToolDialog(this).setTitle("每个版本的更新内容").setView(s).setPositiveButton("知道了",null).show();}
+    void updates(){
+        LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        c.addView(text("1.0.4 · 行星算法校准",19,INK,true));gap(c,12);
+        c.addView(text("• 按参考项目 weather-fighter-global 的 JPL 简化开普勒元素重算地心行星位置，修正行星出现在错误方位的问题。\r\n• 行星坐标使用行星日心坐标减地球日心坐标，并统一黄道到赤道坐标转换；水星到海王星的星等公式同步校准。\r\n• 版本号升至 1.0.4，保留下面各版本的独立更新说明。",14,INK,false));gap(c,20);
+        c.addView(text("1.0.3 · 天文与布局修复",19,INK,true));gap(c,12);
+        c.addView(text("• 修复天文时间按钮重建页面时先回到顶部造成的闪屏，切换后保持原滚动位置。\r\n• 星图加入本地计算的水星、金星、火星、木星、土星、天王星和海王星，并显示行星星等。\r\n• 点击亮星或行星显示方位角、高度角和星等；新增亮星显示设置，北斗七星仍只作图示。\r\n• 流星雨按极大日前后3天标记活跃期并显示辐射点；来源与隐私链接、IMO链接框和常用地区卡片统一留白。\r\n• 厦门、台北调整到香港之前。",14,INK,false));gap(c,20);
+        c.addView(text("1.0.2 · 细节与定位改进",19,INK,true));gap(c,12);
+        c.addView(text("• 天文第一行按钮顺序固定为“-15分钟、当前、+15分钟”；太阳与月球标签按字号计算下移间距，避免遮挡圆点；统一使用“月球”。\r\n• 天气地图、天气代码、背景裁剪、描边颜色、设置逐级返回和定位间隔按本版本记录调整。\r\n• versionCode 升至 4，沿用包名与签名。",14,INK,false));gap(c,20);
+        c.addView(text("1.0.1 · 自由布局与个性设置",19,INK,true));gap(c,12);
+        c.addView(text("• 分级设置、背景选区与缩放、可选颜色描边。\r\n• 天气栏目和底部栏目可显隐排序，新增独立天气地图与天文栏目（默认隐藏）。\r\n• 定位可选 GPS 硬件或网络定位。\r\n• 课程支持自定义授课周与信息前缀，时间改为数字输入。\r\n• 改进天气图标、摄氏度、居中排版、图例与刷新提示。\r\n• 天文支持指定年月日时分、前后15分钟和前后一天，保留滚动位置并区分曙光暮光。\r\n• 更新隐私说明，移除极光功能。",14,INK,false));gap(c,20);
+        c.addView(text("1.0.0 · 呆呆工具箱",19,INK,true));gap(c,12);
+        c.addView(text("• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\r\n• 新增手动周课表、自定义节次、地点、老师与单双周。\r\n• 新增手机图片背景及遮罩调整。\r\n• 新增前台 GPS 经纬度、水平精度与状态。\r\n• 新增官方全国降水、温度和分区雷达网页。\r\n• 新增观星条件、星图、日月位置、月相和曙暮光。\r\n• 整理来源与隐私，Open-Meteo 入口放在一起。\r\n• 页脚改为“呆呆鸟使用Codex制作”。",14,INK,false));gap(c,20);
+        c.addView(text("0.1.0-test · 简天气测试版",17,INK,true));gap(c,10);
+        c.addView(text("早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。",14,MUTED,false));
+        ScrollView s=new ScrollView(this);s.addView(c);new ToolDialog(this).setTitle("每个版本的更新内容").setView(s).setPositiveButton("知道了",null).show();
+    }
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        TextView details=text("呆呆工具箱 1.0.3 · 个人非商业版\n\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\n\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\n\n隐私：无需账号。定位仅在你授权后于前台获取，应用不上传坐标。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\n\n免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\n\n全国降水、气温、雷达和卫星云图通过应用内官方网页查看，版权归中国天气网 / 中央气象台。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
+        TextView details=text("呆呆工具箱 1.0.4 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位仅在你授权后于前台获取，应用不上传坐标。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\n免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达和卫星云图通过应用内官方网页查看，版权归中国天气网 / 中央气象台。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");gap(content,10);link(content,"中国天气网 · 官方页面","https://www.weather.com.cn/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
         ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("知道了",null).show();
     }
@@ -326,5 +341,3 @@ public class MainActivity extends Activity {
     @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
     @Override protected void onDestroy(){dead=true;if(maps!=null)maps.destroy();if(gps!=null)gps.pause();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }
-
-
