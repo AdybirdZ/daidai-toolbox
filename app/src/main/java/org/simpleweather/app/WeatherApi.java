@@ -25,7 +25,7 @@ public final class WeatherApi {
     public static String forecastUrl(City city) {
         return FORECAST_HOST + "?latitude=" + city.latitude + "&longitude=" + city.longitude
             + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m"
-            + "&hourly=temperature_2m,precipitation_probability,weather_code,is_day"
+            + "&hourly=temperature_2m,precipitation_probability,weather_code,is_day,cloud_cover,relative_humidity_2m,visibility,wind_speed_10m"
             + "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max"
             + "&timezone=" + ("中国".equals(city.country) ? "Asia%2FShanghai" : "auto")
             + "&forecast_days=7&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm";
@@ -62,7 +62,7 @@ public final class WeatherApi {
         reserve();
         HttpsURLConnection conn = (HttpsURLConnection)new URL(url).openConnection();
         conn.setConnectTimeout(12000); conn.setReadTimeout(18000); conn.setInstanceFollowRedirects(false);
-        conn.setRequestProperty("User-Agent", "SimpleWeather/1.0 (personal non-commercial Android client)");
+        conn.setRequestProperty("User-Agent", "DaidaiToolbox/1.0 (personal non-commercial Android client)");
         conn.setRequestProperty("Accept", "application/json");
         try {
             int status = conn.getResponseCode();

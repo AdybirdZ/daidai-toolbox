@@ -1,47 +1,40 @@
-# 简天气
+# 呆呆工具箱 1.0.0
 
-原生 Android 简洁天气客户端，面向个人、非商业使用。独立实现界面与代码，参考天气战士的地区天气查询目标，不使用股票风格。
+原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用Codex制作。
 
-- Android 8.0+，Java，无第三方运行时依赖。
-- 43 个内置常用地区；在线检索城市、区县与海外地区；收藏最多 20 个地区。
-- 当前天气（模型估算）、未来 24 小时、7 日预报、湿度、风速、风向、紫外线和日出日落。
-- 15 分钟缓存；失败时保留并标注旧数据；切换地区时丢弃不对应当前地区的返回结果。
-- 仅网络权限，无广告、登录、分析 SDK、定位权限或自建服务器。
-- Open-Meteo / GeoNames 数据署名及条款、隐私入口。
+- 天气：地区搜索、43 个常用地区、收藏、当前模型估算、24 小时与 7 日预报、15 分钟缓存及失败回退。
+- 官方天气图：全国降水、气温、全国及七个区域雷达，通过应用内完整官方网页查看，保留原站版权、图例、发布时间，不下载重发图片。
+- 天文：观星天气条件、亮星示意、日月位置、月相、升落与曙暮光、流星雨常年参考、NOAA 极光原页入口。本地天文计算为近似结果。
+- 课程表：手动新增、修改、删除，课程名、地点、老师，学期、周次、单双周、自定义上下课时间、周课表与今日课程。支持冲突检查，不含教务导入或桌面小组件。
+- GPS：前台读取 WGS84 经纬度、水平精度和海拔，切页或进入后台停止更新，不上传坐标。
+- 手机图片背景及清晰度遮罩，固定天气 / 课程表 / GPS 导航，每版本更新记录。
 
-详细授权核查见 `docs/DATA-LICENSE.md`。源码采用 MIT 许可；天气和地区数据采用 CC BY 4.0。免费托管 API 的非商业限制仍需单独遵守。
+首次使用 GPS 才申请定位权限。图片使用系统文件选择器，无存储读取权限。课程、背景、收藏和缓存保存在手机内部，无账号、广告、统计 SDK 或自建服务器。官方网页适用各自隐私规则。天气查询向 Open-Meteo 发送所选城市坐标，GPS 不自动更改天气城市。
 
-## 构建 APK
+授权与隐私见 `docs/DATA-LICENSE.md`，版本内容见 `CHANGELOG.md`，验证见 `TESTING.md`。新写客户端代码为 MIT，数据许可单独保留。
 
-安装 JDK 17 或更新版本、Python 3，以及 Google Android SDK 的 `platforms;android-35` 和 `build-tools;35.0.0`。无需 Gradle 即可构建：
+## 安装与升级
 
-```powershell
-python build.py --sdk "C:\Android\Sdk" --out "build\SimpleWeather-1.0.0.apk"
-```
+安装 `DaidaiToolbox-1.0.0.apk`。包名保持 `org.simpleweather.app`，versionCode 从 1 增至 2，沿用原开发签名，支持覆盖旧包并保留地区与收藏。旧包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
 
-macOS/Linux 同样可使用该脚本，但需安装对应平台 SDK 工具；本次实际构建环境为 Windows。路径含中文时脚本会向资源工具传递相对路径。
+使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
-脚本依次执行资源编译、Java 编译、D8、zipalign、签名和签名验证。首次构建会创建 `.signing/development.jks`，密码为 Android 通用开发密码 `android`。**这只是本地侧载的开发签名，需自行妥善保存；应用商店发布请配置自己的发布签名。** 删除或更换密钥后，无法直接覆盖安装使用旧密钥签名的应用。不要公开或提交签名私钥。
+## 构建
 
-也可以用 Android Studio 打开项目，安装 API 35 SDK 后使用项目的 Gradle 配置构建。项目指定 Android Gradle Plugin 8.7.3，适配 Gradle 8.9；未包含 Gradle wrapper。Android Studio/Gradle 构建路线未在本次环境验证，已验证的是上述 `build.py` 路线。
-
-## 核心行为测试
-
-下载测试专用 [JSON-java 20240303](https://repo.maven.apache.org/maven2/org/json/json/20240303/json-20240303.jar)，然后运行：
+JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python tests/run.py --json-jar "C:\path\json-20240303.jar"
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.0.0.apk
 ```
 
-Android 应用使用系统自带的 `org.json`；该 jar 只用于 JDK 测试，不打入 APK。测试覆盖城市坐标、同名城市校正、跨时区跨日、小时筛选、过期缓存、缺失值和请求节流。实际安装与界面验证见 `TESTING.md`。
+脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。
 
-## 主要文件
+## 核心测试
 
-- `MainActivity.java`：天气页、地区页、收藏、请求状态和界面。
-- `WeatherApi.java`：官方 HTTPS 请求、突发节流、429 暂停。
-- `WeatherData.java`：数据解析、城市当地时间、缺失值及天气代码。
-- `WeatherStore.java`：地区、收藏、缓存及持久化调用预算。
-- `WeatherIcon.java`：独立绘制的天气图标。
-- `app/src/main/assets/cities.json`：GeoNames 地区数据及展示名称整理。
+测试专用 [JSON-java 20240303](https://repo.maven.apache.org/maven2/org/json/json/20240303/json-20240303.jar)，不打入 APK：
 
-以上 Java 文件均位于 `app/src/main/java/org/simpleweather/app/`。
+```powershell
+python tests/run.py --json-jar C:/path/json-20240303.jar
+```
+
+天气、地区、时区、缓存和节流 41 项，课程模型及天文 32 项，共 73 项。Java 源码在 `app/src/main/java/org/simpleweather/app/`，主要模块为 MainActivity、WeatherApi / Data / Store、ScheduleModel / Screen、GpsScreen、Astronomy / Screen、OfficialPageActivity。

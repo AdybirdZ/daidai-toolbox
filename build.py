@@ -27,7 +27,7 @@ def main():
         sys.stdout.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sdk', default=os.getenv('ANDROID_HOME') or os.getenv('ANDROID_SDK_ROOT'))
-    parser.add_argument('--out', default=str(ROOT / 'build/SimpleWeather-1.0.0.apk'))
+    parser.add_argument('--out', default=str(ROOT / 'build/DaidaiToolbox-1.0.0.apk'))
     opts = parser.parse_args()
     if not opts.sdk:
         parser.error('Set --sdk or ANDROID_HOME to your Android SDK directory.')
