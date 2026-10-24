@@ -200,6 +200,36 @@
     "alias": "大连"
   },
   {
+    "id": 1790645,
+    "name": "厦门市",
+    "latitude": 24.47979,
+    "longitude": 118.08187,
+    "timezone": "Asia/Shanghai",
+    "country": "中国",
+    "admin1": "福建省",
+    "alias": "厦门"
+  },
+  {
+    "id": 1668341,
+    "name": "台北市",
+    "latitude": 25.05306,
+    "longitude": 121.52639,
+    "timezone": "Asia/Shanghai",
+    "country": "中国",
+    "admin1": "台湾省",
+    "alias": "台北"
+  },
+  {
+    "id": 1819730,
+    "name": "香港",
+    "latitude": 22.25,
+    "longitude": 114.16667,
+    "timezone": "Asia/Shanghai",
+    "alias": "香港",
+    "country": "中国",
+    "admin1": "香港特别行政区"
+  },
+  {
     "id": 2038180,
     "name": "长春市",
     "latitude": 43.88,
@@ -350,16 +380,6 @@
     "alias": "呼和浩特"
   },
   {
-    "id": 1819730,
-    "name": "香港",
-    "latitude": 22.25,
-    "longitude": 114.16667,
-    "timezone": "Asia/Shanghai",
-    "alias": "香港",
-    "country": "中国",
-    "admin1": "香港特别行政区"
-  },
-  {
     "id": 1821275,
     "name": "澳门",
     "latitude": 22.15778,
@@ -407,25 +427,5 @@
     "country": "美国",
     "admin1": "纽约州",
     "alias": "纽约"
-  },
-  {
-    "id": 1790645,
-    "name": "厦门市",
-    "latitude": 24.47979,
-    "longitude": 118.08187,
-    "timezone": "Asia/Shanghai",
-    "country": "中国",
-    "admin1": "福建省",
-    "alias": "厦门"
-  },
-  {
-    "id": 1668341,
-    "name": "台北市",
-    "latitude": 25.05306,
-    "longitude": 121.52639,
-    "timezone": "Asia/Shanghai",
-    "country": "中国",
-    "admin1": "台湾省",
-    "alias": "台北"
   }
 ]

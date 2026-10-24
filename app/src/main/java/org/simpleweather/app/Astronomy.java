@@ -25,11 +25,54 @@ public final class Astronomy {
     public static double sidereal(Instant time,double longitude){double jd=time.toEpochMilli()/86400000.0+2440587.5;return norm(280.46061837+360.98564736629*(jd-2451545.0)+longitude);}
     private static double eccentric(double m,double e){double E=Math.toRadians(norm(m)),M=E;for(int i=0;i<10;i++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));return Math.toDegrees(E);}
     private static double[] equatorial(double x,double y,double z,double d){double e=23.4393-0.0000003563*d;double yy=y*cos(e)-z*sin(e),zz=y*sin(e)+z*cos(e);return new double[]{norm(atan(yy,x)),atan(zz,Math.hypot(x,yy)),Math.sqrt(x*x+yy*yy+zz*zz)};}
-    public static double[] sun(Instant time){double d=days(time),w=282.9404+0.0000470935*d,e=.016709-0.000000001151*d,M=356.0470+.9856002585*d,E=eccentric(M,e);double x=cos(E)-e,y=Math.sqrt(1-e*e)*sin(E),lon=atan(y,x)+w,r=Math.hypot(x,y);return equatorial(r*cos(lon),r*sin(lon),0,d);}
+    private static double[] solarEcliptic(double d){double w=282.9404+0.0000470935*d,e=.016709-0.000000001151*d,M=356.0470+.9856002585*d,E=eccentric(M,e);double x=cos(E)-e,y=Math.sqrt(1-e*e)*sin(E),lon=atan(y,x)+w,r=Math.hypot(x,y);return new double[]{r*cos(lon),r*sin(lon),0,r};}
+    public static double[] sun(Instant time){double d=days(time),v[]=solarEcliptic(d);return equatorial(v[0],v[1],v[2],d);}
     public static double[] moon(Instant time){double d=days(time),N=125.1228-.0529538083*d,i=5.1454,w=318.0634+.1643573223*d,e=.0549,M=115.3654+13.0649929509*d,E=eccentric(M,e),x=60.2666*(cos(E)-e),y=60.2666*Math.sqrt(1-e*e)*sin(E),v=atan(y,x),r=Math.hypot(x,y);return equatorial(r*(cos(N)*cos(v+w)-sin(N)*sin(v+w)*cos(i)),r*(sin(N)*cos(v+w)+cos(N)*sin(v+w)*cos(i)),r*sin(v+w)*sin(i),d);}
     public static double[] horizontal(double ra,double dec,Instant time,double lat,double lon){double h=sidereal(time,lon)-ra;double alt=Math.toDegrees(Math.asin(sin(lat)*sin(dec)+cos(lat)*cos(dec)*cos(h)));double az=norm(atan(sin(h),cos(h)*sin(lat)-Math.tan(Math.toRadians(dec))*cos(lat))+180);return new double[]{alt,az};}
     public static double[] sunPosition(Instant time,double lat,double lon){double[] eq=sun(time);return horizontal(eq[0],eq[1],time,lat,lon);}
     public static double[] moonPosition(Instant time,double lat,double lon){double[] eq=moon(time);double lst=sidereal(time,lon),r=eq[2];double x=r*cos(eq[1])*cos(eq[0])-cos(lat)*cos(lst),y=r*cos(eq[1])*sin(eq[0])-cos(lat)*sin(lst),z=r*sin(eq[1])-sin(lat);return horizontal(norm(atan(y,x)),atan(z,Math.hypot(x,y)),time,lat,lon);}
+
+    /** Approximate geocentric positions for the visible planets. Elements are the
+     * compact low precision set from the independently implemented public-domain
+     * orbital recipe used by this app. They are for observing guidance, not navigation. */
+    public static final class Planet {
+        public final String name; public final double ra,dec, distance, magnitude;
+        Planet(String n,double r,double d,double dist,double mag){name=n;ra=r;dec=d;distance=dist;magnitude=mag;}
+    }
+    private static final class Elements {
+        final String name; final double N0,Nd,i0,id,w0,wd,a0,ad,e0,ed,M0,Md,base;
+        Elements(String n,double N,double Nday,double i,double iday,double w,double wday,double a,double aday,double e,double eday,double M,double Mday,double b){name=n;N0=N;Nd=Nday;i0=i;this.id=iday;w0=w;wd=wday;a0=a;ad=aday;e0=e;ed=eday;M0=M;Md=Mday;base=b;}
+    }
+    private static final Elements[] PLANET_ELEMENTS={
+        new Elements("水星",48.3313,3.24587e-5,7.0047,5e-8,29.1241,1.01444e-5,.387098,0,.205635,5.59e-10,168.6562,4.0923344368,-.42),
+        new Elements("金星",76.6799,2.46590e-5,3.3946,2.75e-8,54.8910,1.38374e-5,.72333,0,.006773,-1.302e-9,48.0052,1.6021302244,-4.40),
+        new Elements("火星",49.5574,2.11081e-5,1.8497,-1.78e-8,286.5016,2.92961e-5,1.523688,0,0.093405,2.516e-9,18.6021,.5240207766,-1.52),
+        new Elements("木星",100.4542,2.76854e-5,1.3030,-1.557e-7,273.8777,1.64505e-5,5.20256,0,.048498,4.469e-9,19.8950,.0830853001,-9.40),
+        new Elements("土星",113.6634,2.38980e-5,2.4886,-1.081e-7,339.3939,2.97661e-5,9.55475,0,.055546,-9.499e-9,316.9670,.0334442282,-8.88),
+        new Elements("天王星",74.0005,1.3978e-5,.7733,1.9e-8,96.6612,3.0565e-5,19.18171,-1.55e-8,.047318,7.45e-9,142.5905,.011725806,-7.19),
+        new Elements("海王星",131.7806,3.0173e-5,1.7700,-2.55e-7,272.8461,-6.027e-6,30.05826,3.313e-8,.008606,2.15e-9,260.2471,.005995147,-6.87)
+    };
+    private static double[] heliocentric(Elements q,double d){
+        double N=q.N0+q.Nd*d,i=q.i0+q.id*d,w=q.w0+q.wd*d,a=q.a0+q.ad*d,e=q.e0+q.ed*d,M=q.M0+q.Md*d;
+        double E=eccentric(M,e),xv=a*(cos(E)-e),yv=a*Math.sqrt(1-e*e)*sin(E),v=atan(yv,xv),r=Math.hypot(xv,yv);
+        double x=r*(cos(N)*cos(v+w)-sin(N)*sin(v+w)*cos(i));
+        double y=r*(sin(N)*cos(v+w)+cos(N)*sin(v+w)*cos(i));
+        double z=r*sin(v+w)*sin(i); return new double[]{x,y,z,r,q.base};
+    }
+    public static Planet[] planets(Instant time){
+        double d=days(time); // Earth's heliocentric ecliptic position is the inverse of the solar vector.
+        double[] s=solarEcliptic(d); double[] earth={-s[0],-s[1],0};
+        Planet[] out=new Planet[PLANET_ELEMENTS.length];
+        for(int n=0;n<PLANET_ELEMENTS.length;n++){
+            double[] p=heliocentric(PLANET_ELEMENTS[n],d),x={p[0]+earth[0],p[1]+earth[1],p[2]};
+            double[] eq=equatorial(x[0],x[1],x[2],d); double geo=Math.sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+            double phaseFactor=PLANET_ELEMENTS[n].name.equals("水星")||PLANET_ELEMENTS[n].name.equals("金星")?0.25:0;
+            double mag=PLANET_ELEMENTS[n].base+5*Math.log10(Math.max(.01,p[3]*geo))+phaseFactor;
+            out[n]=new Planet(PLANET_ELEMENTS[n].name,eq[0],eq[1],geo,mag);
+        }
+        return out;
+    }
+    public static double[] planetPosition(Planet p,Instant time,double lat,double lon){return horizontal(p.ra,p.dec,time,lat,lon);}
     public static double phase(Instant time){double[] a=sun(time),b=moon(time);double e=23.4393-.0000003563*days(time);double as=atan(sin(a[0])*cos(a[1])*cos(e)+sin(a[1])*sin(e),cos(a[0])*cos(a[1]));double bs=atan(sin(b[0])*cos(b[1])*cos(e)+sin(b[1])*sin(e),cos(b[0])*cos(b[1]));return norm(bs-as)/360.0;}
     public static double illumination(Instant time){return (1-cos(phase(time)*360))/2;}
     public static String phaseName(double phase){return new String[]{"新月","娥眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"}[(int)Math.floor(phase*8+.5)%8];}
