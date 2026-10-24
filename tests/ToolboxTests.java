@@ -58,6 +58,14 @@ public final class ToolboxTests {
         check(DisplayOrder.window(Arrays.asList(0,1),0).size()==2,"Two tabs share one complete row");check(DisplayOrder.window(Arrays.asList(0,1,2,3),0).size()==4,"Four tabs require no arrow paging");
         check(DisplayOrder.window(Arrays.asList(0,1,2,3,4),2).equals(Arrays.asList(2,3,4)),"Arrow paging reveals the last three of five tabs");
         check(Astronomy.skyDescription(Instant.parse("2024-03-20T05:00:00Z"),0,0).contains("曙光"),"Morning twilight is dawn");check(Astronomy.skyDescription(Instant.parse("2024-03-20T19:00:00Z"),0,0).contains("暮光"),"Evening twilight is dusk");
+        int[] codes={0,1,2,3,45,48,51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,99};
+        String[] names={"晴","少云","多云","阴","雾","沉积雾凇的雾","小毛毛雨","中毛毛雨","大毛毛雨","小冻毛毛雨","大冻毛毛雨","小雨","中雨","大雨","小冻雨","大冻雨","小雪","中雪","大雪","米雪","小阵雨","中阵雨","大阵雨","小阵雪","大阵雪","小雷雨 / 中雷雨","雷雨伴小冰雹","雷雨伴大冰雹"};
+        for(int i=0;i<codes.length;i++)check(WeatherData.condition(codes[i]).equals(names[i]),"Requested Chinese weather term for code "+codes[i]);
+        customModel.semester=LocalDate.of(2020,1,6);customModel.slots.set(0,new ScheduleModel.Slot("07:00","07:45"));customModel.weeks=30;String courseBefore=customModel.json().getJSONArray("courses").toString();customModel.resetSettings();
+        check(customModel.slots.get(0).start.equals("08:00")&&customModel.weeks==20&&customModel.semester.equals(LocalDate.now().with(DayOfWeek.MONDAY)),"Reset restores period, semester and week defaults");
+        check(customModel.json().getJSONArray("courses").toString().equals(courseBefore),"Reset preserves course details and custom recurrence");
+        ScheduleModel extended=new ScheduleModel();extended.weeks=35;extended.slots.add(new ScheduleModel.Slot("21:00","21:45"));ScheduleModel.Course late=new ScheduleModel.Course();late.name="晚课";late.first=late.last=11;late.weekEnd=35;extended.put(late);extended.resetSettings();
+        check(extended.weeks==35&&extended.slots.size()==11&&ScheduleModel.parse(extended.json().toString()).courses.size()==1,"Reset keeps necessary extended course ranges valid");
         System.out.println("PASS: "+checks+" timetable and astronomy checks");
     }
 }

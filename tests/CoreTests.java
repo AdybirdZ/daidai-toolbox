@@ -35,8 +35,8 @@ public final class CoreTests {
         check(WeatherData.number(WeatherData.at(missing,"a",1)).equals("0"),"Real zero is preserved");
         check(WeatherData.code(missing,"weather_code",-1)==-1,"Missing condition does not become sunny");
         check(WeatherData.condition(-1).equals("天气未知"),"Unknown WMO code stays unknown");
-        check(WeatherData.condition(99).equals("雷雨伴冰雹"),"Severe WMO conditions map correctly");
-        check(WeatherData.condition(67).equals("冻雨"),"Freezing rain has its own label");
+        check(WeatherData.condition(99).equals("雷雨伴大冰雹"),"Severe WMO conditions map correctly");
+        check(WeatherData.condition(67).equals("大冻雨"),"Freezing rain has its own label");
         check(WeatherData.wind(359).equals("北风"),"Wind wraps through zero degrees");
         check(WeatherData.wind(Double.NaN).isEmpty(),"Unknown wind direction is not invented");
         check(WeatherData.clock("").equals("—"),"Polar missing sunrise is supported");

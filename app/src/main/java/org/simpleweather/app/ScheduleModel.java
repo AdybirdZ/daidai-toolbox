@@ -26,6 +26,8 @@ public final class ScheduleModel {
         String[][] defaults={{"08:00","08:45"},{"08:55","09:40"},{"10:00","10:45"},{"10:55","11:40"},{"14:00","14:45"},{"14:55","15:40"},{"16:00","16:45"},{"16:55","17:40"},{"19:00","19:45"},{"19:55","20:40"}};
         for(String[] t:defaults)slots.add(new Slot(t[0],t[1]));
     }
+    /** Reset configuration without deleting courses or creating invalid period/week references. */
+    public void resetSettings(){ScheduleModel defaults=new ScheduleModel();int neededPeriods=0,neededWeeks=20;for(Course c:courses){neededPeriods=Math.max(neededPeriods,c.last);neededWeeks=Math.max(neededWeeks,c.parity==3?c.customWeeks.last():c.weekEnd);}semester=defaults.semester;weeks=neededWeeks;if(neededPeriods<=defaults.slots.size()){slots.clear();slots.addAll(defaults.slots);}else{boolean compatible=minute(slots.get(defaults.slots.size()).start)>=minute(defaults.slots.get(defaults.slots.size()-1).end);if(compatible){for(int i=0;i<defaults.slots.size();i++)slots.set(i,defaults.slots.get(i));}while(slots.size()>neededPeriods)slots.remove(slots.size()-1);}}
     public int week(LocalDate date){return (int)Math.floorDiv(ChronoUnit.DAYS.between(semester,date),7)+1;}
     public static int minute(String value){LocalTime t=LocalTime.parse(value);return t.getHour()*60+t.getMinute();}
     public String validateSlot(int index,String start,String end){

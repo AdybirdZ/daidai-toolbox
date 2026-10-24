@@ -18,10 +18,10 @@ final class AstronomyScreen {
     AstronomyScreen(MainActivity a,City city,WeatherData data,Instant at,Consumer<Instant> change){this.a=a;this.city=city;this.data=data;this.at=at;this.change=change;ZoneId z;try{z=ZoneId.of(data!=null?data.zone.getId():city.timezone);}catch(Exception e){z=ZoneId.of("UTC");}zone=z;}
     void render(){
         a.body.addView(a.text(city.label()+" · "+at.atZone(zone).format(DateTimeFormatter.ofPattern("yyyy年M月d日 HH:mm"))+" 当地时间",14,a.MUTED,false));a.gap(a.body,12);
-        LinearLayout clock=a.row();clock.addView(a.button("此刻",false,()->change.accept(Instant.now())),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("-15分钟",false,()->change.accept(at.minusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("+15分钟",false,()->change.accept(at.plusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(clock);a.gap(a.body,8);
+        LinearLayout clock=a.row();clock.addView(a.button("-15分钟",false,()->change.accept(at.minusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("当前",false,()->change.accept(Instant.now())),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("+15分钟",false,()->change.accept(at.plusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(clock);a.gap(a.body,8);
         LinearLayout days=a.row();days.addView(a.button("-1天",false,()->change.accept(at.atZone(zone).minusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("设置时间",false,()->NumericInputs.dateTime(a,at.atZone(zone),change)),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("+1天",false,()->change.accept(at.atZone(zone).plusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(days);a.gap(a.body,16);
         observing();a.gap(a.body,16);
-        LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);sky.addView(new Sky(a,at,city.latitude,city.longitude),a.lp(-1,300));a.gap(sky,10);sky.addView(a.text("北在上、东在左。显示地平线上方的亮星与太阳、月亮；白天的星点仅为方位示意。点击上方切换时间。",12,a.MUTED,false));
+        LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);sky.addView(new Sky(a,at,city.latitude,city.longitude),a.lp(-1,300));a.gap(sky,10);sky.addView(a.text("北在上、东在左。显示地平线上方的亮星与太阳、月球；白天的星点仅为方位示意。点击上方切换时间。",12,a.MUTED,false));
         a.gap(a.body,16);positions();a.gap(a.body,16);events();a.gap(a.body,16);meteor();a.gap(a.body,16);
         a.gap(a.body,20);a.body.addView(a.text("日月和星图为本地低精度天文估算，忽略地形遮挡、大气变化及部分轨道摄动，不用于测量或导航。月升落误差可达数分钟以上；流星雨日期为常年参考。",12,a.MUTED,false));a.link(a.body,"计算公式与方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
     }
@@ -29,7 +29,7 @@ final class AstronomyScreen {
         LinearLayout c=a.card();c.addView(a.text("观星条件 · 经验参考",17,a.INK,true));a.gap(c,12);
         double sun=Astronomy.sunPosition(at,city.latitude,city.longitude)[0],moon=Astronomy.moonPosition(at,city.latitude,city.longitude)[0],lit=Astronomy.illumination(at);
         c.addView(a.text(Astronomy.skyDescription(at,city.latitude,city.longitude),16,a.INK,true));a.gap(c,10);
-        c.addView(a.text(moon>0?"月亮在地平线上 · 照亮比例约 "+Math.round(lit*100)+"%":"月亮在地平线下，月光影响较小",13,a.MUTED,false));a.gap(c,10);
+        c.addView(a.text(moon>0?"月球在地平线上 · 照亮比例约 "+Math.round(lit*100)+"%":"月球在地平线下，月光影响较小",13,a.MUTED,false));a.gap(c,10);
         if(data==null||data.currentIsOld(Instant.now())){c.addView(a.text("天气数据缺失或较旧，请先回天气页刷新。天文位置可离线计算。",13,a.MUTED,false));return;}
         int best=-1;long delta=Long.MAX_VALUE;org.json.JSONArray times=data.hourly.optJSONArray("time");
         for(int i=0;i<times.length();i++)try{long d=Math.abs(Duration.between(LocalDateTime.parse(times.getString(i)).atZone(zone).toInstant(),at).toMinutes());if(d<delta){delta=d;best=i;}}catch(Exception ignored){}
@@ -41,7 +41,7 @@ final class AstronomyScreen {
     }
     private void positions(){
         LinearLayout c=a.card();c.addView(a.text("日月位置与月相",17,a.INK,true));a.gap(c,14);double[] sun=Astronomy.sunPosition(at,city.latitude,city.longitude),moon=Astronomy.moonPosition(at,city.latitude,city.longitude);double phase=Astronomy.phase(at);
-        c.addView(a.text("太阳  "+String.format(Locale.ROOT,"高度 %.1f° · 方位 %.1f°",sun[0],sun[1])+" "+Astronomy.compass(sun[1]),14,a.INK,false));a.gap(c,12);c.addView(a.text("月亮  "+String.format(Locale.ROOT,"高度 %.1f° · 方位 %.1f°",moon[0],moon[1])+" "+Astronomy.compass(moon[1]),14,a.INK,false));a.gap(c,16);
+        c.addView(a.text("太阳  "+String.format(Locale.ROOT,"高度 %.1f° · 方位 %.1f°",sun[0],sun[1])+" "+Astronomy.compass(sun[1]),14,a.INK,false));a.gap(c,12);c.addView(a.text("月球  "+String.format(Locale.ROOT,"高度 %.1f° · 方位 %.1f°",moon[0],moon[1])+" "+Astronomy.compass(moon[1]),14,a.INK,false));a.gap(c,16);
         c.addView(a.text(Astronomy.phaseName(phase)+" · 照亮约 "+Math.round(Astronomy.illumination(at)*100)+"%",21,a.INK,true));a.gap(c,10);double age=phase*29.53059,untilFull=(.5-phase+1)%1*29.53059;c.addView(a.text(String.format(Locale.ROOT,"近似月龄 %.1f 天 · 距下次满月约 %.1f 天",age,untilFull),12,a.MUTED,false));
     }
     private String event(List<Astronomy.Event> events,boolean rise){for(Astronomy.Event e:events)if(e.rising==rise)return e.at.atZone(zone).format(DateTimeFormatter.ofPattern("HH:mm"));return "当日无此事件";}
@@ -58,9 +58,9 @@ final class AstronomyScreen {
         Sky(MainActivity a,Instant at,double lat,double lon){super(a);this.at=at;this.lat=lat;this.lon=lon;setContentDescription("亮星及日月方位的近似星图，北上东左");}
         @Override protected void onDraw(Canvas c){float cx=getWidth()/2f,cy=getHeight()/2f,r=Math.min(getWidth(),getHeight())*.42f;c.drawColor(0xFF13253D);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1);p.setColor(0xFF4D627A);for(int i=1;i<=3;i++)c.drawCircle(cx,cy,r*i/3,p);c.drawLine(cx-r,cy,cx+r,cy,p);c.drawLine(cx,cy-r,cx,cy+r,p);p.setStyle(Paint.Style.FILL);p.setTextSize(12*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(Paint.Align.CENTER);p.setColor(0xFFADC7E7);c.drawText("北",cx,cy-r-10,p);c.drawText("南",cx,cy+r+20,p);c.drawText("东",cx-r-15,cy+4,p);c.drawText("西",cx+r+15,cy+4,p);
             for(Astronomy.Star s:Astronomy.STARS){double[] h=Astronomy.horizontal(s.ra,s.dec,at,lat,lon);if(h[0]<0)continue;float[] xy=xy(cx,cy,r,h);p.setColor(0xFFE9F2FF);c.drawCircle(xy[0],xy[1],(float)Math.max(1.5,3-s.mag*.45),p);if(s.mag<1.5||s.name.equals("北极星")){p.setTextSize(10*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(xy[0]>cx+r*.6?Paint.Align.RIGHT:xy[0]<cx-r*.6?Paint.Align.LEFT:Paint.Align.CENTER);c.drawText(s.name,xy[0],xy[1]-7,p);}}
-            body(c,cx,cy,r,Astronomy.sunPosition(at,lat,lon),"太阳",0xFFFFCB67);body(c,cx,cy,r,Astronomy.moonPosition(at,lat,lon),"月亮",0xFFBCD3FF);
+            body(c,cx,cy,r,Astronomy.sunPosition(at,lat,lon),"太阳",0xFFFFCB67);body(c,cx,cy,r,Astronomy.moonPosition(at,lat,lon),"月球",0xFFBCD3FF);
         }
         private float[] xy(float cx,float cy,float r,double[] h){double d=(90-h[0])/90*r,az=Math.toRadians(h[1]);return new float[]{cx-(float)(d*Math.sin(az)),cy-(float)(d*Math.cos(az))};}
-        private void body(Canvas c,float cx,float cy,float r,double[] h,String label,int color){if(h[0]<0)return;float[] xy=xy(cx,cy,r,h);p.setColor(color);c.drawCircle(xy[0],xy[1],6,p);p.setTextSize(12*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(Paint.Align.CENTER);c.drawText(label,xy[0],xy[1]+20,p);}
+        private void body(Canvas c,float cx,float cy,float r,double[] h,String label,int color){if(h[0]<0)return;float[] xy=xy(cx,cy,r,h);p.setColor(color);c.drawCircle(xy[0],xy[1],6,p);p.setTextSize(12*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(Paint.Align.CENTER);Paint.FontMetrics metrics=p.getFontMetrics();float baseline=xy[1]+6+3*getResources().getDisplayMetrics().density-metrics.ascent;c.drawText(label,xy[0],baseline,p);}
     }
 }
