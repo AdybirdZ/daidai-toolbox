@@ -15,9 +15,9 @@ Free hosted API access is subject to separate non-commercial service terms: http
 All weather icons in this app were drawn in its source code. No upstream Weather Fighter code or visual assets are redistributed.
 
 
-## Additional references in Daidai Toolbox 1.0.0
+## Additional references in Daidai Toolbox 1.0.1
 
-Weather maps are complete original publisher webpages from nmc.cn and weather.com.cn, not copied image assets or authorized image APIs. All relevant copyrights remain with their publishers. NOAA aurora content is likewise viewed on its original page.
+Weather maps are complete original publisher webpages from nmc.cn and weather.com.cn, not copied image assets or authorized image APIs. All relevant copyrights remain with their publishers. Aurora content has been removed in version 1.0.1.
 
 Astronomical mathematics reference: https://stjarnhimlen.se/comp/ppcomp.html . Algorithms were independently implemented; the approximate results are not for navigation or measurement.
 

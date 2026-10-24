@@ -29,18 +29,14 @@ public final class WeatherIcon extends View {
             canvas.restore(); return;
         }
         if (code <= 2) {
+            boolean clear=code==0;float cx=clear?50:63,cy=clear?50:33,r=clear?25:18;
             if (isDay) {
-                color(0xFFFFBD55); canvas.drawCircle(61, 34, 18, p);
-                p.setStrokeWidth(3.5f); p.setStrokeCap(Paint.Cap.ROUND);
-                for (int i=0;i<8;i++) {
-                    double a=i*Math.PI/4;
-                    canvas.drawLine(61+(float)Math.cos(a)*25,34+(float)Math.sin(a)*25,61+(float)Math.cos(a)*29,34+(float)Math.sin(a)*29,p);
-                }
+                color(0xFFFFBD55);canvas.drawCircle(cx,cy,r,p);p.setStrokeWidth(clear?4:3.5f);p.setStrokeCap(Paint.Cap.ROUND);
+                for(int i=0;i<8;i++){double angle=i*Math.PI/4;canvas.drawLine(cx+(float)Math.cos(angle)*(r+7),cy+(float)Math.sin(angle)*(r+7),cx+(float)Math.cos(angle)*(r+12),cy+(float)Math.sin(angle)*(r+12),p);}
             } else {
-                color(0xFF7A91D8); canvas.drawCircle(60, 33, 21, p);
-                color(0xFFEDF4FF); canvas.drawCircle(69, 25, 18, p);
+                color(0xFF7A91D8);Path moon=new Path();moon.addCircle(cx,cy,r+3,Path.Direction.CW);Path cut=new Path();cut.addCircle(cx+r*.5f,cy-r*.4f,r+1,Path.Direction.CW);moon.op(cut,Path.Op.DIFFERENCE);canvas.drawPath(moon,p);
             }
-            if (code == 0) { canvas.restore(); return; }
+            if(clear){canvas.restore();return;}
         }
         cloud(canvas, code >= 51 ? 0xFF85A9D2 : 0xFFADC7E7);
         if (code == 45 || code == 48) {

@@ -31,11 +31,15 @@ public class MainActivity extends Activity {
     private LinearLayout host, results;
     LinearLayout body;
     private int tab=0;
-    private boolean astronomy=false;
+    private ScrollView pageScroll;
+    private LinearLayout navigation;
+    private int navigationOffset;
+    private Instant astronomyTime=Instant.now();
+    private MapScreen maps;
     private ScheduleScreen schedule;
     private GpsScreen gps;
     private android.graphics.Bitmap background;
-    private android.content.SharedPreferences preferences;
+    android.content.SharedPreferences preferences;
     private EditText search;
     private TextView searchStatus;
     private boolean picking, loading, dead;
@@ -54,8 +58,8 @@ public class MainActivity extends Activity {
         city=store.selected(catalog.get(0));data=store.cached(city);
         preferences=getSharedPreferences("toolbox",0);schedule=new ScheduleScreen(this);gps=new GpsScreen(this);
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
-        showWeather();load(false);
-        if(preferences.getInt("seen_version",0)<2)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",2).apply();}},700);
+        tab=preferences.getInt("last_tab",0);if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
+        if(preferences.getInt("seen_version",0)<3)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",3).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -66,7 +70,7 @@ public class MainActivity extends Activity {
         t.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));t.setIncludeFontPadding(false);
         t.setLineSpacing(dp(3),1);return t;
     }
-    GradientDrawable shape(int color,int radius) {GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));return d;}
+    GradientDrawable shape(int color,int radius) {GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));if(outlined())d.setStroke(dp(1),outlineColor());return d;}
     void tap(View v,int color,int radius,Runnable action) {
         v.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x223577CC),shape(color,radius),shape(WHITE,radius)));
         v.setOnClickListener(view->action.run());v.setClickable(true);v.setFocusable(true);
@@ -79,6 +83,7 @@ public class MainActivity extends Activity {
     void spacer(LinearLayout parent) {parent.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));}
     void line(LinearLayout parent) {View v=new View(this);v.setBackgroundColor(0xFFF0F3F8);parent.addView(v,new LinearLayout.LayoutParams(-1,dp(1)));}
     private void startScreen() {
+        if(maps!=null){maps.destroy();maps=null;}
         android.widget.FrameLayout base=new android.widget.FrameLayout(this);
         if(background!=null){ImageView image=new ImageView(this);image.setScaleType(ImageView.ScaleType.CENTER_CROP);image.setImageBitmap(background);base.addView(image,new FrameLayout.LayoutParams(-1,-1));View shade=new View(this);shade.setBackgroundColor(android.graphics.Color.argb(preferences.getInt("shade",80)*255/100,245,247,251));base.addView(shade,new FrameLayout.LayoutParams(-1,-1));}else base.setBackgroundColor(BG);
         host=column();base.addView(host,new FrameLayout.LayoutParams(-1,-1));setContentView(base);
@@ -88,12 +93,31 @@ public class MainActivity extends Activity {
             return insets;
         });host.requestApplyInsets();
         FrameLayout frame=new FrameLayout(this);host.addView(frame,new LinearLayout.LayoutParams(-1,0,1));
-        ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setClipToPadding(false);scroll.setVerticalScrollBarEnabled(false);
-        FrameLayout.LayoutParams fit=new FrameLayout.LayoutParams(Math.min(getResources().getDisplayMetrics().widthPixels,dp(620)),-1,Gravity.CENTER_HORIZONTAL);
-        frame.addView(scroll,fit);body=column();body.setPadding(dp(20),dp(18),dp(20),dp(28));scroll.addView(body);
-        LinearLayout navigation=row();navigation.setPadding(dp(10),dp(7),dp(10),dp(7));navigation.setBackgroundColor(0xF2FFFFFF);
-        String[] titles={"天气","课程表","GPS定位"};for(int n=0;n<3;n++){final int target=n;TextView item=button(titles[n],false,()->switchTab(target));if(tab!=n){item.setTextColor(MUTED);tap(item,Color.TRANSPARENT,16,()->switchTab(target));}navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}host.addView(navigation,lp(-1,-2));
+        body=column();body.setPadding(dp(20),dp(18),dp(20),dp(28));
+        if(tab==3){pageScroll=null;body.setPadding(dp(12),dp(12),dp(12),0);frame.addView(body,new FrameLayout.LayoutParams(-1,-1));}
+        else{pageScroll=new ScrollView(this);pageScroll.setFillViewport(true);pageScroll.setClipToPadding(false);pageScroll.setVerticalScrollBarEnabled(false);FrameLayout.LayoutParams fit=new FrameLayout.LayoutParams(Math.min(getResources().getDisplayMetrics().widthPixels,dp(620)),-1,Gravity.CENTER_HORIZONTAL);frame.addView(pageScroll,fit);pageScroll.addView(body);}
+        pageHeader();
+        navigation=row();navigation.setPadding(dp(8),dp(6),dp(8),dp(6));navigation.setBackground(shape(0xF2FFFFFF,0));host.addView(navigation,lp(-1,-2));renderNavigation();
     }
+    static final String[] TAB_NAMES={"天气","课程表","定位","天气地图","天文"};
+    static final String[] WEATHER_NAMES={"地区","当前天气","未来24小时","未来7天","天气详情","数据来源入口"};
+    boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",true);}
+    int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
+    List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),5);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3))result.add(id);if(result.isEmpty())result.add(0);return result;}
+    void refreshScreen(){List<Integer> visible=visibleTabs();if(!visible.contains(tab))tab=visible.get(0);switchTab(tab);}
+    private void pageHeader(){
+        TextView title=text("呆呆工具箱 · "+TAB_NAMES[tab],25,INK,true);body.addView(title);gap(body,7);body.addView(text("呆呆鸟使用Codex制作",12,MUTED,false));gap(body,12);
+        LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button("地区",false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button("设置",false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button("新增课程",true,()->schedule.addCourse()));}body.addView(actions);gap(body,16);
+    }
+    void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
+    private void renderNavigation(){
+        navigation.removeAllViews();List<Integer> visible=visibleTabs();navigation.setVisibility(visible.size()<2?View.GONE:View.VISIBLE);if(visible.size()<2)return;
+        navigationOffset=Math.max(0,Math.min(navigationOffset,Math.max(0,visible.size()-3)));
+        if(visible.size()>=5){TextView left=button("‹",false,()->{navigationOffset=Math.max(0,navigationOffset-1);renderNavigation();});left.setContentDescription("底栏向左翻页");left.setEnabled(navigationOffset>0);left.setAlpha(navigationOffset>0?1:.35f);left.setPadding(0,0,0,0);navigation.addView(left,lp(40,50));}
+        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(TAB_NAMES[id],false,()->switchTab(id));item.setContentDescription("切换到"+TAB_NAMES[id]);item.setTextSize(visible.size()==4?12:14);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(MUTED);tap(item,Color.TRANSPARENT,16,()->switchTab(id));}navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
+        if(visible.size()>=5){TextView right=button("›",false,()->{navigationOffset=Math.min(visible.size()-3,navigationOffset+1);renderNavigation();});right.setContentDescription("底栏向右翻页");right.setEnabled(navigationOffset<visible.size()-3);right.setAlpha(navigationOffset<visible.size()-3?1:.35f);right.setPadding(0,0,0,0);navigation.addView(right,lp(40,50));}
+    }
+
     LinearLayout card() {LinearLayout c=column();c.setPadding(dp(18),dp(20),dp(18),dp(18));c.setBackground(shape(WHITE,24));body.addView(c,lp(-1,-2));return c;}
     private void section(LinearLayout parent,String name,String aside) {
         LinearLayout r=row();r.addView(text(name,17,INK,true));spacer(r);
@@ -101,37 +125,47 @@ public class MainActivity extends Activity {
         tap(source,Color.TRANSPARENT,6,()->open("https://open-meteo.com/"));r.addView(source);parent.addView(r);gap(parent,12);
     }
     private void showWeather() {
-        tab=0;astronomy=false;picking=false;searchVersion++;startScreen();
-        LinearLayout header=row();
-        header.addView(text("呆呆工具箱",21,INK,true));spacer(header);
-        header.addView(button("地区",false,this::showPicker));header.addView(button("设置",false,this::settings));body.addView(header);gap(body,22);
+        tab=0;picking=false;searchVersion++;startScreen();
+        if(!notice.isEmpty()){TextView n=text(notice,14,0xFF8B6021,false);n.setPadding(dp(14),dp(12),dp(14),dp(12));n.setBackground(shape(0xFFFFF3DD,14));body.addView(n);gap(body,12);}
+        Instant now=Instant.now();int today=data==null?0:data.todayIndex(now);
+        for(int id:DisplayOrder.parse(preferences.getString("weather_order",""),WEATHER_NAMES.length)){
+            if(!preferences.getBoolean("weather_show_"+id,true))continue;
+            if(id==0)weatherLocation();
+            else if(id==5)footer();
+            else if(data==null){if(id==1)emptyWeather();}
+            else if(id==1)currentWeather(now);
+            else if(id==2)hourly(now);
+            else if(id==3)daily(now);
+            else if(id==4)details(today);
+            gap(body,16);
+        }
+    }
+    private void weatherLocation(){
         LinearLayout cityRow=row();
         TextView cityTitle=text(city.label()+"  ⌄",26,INK,true);cityTitle.setMinHeight(dp(48));cityTitle.setGravity(Gravity.CENTER_VERTICAL);tap(cityTitle,Color.TRANSPARENT,10,this::showPicker);
         cityRow.addView(cityTitle,new LinearLayout.LayoutParams(0,-2,1));
         TextView save=button(store.isSaved(city)?"★":"☆",false,()->{boolean saved=store.toggle(city);toast(saved?"已收藏地区":"已取消收藏");showWeather();});
         save.setTextSize(25);save.setPadding(0,0,0,0);save.setContentDescription(store.isSaved(city)?"取消收藏当前地区":"收藏当前地区");cityRow.addView(save,lp(48,48));body.addView(cityRow);
         TextView detail=text(city.detail(),12,MUTED,false);detail.setPadding(0,dp(5),0,dp(14));body.addView(detail);
-        if(!notice.isEmpty()) {
-            TextView n=text(notice,13,0xFF8B6021,false);n.setPadding(dp(14),dp(12),dp(14),dp(12));n.setBackground(shape(0xFFFFF3DD,14));body.addView(n);gap(body,12);
-        }
-        if(data==null) {emptyWeather();weatherTools();footer();return;}
-        Instant now=Instant.now();boolean old=data.currentIsOld(now);
+    }
+    private void currentWeather(Instant now){
+        boolean old=data.currentIsOld(now);
         LinearLayout hero=column();hero.setPadding(dp(22),dp(22),dp(18),dp(20));
-        GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xFFE1EDFF,0xFFF1F6FF});gradient.setCornerRadius(dp(28));hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
+        GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xFFE1EDFF,0xFFF1F6FF});gradient.setCornerRadius(dp(28));if(outlined())gradient.setStroke(dp(1),outlineColor());hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
         LinearLayout heroTop=row();
         TextView label=text(old?"上次天气 · 历史缓存":"当前天气 · 模型估算",12,0xFF53749B,false);heroTop.addView(label);spacer(heroTop);
         TextView refresh=text(loading?"更新中…":"刷新 ↻",13,BLUE,true);refresh.setMinHeight(dp(40));refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(8),0,dp(5),0);tap(refresh,Color.TRANSPARENT,10,()->load(true));heroTop.addView(refresh);hero.addView(heroTop);
         LinearLayout currentRow=row();LinearLayout temperature=column();
-        TextView number=text(WeatherData.degrees(WeatherData.value(data.current,"temperature_2m")),76,INK,false);number.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));temperature.addView(number);
+        TextView number=text(WeatherData.degrees(WeatherData.value(data.current,"temperature_2m")),54,INK,false);number.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));temperature.addView(number);
         int code=WeatherData.code(data.current,"weather_code",-1);
         temperature.addView(text(WeatherData.condition(code)+"   体感 "+WeatherData.degrees(WeatherData.value(data.current,"apparent_temperature")),14,0xFF4F698C,false));
-        currentRow.addView(temperature,new LinearLayout.LayoutParams(0,-2,1));currentRow.addView(new WeatherIcon(this,code,data.current.optInt("is_day",1)==1),lp(108,108));hero.addView(currentRow);gap(hero,20);
+        currentRow.addView(temperature,new LinearLayout.LayoutParams(0,-2,1));currentRow.addView(new WeatherIcon(this,code,data.current.optInt("is_day",1)==1),lp(88,88));hero.addView(currentRow);gap(hero,20);
         int today=data.todayIndex(now);
         hero.addView(text("最高 "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",today))+"    最低 "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",today)),14,INK,false));gap(hero,13);
         String updated=DateTimeFormatter.ofPattern("M月d日 HH:mm").format(data.currentTime);
         hero.addView(text("数据时刻 "+updated+" · 地区当地时间",11,0xFF617D9E,false));
         LinearLayout attribution=row();TextView source=text("天气：Open-Meteo ↗  ·  CC BY 4.0",11,MUTED,false);source.setMinHeight(dp(42));source.setGravity(Gravity.CENTER_VERTICAL);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);body.addView(attribution);gap(body,3);
-        hourly(now);gap(body,16);daily(now);gap(body,16);details(today);gap(body,16);weatherTools();gap(body,20);footer();
+
     }
     private void emptyWeather() {
         LinearLayout c=card();c.setGravity(Gravity.CENTER);gap(c,20);c.addView(new WeatherIcon(this,-1,true),lp(110,110));gap(c,16);
@@ -151,9 +185,9 @@ public class MainActivity extends Activity {
             boolean current=date.toLocalDate().equals(today)&&date.getHour()==currentHour;
             if(current)cell.setBackground(shape(PALE,16));
             cell.addView(text(current?"现在":String.format(Locale.ROOT,"%02d时",date.getHour()),12,current?BLUE:MUTED,current));gap(cell,7);
-            cell.addView(new WeatherIcon(this,WeatherData.code(data.hourly,"weather_code",index),WeatherData.at(data.hourly,"is_day",index)!=0),lp(42,42));gap(cell,9);
+            cell.addView(new WeatherIcon(this,WeatherData.code(data.hourly,"weather_code",index),WeatherData.at(data.hourly,"is_day",index)!=0),lp(48,48));gap(cell,9);
             cell.addView(text(WeatherData.degrees(WeatherData.at(data.hourly,"temperature_2m",index)),18,INK,true));gap(cell,10);
-            cell.addView(text(WeatherData.number(WeatherData.at(data.hourly,"precipitation_probability",index))+"%",11,BLUE,false));hours.addView(cell,lp(66,-2));
+            cell.addView(text(WeatherData.number(WeatherData.at(data.hourly,"precipitation_probability",index))+"%",11,BLUE,false));for(int j=0;j<cell.getChildCount();j++)if(cell.getChildAt(j) instanceof TextView)((TextView)cell.getChildAt(j)).setGravity(Gravity.CENTER);hours.addView(cell,lp(76,-2));
         }
         scroll.addView(hours);c.addView(scroll);gap(c,10);c.addView(text("底部百分比为降水概率 · 左右滑动查看",11,MUTED,false));
     }
@@ -165,8 +199,8 @@ public class MainActivity extends Activity {
             LinearLayout r=row();r.setPadding(0,dp(12),0,dp(12));
             LinearLayout day=column();day.addView(text(WeatherData.day(iso,today),14,INK,true));gap(day,5);day.addView(text(iso.length()>=10?iso.substring(5).replace('-','/') : "—",11,MUTED,false));r.addView(day,lp(48,-2));
             int code=WeatherData.code(data.daily,"weather_code",i);r.addView(new WeatherIcon(this,code,true),lp(33,36));
-            LinearLayout desc=column();desc.setPadding(dp(6),0,0,0);desc.addView(text(WeatherData.condition(code),12,INK,false));gap(desc,5);desc.addView(text(WeatherData.number(WeatherData.at(data.daily,"precipitation_probability_max",i))+"% 降水",10,MUTED,false));r.addView(desc,new LinearLayout.LayoutParams(0,-2,1));
-            TextView range=text(WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",i))+"  /  "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",i)),15,INK,true);r.addView(range);c.addView(r);
+            LinearLayout desc=column();desc.setPadding(dp(6),0,0,0);LinearLayout values=row();values.addView(text(WeatherData.condition(code),12,INK,false),new LinearLayout.LayoutParams(0,-2,1));TextView range=text(WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",i))+" / "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",i)),13,INK,true);values.addView(range);desc.addView(values);gap(desc,7);desc.addView(text(WeatherData.number(WeatherData.at(data.daily,"precipitation_probability_max",i))+"% 降水概率",11,MUTED,false));r.addView(desc,new LinearLayout.LayoutParams(0,-2,1));c.addView(r);
+
         }
         if(count==0)c.addView(text("缓存预报已过期，请联网刷新",13,MUTED,false));
     }
@@ -184,9 +218,9 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView note=text("呆呆鸟使用Codex制作",12,MUTED,false);note.setGravity(Gravity.CENTER);body.addView(note);gap(body,8);
-        TextView about=text("数据来源与隐私  ·  v1.0.0",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · v1.0.1",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
+
     private void load(boolean force) {
         if(dead)return;
         String key=city.key();WeatherData cache=store.cached(city);
@@ -202,17 +236,17 @@ public class MainActivity extends Activity {
             catch(Exception e){error=e instanceof java.io.IOException?e.getMessage():"天气数据暂不可用，请稍后重试";if(error==null||!error.matches(".*[\\u4e00-\\u9fff].*"))error="网络连接失败，请检查网络后重试";}
             final WeatherData result=received;final String failure=error;
             main.post(()->{if(dead)return;inFlight.remove(key);if(!city.key().equals(key))return;loading=false;
-                if(result!=null){data=result;notice="";}else{data=store.cached(requested);notice=data==null?failure:failure+"；当前显示上次保存的数据。";}
+                if(result!=null){data=result;notice="";if(force)toast("刷新成功！");}else{data=store.cached(requested);notice=data==null?failure:failure+"；当前显示上次保存的数据。";}
                 if(weatherVisible())showWeather();
             });
         });
     }
     private void choose(City selected) {
-        hideKeyboard();city=selected;store.select(city);data=store.cached(city);notice="";loading=inFlight.contains(city.key());showWeather();if(!loading)load(false);
+        hideKeyboard();city=selected;store.select(city);data=store.cached(city);notice="";loading=inFlight.contains(city.key());switchTab(tab);if(!loading)load(false);
     }
     private void showPicker() {
-        tab=0;astronomy=false;picking=true;searchVersion++;startScreen();
-        LinearLayout heading=row();heading.addView(text("选择地区",25,INK,true));spacer(heading);heading.addView(button("完成",false,()->{hideKeyboard();showWeather();}));body.addView(heading);gap(body,10);
+        picking=true;searchVersion++;startScreen();
+        LinearLayout heading=row();heading.addView(text("选择地区",25,INK,true));spacer(heading);heading.addView(button("完成",false,()->{hideKeyboard();switchTab(tab);}));body.addView(heading);gap(body,10);
         body.addView(text("搜索城市、区县或海外地区",13,MUTED,false));gap(body,18);
         LinearLayout input=row();input.setBackground(shape(WHITE,18));input.setPadding(dp(13),0,dp(4),0);
         search=new EditText(this);search.setSingleLine(true);search.setTextSize(16);search.setTextColor(INK);search.setHintTextColor(MUTED);search.setHint("例如：杭州、海淀、Tokyo");search.setBackgroundColor(Color.TRANSPARENT);search.setPadding(0,dp(15),dp(6),dp(15));search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);input.addView(search,new LinearLayout.LayoutParams(0,-2,1));
@@ -256,33 +290,31 @@ public class MainActivity extends Activity {
             });
         });
     }
-    private boolean weatherVisible(){return tab==0&&!picking&&!astronomy;}
-    void switchTab(int next){hideKeyboard();if(next!=2)gps.stopForNavigation();tab=next;picking=false;astronomy=false;if(next==0)showWeather();else if(next==1){startScreen();schedule.render();}else{startScreen();gps.render();}}
-    private void weatherTools(){
-        gap(body,16);LinearLayout c=card();c.addView(text("天气图与天文",17,INK,true));gap(c,12);
-        c.addView(button("全国降水 · 气温 · 区域雷达",false,this::weatherMaps));gap(c,10);
-        c.addView(button("天文 · 观星 / 星图 / 日月",false,()->showAstronomy(Instant.now())));
-    }
-    private void weatherMaps(){String[] names={"全国 1 小时降水实况","全国 24 小时降水实况","全国 24 小时降水预报","全国逐时气温","雷达 · 全国","雷达 · 华北","雷达 · 东北","雷达 · 华东","雷达 · 华中","雷达 · 华南","雷达 · 西南","雷达 · 西北","中国天气网 · 雷达"};String[] paths={"observations/hourly-precipitation.html","observations/24hour-precipitation.html","precipitation/1-day.html","observations/hourly-temperature.html","radar/chinaall.html","radar/huabei.html","radar/dongbei.html","radar/huadong.html","radar/huazhong.html","radar/huanan.html","radar/xinan.html","radar/xibei.html"};new AlertDialog.Builder(this).setTitle("官方天气图 · 原站页面").setItems(names,(d,n)->official(names[n],n<paths.length?"https://www.nmc.cn/publish/"+paths[n]:"https://www.weather.com.cn/radar/")).setNegativeButton("返回",null).show();}
+    private boolean weatherVisible(){return tab==0&&!picking;}
+    void switchTab(int next){hideKeyboard();if(next!=2)gps.stopForNavigation();tab=next;List<Integer> items=visibleTabs();if(items.size()>=5){int pos=items.indexOf(tab);if(pos<navigationOffset)navigationOffset=pos;else if(pos>=navigationOffset+3)navigationOffset=pos-2;}picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==0)showWeather();else{startScreen();if(next==1)schedule.render();else if(next==2)gps.render();else if(next==3){maps=new MapScreen(this);maps.render();}else new AstronomyScreen(this,city,data,astronomyTime,this::showAstronomy).render();}}
     void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
-    private void showAstronomy(Instant at){tab=0;picking=false;astronomy=true;startScreen();new AstronomyScreen(this,city,data,at,this::showAstronomy).render();}
-    void settings(){LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(10));c.addView(button("从手机导入背景图片",false,()->{Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast("未找到系统图片选择器");}}));gap(c,10);c.addView(button("恢复默认背景",false,()->{new java.io.File(getFilesDir(),"background.jpg").delete();background=null;switchTab(tab);}));gap(c,16);c.addView(text("背景遮罩 · 调整文字清晰度",14,INK,true));SeekBar shade=new SeekBar(this);shade.setMax(90);shade.setProgress(preferences.getInt("shade",80)-10);shade.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar b,int n,boolean user){if(user)preferences.edit().putInt("shade",n+10).apply();}public void onStartTrackingTouch(SeekBar b){}public void onStopTrackingTouch(SeekBar b){switchTab(tab);}});c.addView(shade,lp(-1,48));c.addView(button("版本更新记录",false,this::updates));gap(c,10);c.addView(button("数据来源与隐私",false,this::about));new AlertDialog.Builder(this).setTitle("呆呆工具箱 · 设置").setView(c).setPositiveButton("完成",null).show();}
-    private void importBackground(Uri uri){toast("正在处理背景图片…");workers.execute(()->{android.graphics.Bitmap bitmap=null;try{android.graphics.BitmapFactory.Options opts=new android.graphics.BitmapFactory.Options();opts.inJustDecodeBounds=true;try(java.io.InputStream in=getContentResolver().openInputStream(uri)){android.graphics.BitmapFactory.decodeStream(in,null,opts);}if(opts.outWidth<=0||opts.outHeight<=0)throw new java.io.IOException();opts.inSampleSize=1;while((long)(opts.outWidth/opts.inSampleSize)*(opts.outHeight/opts.inSampleSize)>4_000_000L||Math.max(opts.outWidth,opts.outHeight)/opts.inSampleSize>2400)opts.inSampleSize*=2;opts.inJustDecodeBounds=false;try(java.io.InputStream in=getContentResolver().openInputStream(uri)){bitmap=android.graphics.BitmapFactory.decodeStream(in,null,opts);}if(bitmap==null)throw new java.io.IOException();try(java.io.InputStream in=getContentResolver().openInputStream(uri)){android.media.ExifInterface exif=new android.media.ExifInterface(in);int orientation=exif.getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION,1);android.graphics.Matrix matrix=new android.graphics.Matrix();switch(orientation){case 2:matrix.setScale(-1,1);break;case 3:matrix.setRotate(180);break;case 4:matrix.setScale(1,-1);break;case 5:matrix.setRotate(90);matrix.postScale(-1,1);break;case 6:matrix.setRotate(90);break;case 7:matrix.setRotate(270);matrix.postScale(-1,1);break;case 8:matrix.setRotate(270);break;}if(!matrix.isIdentity())bitmap=android.graphics.Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);}catch(Exception ignored){}java.io.File temp=new java.io.File(getFilesDir(),"background.tmp"),dest=new java.io.File(getFilesDir(),"background.jpg");try(java.io.FileOutputStream out=new java.io.FileOutputStream(temp)){if(!bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG,88,out))throw new java.io.IOException();}java.nio.file.Files.move(temp.toPath(),dest.toPath(),java.nio.file.StandardCopyOption.REPLACE_EXISTING);final android.graphics.Bitmap loaded=bitmap;main.post(()->{if(!dead){background=loaded;switchTab(tab);toast("背景已保存到手机内部");}});}catch(Exception|OutOfMemoryError e){main.post(()->{if(!dead)toast("无法读取图片，请换一张较小的图片重试");});}});}
-    private void updates(){LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));c.addView(text("1.0.0 · 呆呆工具箱",19,INK,true));gap(c,12);c.addView(text("• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\n• 新增手动周课表、自定义节次、地点、老师与单双周。\n• 新增手机图片背景及遮罩调整。\n• 新增前台 GPS 经纬度、水平精度与状态。\n• 新增官方全国降水、温度和分区雷达网页。\n• 新增观星条件、星图、日月位置、月相和曙暮光。\n• 整理来源与隐私，Open-Meteo 入口放在一起。\n• 页脚改为“呆呆鸟使用Codex制作”。",14,INK,false));gap(c,20);c.addView(text("0.1.0-test · 简天气测试版",17,INK,true));gap(c,10);c.addView(text("早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。",14,MUTED,false));ScrollView s=new ScrollView(this);s.addView(c);new AlertDialog.Builder(this).setTitle("每个版本的更新内容").setView(s).setPositiveButton("知道了",null).show();}
-    private void about() {
+    private void showAstronomy(Instant at){int y=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);if(pageScroll!=null){ScrollView target=pageScroll;target.post(()->target.scrollTo(0,y));}}
+    void settings(){new SettingsScreen(this).show();}
+    void scheduleSettings(){schedule.menu();}
+    void locationModeChanged(){gps.modeChanged();if(tab==2)switchTab(2);}
+    void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast("未找到系统图片选择器");}}
+    void resetBackground(){new java.io.File(getFilesDir(),"background.jpg").delete();background=null;refreshScreen();}
+    void reloadBackground(){background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());refreshScreen();}
+    void updates(){LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));c.addView(text("1.0.1 · 自由布局与个性设置",19,INK,true));gap(c,12);c.addView(text("• 分级设置、背景选区与缩放、可选颜色描边。\n• 天气栏目和底部栏目可显隐排序，新增独立天气地图与天文栏目（默认隐藏）。\n• 定位可选 GPS 硬件或网络定位。\n• 课程支持自定义授课周与信息前缀，时间改为数字输入。\n• 改进天气图标、摄氏度、居中排版、图例与刷新提示。\n• 天文支持指定年月日时分、前后15分钟和前后一天，保留滚动位置并区分曙光暮光。\n• 更新隐私说明，移除极光功能。",14,INK,false));gap(c,20);c.addView(text("1.0.0 · 呆呆工具箱",19,INK,true));gap(c,12);c.addView(text("• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\n• 新增手动周课表、自定义节次、地点、老师与单双周。\n• 新增手机图片背景及遮罩调整。\n• 新增前台 GPS 经纬度、水平精度与状态。\n• 新增官方全国降水、温度和分区雷达网页。\n• 新增观星条件、星图、日月位置、月相和曙暮光。\n• 整理来源与隐私，Open-Meteo 入口放在一起。\n• 页脚改为“呆呆鸟使用Codex制作”。",14,INK,false));gap(c,20);c.addView(text("0.1.0-test · 简天气测试版",17,INK,true));gap(c,10);c.addView(text("早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。",14,MUTED,false));ScrollView s=new ScrollView(this);s.addView(c);new ToolDialog(this).setTitle("每个版本的更新内容").setView(s).setPositiveButton("知道了",null).show();}
+    void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        TextView details=text("呆呆工具箱 1.0.0 · 个人非商业版\n\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\n\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\n\n隐私：无需账号。GPS 仅在你授权后于前台获取，坐标不上传；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\n\n免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
-        link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");gap(content,10);content.addView(text("全国降水、气温和雷达通过应用内官方网页查看，版权归中国天气网 / 中央气象台。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",12,MUTED,false));link(content,"中国天气网 · 官方页面","https://www.weather.com.cn/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");content.addView(button("版本更新记录",false,this::updates));
-        ScrollView scroll=new ScrollView(this);scroll.addView(content);new AlertDialog.Builder(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("知道了",null).show();
+        TextView details=text("呆呆工具箱 1.0.1 · 个人非商业版\n\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\n\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\n\n隐私：无需账号。定位仅在你授权后于前台获取，应用不上传坐标。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\n\n免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\n\n全国降水、气温和雷达通过应用内官方网页查看，版权归中国天气网 / 中央气象台。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
+        link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");gap(content,10);link(content,"中国天气网 · 官方页面","https://www.weather.com.cn/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
+        ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("知道了",null).show();
     }
     void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);t.setMinHeight(dp(48));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t);}
     void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast("未找到可打开链接的浏览器");}}
     private void hideKeyboard() {View focused=getCurrentFocus();if(focused!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focused.getWindowToken(),0);focused.clearFocus();}}
-    void toast(String message) {Toast.makeText(this,message,Toast.LENGTH_SHORT).show();}
-    @Override public void onBackPressed() {if(picking||astronomy){hideKeyboard();showWeather();}else if(tab!=0)switchTab(0);else super.onBackPressed();}
-    @Override protected void onPause(){if(gps!=null)gps.pause();super.onPause();}
-    @Override protected void onResume(){super.onResume();if(gps!=null&&tab==2)gps.resume();}
+    void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(message,16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
+    @Override public void onBackPressed() {if(picking){hideKeyboard();switchTab(tab);}else if(tab!=visibleTabs().get(0))switchTab(visibleTabs().get(0));else super.onBackPressed();}
+    @Override protected void onPause(){if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
+    @Override protected void onResume(){super.onResume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();}
-    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null)importBackground(intent.getData());}
-    @Override protected void onDestroy(){dead=true;if(gps!=null)gps.pause();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
+    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
+    @Override protected void onDestroy(){dead=true;if(maps!=null)maps.destroy();if(gps!=null)gps.pause();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }

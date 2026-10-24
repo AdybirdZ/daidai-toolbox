@@ -44,6 +44,20 @@ public final class ToolboxTests {
         check(Astronomy.crossings(LocalDate.of(2024,12,21),ZoneId.of("Europe/Oslo"),69.65,18.96,false,-.833).isEmpty(),"Polar night has no fabricated sunrise or sunset");
         double polaris=Astronomy.horizontal(37.955,89.264,equinox,39.9,116.4)[0];check(Math.abs(polaris-39.9)<1,"Polaris altitude is near observer latitude");
         double[] moon=Astronomy.moonPosition(full,39.9,116.4);check(Double.isFinite(moon[0])&&moon[0]>=-90&&moon[0]<=90&&moon[1]>=0&&moon[1]<360,"Moon altitude and azimuth remain valid");
+        ScheduleModel customModel=new ScheduleModel();ScheduleModel.Course custom=new ScheduleModel.Course();custom.name="自定义课";custom.parity=3;custom.customWeeks.addAll(Arrays.asList(1,3,4,6));
+        check(customModel.validateCourse(custom)==null,"Non-consecutive teaching weeks are accepted");customModel.put(custom);
+        check(custom.runs(1)&&custom.runs(3)&&custom.runs(4)&&custom.runs(6)&&!custom.runs(2)&&!custom.runs(5),"Custom recurrence uses only selected weeks");
+        ScheduleModel.Course customConflict=custom.copy();customConflict.id="new";customConflict.parity=2;customConflict.weekStart=4;customConflict.weekEnd=4;
+        check(customModel.validateCourse(customConflict)!=null,"Custom and even-week rules conflict in shared week four");customConflict.weekStart=2;customConflict.weekEnd=2;check(customModel.validateCourse(customConflict)==null,"Disjoint custom weeks may share a period");
+        ScheduleModel customCopy=ScheduleModel.parse(customModel.json().toString());check(customCopy.courses.get(0).customWeeks.equals(custom.customWeeks),"Custom week set survives serialization");
+        ScheduleModel.Course empty=custom.copy();empty.customWeeks.clear();check(customModel.validateCourse(empty)!=null,"Empty custom weeks are rejected");empty.customWeeks.add(21);check(customModel.validateCourse(empty)!=null,"Custom weeks cannot exceed semester");
+        ScheduleModel.Course independent=custom.copy();independent.customWeeks.clear();check(custom.customWeeks.size()==4,"Editing a copied course cannot mutate saved weeks before confirmation");
+        check(WeatherData.degrees(19).equals("19℃"),"Temperature unit is Celsius");
+        check(DisplayOrder.parse("4,2,4,99,bad,0",5).equals(Arrays.asList(4,2,0,1,3)),"Invalid and duplicate preferences recover without dropping new sections");
+        check(DisplayOrder.visible(Arrays.asList(3,0,4,1,2),new HashSet<>(Arrays.asList(3,4))).equals(Arrays.asList(0,1,2)),"Hiding tabs preserves configured order");
+        check(DisplayOrder.window(Arrays.asList(0,1),0).size()==2,"Two tabs share one complete row");check(DisplayOrder.window(Arrays.asList(0,1,2,3),0).size()==4,"Four tabs require no arrow paging");
+        check(DisplayOrder.window(Arrays.asList(0,1,2,3,4),2).equals(Arrays.asList(2,3,4)),"Arrow paging reveals the last three of five tabs");
+        check(Astronomy.skyDescription(Instant.parse("2024-03-20T05:00:00Z"),0,0).contains("曙光"),"Morning twilight is dawn");check(Astronomy.skyDescription(Instant.parse("2024-03-20T19:00:00Z"),0,0).contains("暮光"),"Evening twilight is dusk");
         System.out.println("PASS: "+checks+" timetable and astronomy checks");
     }
 }

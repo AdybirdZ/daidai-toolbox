@@ -17,28 +17,27 @@ final class AstronomyScreen {
     private final ZoneId zone;
     AstronomyScreen(MainActivity a,City city,WeatherData data,Instant at,Consumer<Instant> change){this.a=a;this.city=city;this.data=data;this.at=at;this.change=change;ZoneId z;try{z=ZoneId.of(data!=null?data.zone.getId():city.timezone);}catch(Exception e){z=ZoneId.of("UTC");}zone=z;}
     void render(){
-        LinearLayout heading=a.row();heading.addView(a.text("天文",24,a.INK,true));a.spacer(heading);heading.addView(a.button("返回天气",false,()->a.switchTab(0)));a.body.addView(heading);a.gap(a.body,12);
-        a.body.addView(a.text(city.label()+" · "+at.atZone(zone).format(DateTimeFormatter.ofPattern("M月d日 HH:mm"))+" 当地时间",13,a.MUTED,false));a.gap(a.body,12);
-        LinearLayout clock=a.row();clock.addView(a.button("此刻",false,()->change.accept(Instant.now())),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("今晚22时",false,()->{LocalDate d=Instant.now().atZone(zone).toLocalDate();change.accept(d.atTime(22,0).atZone(zone).toInstant());}),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("+1小时",false,()->change.accept(at.plusSeconds(3600))),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(clock);a.gap(a.body,16);
+        a.body.addView(a.text(city.label()+" · "+at.atZone(zone).format(DateTimeFormatter.ofPattern("yyyy年M月d日 HH:mm"))+" 当地时间",14,a.MUTED,false));a.gap(a.body,12);
+        LinearLayout clock=a.row();clock.addView(a.button("此刻",false,()->change.accept(Instant.now())),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("-15分钟",false,()->change.accept(at.minusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("+15分钟",false,()->change.accept(at.plusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(clock);a.gap(a.body,8);
+        LinearLayout days=a.row();days.addView(a.button("-1天",false,()->change.accept(at.atZone(zone).minusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("设置时间",false,()->NumericInputs.dateTime(a,at.atZone(zone),change)),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("+1天",false,()->change.accept(at.atZone(zone).plusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(days);a.gap(a.body,16);
         observing();a.gap(a.body,16);
         LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);sky.addView(new Sky(a,at,city.latitude,city.longitude),a.lp(-1,300));a.gap(sky,10);sky.addView(a.text("北在上、东在左。显示地平线上方的亮星与太阳、月亮；白天的星点仅为方位示意。点击上方切换时间。",12,a.MUTED,false));
         a.gap(a.body,16);positions();a.gap(a.body,16);events();a.gap(a.body,16);meteor();a.gap(a.body,16);
-        LinearLayout links=a.card();links.addView(a.text("空间天气",17,a.INK,true));a.gap(links,12);links.addView(a.button("NOAA · 极光30分钟预报",false,()->a.official("NOAA · 极光预报","https://www.swpc.noaa.gov/products/aurora-30-minute-forecast")));a.gap(links,10);links.addView(a.text("打开 NOAA 官方原页查看实时空间天气，不将全球极光预报当作本地可见保证。",12,a.MUTED,false));
         a.gap(a.body,20);a.body.addView(a.text("日月和星图为本地低精度天文估算，忽略地形遮挡、大气变化及部分轨道摄动，不用于测量或导航。月升落误差可达数分钟以上；流星雨日期为常年参考。",12,a.MUTED,false));a.link(a.body,"计算公式与方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
     }
     private void observing(){
         LinearLayout c=a.card();c.addView(a.text("观星条件 · 经验参考",17,a.INK,true));a.gap(c,12);
         double sun=Astronomy.sunPosition(at,city.latitude,city.longitude)[0],moon=Astronomy.moonPosition(at,city.latitude,city.longitude)[0],lit=Astronomy.illumination(at);
-        c.addView(a.text(sun>=-6?"天空仍较亮":sun>=-12?"暮光中，适合寻找亮星":sun>=-18?"天色较暗，仍有天文暮光":"已进入天文夜",16,a.INK,true));a.gap(c,10);
+        c.addView(a.text(Astronomy.skyDescription(at,city.latitude,city.longitude),16,a.INK,true));a.gap(c,10);
         c.addView(a.text(moon>0?"月亮在地平线上 · 照亮比例约 "+Math.round(lit*100)+"%":"月亮在地平线下，月光影响较小",13,a.MUTED,false));a.gap(c,10);
-        if(data==null||data.currentIsOld(Instant.now())){c.addView(a.text("天气数据缺失或较旧，请先回天气页刷新。天文位置仍可离线计算。",13,a.MUTED,false));return;}
+        if(data==null||data.currentIsOld(Instant.now())){c.addView(a.text("天气数据缺失或较旧，请先回天气页刷新。天文位置可离线计算。",13,a.MUTED,false));return;}
         int best=-1;long delta=Long.MAX_VALUE;org.json.JSONArray times=data.hourly.optJSONArray("time");
         for(int i=0;i<times.length();i++)try{long d=Math.abs(Duration.between(LocalDateTime.parse(times.getString(i)).atZone(zone).toInstant(),at).toMinutes());if(d<delta){delta=d;best=i;}}catch(Exception ignored){}
         double cloud=WeatherData.at(data.hourly,"cloud_cover",best),rain=WeatherData.at(data.hourly,"precipitation_probability",best),wind=WeatherData.at(data.hourly,"wind_speed_10m",best),humidity=WeatherData.at(data.hourly,"relative_humidity_2m",best),visibility=WeatherData.at(data.hourly,"visibility",best);
         if(delta>90||!Double.isFinite(cloud)||!Double.isFinite(rain)||!Double.isFinite(wind)||!Double.isFinite(humidity)||!Double.isFinite(visibility)){c.addView(a.text("暂无完整的逐时观星天气条件，可返回天气页更新。",13,a.MUTED,false));return;}
         c.addView(a.text("云量 "+WeatherData.number(cloud)+"% · 降水概率 "+WeatherData.number(rain)+"%\n湿度 "+WeatherData.number(humidity)+"% · 风速 "+WeatherData.number(wind)+" km/h\n能见度 "+String.format(Locale.ROOT,"%.1f",visibility/1000)+" km",13,a.INK,false));a.gap(c,10);
         boolean good=sun<-12&&cloud<=40&&rain<=20&&wind<=25&&humidity<=85&&visibility>=8000;
-        c.addView(a.text(good?"天气条件相对适合观星；仍需考虑月光及光污染。":"至少一项条件不理想，建议结合实际天空判断。",13,good?0xFF287C60:0xFF8B6021,false));a.gap(c,8);c.addView(a.text("经验筛选：太阳低于 −12°、云量≤40%、降水概率≤20%、湿度≤85%、风速≤25 km/h、能见度≥8 km。天气来源 Open-Meteo。未计算本地光污染。",11,a.MUTED,false));
+        c.addView(a.text(good?"天气条件相对适合观星；需考虑月光及光污染。":"至少一项条件不理想，建议结合实际天空判断。",13,good?0xFF287C60:0xFF8B6021,false));a.gap(c,8);c.addView(a.text("经验筛选：太阳低于 −12°、云量≤40%、降水概率≤20%、湿度≤85%、风速≤25 km/h、能见度≥8 km。天气来源 Open-Meteo。未计算本地光污染。",11,a.MUTED,false));
     }
     private void positions(){
         LinearLayout c=a.card();c.addView(a.text("日月位置与月相",17,a.INK,true));a.gap(c,14);double[] sun=Astronomy.sunPosition(at,city.latitude,city.longitude),moon=Astronomy.moonPosition(at,city.latitude,city.longitude);double phase=Astronomy.phase(at);

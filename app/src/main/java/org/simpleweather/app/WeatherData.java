@@ -48,7 +48,7 @@ public final class WeatherData {
     }
     public boolean fresh(long now) { return now >= fetchedAt && now - fetchedAt < 15 * 60_000; }
     public static String number(double n) { return Double.isFinite(n) ? String.format(Locale.ROOT, "%.0f", n) : "—"; }
-    public static String degrees(double n) { return number(n) + "°"; }
+    public static String degrees(double n) { return number(n) + "℃"; }
     public static String condition(int code) {
         switch (code) {
             case 0: return "晴"; case 1: return "晴间多云"; case 2: return "多云"; case 3: return "阴";

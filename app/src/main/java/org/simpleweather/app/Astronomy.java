@@ -8,6 +8,15 @@ import java.util.*;
  * Moon perturbations, refraction variations, proper motion and terrain are not modeled.
  */
 public final class Astronomy {
+    public static String skyDescription(Instant at,double lat,double lon){
+        double sun=sunPosition(at,lat,lon)[0];boolean rising=sunPosition(at.plusSeconds(300),lat,lon)[0]>=sunPosition(at.minusSeconds(300),lat,lon)[0];String twilight=rising?"曙光":"暮光";
+        if(sun>=0)return "太阳在地平线上，天空较亮";
+        if(sun>=-6)return "民用"+twilight+"中，天空较亮";
+        if(sun>=-12)return "航海"+twilight+"中，可寻找亮星";
+        if(sun>=-18)return "天文"+twilight+"中，天色较暗";
+        return "当前为天文夜";
+    }
+
     private static double sin(double x){return Math.sin(Math.toRadians(x));}
     private static double cos(double x){return Math.cos(Math.toRadians(x));}
     private static double atan(double y,double x){return Math.toDegrees(Math.atan2(y,x));}
