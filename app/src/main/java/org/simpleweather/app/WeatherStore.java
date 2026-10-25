@@ -66,6 +66,7 @@ public final class WeatherStore implements WeatherApi.RequestPolicy {
             }
         } catch(Exception ignored) { }
     }
+    public synchronized boolean clearCache(){return ForecastCache.clear(context.getFilesDir());}
     public List<City> catalog() {
         List<City> cities=new ArrayList<>();
         try(InputStream in=context.getAssets().open("cities.json")) {

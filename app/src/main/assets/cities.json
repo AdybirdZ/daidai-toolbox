@@ -427,5 +427,23 @@
     "country": "美国",
     "admin1": "纽约州",
     "alias": "纽约"
+  },
+  {
+    "id": 524901,
+    "name": "莫斯科",
+    "latitude": 55.75204,
+    "longitude": 37.61781,
+    "timezone": "Europe/Moscow",
+    "country": "俄罗斯",
+    "admin1": "Moskva"
+  },
+  {
+    "id": 2988507,
+    "name": "巴黎",
+    "latitude": 48.85341,
+    "longitude": 2.3488,
+    "timezone": "Europe/Paris",
+    "country": "法国",
+    "admin1": "法兰西岛"
   }
 ]

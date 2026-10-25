@@ -44,3 +44,7 @@ Approximate J2000 centers for the Pleiades and Andromeda Galaxy are from Wikidat
 The lunar V-magnitude mathematical formula is referenced from Paul Schlyter, section 15: https://stjarnhimlen.se/comp/ppcomp.html#15 . It is independently implemented in Java using this application's computed geometry and distances; no third-party source code, webpage prose, photographs or textures are bundled. The phase illustration is drawn locally from the geometric illuminated fraction. See docs/ASTRONOMY-1.0.10.md for assumptions and limits.
 
 The new NMC weather-chart button opens the complete publisher page: https://www.nmc.cn/publish/observations/china/dm/weatherchart-h000.htm . Publisher copyright applies; no image redistribution license is claimed.
+
+## Regions and earthquake research in 1.0.11
+
+Moscow (GeoNames 524901) and Paris (GeoNames 2988507) were retrieved through the official Open-Meteo geocoding endpoint on 2026-10-25; the existing GeoNames/Open-Meteo CC BY 4.0 attribution continues to apply. Earthquake sources and terms are documented for future consideration only in docs/EARTHQUAKE-RESEARCH-1.1.0.md. No earthquake client, feed data, dependency or artwork is incorporated.

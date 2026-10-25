@@ -18,17 +18,33 @@ final class AstronomyScreen {
     private TextView selectedInfo;
 
     AstronomyScreen(MainActivity a,City city,WeatherData data,Instant at,Consumer<Instant> change){this.a=a;this.city=city;this.data=data;this.at=at;this.change=change;ZoneId z;try{z=ZoneId.of(data!=null?data.zone.getId():city.timezone);}catch(Exception e){z=ZoneId.of("UTC");}zone=z;}
+    static final String[] SECTION_NAMES={"时间控制","观星条件","当地星空","选中的星星信息","月球信息","日月与行星位置","当天日月事件与曙暮光","流星雨","计算说明与来源"};
     void render(){
         a.body.addView(a.text(city.label()+" · "+at.atZone(zone).format(DateTimeFormatter.ofPattern("yyyy年M月d日 HH:mm"))+" 当地时间",14,a.MUTED,false));a.gap(a.body,12);
-        LinearLayout clock=a.row();clock.addView(a.button("-15分钟",false,()->change.accept(at.minusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("当前",false,()->change.accept(Instant.now())),new LinearLayout.LayoutParams(0,-2,1));clock.addView(a.button("+15分钟",false,()->change.accept(at.plusSeconds(900))),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(clock);a.gap(a.body,8);
-        LinearLayout days=a.row();days.addView(a.button("-1天",false,()->change.accept(at.atZone(zone).minusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("设置时间",false,()->NumericInputs.dateTime(a,at.atZone(zone),change)),new LinearLayout.LayoutParams(0,-2,1));days.addView(a.button("+1天",false,()->change.accept(at.atZone(zone).plusDays(1).toInstant())),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(days);a.gap(a.body,16);
-        observing();a.gap(a.body,16);
-        LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);
+        // Create the selection model before either card, so arbitrary ordering remains valid.
         Sky view=new Sky(a,at,city.latitude,city.longitude,at.atZone(zone).toLocalDate(),description->{if(selectedInfo!=null)selectedInfo.setText(description);});
-        sky.addView(view,a.lp(-1,-2));a.gap(sky,10);sky.addView(a.text(view.chartNote(),12,a.MUTED,false));
-        a.gap(a.body,16);LinearLayout info=a.card();info.addView(a.text("选中的星星信息",17,a.INK,true));a.gap(info,10);selectedInfo=a.text(view.selectionDescription(),13,a.MUTED,false);info.addView(selectedInfo);a.gap(a.body,16);
-        moonInfo();a.gap(a.body,16);positions();a.gap(a.body,16);events();a.gap(a.body,16);meteor();a.gap(a.body,16);
-        a.gap(a.body,20);a.body.addView(a.text("日月、行星和星图为本地低精度天文估算，使用本地计算，不请求第三方天文服务；忽略地形遮挡、大气变化及部分轨道摄动，不用于测量或导航。流星雨日期为常年参考，活跃期按极大日前后3天。",12,a.MUTED,false));a.link(a.body,"计算公式与方法参考","https://stjarnhimlen.se/comp/ppcomp.html");a.link(a.body,"深空天体中心坐标 · CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
+        selectedInfo=a.text(view.selectionDescription(),13,a.MUTED,false);
+        for(int id:DisplayOrder.parse(a.preferences.getString("astro_order",""),SECTION_NAMES.length)){
+            if(!a.preferences.getBoolean("astro_show_"+id,true))continue;
+            switch(id){
+                case 0:timeControl();break;
+                case 1:observing();break;
+                case 2:LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);sky.addView(a.text(view.chartNote(),12,a.MUTED,false));break;
+                case 3:LinearLayout info=a.card();info.addView(a.text("选中的星星信息",17,a.INK,true));a.gap(info,10);info.addView(selectedInfo);break;
+                case 4:moonInfo();break;
+                case 5:positions();break;
+                case 6:events();break;
+                case 7:meteor();break;
+                case 8:LinearLayout note=a.card();note.addView(a.text("计算说明与来源",17,a.INK,true));a.gap(note,12);note.addView(a.text("日月、行星和星图为本地低精度天文估算，使用本地计算，不请求第三方天文服务；忽略地形遮挡、大气变化及部分轨道摄动，不用于测量或导航。流星雨日期为常年参考，活跃期按极大日前后3天。",12,a.MUTED,false));a.gap(note,10);a.link(note,"计算公式与方法参考","https://stjarnhimlen.se/comp/ppcomp.html");a.link(note,"深空天体中心坐标 · CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");break;
+            }
+            a.gap(a.body,16);
+        }
+    }
+    private void timeButton(LinearLayout row,String title,Runnable click){if(row.getChildCount()>0)a.gapHorizontal(row,8);TextView button=a.button(title,false,click);button.setPadding(a.dp(4),a.dp(10),a.dp(4),a.dp(10));row.addView(button,new LinearLayout.LayoutParams(0,-2,1));}
+    private void timeControl(){
+        LinearLayout card=a.card();card.addView(a.text("时间控制",17,a.INK,true));a.gap(card,12);
+        LinearLayout clock=a.row();timeButton(clock,"-15分钟",()->change.accept(at.minusSeconds(900)));timeButton(clock,"当前",()->change.accept(Instant.now()));timeButton(clock,"+15分钟",()->change.accept(at.plusSeconds(900)));card.addView(clock);a.gap(card,8);
+        LinearLayout days=a.row();timeButton(days,"-1天",()->change.accept(at.atZone(zone).minusDays(1).toInstant()));timeButton(days,"设置时间",()->NumericInputs.dateTime(a,at.atZone(zone),change));timeButton(days,"+1天",()->change.accept(at.atZone(zone).plusDays(1).toInstant()));card.addView(days);
     }
     private void observing(){
         LinearLayout c=a.card();c.addView(a.text("观星条件 · 经验参考",17,a.INK,true));a.gap(c,12);

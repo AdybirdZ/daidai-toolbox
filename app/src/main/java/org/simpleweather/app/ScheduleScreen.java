@@ -25,7 +25,7 @@ final class ScheduleScreen {
 
         int current=model.week(LocalDate.now());String semesterStatus=current<1?"学期尚未开始":current>model.weeks?"学期已结束":"当前第 "+current+" 周";
         a.body.addView(a.text(semesterStatus+" · 本机时间 · 周一为每周起点",12,a.MUTED,false));a.gap(a.body,12);
-        LinearLayout nav=a.row();nav.addView(a.button("‹",false,()->{if(selectedWeek>1){selectedWeek--;a.switchTab(1);}}),a.lp(48,48));TextView week=a.button("第 "+selectedWeek+" / "+model.weeks+" 周",false,this::selectWeek);nav.addView(week,new LinearLayout.LayoutParams(0,-2,1));nav.addView(a.button("›",false,()->{if(selectedWeek<model.weeks){selectedWeek++;a.switchTab(1);}}),a.lp(48,48));a.body.addView(nav);a.gap(a.body,10);
+        LinearLayout nav=a.row();nav.addView(a.button("‹",false,()->{if(selectedWeek>1){selectedWeek--;a.switchTab(1);}}),a.lp(48,48));a.gapHorizontal(nav,8);TextView week=a.button("第 "+selectedWeek+" / "+model.weeks+" 周",false,this::selectWeek);nav.addView(week,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(nav,8);nav.addView(a.button("›",false,()->{if(selectedWeek<model.weeks){selectedWeek++;a.switchTab(1);}}),a.lp(48,48));a.body.addView(nav);a.gap(a.body,10);
         LocalDate monday=model.semester.plusWeeks(selectedWeek-1);a.body.addView(a.text(monday+"  至  "+monday.plusDays(6),12,a.MUTED,false));a.gap(a.body,16);
         today(current);a.gap(a.body,16);grid(monday);a.gap(a.body,16);a.body.addView(a.text("全部课程 · 点击编辑或删除",17,a.INK,true));a.gap(a.body,12);
         if(model.courses.isEmpty()){LinearLayout empty=a.card();empty.addView(a.text("还没有课程",17,a.INK,true));a.gap(empty,10);empty.addView(a.text("先在设置里调整学期和上课时间，再新增课程。",13,a.MUTED,false));a.gap(empty,12);empty.addView(a.button("新增第一门课程",true,()->edit(null)));}
@@ -34,7 +34,7 @@ final class ScheduleScreen {
 
     }
     private void today(int week){LinearLayout c=a.card();c.addView(a.text("今日课程 · "+DAYS[LocalDate.now().getDayOfWeek().getValue()-1],17,a.INK,true));a.gap(c,12);int n=0;for(ScheduleModel.Course course:model.courses)if(course.day==LocalDate.now().getDayOfWeek().getValue()&&course.runs(week)){c.addView(a.text(model.courseTime(course)+"  "+nameText(course)+"  "+roomText(course)+"  "+teacherText(course),13,a.INK,false));a.gap(c,7);n++;}if(n==0)c.addView(a.text("今天没有安排课程",13,a.MUTED,false));}
-    private void selectWeek(){String[] values=new String[model.weeks];for(int i=0;i<values.length;i++)values[i]="第 "+(i+1)+" 周";new ToolDialog(a).setTitle("选择周次").setSingleChoiceItems(values,selectedWeek-1,(d,n)->{selectedWeek=n+1;d.dismiss();a.switchTab(1);}).setNegativeButton("返回",null).show();}
+    private void selectWeek(){LinearLayout c=form();EditText input=field(c,"周次（1–"+model.weeks+"）",String.valueOf(selectedWeek),true);AlertDialog dialog=new ToolDialog(a).setTitle("输入周次").setView(c).setPositiveButton("确定",null).setNegativeButton("取消",null).create();dialog.setOnShowListener(d->dialog.getButton(-1).setOnClickListener(v->{try{int week=Integer.parseInt(input.getText().toString().trim());if(week<1||week>model.weeks)throw new NumberFormatException();selectedWeek=week;dialog.dismiss();a.switchTab(1);}catch(NumberFormatException e){input.setError("请输入 1–"+model.weeks+" 之间的周次");}}));dialog.show();}
     private void grid(LocalDate monday){
         LinearLayout c=a.card();c.addView(a.text("一周课表 · 左右滑动",17,a.INK,true));a.gap(c,12);HorizontalScrollView scroll=new HorizontalScrollView(a);LinearLayout grid=a.column();int label=58,width=112,height=126;
         LinearLayout heading=a.row();heading.addView(a.text("节次",12,a.MUTED,true),a.lp(label,48));for(int day=1;day<=7;day++){LocalDate date=monday.plusDays(day-1);TextView t=a.text(DAYS[day-1]+"\n"+date.format(DateTimeFormatter.ofPattern("M/d")),12,date.equals(LocalDate.now())?a.BLUE:a.INK,true);t.setGravity(Gravity.CENTER);heading.addView(t,a.lp(width,48));}grid.addView(heading);
@@ -49,7 +49,7 @@ final class ScheduleScreen {
         grid.addView(matrix);scroll.addView(grid);c.addView(scroll);
     }
     void resetSettings(){model.resetSettings();selectedWeek=1;save();}
-    void menu(){LinearLayout c=form();c.addView(a.button("学期开始与总周数",false,this::semester));a.gap(c,10);c.addView(a.button("自定义上课时间",false,this::times));a.gap(c,10);c.addView(a.button("课程信息前缀",false,this::prefixes));new ToolDialog(a).setTitle("课程表设置").setView(scroll(c)).setNegativeButton("返回",null).show();}
+    void menu(){LinearLayout c=form();c.addView(a.button("学期设置",false,this::semester));a.gap(c,10);c.addView(a.button("自定义上课时间",false,this::times));a.gap(c,10);c.addView(a.button("课程信息前缀",false,this::prefixes));new ToolDialog(a).setTitle("课程表设置").setView(scroll(c)).setNegativeButton("返回",null).show();}
     private String nameText(ScheduleModel.Course c){return (a.preferences.getBoolean("course_name_prefix",true)?"课程名称：":"")+c.name;}
     private String roomText(ScheduleModel.Course c){int p=a.preferences.getInt("course_room_prefix",1);return (p==0?"@":p==1?"地点：":"")+(c.room.isEmpty()?"未填写":c.room);}
     private String teacherText(ScheduleModel.Course c){return (a.preferences.getBoolean("course_teacher_prefix",true)?"教师：":"")+(c.teacher.isEmpty()?"未填写":c.teacher);}

@@ -6,6 +6,15 @@ public final class ToolboxTests {
     private static int checks;
     private static void check(boolean ok,String why){checks++;if(!ok)throw new AssertionError(why);}
     public static void main(String[] args) throws Exception {
+        java.nio.file.Path cache=java.nio.file.Files.createTempDirectory("toolbox-cache-test");
+        String[] cacheNames={"forecast_city.json","forecast_city.json.tmp","background.jpg","background.tmp","courses.json","preferences.json"};
+        try {
+            for(String name:cacheNames)java.nio.file.Files.write(cache.resolve(name),new byte[]{1,2,3});
+            check(ForecastCache.clear(cache.toFile()),"Weather cache deletion succeeds");
+            check(!java.nio.file.Files.exists(cache.resolve(cacheNames[0]))&&!java.nio.file.Files.exists(cache.resolve(cacheNames[1])),"Both complete and interrupted forecast writes are removed");
+            for(int i=2;i<cacheNames.length;i++)check(java.util.Arrays.equals(java.nio.file.Files.readAllBytes(cache.resolve(cacheNames[i])),new byte[]{1,2,3}),"Cache clearing preserves user data: "+cacheNames[i]);
+            check(ForecastCache.clear(cache.toFile()),"Clearing twice is harmless");
+        } finally {for(String name:cacheNames)java.nio.file.Files.deleteIfExists(cache.resolve(name));java.nio.file.Files.delete(cache);}
         ScheduleModel m=new ScheduleModel();m.semester=LocalDate.of(2026,9,7);
         check(m.weeks==17&&m.slots.size()==12,"Fresh timetable uses 17 weeks and 12 periods");
         String[] expectedTimes={"08:00–08:45","08:50–09:35","09:55–10:40","10:45–11:30","11:35–12:20","14:00–14:45","14:50–15:35","15:55–16:40","16:45–17:30","18:30–19:15","19:25–20:10","20:20–21:05"};
