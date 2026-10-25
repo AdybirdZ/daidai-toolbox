@@ -1,4 +1,4 @@
-# 呆呆工具箱 1.0.11
+# 呆呆工具箱 1.0.12
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用 Codex 制作。
 
@@ -20,11 +20,13 @@
 
 本版星图为正方形，太阳/月球可选中，标签仅在点的上下固定位置避让。独立月球信息包含本地月相图与近似月龄；月球视星等为离线经验式估算，详见 [计算与来源](docs/ASTRONOMY-1.0.10.md)。天气地图新增中央气象台“天气图”完整原页。
 
-本版统一按钮间距、数字输入课表周次，天文时间操作收进“时间控制”卡片；地区搜索按钮移到输入框外。新增“设置 → 缓存管理”，清除天气预报和应用内网页资源、Cookie、网站存储，保留课程、收藏、背景、设置及限流记录；清理前在途天气结果不会回写。工具箱图标缩小并保留白边。地震仅作 [来源与许可调研](docs/EARTHQUAKE-RESEARCH-1.1.0.md)，未接入。
+1.0.11 统一按钮间距、数字输入课表周次，天文时间操作收进“时间控制”卡片；地区搜索按钮移到输入框外。新增“设置 → 缓存管理”，清除天气预报和应用内网页资源、Cookie、网站存储，保留课程、收藏、背景、设置及限流记录；清理前在途天气结果不会回写。工具箱图标缩小并保留白边。地震仅作研究，未接入。
+
+1.0.12 设置对话框取消系统位移动画，样式在首次布局前完成；天气地图“在浏览器中打开”与图种按钮统一尺寸、间距。新的 [地震许可核查](docs/EARTHQUAKE-LICENSE-1.0.12.md) 列明参考项目全部调用，以及 GEOFON、EMSC、GeoNet 等可按条件使用的候选来源。
 
 ## 安装与升级
 
-安装 `DaidaiToolbox-1.0.11.apk`。包名保持 `org.simpleweather.app`，versionCode 从 12 增至 13，沿用原开发签名，可覆盖1.0.10并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
+安装 `DaidaiToolbox-1.0.12.apk`。包名保持 `org.simpleweather.app`，versionCode 从 13 增至 14，沿用原开发签名，可覆盖1.0.11并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
 
 使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
@@ -33,7 +35,7 @@
 JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.0.11.apk
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.0.12.apk
 ```
 
 脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。
