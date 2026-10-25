@@ -81,6 +81,17 @@ public final class ToolboxTests {
         check(customModel.json().getJSONArray("courses").toString().equals(courseBefore),"Reset preserves course details and custom recurrence");
         ScheduleModel extended=new ScheduleModel();extended.weeks=35;extended.slots.add(new ScheduleModel.Slot("21:15","22:00"));ScheduleModel.Course late=new ScheduleModel.Course();late.name="晚课";late.first=late.last=13;late.weekEnd=35;extended.put(late);extended.resetSettings();
         check(extended.weeks==35&&extended.slots.size()==13&&ScheduleModel.parse(extended.json().toString()).courses.size()==1,"Reset keeps necessary extended course ranges valid");
+        double[] zenith=SkyGeometry.horizontal(90,123),north=SkyGeometry.horizontal(0,0),east=SkyGeometry.horizontal(0,90);
+        check(Math.hypot(zenith[0],zenith[1])<1e-10&&Math.abs(north[1]+1)<1e-10&&Math.abs(east[0]+1)<1e-10,"Horizontal chart has zenith center, north up and east left");
+        double[] pole=SkyGeometry.northPolar(0,90),equator=SkyGeometry.northPolar(90,0);
+        check(Math.hypot(pole[0],pole[1])<1e-10&&Math.abs(equator[0]+.5)<1e-10,"Equatorial chart is centered on the celestial pole with RA 6h left");
+        boolean inverse=true;for(double latitude:new double[]{-70,-20,0,35,80})for(int az=0;az<360;az+=15){double[] eq=SkyGeometry.equatorial(12,az,equinox,latitude,116.4);double[] hz=Astronomy.horizontal(eq[0],eq[1],equinox,latitude,116.4);inverse&=Math.abs(hz[0]-12)<1e-8&&Math.abs(Astronomy.norm(hz[1]-az+180)-180)<1e-8;}
+        check(inverse,"Equatorial horizon conversion roundtrips for both hemispheres and all azimuths");
+        check(SkyGeometry.selectionAngle(0)==0&&SkyGeometry.selectionAngle(7500)==90&&SkyGeometry.selectionAngle(30000)==0,"Selection cross rotates clockwise once per 30 seconds");
+        Set<String> starNames=new HashSet<>();for(Astronomy.Star star:Astronomy.STARS)starNames.add(star.name);
+        check(starNames.containsAll(Arrays.asList("织女一","河鼓二","勾陈一"))&&!starNames.contains("织女星")&&!starNames.contains("牛郎星")&&!starNames.contains("北极星"),"Current star labels use the requested traditional catalog names");
+        check(Astronomy.DEEP_SKY.length==2&&Math.abs(Astronomy.DEEP_SKY[0].ra-56.75)<1e-6&&Math.abs(Astronomy.DEEP_SKY[1].dec-41.26875)<1e-6,"Two CC0 deep-sky centers match the attributed records");
+        for(Astronomy.Star object:Astronomy.DEEP_SKY){Instant transit=equinox;double longitude=Astronomy.norm(object.ra-Astronomy.sidereal(transit,0)+180)-180;double[] above=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude);double[] below=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude+180);check(above[0]>0&&below[0]<0,"Deep-sky center observes local horizon rather than being always visible: "+object.name);}
         int dipperCount=0;for(Astronomy.Star star:Astronomy.STARS)if(Astronomy.isDipper(star.name))dipperCount++;
         check(dipperCount==7&&!Astronomy.isDipper("北极星"),"Only the seven Big Dipper stars are mandatory");
         for(Astronomy.Shower shower:Astronomy.SHOWERS){

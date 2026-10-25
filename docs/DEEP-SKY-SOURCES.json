@@ -1,0 +1,24 @@
+[
+  {
+    "name": "昴星团",
+    "wikidataId": "Q13423",
+    "revision": 2556354817,
+    "raDegrees": 56.75,
+    "decDegrees": 24.1167,
+    "epoch": "J2000",
+    "license": "CC0-1.0",
+    "retrievedOn": "2026-10-25",
+    "url": "https://www.wikidata.org/wiki/Q13423"
+  },
+  {
+    "name": "仙女座星系",
+    "wikidataId": "Q2469",
+    "revision": 2559463991,
+    "raDegrees": 10.6847083,
+    "decDegrees": 41.26875,
+    "epoch": "J2000",
+    "license": "CC0-1.0",
+    "retrievedOn": "2026-10-25",
+    "url": "https://www.wikidata.org/wiki/Q2469"
+  }
+]

@@ -34,3 +34,7 @@ Weather Fighter Global (天气战士 · 全球版): https://github.com/anyin233/
 ShiGuangSchedule (拾光课程表): https://github.com/ShiGuangSchedule/shiguangschedule . The original XingHeYuZhuan URL redirects to this official organization. Both project names were checked against their official README on 2026-10-25. No upstream code or assets are incorporated.
 
 This application's repository: https://github.com/AdybirdZ/daidai-toolbox .
+
+## Deep-sky coordinate facts in 1.0.9
+
+Approximate J2000 centers for the Pleiades and Andromeda Galaxy are from Wikidata structured statements P6257/P6258 in Q13423 and Q2469 (retrieved 2026-10-25), released under CC0: https://www.wikidata.org/wiki/Wikidata:Licensing . Numeric source revisions are recorded in docs/DEEP-SKY-SOURCES.json. No images or encyclopedia prose are incorporated. Coordinates are converted locally with this application's own approximate math; the application does not contact Wikidata at runtime. The source and coordinate system are documented in docs/ASTRONOMY-1.0.9.md.

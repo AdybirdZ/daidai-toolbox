@@ -22,9 +22,9 @@ final class GpsScreen implements LocationListener {
     GpsScreen(MainActivity activity){a=activity;manager=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);}
     void render(){
         LinearLayout c=a.card();c.addView(a.text("当前位置",18,a.INK,true));a.gap(c,12);status=a.text("尚未开始定位",14,a.MUTED,false);c.addView(status);a.gap(c,22);
-        latitude=value(c,"纬度 · WGS84");longitude=value(c,"经度 · WGS84");accuracy=value(c,"水平定位精度 / 估计误差半径");altitude=value(c,"海拔 · 相对 WGS84 椭球");age=a.text("等待定位结果",12,a.MUTED,false);c.addView(age);a.gap(c,16);
+        latitude=value(c,"纬度 · WGS84");longitude=value(c,"经度 · WGS84");accuracy=value(c,"水平定位误差半径");altitude=value(c,"海拔 · 相对 WGS84 椭球");age=a.text("等待定位结果",12,a.MUTED,false);c.addView(age);a.gap(c,16);
         c.addView(a.button("开始 / 重新定位",true,()->{wanted=true;foreground=true;start();}));a.gap(c,10);c.addView(a.button("停止定位",false,()->{wanted=false;pause();foreground=true;handler.post(tick);set(status,"定位已停止"+(fix==null?"":" · 下方为上次结果"));update();}));a.gap(a.body,16);
-        LinearLayout info=a.card();info.addView(a.text("定位说明",17,a.INK,true));a.gap(info,12);info.addView(a.text("仅在定位页前台启动后获取位置。切换页面、锁屏或离开应用即停止更新；应用不上传经纬度。\n\n精度为 Android 提供的水平误差半径估计（约 68% 置信水平），不是实际偏差保证。\n\nGPS 硬件模式：直接读取卫星定位，应用无需联网，室内或遮挡处可能无法获得信号。\n\n网络模式：需系统支持网络位置服务且保持网络连接，精度通常较低。系统可能把 IP、基站或 Wi-Fi 信息发给其定位服务商，适用系统与服务商规则。没有网络位置提供程序的设备无法使用此模式。\n\n经纬度为 WGS84，不做地图坐标偏移。可在设置→定位中选择模式和自动定位时间间隔。时间间隔是向系统请求的最短间隔，系统可能延迟或返回缓存；即使坐标相同，也以系统结果的时间计算距上次定位秒数。",13,a.MUTED,false));a.gap(info,12);info.addView(a.button("打开手机定位设置",false,()->a.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))));a.gap(info,8);info.addView(a.button("打开应用权限设置",false,()->a.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName())))));
+        LinearLayout info=a.card();info.addView(a.text("定位说明",17,a.INK,true));a.gap(info,12);info.addView(a.text("仅在定位页前台启动后获取位置。切换页面、锁屏或离开应用即停止更新；应用不上传经纬度。\n\n水平定位误差半径为 Android 提供的估计（约 68% 置信水平），不是实际偏差保证。\n\nGPS 硬件模式：直接读取卫星定位，应用无需联网，室内或遮挡处可能无法获得信号。\n\n网络模式：需系统支持网络位置服务且保持网络连接，精度通常较低。系统可能把 IP、基站或 Wi-Fi 信息发给其定位服务商，适用系统与服务商规则。没有网络位置提供程序的设备无法使用此模式。\n\n当系统定位结果不含海拔字段时，显示“未提供海拔”；常见于网络定位仅提供平面位置、设备或定位服务未返回高度时。这不表示海拔为零。海拔存在时为 WGS84 椭球高，不等同于海拔基准面上的正高。\n\n经纬度为 WGS84，不做地图坐标偏移。可在设置→定位中选择模式和自动定位时间间隔。时间间隔是向系统请求的最短间隔，系统可能延迟或返回缓存；即使坐标相同，也以系统结果的时间计算距上次定位秒数。",13,a.MUTED,false));a.gap(info,12);info.addView(a.button("打开手机定位设置",false,()->a.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))));a.gap(info,8);info.addView(a.button("打开应用权限设置",false,()->a.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName())))));
         c.addView(a.text("当前方式："+mode()+" · 设置中可切换",12,a.MUTED,false));
         foreground=true;handler.removeCallbacks(tick);handler.post(tick);update();
     }
@@ -34,7 +34,7 @@ final class GpsScreen implements LocationListener {
     private String mode(){return network()?"网络定位":"GPS 硬件定位";}
     void modeChanged(){wanted=false;pause();fix=null;}
     void intervalChanged(){if(wanted&&foreground)start();}
-    private long interval(){long n=a.preferences.getLong("location_interval",1000);for(long valid:new long[]{1000,5000,10000,30000,60000,180000,300000,600000})if(n==valid)return n;return 1000;}
+    private long interval(){long n=a.preferences.getLong("location_interval",5000);for(long valid:new long[]{1000,5000,10000,30000,60000,180000,300000,600000})if(n==valid)return n;return 5000;}
     private boolean allowed(){return a.checkSelfPermission(network()?Manifest.permission.ACCESS_COARSE_LOCATION:Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED;}
     void permissionResult(){if(allowed())start();else {wanted=false;if(status!=null)set(status,"未授予所需定位权限；可再次申请或到应用权限设置开启。");}}
     private void start(){
@@ -55,7 +55,7 @@ final class GpsScreen implements LocationListener {
     private void update(){
         if(latitude==null||fix==null)return;
         set(latitude,String.format(Locale.ROOT,"%.6f° %s",Math.abs(fix.getLatitude()),fix.getLatitude()<0?"S":"N"));set(longitude,String.format(Locale.ROOT,"%.6f° %s",Math.abs(fix.getLongitude()),fix.getLongitude()<0?"W":"E"));
-        set(accuracy,fix.hasAccuracy()?String.format(Locale.ROOT,"± %.1f 米",fix.getAccuracy()):"未提供精度");set(altitude,fix.hasAltitude()?String.format(Locale.ROOT,"%.1f 米",fix.getAltitude()):"未提供海拔");
+        set(accuracy,fix.hasAccuracy()?String.format(Locale.ROOT,"%.1f 米",fix.getAccuracy()):"未提供精度");set(altitude,fix.hasAltitude()?String.format(Locale.ROOT,"%.1f 米",fix.getAltitude()):"未提供海拔");
         long seconds=Math.max(0,(SystemClock.elapsedRealtimeNanos()-fix.getElapsedRealtimeNanos())/1_000_000_000L);set(age,mode()+" · 距上次定位"+seconds+"秒"+(seconds>30?" · 结果较旧":""));
         if(active&&seconds<=10)set(status,"已获取"+mode());else if(active&&seconds>30)set(status,"等待新信号 · 下方为上次定位");
     }
