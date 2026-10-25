@@ -1,3 +1,13 @@
+# 呆呆工具箱 1.0.8 补充
+
+本版不新增 API、依赖或数据上传，继续个人非商业使用原数据服务。57、67 的中文同时参考 WMO 原文及 Open-Meteo 官方计算代码命名。
+
+2026-10-25 通过官方 GitHub README 核实参考项目名为[天气战士 · 全球版](https://github.com/anyin233/weather-fighter-global)和[拾光课程表](https://github.com/ShiGuangSchedule/shiguangschedule)。拾光课程表旧地址 XingHeYuZhuan/shiguangschedule 已跳转到 ShiGuangSchedule 组织。应用隐私页列出这两个参考项目，最后链接[呆呆工具箱](https://github.com/AdybirdZ/daidai-toolbox)。仅参考功能，未引入其源码或素材，原有独立实现与许可保持。
+
+安装包 1.0.8 / versionCode 10，原签名可覆盖 1.0.7。以下为历史说明。
+
+---
+
 # 呆呆工具箱1.0.7补充
 
 2026-10-25新增核查WMO官方天气电码英文原文，引用与对照见 [天气代码核对](WEATHER-CODE-COMPARISON.md)。注册表页脚说明默认适用Open Government Licence v3.0，已保留来源与许可链接；本应用中文名称和图标是本地解释，不代表WMO背书。本版不新增天气接口、定位上传或运行时依赖，继续个人非商业使用原数据服务。安装包1.0.7 / versionCode 9，原签名可覆盖1.0.6。

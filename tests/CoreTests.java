@@ -36,7 +36,7 @@ public final class CoreTests {
         check(WeatherData.code(missing,"weather_code",-1)==-1,"Missing condition does not become sunny");
         check(WeatherData.condition(-1).equals("天气未知"),"Unknown WMO code stays unknown");
         check(WeatherData.condition(99).equals("大雷暴伴冰雹"),"Heavy qualifies thunderstorm rather than hail size");
-        check(WeatherData.condition(67).equals("大冻雨"),"Freezing rain has its own label");
+        check(WeatherData.condition(67).equals("中或大冻雨"),"Freezing rain has its own label");
         check(WeatherData.code(new JSONObject(),"weather_code",-1)==-1,"Absent weather code is unknown");
         check(WeatherData.code(new JSONObject("{\"weather_code\":\"bad\"}"),"weather_code",-1)==-1,"Nonnumeric weather code is unknown");
         check(WeatherData.code(new JSONObject("{\"weather_code\":3.5}"),"weather_code",-1)==-1,"Fractional code must not be truncated into overcast");

@@ -26,3 +26,11 @@ Timetable feature reference: https://github.com/XingHeYuZhuan/shiguangschedule ,
 Weather Fighter reference commit: e75bbe601237d663bf611577e618c3354685f68f. No source code or visual assets incorporated.
 
 Version 1.0.2 adds the complete NMC FY4B satellite webpage (https://www.nmc.cn/publish/satellite/fy4b-visible.htm) and removes the weather.com.cn radar choice. Weather descriptions follow the user-requested Chinese mapping; composite codes such as 48 and 95 do not imply an exact CMA classification or endorsement.
+
+## Reference links updated in 1.0.8
+
+Weather Fighter Global (天气战士 · 全球版): https://github.com/anyin233/weather-fighter-global .
+
+ShiGuangSchedule (拾光课程表): https://github.com/ShiGuangSchedule/shiguangschedule . The original XingHeYuZhuan URL redirects to this official organization. Both project names were checked against their official README on 2026-10-25. No upstream code or assets are incorporated.
+
+This application's repository: https://github.com/AdybirdZ/daidai-toolbox .

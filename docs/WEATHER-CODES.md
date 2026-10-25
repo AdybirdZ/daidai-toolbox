@@ -1,3 +1,11 @@
+# 1.0.8 天气代码补充
+
+57 → 中或大冻毛毛雨；67 → 中或大冻雨。WMO 原文分别为 moderate or heavy (dense)、moderate or heavy；Open-Meteo 官方计算代码也分别命名为 moderateOrDenseFreezingDrizzle、moderateOrHeavyFreezingRain。图标未改；其他天气名称保持 1.0.7。
+
+以下保留历史核查说明。
+
+---
+
 # 天气图例与天气代码：1.0.7补充
 
 本版将95/96/97/99改为“小或中雷暴 / 小或中雷暴伴冰雹 / 大雷暴 / 大雷暴伴冰雹”，99图标共有四枚冰雹圆点，图例新增[WMO官方英文原文](https://codes.wmo.int/bufr4/codeflag/0-20-003?_view=all)入口。完整依据与29码逐项核对见 [Open-Meteo与WMO对照](WEATHER-CODE-COMPARISON.md)。

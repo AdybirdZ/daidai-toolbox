@@ -7,6 +7,18 @@ public final class ToolboxTests {
     private static void check(boolean ok,String why){checks++;if(!ok)throw new AssertionError(why);}
     public static void main(String[] args) throws Exception {
         ScheduleModel m=new ScheduleModel();m.semester=LocalDate.of(2026,9,7);
+        check(m.weeks==17&&m.slots.size()==12,"Fresh timetable uses 17 weeks and 12 periods");
+        String[] expectedTimes={"08:00–08:45","08:50–09:35","09:55–10:40","10:45–11:30","11:35–12:20","14:00–14:45","14:50–15:35","15:55–16:40","16:45–17:30","18:30–19:15","19:25–20:10","20:20–21:05"};
+        boolean correctTimes=true;for(int i=0;i<expectedTimes.length;i++){ScheduleModel.Slot slot=m.slots.get(i);correctTimes&=(slot.start+"–"+slot.end).equals(expectedTimes[i])&&m.validateSlot(i,slot.start,slot.end)==null;}
+        check(correctTimes,"All requested default class times match and do not overlap");
+        ScheduleModel legacy=new ScheduleModel();legacy.weeks=20;legacy.slots.clear();
+        String[][] legacyTimes={{"07:55","08:45"},{"08:55","09:40"},{"10:00","10:45"},{"10:55","11:40"},{"14:00","14:45"},{"14:55","15:40"},{"16:00","16:45"},{"16:55","17:40"},{"19:00","19:45"},{"19:55","20:40"}};
+        for(String[] time:legacyTimes)legacy.slots.add(new ScheduleModel.Slot(time[0],time[1]));
+        ScheduleModel.Course oldCourse=new ScheduleModel.Course();oldCourse.name="Legacy";oldCourse.first=oldCourse.last=10;oldCourse.weekEnd=20;legacy.put(oldCourse);
+        String legacyJson=legacy.json().toString();ScheduleModel upgraded=ScheduleModel.parse(legacyJson);
+        check(upgraded.weeks==20&&upgraded.slots.size()==10&&upgraded.slots.get(0).start.equals("07:55")&&upgraded.json().toString().equals(legacyJson),"Upgrade preserves old semester, custom times and courses unchanged");
+        upgraded.resetSettings();check(upgraded.weeks==20&&upgraded.slots.size()==12&&upgraded.validateCourse(upgraded.courses.get(0))==null,"Reset adopts 12 periods while preserving a course through week 20");
+        upgraded.courses.clear();upgraded.resetSettings();check(upgraded.weeks==17&&upgraded.slots.size()==12,"Reset without extended courses returns to 17 weeks");
         check(m.week(LocalDate.of(2026,9,6))==0,"Before semester is not week one");
         check(m.week(LocalDate.of(2026,9,7))==1,"Semester begins on first Monday");
         check(m.week(LocalDate.of(2026,9,13))==1,"Sunday stays in the same week");
@@ -62,13 +74,13 @@ public final class ToolboxTests {
         check(DisplayOrder.window(Arrays.asList(0,1,2,3,4),2).equals(Arrays.asList(2,3,4)),"Arrow paging reveals the last three of five tabs");
         check(Astronomy.skyDescription(Instant.parse("2024-03-20T05:00:00Z"),0,0).contains("曙光"),"Morning twilight is dawn");check(Astronomy.skyDescription(Instant.parse("2024-03-20T19:00:00Z"),0,0).contains("暮光"),"Evening twilight is dusk");
         int[] codes={0,1,2,3,45,48,51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,97,99};
-        String[] names={"晴","少云","多云","阴","雾","沉积雾凇的雾","小毛毛雨","中毛毛雨","大毛毛雨","小冻毛毛雨","大冻毛毛雨","小雨","中雨","大雨","小冻雨","大冻雨","小雪","中雪","大雪","米雪","小阵雨","中阵雨","大阵雨","小阵雪","大阵雪","小或中雷暴","小或中雷暴伴冰雹","大雷暴","大雷暴伴冰雹"};
+        String[] names={"晴","少云","多云","阴","雾","沉积雾凇的雾","小毛毛雨","中毛毛雨","大毛毛雨","小冻毛毛雨","中或大冻毛毛雨","小雨","中雨","大雨","小冻雨","中或大冻雨","小雪","中雪","大雪","米雪","小阵雨","中阵雨","大阵雨","小阵雪","大阵雪","小或中雷暴","小或中雷暴伴冰雹","大雷暴","大雷暴伴冰雹"};
         for(int i=0;i<codes.length;i++)check(WeatherData.condition(codes[i]).equals(names[i]),"Requested Chinese weather term for code "+codes[i]);
         customModel.semester=LocalDate.of(2020,1,6);customModel.slots.set(0,new ScheduleModel.Slot("07:00","07:45"));customModel.weeks=30;String courseBefore=customModel.json().getJSONArray("courses").toString();customModel.resetSettings();
-        check(customModel.slots.get(0).start.equals("08:00")&&customModel.weeks==20&&customModel.semester.equals(LocalDate.now().with(DayOfWeek.MONDAY)),"Reset restores period, semester and week defaults");
+        check(customModel.slots.get(0).start.equals("08:00")&&customModel.weeks==17&&customModel.semester.equals(LocalDate.now().with(DayOfWeek.MONDAY)),"Reset restores period, semester and week defaults");
         check(customModel.json().getJSONArray("courses").toString().equals(courseBefore),"Reset preserves course details and custom recurrence");
-        ScheduleModel extended=new ScheduleModel();extended.weeks=35;extended.slots.add(new ScheduleModel.Slot("21:00","21:45"));ScheduleModel.Course late=new ScheduleModel.Course();late.name="晚课";late.first=late.last=11;late.weekEnd=35;extended.put(late);extended.resetSettings();
-        check(extended.weeks==35&&extended.slots.size()==11&&ScheduleModel.parse(extended.json().toString()).courses.size()==1,"Reset keeps necessary extended course ranges valid");
+        ScheduleModel extended=new ScheduleModel();extended.weeks=35;extended.slots.add(new ScheduleModel.Slot("21:15","22:00"));ScheduleModel.Course late=new ScheduleModel.Course();late.name="晚课";late.first=late.last=13;late.weekEnd=35;extended.put(late);extended.resetSettings();
+        check(extended.weeks==35&&extended.slots.size()==13&&ScheduleModel.parse(extended.json().toString()).courses.size()==1,"Reset keeps necessary extended course ranges valid");
         int dipperCount=0;for(Astronomy.Star star:Astronomy.STARS)if(Astronomy.isDipper(star.name))dipperCount++;
         check(dipperCount==7&&!Astronomy.isDipper("北极星"),"Only the seven Big Dipper stars are mandatory");
         for(Astronomy.Shower shower:Astronomy.SHOWERS){

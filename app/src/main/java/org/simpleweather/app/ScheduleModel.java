@@ -7,27 +7,28 @@ import java.util.*;
 
 /** Independent manual timetable model. All validation runs before replacing persisted data. */
 public final class ScheduleModel {
+    public static final int DEFAULT_WEEKS=17;
     public static final class Slot {
         public String start,end;
         public Slot(String start,String end){this.start=start;this.end=end;}
     }
     public static final class Course {
         public String id=UUID.randomUUID().toString(),name="",room="",teacher="";
-        public int day=1,first=1,last=1,weekStart=1,weekEnd=20,parity=0,color=0;
+        public int day=1,first=1,last=1,weekStart=1,weekEnd=DEFAULT_WEEKS,parity=0,color=0;
         public final SortedSet<Integer> customWeeks=new TreeSet<>();
         public boolean runs(int week){if(parity==3)return customWeeks.contains(week);return week>=weekStart&&week<=weekEnd&&(parity==0||week%2==parity%2);}
         public Course copy(){Course c=new Course();c.id=id;c.name=name;c.room=room;c.teacher=teacher;c.day=day;c.first=first;c.last=last;c.weekStart=weekStart;c.weekEnd=weekEnd;c.parity=parity;c.color=color;c.customWeeks.addAll(customWeeks);return c;}
     }
     public LocalDate semester=LocalDate.now().with(java.time.DayOfWeek.MONDAY);
-    public int weeks=20;
+    public int weeks=DEFAULT_WEEKS;
     public final List<Slot> slots=new ArrayList<>();
     public final List<Course> courses=new ArrayList<>();
     public ScheduleModel(){
-        String[][] defaults={{"08:00","08:45"},{"08:55","09:40"},{"10:00","10:45"},{"10:55","11:40"},{"14:00","14:45"},{"14:55","15:40"},{"16:00","16:45"},{"16:55","17:40"},{"19:00","19:45"},{"19:55","20:40"}};
+        String[][] defaults={{"08:00","08:45"},{"08:50","09:35"},{"09:55","10:40"},{"10:45","11:30"},{"11:35","12:20"},{"14:00","14:45"},{"14:50","15:35"},{"15:55","16:40"},{"16:45","17:30"},{"18:30","19:15"},{"19:25","20:10"},{"20:20","21:05"}};
         for(String[] t:defaults)slots.add(new Slot(t[0],t[1]));
     }
     /** Reset configuration without deleting courses or creating invalid period/week references. */
-    public void resetSettings(){ScheduleModel defaults=new ScheduleModel();int neededPeriods=0,neededWeeks=20;for(Course c:courses){neededPeriods=Math.max(neededPeriods,c.last);neededWeeks=Math.max(neededWeeks,c.parity==3?c.customWeeks.last():c.weekEnd);}semester=defaults.semester;weeks=neededWeeks;if(neededPeriods<=defaults.slots.size()){slots.clear();slots.addAll(defaults.slots);}else{boolean compatible=minute(slots.get(defaults.slots.size()).start)>=minute(defaults.slots.get(defaults.slots.size()-1).end);if(compatible){for(int i=0;i<defaults.slots.size();i++)slots.set(i,defaults.slots.get(i));}while(slots.size()>neededPeriods)slots.remove(slots.size()-1);}}
+    public void resetSettings(){ScheduleModel defaults=new ScheduleModel();int neededPeriods=0,neededWeeks=defaults.weeks;for(Course c:courses){neededPeriods=Math.max(neededPeriods,c.last);neededWeeks=Math.max(neededWeeks,c.parity==3?c.customWeeks.last():c.weekEnd);}semester=defaults.semester;weeks=neededWeeks;if(neededPeriods<=defaults.slots.size()){slots.clear();slots.addAll(defaults.slots);}else{boolean compatible=minute(slots.get(defaults.slots.size()).start)>=minute(defaults.slots.get(defaults.slots.size()-1).end);if(compatible){for(int i=0;i<defaults.slots.size();i++)slots.set(i,defaults.slots.get(i));}while(slots.size()>neededPeriods)slots.remove(slots.size()-1);}}
     public int week(LocalDate date){return (int)Math.floorDiv(ChronoUnit.DAYS.between(semester,date),7)+1;}
     public static int minute(String value){LocalTime t=LocalTime.parse(value);return t.getHour()*60+t.getMinute();}
     public String validateSlot(int index,String start,String end){
