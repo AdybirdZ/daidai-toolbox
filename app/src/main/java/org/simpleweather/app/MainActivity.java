@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
         schedule=new ScheduleScreen(this);gps=new GpsScreen(this);
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         tab=preferences.getInt("last_tab",0);if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<11)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",11).apply();}},700);
+        if(preferences.getInt("seen_version",0)<12)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",12).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -225,7 +225,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.0.9",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · v1.0.10",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -303,7 +303,7 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",11).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",12).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationModeChanged(){gps.modeChanged();if(tab==2)switchTab(2);}
     void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast("未找到系统图片选择器");}}
@@ -311,6 +311,8 @@ public class MainActivity extends Activity {
     void reloadBackground(){background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());refreshScreen();}
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        c.addView(text("1.0.10 · 星空与月球信息",19,INK,true));gap(c,12);
+        c.addView(text("• 当地星空改为随屏幕宽度扩展的正方形，放大坐标。标签只在星点正上方或正下方，冲突时隐藏标签但星点仍可选中。\n• “星点信息”改为“选中的星星信息”；太阳和月球可选中，太阳不显示星等，月球显示本地估算视星等。\n• 新增独立“月球信息”，移入月相、照亮比例、近似月龄及距下次满月时间，并绘制随所选时间更新的月相示意。\n• 天气地图在卫星云图后新增中央气象台“天气图”原页入口。\n• 课程信息前缀各项的默认选项移到最前，保留原选择。",14,INK,false));gap(c,20);
         c.addView(text("1.0.9 · 天球坐标与星图选中",19,INK,true));gap(c,12);
         c.addView(text("• 精简天气图例说明，WMO 专业表统一称“电码”，修正未知天气提示。\n• 调整默认文案；课表三个信息前缀默认显示完整名称，定位默认间隔改为 5 秒。\n• 天文设置新增行星与深空天体显示开关，以及地平坐标、北天极居中的赤道坐标、不显示坐标网格三种模式。\n• 选中天体显示缓慢顺时针旋转的断开十字，调整时间保留选中；天体落到地平线下时隐藏十字。\n• 恒星名改为织女一、河鼓二、勾陈一，保留原来的显隐偏好；新增昴星团、仙女座星系大致中心，采用 CC0 坐标离线换算。\n• 定位改为“水平定位误差半径”，移除正负号，说明未提供海拔的情况。",14,INK,false));gap(c,20);
         c.addView(text("1.0.8 · 默认设置与来源补充",19,INK,true));gap(c,12);
@@ -337,7 +339,7 @@ public class MainActivity extends Activity {
     }
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        TextView details=text("呆呆工具箱 1.0.9 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位仅在你授权后于前台获取，应用不上传坐标。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\n免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达和卫星云图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
+        TextView details=text("呆呆工具箱 1.0.10 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位仅在你授权后于前台获取，应用不上传坐标。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\n免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
         link(content,"深空天体中心坐标 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
         gap(content,10);content.addView(text("参考开源项目",17,INK,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");

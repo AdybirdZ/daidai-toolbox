@@ -105,6 +105,25 @@ public final class Astronomy {
     public static double[] planetPosition(Planet p,Instant time,double lat,double lon){return horizontal(p.ra,p.dec,time,lat,lon);}
     public static double phase(Instant time){double[] a=sun(time),b=moon(time);double e=23.4393-.0000003563*days(time);double as=atan(sin(a[0])*cos(a[1])*cos(e)+sin(a[1])*sin(e),cos(a[0])*cos(a[1]));double bs=atan(sin(b[0])*cos(b[1])*cos(e)+sin(b[1])*sin(e),cos(b[0])*cos(b[1]));return norm(bs-as)/360.0;}
     public static double illumination(Instant time){return (1-cos(phase(time)*360))/2;}
+    /** V-band geometric brightness estimate; Schlyter section 15, independently implemented.
+     * Earth-radius lunar distance; excludes extinction, earthshine and eclipses. */
+    public static double moonMagnitude(Instant time){
+        double[] solar=sun(time),lunar=moon(time);
+        double cosine=sin(solar[1])*sin(lunar[1])+cos(solar[1])*cos(lunar[1])*cos(solar[0]-lunar[0]);
+        double angle=180-Math.toDegrees(Math.acos(Math.max(-1,Math.min(1,cosine))));
+        return moonMagnitudeEstimate(angle,solar[2],lunar[2]);
+    }
+    public static double moonMagnitudeEstimate(double phaseAngle,double solarDistanceAu,double lunarDistanceEarthRadii){
+        // The empirical curve is unreliable near new moon; do not extrapolate there.
+        if(!Double.isFinite(phaseAngle)||phaseAngle<0||phaseAngle>=170||!Double.isFinite(solarDistanceAu)||solarDistanceAu<=0||!Double.isFinite(lunarDistanceEarthRadii)||lunarDistanceEarthRadii<=0)return Double.NaN;
+        return -21.62+5*Math.log10(solarDistanceAu*lunarDistanceEarthRadii)+.026*phaseAngle+4e-9*Math.pow(phaseAngle,4);
+    }
+    /** Illuminated left/right x boundaries of a unit lunar disc, north-up convention.
+     * Waxing right side, waning left side. Does not model local parallactic rotation. */
+    public static double[] moonDiscSpan(double phase,double y){
+        double edge=Math.sqrt(Math.max(0,1-y*y)),cycle=(phase%1+1)%1,k=cos(cycle*360);
+        return cycle<=.5?new double[]{k*edge,edge}:new double[]{-edge,-k*edge};
+    }
     public static String phaseName(double phase){return new String[]{"新月","娥眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"}[(int)Math.floor(phase*8+.5)%8];}
     public static String compass(double az){return new String[]{"北","东北","东","东南","南","西南","西","西北"}[(int)Math.floor((norm(az)+22.5)/45)%8];}
     public static final class Event {public final Instant at;public final boolean rising;Event(Instant t,boolean r){at=t;rising=r;}}

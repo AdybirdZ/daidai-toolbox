@@ -92,6 +92,20 @@ public final class ToolboxTests {
         check(starNames.containsAll(Arrays.asList("织女一","河鼓二","勾陈一"))&&!starNames.contains("织女星")&&!starNames.contains("牛郎星")&&!starNames.contains("北极星"),"Current star labels use the requested traditional catalog names");
         check(Astronomy.DEEP_SKY.length==2&&Math.abs(Astronomy.DEEP_SKY[0].ra-56.75)<1e-6&&Math.abs(Astronomy.DEEP_SKY[1].dec-41.26875)<1e-6,"Two CC0 deep-sky centers match the attributed records");
         for(Astronomy.Star object:Astronomy.DEEP_SKY){Instant transit=equinox;double longitude=Astronomy.norm(object.ra-Astronomy.sidereal(transit,0)+180)-180;double[] above=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude);double[] below=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude+180);check(above[0]>0&&below[0]<0,"Deep-sky center observes local horizon rather than being always visible: "+object.name);}
+        double fullMag=Astronomy.moonMagnitudeEstimate(0,1,60.2666),halfMag=Astronomy.moonMagnitudeEstimate(90,1,60.2666);
+        check(Math.abs(fullMag+12.7196)<.01&&halfMag>fullMag+2,"Lunar empirical magnitude reproduces reference full and half brightness");
+        check(Math.abs(Astronomy.moonMagnitudeEstimate(0,1,120.5332)-fullMag-5*Math.log10(2))<1e-9,"Moon distance changes magnitude with inverse square illumination");
+        check(Double.isNaN(Astronomy.moonMagnitudeEstimate(170,1,60))&&Double.isNaN(Astronomy.moonMagnitudeEstimate(0,0,60))&&Double.isNaN(Astronomy.moonMagnitudeEstimate(Double.NaN,1,60)),"Do not extrapolate lunar photometry near new moon or accept invalid inputs");
+        check(Astronomy.moonMagnitude(full)<-12&&Astronomy.moonMagnitude(full)>-13.5,"Known full moon has plausible estimated V magnitude");
+        for(double cycle:new double[]{0,.125,.25,.5,.75,.875}){double area=0;for(int i=0;i<10000;i++){double y=-1+(i+.5)/5000;double[] span=Astronomy.moonDiscSpan(cycle,y);area+=(span[1]-span[0])/5000;}check(Math.abs(area/Math.PI-(1-Math.cos(2*Math.PI*cycle))/2)<1e-5,"Lunar disc bright area matches illuminated fraction at phase "+cycle);}
+        check(Astronomy.moonDiscSpan(.25,0)[0]>-1e-9&&Astronomy.moonDiscSpan(.75,0)[1]<1e-9,"Waxing illuminates right and waning illuminates left");
+        SkyLabels.Candidate high=new SkyLabels.Candidate("high",100,100,40,-10,2),low=new SkyLabels.Candidate("low",100,108,40,-10,2),third=new SkyLabels.Candidate("third",100,110,40,-10,2);
+        List<SkyLabels.Placed> placed=SkyLabels.place(Arrays.asList(third,low,high),Collections.emptyList(),300,300,8,2,1);
+        check(placed.size()==2&&placed.get(0).candidate.id.equals("high")&&placed.get(0).baseline==92&&placed.get(1).candidate.id.equals("low")&&placed.get(1).baseline==124,"Higher point keeps upper label, lower flips below, third hides if both collide");
+        check(Math.abs((high.y-placed.get(0).box.bottom)-(placed.get(1).box.top-low.y))<1e-6,"Upper and lower label gaps are symmetric");
+        List<SkyLabels.Placed> blocked=SkyLabels.place(Arrays.asList(high),Arrays.asList(new SkyLabels.Box(75,70,125,100)),300,300,8,2,1);
+        check(blocked.size()==1&&blocked.get(0).baseline==116,"Reserved coordinate text makes label use only the fixed lower alternative");
+        check(SkyLabels.place(Arrays.asList(new SkyLabels.Candidate("edge",2,100,40,-10,2)),Collections.emptyList(),300,300,8,2,1).isEmpty(),"Out-of-bounds labels hide instead of drifting sideways");
         int dipperCount=0;for(Astronomy.Star star:Astronomy.STARS)if(Astronomy.isDipper(star.name))dipperCount++;
         check(dipperCount==7&&!Astronomy.isDipper("北极星"),"Only the seven Big Dipper stars are mandatory");
         for(Astronomy.Shower shower:Astronomy.SHOWERS){

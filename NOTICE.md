@@ -38,3 +38,9 @@ This application's repository: https://github.com/AdybirdZ/daidai-toolbox .
 ## Deep-sky coordinate facts in 1.0.9
 
 Approximate J2000 centers for the Pleiades and Andromeda Galaxy are from Wikidata structured statements P6257/P6258 in Q13423 and Q2469 (retrieved 2026-10-25), released under CC0: https://www.wikidata.org/wiki/Wikidata:Licensing . Numeric source revisions are recorded in docs/DEEP-SKY-SOURCES.json. No images or encyclopedia prose are incorporated. Coordinates are converted locally with this application's own approximate math; the application does not contact Wikidata at runtime. The source and coordinate system are documented in docs/ASTRONOMY-1.0.9.md.
+
+## Moon estimates and weather-chart entry in 1.0.10
+
+The lunar V-magnitude mathematical formula is referenced from Paul Schlyter, section 15: https://stjarnhimlen.se/comp/ppcomp.html#15 . It is independently implemented in Java using this application's computed geometry and distances; no third-party source code, webpage prose, photographs or textures are bundled. The phase illustration is drawn locally from the geometric illuminated fraction. See docs/ASTRONOMY-1.0.10.md for assumptions and limits.
+
+The new NMC weather-chart button opens the complete publisher page: https://www.nmc.cn/publish/observations/china/dm/weatherchart-h000.htm . Publisher copyright applies; no image redistribution license is claimed.
