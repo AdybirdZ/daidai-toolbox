@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=preferences.getInt("last_tab",0);if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<15)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",15).apply();}},700);
+        if(preferences.getInt("seen_version",0)<16)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",16).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -229,7 +229,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.1.0",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · v1.1.1",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -307,7 +307,7 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",15).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",16).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
@@ -321,6 +321,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"1.1.1 · Wolfx 国内目录","• 接入 CENC（Wolfx 转发）近期最多 50 条目录，独立缓存、刷新与数据源开关；与 GEOFON、EMSC 明确匹配才合并，保留各来源参数。\n• 如实说明：上游公开展示适用依据尚未完全确认，不宣称已获 CENC 再发布授权；CORS 和非商业用途不等于授权。可关闭此来源，仅供参考。\n• 按北京时间解析发生及报告时刻；不承诺覆盖所选天数或完整收录；未采用未核实的 intensity 字段，未接入任何预警流。");
         updateEntry(c,"1.1.0 · 近期地震与持续定位","• 新增地震栏目：GEOFON 与 EMSC 双源近期目录、相近事件合并、震级类型、发生时间、深度、震中、地表距离及各来源详情。\n• 可设置时间范围、区域、最低震级、附近范围、排序、时区、烈度标度、列表字段、栏目顺序和前台刷新间隔；保留离线缓存，区分各来源更新与失败。\n• 来源使用 CC BY 4.0 并保留署名；Wolfx 国内目录的上游依据尚待确认，未启用，也未接入预警流。缺乏可靠烈度资料时不生成数值。\n• 定位新增“切换栏目和后台继续定位”，默认关闭；主动开启并开始后使用 Android 前台服务，提供持续通知和停止按钮。最近定位供地震距离本地计算，不上传。\n• 缓存管理新增地震目录，清理期间的旧请求不会回写。新增栏目保留原有底栏排序及其他设置。");
         updateEntry(c,"1.0.12 · 设置弹窗与地图按钮","• 设置弹窗直接在中央显示，取消系统滑入/退出动画。按钮间距与描边改为首次布局前完成，避免显示时再次调整尺寸。日期选择也使用相同处理，保留逐级返回和输入校验。\n• 天气地图的“浏览器”改为“在浏览器中打开”，与图种按钮保持相同宽高、圆角和间距，小屏可完整换行显示。\n• 扩展地震来源及调用许可调研，不在本版本接入地震功能。");
         updateEntry(c,"1.0.11 · 间距与栏目管理","• 统一底栏、排序、时间控制、课表、裁剪和弹窗按钮间距，地区名称不再重复打开选择器，搜索按钮移到输入框外。\n• 常用地区新增莫斯科、巴黎，保持每行三列等宽。调整背景裁剪标题与说明，课表入口改为“学期设置”。\n• 版本记录按版本折叠，每次进入默认收起；新增缓存管理，保留课程、收藏、背景、设置与限流记录。\n• 天文新增“时间控制”卡片及栏目显示与排序设置，切换时间保留星图选中与滚动位置。\n• 课表跳周改为输入周次；缩小工具箱图标，四周留白。地震功能仅调研，未加入本版本。");
@@ -349,10 +350,11 @@ public class MainActivity extends Activity {
     }
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        TextView details=text("呆呆工具箱 1.1.0 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位默认切换栏目或后台即停止；可在设置中主动开启持续定位，开始后由前台服务工作并提供通知和停止入口。应用不上传定位坐标；最近一次定位保存在本机，地震距离也在本机计算。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\nOpen-Meteo 免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
+        TextView details=text("呆呆工具箱 1.1.1 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位默认切换栏目或后台即停止；可在设置中主动开启持续定位，开始后由前台服务工作并提供通知和停止入口。应用不上传定位坐标；最近一次定位保存在本机，地震距离也在本机计算。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\nOpen-Meteo 免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"GEOFON · 地震来源与许可","https://geofon.gfz.de/eqinfo/faq/");link(content,"EMSC · 地震许可与条款","https://www.seismicportal.eu/terms.html");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
         link(content,"深空天体中心坐标 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
-        content.addView(text("地震：GEOFON（GFZ／GEVN）与 EMSC／SeismicPortal，数据采用 CC BY 4.0。Event locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks. 本应用合并、筛选和格式化目录，保留各来源参数；不是官方预警。查询会向来源发送 IP、时间范围和最低震级，不发送参考位置。目录缓存在本机；仅地震页前台自动刷新。Wolfx 上游依据尚未确认，当前不调用。",14,INK,false));gap(content,12);
+        link(content,"Wolfx · 开放 API 文档","https://wolfx.jp/zh/docs/open-api/");link(content,"Wolfx · 使用条款","https://wolfx.jp/zh/legal/terms/");link(content,"CENC · 官方网站","https://www.cenc.ac.cn/");
+        content.addView(text("地震：GEOFON（GFZ／GEVN）与 EMSC／SeismicPortal，数据采用 CC BY 4.0。Event locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks. 本应用合并、筛选和格式化目录，保留各来源参数；不是官方预警。查询会向来源发送 IP、时间范围和最低震级，不发送参考位置。目录缓存在本机；仅地震页前台自动刷新。另接入 CENC（Wolfx 转发）近期最多 50 条目录，向 Wolfx 发送 IP，不上传参考坐标；可单独关闭。Wolfx 为非官方服务，仅供参考，接口不保证覆盖所选天数或完整收录。上游面向不特定用户公开展示的适用依据尚未完全确认，尚未发现该接口专项许可，不宣称已获 CENC 再发布授权。CORS、个人非商业用途、署名和免责声明均不等于授权；CENC／Wolfx 不适用前述 CC BY 4.0。未接入预警流，未使用未核实的 intensity 字段。",14,INK,false));gap(content,12);
         gap(content,10);content.addView(text("参考开源项目",17,INK,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");
         ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("知道了",null).show();
     }

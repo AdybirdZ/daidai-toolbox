@@ -11,13 +11,14 @@ import java.util.*;
 /** Parametric facts only. Different agencies' solutions are preserved, never averaged. */
 final class EarthquakeData {
     static final int LIMIT=3000;
-    static final String[] SOURCES={"GEOFON","EMSC"};
+    static final String[] SOURCES={"GEOFON","EMSC","Wolfx"};
+    static String sourceName(String source){return source.equals("Wolfx")?"CENC（Wolfx 转发）":source;}
     static final class Report {
         String source="",id="",region="",magnitudeType="M",agency="",review="未提供复核状态",depthNote="来源未说明深度是否固定";
         long time,updated;
         double latitude,longitude,magnitude,depth=Double.NaN;
         String magnitudeLabel(){return magnitudeType+" "+String.format(Locale.ROOT,"%.1f",magnitude);}
-        String url(){return source.equals("GEOFON")?"https://geofon.gfz.de/eqinfo/event.php?id="+id:"https://www.seismicportal.eu/eventdetails.html?unid="+id;}
+        String url(){String encoded;try{encoded=java.net.URLEncoder.encode(id,"UTF-8");}catch(Exception e){encoded="";}return source.equals("Wolfx")?"https://www.cenc.ac.cn/":source.equals("GEOFON")?"https://geofon.gfz.de/eqinfo/event.php?id="+encoded:"https://www.seismicportal.eu/eventdetails.html?unid="+encoded;}
     }
     static final class Event {
         final List<Report> reports=new ArrayList<>();
@@ -26,7 +27,7 @@ final class EarthquakeData {
             for(Report r:reports)if(priority(r)>priority(best)||(priority(r)==priority(best)&&r.updated>best.updated))best=r;
             return best;
         }
-        String sources(){StringJoiner s=new StringJoiner("、");for(Report r:reports)s.add(r.source);return s.toString();}
+        String sources(){StringJoiner s=new StringJoiner("、");for(Report r:reports)s.add(sourceName(r.source));return s.toString();}
         double maxMagnitude(){double m=-99;for(Report r:reports)m=Math.max(m,r.magnitude);return m;}
     }
     private static int priority(Report r){return (r.review.contains("人工")?2:0)+(r.source.equals("GEOFON")?1:0);}
@@ -52,6 +53,21 @@ final class EarthquakeData {
         return result;
     }
     private static double number(JSONObject p,String key){Object v=p.opt(key);if(v==null||v==JSONObject.NULL||v instanceof Boolean)return Double.NaN;try{return Double.parseDouble(v.toString());}catch(Exception e){return Double.NaN;}}
+    /** Wolfx documents catalogue times as UTC+8. Row numbers are not event IDs. */
+    static long wolfxTime(String value){try{return LocalDateTime.parse(value,java.time.format.DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss").withResolverStyle(java.time.format.ResolverStyle.STRICT)).toInstant(ZoneOffset.ofHours(8)).toEpochMilli();}catch(Exception e){return 0;}}
+    static List<Report> wolfx(String raw)throws Exception{
+        JSONObject root=new JSONObject(raw);List<Report> result=new ArrayList<>();int rows=0;
+        for(Iterator<String> it=root.keys();it.hasNext();){String key=it.next();if(!key.matches("No[1-9][0-9]*"))continue;rows++;JSONObject p=root.optJSONObject(key);if(p==null)continue;
+            Report r=new Report();r.source="Wolfx";r.time=wolfxTime(p.optString("time"));r.updated=wolfxTime(p.optString("ReportTime"));r.latitude=number(p,"latitude");r.longitude=number(p,"longitude");r.magnitude=number(p,"magnitude");r.depth=number(p,"depth");
+            r.id=p.optString("EventID","").trim();if(r.id.isEmpty()||r.id.equals("null"))r.id="derived:"+r.time+":"+r.latitude+":"+r.longitude;
+            r.region=p.optString("placeName","").trim();if(r.region.isEmpty()||r.region.equals("null"))r.region=p.optString("location","未提供地区名称");r.agency="CENC（经 Wolfx 转发，非官方接口）";
+            String type=p.optString("type");if(type.equals("reviewed"))r.review="来源标记已复核";else if(type.equals("automatic"))r.review="自动解，参数可能修订";
+            if(r.depth<0||r.depth>800)r.depth=Double.NaN;
+            if(valid(r))result.add(r);
+        }
+        if(rows==0||result.isEmpty())throw new IOException("Wolfx 目录格式或事件参数无效");
+        return result;
+    }
     static List<Report> geofon(String raw)throws Exception{
         if(raw.toUpperCase(Locale.ROOT).contains("<!DOCTYPE")||raw.toUpperCase(Locale.ROOT).contains("<!ENTITY"))throw new IOException("不接受包含外部实体的数据");
         DocumentBuilderFactory f=DocumentBuilderFactory.newInstance();f.setNamespaceAware(true);f.setExpandEntityReferences(false);
@@ -91,19 +107,21 @@ final class EarthquakeData {
         Map<String,Report> unique=new LinkedHashMap<>();
         for(Report r:input){String key=r.source+":"+r.id;Report old=unique.get(key);if(old==null||r.updated>=old.updated)unique.put(key,r);}
         List<Report> list=new ArrayList<>(unique.values());list.sort(Comparator.comparingLong(r->r.time));List<Event> result=new ArrayList<>();
-        Map<Report,Report> closest=new IdentityHashMap<>();
+        Map<Report,Map<String,Report>> closest=new IdentityHashMap<>();
         for(int index=0;index<list.size();index++){
-            Report r=list.get(index),best=null;double cost=Double.POSITIVE_INFINITY,second=Double.POSITIVE_INFINITY;
+            Report r=list.get(index);Map<String,Report> matches=new HashMap<>();
+            for(String source:SOURCES){if(source.equals(r.source))continue;Report best=null;double cost=Double.POSITIVE_INFINITY,second=Double.POSITIVE_INFINITY;
             for(int direction:new int[]{-1,1})for(int i=index+direction;i>=0&&i<list.size();i+=direction){
-                Report other=list.get(i);long dt=Math.abs(other.time-r.time);if(dt>20_000)break;if(other.source.equals(r.source))continue;
+                Report other=list.get(i);long dt=Math.abs(other.time-r.time);if(dt>20_000)break;if(!other.source.equals(source))continue;
                 double km=distance(r.latitude,r.longitude,other.latitude,other.longitude);if(km>35||Math.abs(r.magnitude-other.magnitude)>1)continue;
                 double score=dt/1000.0+km;if(score<cost){second=cost;cost=score;best=other;}else second=Math.min(second,score);
             }
-            if(best!=null&&second-cost>=5)closest.put(r,best);
+            if(best!=null&&second-cost>=5)matches.put(source,best);
+            }closest.put(r,matches);
         }
         Set<Report> used=Collections.newSetFromMap(new IdentityHashMap<Report,Boolean>());
-        for(Report r:list){if(used.contains(r))continue;Event event=new Event();event.reports.add(r);used.add(r);Report match=closest.get(r);
-            if(match!=null&&closest.get(match)==r&&!used.contains(match)){event.reports.add(match);used.add(match);}result.add(event);
+        for(Report r:list){if(used.contains(r))continue;Event event=new Event();event.reports.add(r);used.add(r);
+            for(String source:SOURCES){Report match=closest.get(r).get(source);if(match==null||used.contains(match))continue;boolean mutual=true;for(Report member:event.reports)if(closest.get(member).get(match.source)!=match||closest.get(match).get(member.source)!=member){mutual=false;break;}if(mutual){event.reports.add(match);used.add(match);}}result.add(event);
         }
         return result;
     }

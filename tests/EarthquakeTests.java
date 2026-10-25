@@ -24,6 +24,21 @@ public final class EarthquakeTests {
         check(e.agency.equals("GSRAS")&&e.updated>e.time,"EMSC contribution agency and revision time retained");
         check(EarthquakeData.instant("2026-10-25T11:25:58.0Z")==EarthquakeData.instant("2026-10-25T19:25:58+08:00"),"Explicit UTC and offsets refer to same instant");
         check(EarthquakeData.instant("nonsense")==0,"Invalid date rejected rather than replaced with now");
+        // Synthetic data only: no redistribution of the live Wolfx catalogue as a fixture.
+        JSONObject wxRow=new JSONObject().put("EventID","synthetic-event").put("time","2026-10-26 00:46:46").put("ReportTime","2026-10-26 00:53:38").put("placeName","合成测试地点").put("location","processed name").put("latitude","32.57").put("longitude","93.98").put("magnitude","4.2").put("depth","10").put("type","reviewed").put("intensity","5");
+        String wx=new JSONObject().put("No1",wxRow).put("md5","synthetic").toString();
+        EarthquakeData.Report w=EarthquakeApi.parse("Wolfx",wx).get(0);
+        check(w.time==EarthquakeData.instant("2026-10-25T16:46:46Z")&&w.updated==EarthquakeData.instant("2026-10-25T16:53:38Z"),"Wolfx occurrence and report times explicitly UTC+8, not event-ID timestamp");
+        check(w.source.equals("Wolfx")&&w.region.equals("合成测试地点")&&w.magnitudeType.equals("M")&&w.depth==10,"Wolfx original place name and unspecified magnitude scale preserved");
+        check(w.review.equals("来源标记已复核")&&w.url().equals("https://www.cenc.ac.cn/"),"Source review label does not invent manual processing or per-event official URL");
+        check(EarthquakeData.wolfxTime("2026-02-30 00:00:00")==0&&EarthquakeData.wolfxTime("invalid")==0,"Wolfx invalid calendar date rejected");
+        wxRow.remove("EventID");String derived=EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString()).get(0).id;
+        check(derived.equals(EarthquakeData.wolfx(new JSONObject().put("No23",wxRow).toString()).get(0).id),"Fallback ID remains stable when catalogue rows shift");
+        wxRow.put("placeName",JSONObject.NULL).put("depth",JSONObject.NULL).put("type","automatic");w=EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString()).get(0);
+        check(w.region.equals("processed name")&&Double.isNaN(w.depth)&&w.review.contains("自动"),"Wolfx missing original name falls back, missing depth stays unavailable");
+        wxRow.put("latitude",true);boolean wxRejected=false;try{EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString());}catch(Exception ex){wxRejected=true;}check(wxRejected,"Wolfx boolean coordinates do not become valid epicentre");
+        wxRejected=false;try{EarthquakeData.wolfx("{\"error\":\"maintenance\"}");}catch(Exception ex){wxRejected=true;}check(wxRejected,"Wolfx service error cannot replace cache with empty catalogue");
+        wxRow.put("latitude",91);wxRejected=false;try{EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString());}catch(Exception ex){wxRejected=true;}check(wxRejected,"Wolfx out-of-range coordinates rejected");
         JSONObject missing=new JSONObject(json);JSONObject p=missing.getJSONArray("features").getJSONObject(0).getJSONObject("properties");p.put("lat",JSONObject.NULL);
         check(EarthquakeData.emsc(missing.toString()).size()==1,"Missing latitude cannot become a false zero-degree epicentre");
         p.put("lat",91);check(EarthquakeData.emsc(missing.toString()).size()==1,"Out-of-range coordinates rejected");
@@ -47,6 +62,13 @@ public final class EarthquakeTests {
         EarthquakeData.Report revised=report("GEOFON","a",t,30,100,5.2);revised.updated=t+1000;
         check(EarthquakeData.merge(Arrays.asList(revised,a)).get(0).main().magnitude==5.2,"Newer same-ID revision wins regardless of input order");
         EarthquakeData.Report distant=report("EMSC","d",t,31,100,5);check(EarthquakeData.merge(Arrays.asList(a,distant)).size()==2,"Distant simultaneous events stay separate");
+        EarthquakeData.Report second=report("EMSC","second",t+1000,30.01,100,5.1),third=report("Wolfx","third",t+2000,30.02,100,5.2);
+        List<EarthquakeData.Event> triple=EarthquakeData.merge(Arrays.asList(third,a,second));
+        check(triple.size()==1&&triple.get(0).reports.size()==3,"All three unambiguous sources merge into one event");
+        check(triple.get(0).sources().contains("CENC（Wolfx 转发）")&&triple.get(0).main()==a,"Attribution identifies upstream and relay; original priority retained");
+        EarthquakeData.Report chainA=report("GEOFON","chainA",t,30,100,5),chainB=report("EMSC","chainB",t+15000,30,100,5),chainC=report("Wolfx","chainC",t+30000,30,100,5);
+        check(EarthquakeData.merge(Arrays.asList(chainA,chainB,chainC)).size()==2,"Three-way merge requires pairwise compatibility, not a time chain");
+        check(EarthquakeData.merge(Arrays.asList(a,b,c,report("Wolfx","ambiguous",t+3000,30,100,5))).size()==3,"Third source does not make ambiguous aftershocks collapse");
         check(EarthquakeData.distance(0,0,0,0)==0,"Coincident epicentral distance zero");
         check(Math.abs(EarthquakeData.distance(0,0,0,1)-111.195)<.01,"One-degree great-circle distance in km");
         check(EarthquakeData.distance(0,179.9,0,-179.9)<23,"Distance works across the date line");
@@ -59,6 +81,8 @@ public final class EarthquakeTests {
         check(EarthquakeData.filter(candidates,t+1,t,0,3,3,null,1000,0).isEmpty(),"Old records excluded from selected window");
         check(EarthquakeData.filter(candidates,t-86400000,t,0,3,3,new double[]{0,0},1000,2).get(0).main().id.equals("x"),"Distance ordering has closest record first");
         String url=EarthquakeApi.url("GEOFON",t,4);check(url.startsWith("https://geofon.gfz.de/fdsnws/event/1/query?")&&url.contains("minmagnitude=4.0")&&!url.contains("latitude")&&!url.contains("longitude"),"Query only sends time and magnitude, not location");
+        check(EarthquakeApi.url("Wolfx",t,4).equals("https://api.wolfx.jp/cenc_eqlist.json")&&EarthquakeApi.url("Wolfx",t+1,7).equals(EarthquakeApi.url("Wolfx",t,4)),"Only fixed Wolfx catalogue endpoint, no coordinates, filter parameters or warning stream");
+        rejected=false;try{EarthquakeApi.url("unknown",t,4);}catch(IllegalArgumentException ex){rejected=true;}check(rejected,"Unknown source cannot silently request EMSC");
         check(EarthquakeApi.retryAfter("120",t)==t+120000,"Numeric Retry-After respected");
         check(EarthquakeApi.retryAfter("bad",t)==t+60000,"Invalid Retry-After falls back to one minute");
         check(EarthquakeApi.retryAfter("Mon, 26 Oct 2026 00:00:00 GMT",t)>t,"HTTP-date Retry-After supported");
@@ -69,7 +93,10 @@ public final class EarthquakeTests {
             check(store.save("EMSC",entry,generation),"Catalogue cache written");
             EarthquakeCache.Entry cached=store.read("EMSC");check(cached.reports.size()==2&&cached.since==entry.since&&cached.minimum==4,"Cache preserves catalogue and fetched query coverage");
             entry.fetched=t+1000;check(store.save("EMSC",entry,generation)&&store.read("EMSC").fetched==t+1000,"Existing cache safely replaced");
+            EarthquakeCache.Entry wxEntry=new EarthquakeCache.Entry();wxEntry.raw=wx;wxEntry.reports=EarthquakeData.wolfx(wx);wxEntry.fetched=t;wxEntry.since=t;wxEntry.minimum=3;
+            check(store.save("Wolfx",wxEntry,generation)&&store.read("Wolfx").reports.get(0).id.equals("synthetic-event"),"Wolfx independent cache round-trips synthetic catalogue");
             check(store.clear()&&store.read("EMSC")==null,"Clearing removes existing catalogue");
+            check(store.read("Wolfx")==null&&!store.save("Wolfx",wxEntry,generation),"Clear includes Wolfx and prevents old response resurrection");
             check(!store.save("EMSC",entry,generation)&&store.read("EMSC")==null,"In-flight pre-clear response cannot resurrect deleted cache");
             check(Arrays.equals(Files.readAllBytes(dir.resolve("background.jpg")),new byte[]{7,8})&&Files.readAllBytes(dir.resolve("courses.json"))[0]==9,"Clearing quake cache preserves all user content");
             check(store.save("EMSC",entry,store.generation()),"New post-clear request can persist normally");

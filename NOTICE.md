@@ -50,7 +50,7 @@ The new NMC weather-chart button opens the complete publisher page: https://www.
 Moscow (GeoNames 524901) and Paris (GeoNames 2988507) were retrieved through the official Open-Meteo geocoding endpoint on 2026-10-25; the existing GeoNames/Open-Meteo CC BY 4.0 attribution continues to apply. Earthquake sources and terms are documented for future consideration only in docs/EARTHQUAKE-RESEARCH-1.1.0.md. No earthquake client, feed data, dependency or artwork is incorporated.
 
 
-## Earthquake catalogue parameters in 1.1.0
+## Earthquake catalogue parameters in 1.1.0 (historical)
 
 Event locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks. GEOFON event locations, depths and magnitudes: CC BY 4.0, https://geofon.gfz.de/eqinfo/faq/ .
 
@@ -59,3 +59,9 @@ Credit: EMSC-CSEM SeismicPortal, https://www.seismicportal.eu . Downloaded datas
 The application matches and filters event solutions, formats times/numbers and translates a few region names. Provider magnitudes are not averaged; original solutions are retained in details. Source catalogues are neither complete nor guaranteed to arrive within a fixed time. No endorsement is implied. Real CC BY 4.0 regression samples in tests/fixtures/geofon-earthquakes.xml and emsc-earthquakes.json were retrieved 2026-10-26 and are not bundled as current data.
 
 Wolfx/CENC redistribution applicability is not confirmed; no Wolfx or earthquake early-warning stream is called in this version. Details: docs/EARTHQUAKE-1.1.0.md. Mathematical intensity estimates are not enabled without a validated applicable model.
+
+## Wolfx-relayed CENC recent catalogue in 1.1.1
+
+The app now directly requests only https://api.wolfx.jp/cenc_eqlist.json (latest up to approximately 50 records), attributed as CENC via the unofficial Wolfx service. No early-warning stream is requested. Wolfx terms retain upstream rights; the applicability of CENC public-display / redistribution conditions to this product remains unconfirmed. Technical access, CORS, noncommercial use and disclaimers are not authorization. No CENC redistribution authorization is claimed. The source can be disabled independently in the app.
+
+GEOFON / EMSC CC BY 4.0 licensing does NOT extend to Wolfx / CENC. The code's MIT license does not cover third-party data. No live Wolfx catalogue is bundled as a public test fixture. The unverified `intensity` field is not shown as official maximum intensity or mechanically converted to Chinese intensity / MMI. Details and official terms links: [1.1.1 source and limits](docs/EARTHQUAKE-1.1.1.md).
