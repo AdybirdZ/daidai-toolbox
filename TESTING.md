@@ -1,3 +1,22 @@
+# 呆呆工具箱 1.0.7 验证记录
+
+日期：2026-10-25。包名 `org.simpleweather.app`，versionCode 9，versionName 1.0.7。
+
+- JVM核心测试：51项天气行为检查 + 114项课表/天文/显示检查，共165项通过；雷暴组断言更新为本版指定名称。
+- 构建、zipalign及APK v2/v3签名验证通过；沿用原证书SHA-256 `b08f1aa17fc9c7a91f755290e1d3edcc68c88661cb93935f34ef811828bc0e95`。minSdk26，targetSdk35。
+- Android API35模拟器从1.0.6同签名覆盖安装成功，杭州地区及原设置保留；首次显示独立1.0.7更新段，旧版本记录保留。
+- 图例日夜图标实拍确认95/96/97/99名称正确，99各有四枚冰雹圆点、96保持两枚；说明改为“数”，保留模型条件与未知说明。
+- 图例底部同时显示Open-Meteo与WMO链接；点击WMO按钮后实际ACTION_VIEW为 `https://codes.wmo.int/bufr4/codeflag/0-20-003?_view=all`，外部浏览器成功显示WMO官方Present weather注册表。
+- 320dp宽、1.2倍字号检查：96长名称正常换行，不与最右侧代码重叠，99与未知图标正常；底部两个链接均完整可见。测试后恢复原分辨率与1.0倍字号。
+- 官方Open-Meteo文档、WMO注册表/英文CSV及服务商实现交叉核查，29码对照见 `docs/WEATHER-CODE-COMPARISON.md`。其他代码差异仅记入报告，没有改动对应中文标签。
+- Android crash缓冲区为空。此次未重测不涉及的课表编辑、真实硬件定位或各厂商手机。
+
+截图：`docs/images/v107-legend-top.png`、`v107-thunderstorms.png`、`v107-legend-links.png`、`v107-small-thunderstorms.png`、`v107-small-links.png`。
+
+以下保留历史版本验证，历史结果不表示本次全部重测。
+
+---
+
 # 呆呆工具箱 1.0.6 验证记录
 
 日期：2026-10-25。包名 `org.simpleweather.app`，versionCode 8，versionName 1.0.6。

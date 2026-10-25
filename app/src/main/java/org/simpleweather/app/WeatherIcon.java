@@ -34,7 +34,7 @@ public final class WeatherIcon extends View {
         else if(code==71||code==73||code==75){snow(c,code==71?1:code==73?2:3);}
         else if(code==85||code==86){snow(c,code==85?1:3);}
         else if(code==95||code==97){bolt(c);stroke(BLUE,3.8f);c.drawLine(29,81,23,92,p);c.drawLine(80,81,74,92,p);if(code==97){c.drawLine(18,81,12,92,p);c.drawLine(91,81,85,92,p);}}
-        else if(code==96||code==99){bolt(c);color(BLUE);c.drawCircle(28,86,code==96?4:5,p);c.drawCircle(77,86,code==96?4:5,p);}
+        else if(code==96||code==99){bolt(c);color(BLUE);c.drawCircle(28,86,code==96?4:5,p);c.drawCircle(77,86,code==96?4:5,p);if(code==99){c.drawCircle(16,95,4.5f,p);c.drawCircle(88,95,4.5f,p);}}
         else if(drizzle||shower){rain(c,code==81?2:code==82?3:1);}
         else if(code==61||code==63||code==65){rain(c,code==61?1:code==63?2:3);}
         c.restore();
