@@ -37,6 +37,18 @@ public final class CoreTests {
         check(WeatherData.condition(-1).equals("天气未知"),"Unknown WMO code stays unknown");
         check(WeatherData.condition(99).equals("雷雨伴大冰雹"),"Severe WMO conditions map correctly");
         check(WeatherData.condition(67).equals("大冻雨"),"Freezing rain has its own label");
+        check(WeatherData.code(new JSONObject(),"weather_code",-1)==-1,"Absent weather code is unknown");
+        check(WeatherData.code(new JSONObject("{\"weather_code\":\"bad\"}"),"weather_code",-1)==-1,"Nonnumeric weather code is unknown");
+        check(WeatherData.code(new JSONObject("{\"weather_code\":3.5}"),"weather_code",-1)==-1,"Fractional code must not be truncated into overcast");
+        check(WeatherData.code(new JSONObject("{\"weather_code\":-3}"),"weather_code",-1)==-1,"Negative weather code is invalid");
+        check(WeatherData.code(new JSONObject("{\"weather_code\":2147483648}"),"weather_code",-1)==-1,"Out-of-range weather code must not overflow");
+        check(WeatherData.code(new JSONObject("{\"weather_code\":0}"),"weather_code",-1)==0,"Valid clear sky code zero survives validation");
+        check(WeatherData.code(new JSONObject("{\"weather_code\":97}"),"weather_code",-1)==97&&WeatherData.isSupportedCode(97),"Current official heavy thunderstorm code is supported");
+        JSONObject hourlyCodes=new JSONObject("{\"weather_code\":[null,67,2.5]}");
+        check(WeatherData.code(hourlyCodes,"weather_code",0)==-1&&WeatherData.code(hourlyCodes,"weather_code",1)==67&&WeatherData.code(hourlyCodes,"weather_code",2)==-1,"Hourly codes use the same missing and integer validation");
+        int future=WeatherData.code(new JSONObject("{\"weather_code\":123}"),"weather_code",-1);
+        check(future==123&&!WeatherData.isSupportedCode(future)&&WeatherData.condition(future).equals("天气未知"),"Unrecognized future code uses unknown fallback instead of a known condition");
+        check(!WeatherData.isSupportedCode(4)&&WeatherData.condition(4).equals("天气未知"),"Unlisted WMO code uses the same unknown label and icon classification");
         check(WeatherData.wind(359).equals("北风"),"Wind wraps through zero degrees");
         check(WeatherData.wind(Double.NaN).isEmpty(),"Unknown wind direction is not invented");
         check(WeatherData.clock("").equals("—"),"Polar missing sunrise is supported");

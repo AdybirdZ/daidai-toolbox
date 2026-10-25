@@ -1,4 +1,4 @@
-# 呆呆工具箱 1.0.5
+# 呆呆工具箱 1.0.6
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用Codex制作。
 
@@ -12,11 +12,13 @@
 
 首次启动定位才申请所需的前台位置权限。网络模式的系统位置服务可能向其服务商发送 IP、基站或 Wi-Fi 信息，适用系统规则。图片使用系统文件选择器，无存储读取权限。课程、背景、收藏和缓存保存在手机内部，无账号、广告、统计 SDK 或自建服务器。官方网页适用各自隐私规则。天气查询向 Open-Meteo 发送所选城市坐标，GPS 不自动更改天气城市。
 
+天气图例包含29种已核查的 Open-Meteo 代码与未知数据提示，按白天、夜间及最右侧代码排列；代码和模型限制见 `docs/WEATHER-CODES.md`，图例底部可打开官方文档。
+
 授权与隐私见 `docs/DATA-LICENSE.md`，版本内容见 `CHANGELOG.md`，验证见 `TESTING.md`。新写客户端代码为 MIT，数据许可单独保留。
 
 ## 安装与升级
 
-安装 `DaidaiToolbox-1.0.5.apk`。包名保持 `org.simpleweather.app`，versionCode 从 6 增至 7，沿用原开发签名，可覆盖1.0.4并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
+安装 `DaidaiToolbox-1.0.6.apk`。包名保持 `org.simpleweather.app`，versionCode 从 7 增至 8，沿用原开发签名，可覆盖1.0.5并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
 
 使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
@@ -25,7 +27,7 @@
 JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.0.5.apk
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.0.6.apk
 ```
 
 脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。
@@ -38,4 +40,4 @@ python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.0.5.apk
 python tests/run.py --json-jar C:/path/json-20240303.jar
 ```
 
-天气、地区、时区、缓存和节流 41 项，课程模型、天文及显示顺序 79 项，共 120 项。Java 源码在 `app/src/main/java/org/simpleweather/app/`，主要模块为 MainActivity、WeatherApi / Data / Store、ScheduleModel / Screen、GpsScreen、Astronomy / Screen、MapScreen、SettingsScreen、BackgroundCropActivity、DisplayOrder。
+天气、地区、时区、缓存、节流与异常天气代码 51 项，课程模型、天文及显示顺序 114 项，共 165 项。Java 源码在 `app/src/main/java/org/simpleweather/app/`，主要模块为 MainActivity、WeatherApi / Data / Store、ScheduleModel / Screen、GpsScreen、Astronomy / Screen、MapScreen、SettingsScreen、BackgroundCropActivity、DisplayOrder。

@@ -9,6 +9,12 @@ import java.util.*;
 
 /** Local times are interpreted in the selected city's zone, never the phone's zone. */
 public final class WeatherData {
+    private static final int[] SUPPORTED_CODES={0,1,2,3,45,48,51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,97,99};
+    public static int[] supportedCodes() { return SUPPORTED_CODES.clone(); }
+    public static boolean isSupportedCode(int code) {
+        for (int supported : SUPPORTED_CODES) if (code == supported) return true;
+        return false;
+    }
     public final JSONObject raw, current, daily, hourly;
     public final ZoneId zone;
     public final LocalDateTime currentTime;
@@ -60,13 +66,13 @@ public final class WeatherData {
             case 71: return "小雪"; case 73: return "中雪"; case 75: return "大雪"; case 77: return "米雪";
             case 80: return "小阵雨"; case 81: return "中阵雨"; case 82: return "大阵雨";
             case 85: return "小阵雪"; case 86: return "大阵雪";
-            case 95: return "小或中雷雨"; case 96: return "雷雨伴小冰雹"; case 99: return "雷雨伴大冰雹";
+            case 95: return "小或中雷雨"; case 96: return "雷雨伴小冰雹"; case 97: return "强雷暴"; case 99: return "雷雨伴大冰雹";
             default: return "天气未知";
         }
     }
     public static int code(JSONObject object, String field, int index) {
         double n = index < 0 ? value(object, field) : at(object, field, index);
-        return Double.isFinite(n) ? (int)n : -1;
+        return Double.isFinite(n) && n >= 0 && n <= Integer.MAX_VALUE && n == Math.rint(n) ? (int)n : -1;
     }
     public static String wind(double direction) {
         if (!Double.isFinite(direction)) return "";

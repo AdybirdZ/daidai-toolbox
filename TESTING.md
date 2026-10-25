@@ -1,3 +1,23 @@
+# 呆呆工具箱 1.0.6 验证记录
+
+日期：2026-10-25。包名 `org.simpleweather.app`，versionCode 8，versionName 1.0.6。
+
+- JVM 核心测试：51项天气行为检查 + 114项课表/天文/显示检查，共165项通过。新增天气字段缺失、null、非数值、小数、负数、整数溢出、逐时异常、未知正整数与97强雷暴的检查。小数不再截断为已知天气；未识别正整数与缺失值统一进入问号图标分类。
+- 从工作区 `scripts/build.ps1` 完成 aapt2 / javac / D8 / zipalign / apksigner 构建；APK v2/v3签名通过，证书SHA-256保持 `b08f1aa17fc9c7a91f755290e1d3edcc68c88661cb93935f34ef811828bc0e95`。
+- Android API35模拟器从1.0.5同签名覆盖安装成功，杭州地区及原设置保留；首次展示独立1.0.6更新段，1.0.5及更早历史内容仍分别保留。
+- 图例顶部说明数字含义、代码不连续原因，以及96/99取决于模型冰雹预报能力；29个支持代码与当前官方文档表一致，并含97“强雷暴”。
+- 实际截图确认67“大冻雨”的白天与夜间云下均为三个深蓝色斜线雨点，66“小冻雨”保持一个；数字独立右对齐。
+- 图例底部“天气未知”保留问号与无编号占位，解释缺失/null/无效或未识别代码。文档按钮可见且能点击，Android实际发出的 ACTION_VIEW URL 为 `https://open-meteo.com/en/docs#weather_variable_documentation`。
+- 320dp宽度、1.2倍字号复核名称、数字、说明与底部链接；缩短按钮标题以避免箭头单独换行。测试后恢复模拟器原始分辨率及1.0字号。
+- 官方文档本次直接访问HTTP200，核查范围与引用见 `docs/WEATHER-CODES.md`。当前文档的96/99脚注限定模型能力，不按旧资料写“仅中欧”；97列为Heavy thunderstorm。
+- 本次Android crash缓冲区为空。未重新测试不涉及的课程编辑、硬件搜星或各厂商手机。
+
+截图：`docs/images/v106-legend-top.png`、`v106-freezing-rain.png`、`v106-legend-bottom.png`、`v106-small-bottom.png`。
+
+以下保留此前版本验证，历史结果不表示本次全部重测。
+
+---
+
 # 呆呆工具箱 1.0.5 验证记录
 
 日期：2026-10-25。包名 org.simpleweather.app，versionCode 7，versionName 1.0.5。
