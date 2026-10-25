@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
     private MapScreen maps;
     private ScheduleScreen schedule;
     private GpsScreen gps;
+    private EarthquakeScreen earthquakes;
     private android.graphics.Bitmap background;
     android.content.SharedPreferences preferences;
     private EditText search;
@@ -62,10 +63,11 @@ public class MainActivity extends Activity {
         preferences=getSharedPreferences("toolbox",0);
         if(preferences.getInt("settings_schema",0)<4){SharedPreferences.Editor e=preferences.edit();if(!preferences.contains("background_brightness"))e.putInt("background_brightness",100-Math.max(0,Math.min(100,preferences.getInt("shade",80))));if(preferences.getInt("radar_region",0)>7)e.putInt("radar_region",0);if(preferences.getInt("map_product",0)==4)e.putInt("map_product",0);e.remove("shade").putInt("settings_schema",4).apply();}
         if(preferences.getInt("star_names_schema",0)<1){String[][] renamed={{"织女星","织女一"},{"牛郎星","河鼓二"},{"北极星","勾陈一"}};SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_star_"+pair[0],newKey="astro_star_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);}e.putInt("star_names_schema",1).apply();}
-        schedule=new ScheduleScreen(this);gps=new GpsScreen(this);
+        schedule=new ScheduleScreen(this);gps=new GpsScreen(this);earthquakes=new EarthquakeScreen(this);
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
+        if(getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=preferences.getInt("last_tab",0);if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<14)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",14).apply();}},700);
+        if(preferences.getInt("seen_version",0)<15)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",15).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -105,11 +107,11 @@ public class MainActivity extends Activity {
         pageHeader();
         navigation=row();navigation.setPadding(dp(8),dp(6),dp(8),dp(6));navigation.setBackground(shape(0xF2FFFFFF,0));host.addView(navigation,lp(-1,-2));renderNavigation();
     }
-    static final String[] TAB_NAMES={"天气","课程表","定位","天气地图","天文"};
+    static final String[] TAB_NAMES={"天气","课程表","定位","天气地图","天文","地震"};
     static final String[] WEATHER_NAMES={"地区","当前天气","未来24小时","未来7天","天气详情","数据来源入口"};
     boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",false);}
     int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
-    List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),5);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3))result.add(id);if(result.isEmpty())result.add(0);return result;}
+    List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),TAB_NAMES.length);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3||id==5))result.add(id);if(result.isEmpty())result.add(0);return result;}
     void refreshScreen(){List<Integer> visible=visibleTabs();if(!visible.contains(tab))tab=visible.get(0);switchTab(tab);}
     private void pageHeader(){
         TextView title=text("呆呆工具箱 · "+TAB_NAMES[tab],25,INK,true);body.addView(title);gap(body,7);body.addView(text("呆呆鸟使用 Codex 制作",12,MUTED,false));gap(body,12);
@@ -227,7 +229,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.0.10",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · v1.1.0",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -300,13 +302,15 @@ public class MainActivity extends Activity {
         });
     }
     private boolean weatherVisible(){return tab==0&&!picking;}
-    void switchTab(int next){hideKeyboard();if(next!=2)gps.stopForNavigation();tab=next;List<Integer> items=visibleTabs();if(items.size()>=5){int pos=items.indexOf(tab);if(pos<navigationOffset)navigationOffset=pos;else if(pos>=navigationOffset+3)navigationOffset=pos-2;}picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==0)showWeather();else{startScreen();if(next==1)schedule.render();else if(next==2)gps.render();else if(next==3){maps=new MapScreen(this);maps.render(!deferMapReload);deferMapReload=false;}else new AstronomyScreen(this,city,data,astronomyTime,this::showAstronomy).render();}}
+    void switchTab(int next){hideKeyboard();if(next!=2)gps.stopForNavigation();if(earthquakes!=null)earthquakes.pause();tab=next;List<Integer> items=visibleTabs();if(items.size()>=5){int pos=items.indexOf(tab);if(pos<navigationOffset)navigationOffset=pos;else if(pos>=navigationOffset+3)navigationOffset=pos-2;}picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==0)showWeather();else{startScreen();if(next==1)schedule.render();else if(next==2)gps.render();else if(next==3){maps=new MapScreen(this);maps.render(!deferMapReload);deferMapReload=false;}else if(next==4)new AstronomyScreen(this,city,data,astronomyTime,this::showAstronomy).render();else if(next==5)earthquakes.render();}}
     void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",14).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",15).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
+    void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
+    void earthquakeSettings(){earthquakes.settings();}
     void locationModeChanged(){gps.modeChanged();if(tab==2)switchTab(2);}
     void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast("未找到系统图片选择器");}}
     void resetBackground(){new java.io.File(getFilesDir(),"background.jpg").delete();background=null;refreshScreen();}
@@ -317,6 +321,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"1.1.0 · 近期地震与持续定位","• 新增地震栏目：GEOFON 与 EMSC 双源近期目录、相近事件合并、震级类型、发生时间、深度、震中、地表距离及各来源详情。\n• 可设置时间范围、区域、最低震级、附近范围、排序、时区、烈度标度、列表字段、栏目顺序和前台刷新间隔；保留离线缓存，区分各来源更新与失败。\n• 来源使用 CC BY 4.0 并保留署名；Wolfx 国内目录的上游依据尚待确认，未启用，也未接入预警流。缺乏可靠烈度资料时不生成数值。\n• 定位新增“切换栏目和后台继续定位”，默认关闭；主动开启并开始后使用 Android 前台服务，提供持续通知和停止按钮。最近定位供地震距离本地计算，不上传。\n• 缓存管理新增地震目录，清理期间的旧请求不会回写。新增栏目保留原有底栏排序及其他设置。");
         updateEntry(c,"1.0.12 · 设置弹窗与地图按钮","• 设置弹窗直接在中央显示，取消系统滑入/退出动画。按钮间距与描边改为首次布局前完成，避免显示时再次调整尺寸。日期选择也使用相同处理，保留逐级返回和输入校验。\n• 天气地图的“浏览器”改为“在浏览器中打开”，与图种按钮保持相同宽高、圆角和间距，小屏可完整换行显示。\n• 扩展地震来源及调用许可调研，不在本版本接入地震功能。");
         updateEntry(c,"1.0.11 · 间距与栏目管理","• 统一底栏、排序、时间控制、课表、裁剪和弹窗按钮间距，地区名称不再重复打开选择器，搜索按钮移到输入框外。\n• 常用地区新增莫斯科、巴黎，保持每行三列等宽。调整背景裁剪标题与说明，课表入口改为“学期设置”。\n• 版本记录按版本折叠，每次进入默认收起；新增缓存管理，保留课程、收藏、背景、设置与限流记录。\n• 天文新增“时间控制”卡片及栏目显示与排序设置，切换时间保留星图选中与滚动位置。\n• 课表跳周改为输入周次；缩小工具箱图标，四周留白。地震功能仅调研，未加入本版本。");
         updateEntry(c,"1.0.10 · 星空与月球信息","• 当地星空改为随屏幕宽度扩展的正方形，放大坐标。标签只在星点正上方或正下方，冲突时隐藏标签但星点仍可选中。\n• “星点信息”改为“选中的星星信息”；太阳和月球可选中，太阳不显示星等，月球显示本地估算视星等。\n• 新增独立“月球信息”，移入月相、照亮比例、近似月龄及距下次满月时间，并绘制随所选时间更新的月相示意。\n• 天气地图在卫星云图后新增中央气象台“天气图”原页入口。\n• 课程信息前缀各项的默认选项移到最前，保留原选择。");
@@ -337,16 +342,17 @@ public class MainActivity extends Activity {
         cacheGeneration++;searchVersion++;data=null;notice="";
         deferMapReload=tab==3;
         if(maps!=null){maps.destroy();maps=null;}
-        boolean filesCleared=store.clearCache();
+        boolean filesCleared=store.clearCache() & earthquakes.clear();
         android.webkit.WebView web=new android.webkit.WebView(this);web.clearCache(true);web.clearHistory();web.destroy();
         android.webkit.WebStorage.getInstance().deleteAllData();
-        android.webkit.CookieManager.getInstance().removeAllCookies(removed->{android.webkit.CookieManager.getInstance().flush();if(!dead){refreshScreen();done.run();toast(filesCleared?"缓存已清除":"部分天气缓存未能删除，请重试");}});
+        android.webkit.CookieManager.getInstance().removeAllCookies(removed->{android.webkit.CookieManager.getInstance().flush();if(!dead){refreshScreen();done.run();toast(filesCleared?"缓存已清除":"部分缓存未能删除，请重试");}});
     }
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        TextView details=text("呆呆工具箱 1.0.12 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位仅在你授权后于前台获取，应用不上传坐标。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\n免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
-        link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
+        TextView details=text("呆呆工具箱 1.1.0 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位默认切换栏目或后台即停止；可在设置中主动开启持续定位，开始后由前台服务工作并提供通知和停止入口。应用不上传定位坐标；最近一次定位保存在本机，地震距离也在本机计算。GPS 硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\nOpen-Meteo 免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。",14,INK,false);details.setLineSpacing(dp(4),1);content.addView(details);gap(content,16);
+        link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"GEOFON · 地震来源与许可","https://geofon.gfz.de/eqinfo/faq/");link(content,"EMSC · 地震许可与条款","https://www.seismicportal.eu/terms.html");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");
         link(content,"深空天体中心坐标 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
+        content.addView(text("地震：GEOFON（GFZ／GEVN）与 EMSC／SeismicPortal，数据采用 CC BY 4.0。Event locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks. 本应用合并、筛选和格式化目录，保留各来源参数；不是官方预警。查询会向来源发送 IP、时间范围和最低震级，不发送参考位置。目录缓存在本机；仅地震页前台自动刷新。Wolfx 上游依据尚未确认，当前不调用。",14,INK,false));gap(content,12);
         gap(content,10);content.addView(text("参考开源项目",17,INK,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");
         ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("知道了",null).show();
     }
@@ -354,10 +360,11 @@ public class MainActivity extends Activity {
     void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast("未找到可打开链接的浏览器");}}
     private void hideKeyboard() {View focused=getCurrentFocus();if(focused!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focused.getWindowToken(),0);focused.clearFocus();}}
     void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(message,16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
+    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(intent.getBooleanExtra("open_location",false)){preferences.edit().putBoolean("tab_show_2",true).apply();switchTab(2);}}
     @Override public void onBackPressed() {if(picking){hideKeyboard();switchTab(tab);}else if(tab!=visibleTabs().get(0))switchTab(visibleTabs().get(0));else super.onBackPressed();}
-    @Override protected void onPause(){if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
-    @Override protected void onResume(){super.onResume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();}
-    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();}
+    @Override protected void onPause(){if(earthquakes!=null)earthquakes.pause();if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
+    @Override protected void onResume(){super.onResume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
+    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();else if(request==44)gps.notificationPermissionResult();}
     @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
-    @Override protected void onDestroy(){dead=true;if(maps!=null)maps.destroy();if(gps!=null)gps.pause();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
+    @Override protected void onDestroy(){dead=true;if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.pause();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }

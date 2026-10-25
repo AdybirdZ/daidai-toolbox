@@ -1,0 +1,53 @@
+{"type":"FeatureCollection","metadata":{"count":2},"features":[{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      94.0400,
+      32.4100,
+      -10.0
+    ]
+  },
+  "id": "20261025_0000153",
+  "properties": {
+    "source_id": "2080360",
+    "source_catalog": "EMSC-RTS",
+    "lastupdate": "2026-10-25T12:18:47.902429Z",
+    "time": "2026-10-25T11:25:58.0Z",
+    "flynn_region": "XIZANG-QINGHAI BORDER REGION",
+    "lat": 32.4100,
+    "lon": 94.0400,
+    "depth": 10.0,
+    "evtype": "ke",
+    "auth": "GSRAS",
+    "mag": 5.9,
+    "magtype": "mw",
+    "unid": "20261025_0000153"
+  }
+},{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      94.0600,
+      32.4100,
+      -10.0
+    ]
+  },
+  "id": "20261025_0000156",
+  "properties": {
+    "source_id": "2080358",
+    "source_catalog": "EMSC-RTS",
+    "lastupdate": "2026-10-25T12:39:36.240836Z",
+    "time": "2026-10-25T11:24:14.8Z",
+    "flynn_region": "XIZANG-QINGHAI BORDER REGION",
+    "lat": 32.4100,
+    "lon": 94.0600,
+    "depth": 10.0,
+    "evtype": "ke",
+    "auth": "GSRAS",
+    "mag": 5.1,
+    "magtype": "mb",
+    "unid": "20261025_0000156"
+  }
+}]}
