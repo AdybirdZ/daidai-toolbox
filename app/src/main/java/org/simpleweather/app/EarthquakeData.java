@@ -65,7 +65,7 @@ final class EarthquakeData {
             r.longitude=arrayNumber(coordinates,0);r.latitude=arrayNumber(coordinates,1);r.depth=arrayNumber(coordinates,2);r.magnitude=number(p,"mag");r.region=p.optString("place","未提供地区名称");r.agency="美国地质调查局国家地震信息中心（USGS / NEIC）";r.magnitudeType=p.optString("magType","M");if(r.magnitudeType.isEmpty())r.magnitudeType="M";
             if(r.depth<0||r.depth>800)r.depth=Double.NaN;
             r.reportedMmi=intensityNumber(number(p,"cdi"));r.modelMmi=intensityNumber(number(p,"mmi"));double felt=number(p,"felt");r.felt=Double.isFinite(felt)&&felt>=1?(int)Math.min(felt,Integer.MAX_VALUE):0;if(r.felt==0)r.reportedMmi=Double.NaN;
-            if(p.optString("status").equals("reviewed"))r.review="来源标记已复核";else if(p.optString("status").equals("automatic"))r.review="自动解，参数可能修订";
+            if(p.optString("status").equals("reviewed"))r.review="来源标记已复核";else if(p.optString("status").equals("automatic"))r.review="自动解算，参数可能修订";
             if(valid(r))out.add(r);
         }catch(JSONException ignored){}
         if(eligible>0&&out.isEmpty())throw new IOException("美国地质调查局事件参数无效");return out;
@@ -81,7 +81,7 @@ final class EarthquakeData {
             Report r=new Report();r.source="Wolfx";r.time=wolfxTime(p.optString("time"));r.updated=wolfxTime(p.optString("ReportTime"));r.latitude=number(p,"latitude");r.longitude=number(p,"longitude");r.magnitude=number(p,"magnitude");r.depth=number(p,"depth");
             r.id=p.optString("EventID","").trim();if(r.id.isEmpty()||r.id.equals("null"))r.id="derived:"+r.time+":"+r.latitude+":"+r.longitude;
             r.region=p.optString("placeName","").trim();if(r.region.isEmpty()||r.region.equals("null"))r.region=p.optString("location","未提供地区名称");r.agency="中国地震台网中心（经 Wolfx 转发，非官方接口）";
-            String type=p.optString("type");if(type.equals("reviewed"))r.review="来源标记已复核";else if(type.equals("automatic"))r.review="自动解，参数可能修订";
+            String type=p.optString("type");if(type.equals("reviewed"))r.review="来源标记已复核";else if(type.equals("automatic"))r.review="自动解算，参数可能修订";
             if(r.depth<0||r.depth>800)r.depth=Double.NaN;
             if(valid(r))result.add(r);
         }
@@ -105,7 +105,7 @@ final class EarthquakeData {
             r.magnitudeType=value(m,"type");if(r.magnitudeType.isEmpty())r.magnitudeType="M";
             r.agency=value(child(o,"creationInfo"),"agencyID");r.updated=Math.max(instant(value(child(o,"creationInfo"),"creationTime")),instant(value(child(e,"creationInfo"),"creationTime")));
             String mode=value(o,"evaluationMode"),status=value(o,"evaluationStatus");
-            if(mode.equals("manual"))r.review="人工处理";else if(status.equals("reviewed")||status.equals("confirmed"))r.review="已复核";else if(mode.equals("automatic"))r.review="自动解，参数可能修订";
+            if(mode.equals("manual"))r.review="人工处理";else if(status.equals("reviewed")||status.equals("confirmed"))r.review="已复核";else if(mode.equals("automatic"))r.review="自动解算，参数可能修订";
             String depthType=value(o,"depthType");
             if(depthType.contains("assigned")||value(o,"depthFixed").equals("true"))r.depthNote="来源标记为固定／指定深度，不能视为可靠实测";
             else if(Double.isFinite(r.depth)&&Math.abs(r.depth-10)<.001)r.depthNote="10 km 可能为默认浅源深度，不能据此确定实际深度";

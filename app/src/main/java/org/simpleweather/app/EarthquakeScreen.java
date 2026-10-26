@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 
 final class EarthquakeScreen {
     static final String[] SECTION_NAMES={"筛选与刷新","更新状态","地震列表"};
-    static final String[] DAYS={"最近 24 小时","最近 3 天","最近 7 天（默认）","最近 30 天"};
+    static final String[] DAYS={"最近 1 天","最近 3 天","最近 7 天（默认）","最近 30 天"};
     static final int[] DAY_VALUES={1,3,7,30};
     static final String[] AREAS={"全球（默认）","中国及周边","参考位置附近"};
     static final String[] SORTS={"按最新发生排序（默认）","按震级从大到小排序","按距离从近到远排序"};
@@ -28,7 +28,7 @@ final class EarthquakeScreen {
     private final Map<String,String> failures=new HashMap<>();
     private final Set<String> inFlight=new HashSet<>(),fromCache=new HashSet<>();
     private LinearLayout statusBox,listBox;
-    private TextView refresh,rangeButton,summary,referenceText;
+    private TextView refresh,summary,referenceText;
     private LinearLayout locationControls;
     private final EarthquakeLocation location;
     private String locationKey="";
@@ -38,14 +38,14 @@ final class EarthquakeScreen {
     private int shown=30,cycle,cycleGood,cycleTotal;
     private boolean cycleManual;
     private final Runnable tick=new Runnable(){public void run(){if(visible&&!dead){if(ticks++%15==0){refresh(false);updateStatus();}updateReference();String key=referenceKey();if(!key.equals(locationKey)){locationKey=key;updateList();}ui.postDelayed(this,1000);}}};
-    EarthquakeScreen(MainActivity activity){a=activity;p=a.preferences;limits=a.getSharedPreferences("earthquake_limits",0);cache=new EarthquakeCache(a.getFilesDir());location=new EarthquakeLocation(a,()->{updateReference();updateList();});}
+    EarthquakeScreen(MainActivity activity){a=activity;p=a.preferences;if(!p.getBoolean("quake_mmi_default_113",false))p.edit().putInt("quake_intensity_scale",1).putBoolean("quake_mmi_default_113",true).apply();limits=a.getSharedPreferences("earthquake_limits",0);cache=new EarthquakeCache(a.getFilesDir());location=new EarthquakeLocation(a,()->{updateReference();updateList();});}
 
     private int days(){int v=p.getInt("quake_days",7);for(int d:DAY_VALUES)if(v==d)return d;return 7;}
     private double global(){return EarthquakeOptions.magnitude(p.getFloat("quake_global_min",1));}
     private double regional(){return EarthquakeOptions.magnitude(p.getFloat("quake_regional_min",1));}
     private boolean enabled(String source){return source.equals("Wolfx")?p.getBoolean("quake_wolfx_ack_112",false)&&p.getBoolean("quake_source_Wolfx",false):p.getBoolean("quake_source_"+source,true);}
     void render(){
-        visible=true;statusBox=null;listBox=null;rangeButton=null;summary=null;refresh=null;referenceText=null;locationControls=null;
+        visible=true;statusBox=null;listBox=null;summary=null;refresh=null;referenceText=null;locationControls=null;
         for(int section:DisplayOrder.parse(p.getString("quake_order",""),SECTION_NAMES.length)){
             if(!p.getBoolean("quake_show_"+section,true))continue;
             LinearLayout c=a.card();c.addView(a.text(SECTION_NAMES[section],17,a.INK,true));a.gap(c,12);
@@ -59,18 +59,16 @@ final class EarthquakeScreen {
         resume();
     }
     private void controls(LinearLayout c){
-        LinearLayout row=a.row();rangeButton=a.button(dayLabel(),false,()->choose("查询时间范围",DAYS,dayIndex(),n->{p.edit().putInt("quake_days",DAY_VALUES[n]).apply();changed();}));row.addView(rangeButton,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(row,8);row.addView(a.button("筛选设置",false,()->settings()),new LinearLayout.LayoutParams(0,-2,1));c.addView(row);a.gap(c,10);
         summary=a.text("",13,a.MUTED,false);c.addView(summary);updateControls();a.gap(c,12);
         refresh=a.button(inFlight.isEmpty()?"刷新目录":"正在更新…",true,()->refresh(true));c.addView(refresh);
         locationControls=a.column();c.addView(locationControls);updateLocationControls();
     }
-    private void updateControls(){if(rangeButton!=null)rangeButton.setText(dayLabel());if(summary!=null)summary.setText(AREAS[area()].replace("（默认）","")+(area()==2?" · "+p.getInt("quake_radius",1000)+" km":"")+" · 全球 M≥"+String.format(Locale.ROOT,"%.1f",global())+" / 中国及周边 M≥"+String.format(Locale.ROOT,"%.1f",regional())+"\n"+SORTS[sort()].replace("（默认）",""));}
+    private void updateControls(){if(summary!=null)summary.setText("最近 "+days()+" 天 · "+AREAS[area()].replace("（默认）","")+(area()==2?" · "+p.getInt("quake_radius",1000)+" km":"")+" · 全球 M≥"+String.format(Locale.ROOT,"%.1f",global())+" / 中国及周边 M≥"+String.format(Locale.ROOT,"%.1f",regional())+"\n"+SORTS[sort()].replace("（默认）",""));}
     private void updateLocationControls(){if(locationControls==null)return;locationControls.removeAllViews();if(!p.getBoolean("quake_manual_location",false)){a.gap(locationControls,10);locationControls.addView(a.button("刷新定位",false,()->location.start()));}}
     private void updateReference(){if(referenceText!=null)referenceText.setText(referenceLabel()+(location.status.isEmpty()?"":"\n"+location.status));}
     private String referenceKey(){double[] ref=reference();Location l=LocationService.last(a);return Arrays.toString(ref)+":"+(l==null?0:l.getTime());}
     void locationPermissionResult(){location.permissionResult(visible&&!dead);}
 
-    private String dayLabel(){return "最近 "+days()+" 天";}
     private int dayIndex(){for(int i=0;i<DAY_VALUES.length;i++)if(DAY_VALUES[i]==days())return i;return 2;}
     private int area(){return Math.max(0,Math.min(2,p.getInt("quake_area",0)));}
     private int sort(){return Math.max(0,Math.min(2,p.getInt("quake_sort",0)));}
@@ -156,7 +154,7 @@ final class EarthquakeScreen {
         action(c,"排序方式",()->choose("排序方式",SORTS,sort(),n->{p.edit().putInt("quake_sort",n).apply();changed();}));action(c,"时间显示",()->choose("时间显示",new String[]{"手机当地时间（默认）","北京时间","UTC"},p.getInt("quake_timezone",0),n->{p.edit().putInt("quake_timezone",n).apply();changed();}));
         action(c,"烈度标度",()->choose("烈度标度",new String[]{"MMI（默认）","中国地震烈度（暂不估算）"},p.getInt("quake_intensity_scale",1)==1?0:1,n->{p.edit().putInt("quake_intensity_scale",n==0?1:0).apply();changed();}));
         action(c,"自动刷新间隔",()->choose("自动刷新间隔 · 仅页面前台",new String[]{"关闭","5 分钟","15 分钟（默认）","30 分钟","1 小时"},index(new int[]{0,300000,900000,1800000,3600000},(int)p.getLong("quake_interval",900000)),n->{p.edit().putLong("quake_interval",new long[]{0,300000,900000,1800000,3600000}[n]).apply();changed();}));
-        action(c,"距离计算参考位置",this::referenceSettings);action(c,"列表信息显示",this::fields);action(c,"栏目显示与排序",()->new SettingsScreen(a).earthquakeOrder());action(c,"数据源",this::sources);action(c,"地震术语介绍",()->EarthquakeInfo.terms(a));action(c,"数据来源与隐私",a::about);action(c,"清除地震缓存",()->new ToolDialog(a).setTitle("清除地震缓存？").setMessage("仅删除已下载的地震目录，保留设置、最近定位和来源限流记录。").setPositiveButton("清除",(d,n)->{a.toast(clear()?"地震缓存已清除":"部分地震缓存未能删除");}).setNegativeButton("取消",null).show());
+        action(c,"距离计算参考位置",this::referenceSettings);action(c,"列表信息显示",this::fields);action(c,"栏目显示与排序",()->new SettingsScreen(a).earthquakeOrder());action(c,"数据源",this::sources);action(c,"地震术语介绍",()->EarthquakeInfo.terms(a));action(c,"清除地震缓存",()->new ToolDialog(a).setTitle("清除地震缓存？").setMessage("仅删除已下载的地震目录，保留设置、最近定位和来源限流记录。").setPositiveButton("清除",(d,n)->{a.toast(clear()?"地震缓存已清除":"部分地震缓存未能删除");}).setNegativeButton("取消",null).show());
         dialog("地震设置",c);
     }
     private int index(int[] values,int v){for(int i=0;i<values.length;i++)if(values[i]==v)return i;return 0;}

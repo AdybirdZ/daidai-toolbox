@@ -1,11 +1,11 @@
-# 呆呆工具箱 1.1.2
+# 呆呆工具箱 1.1.3
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用 Codex 制作。
 
 - 天气：地区搜索、45 个常用地区、收藏、当前模型估算、24 小时与 7 日预报、15 分钟缓存及失败回退。
 - 官方天气图：全国日降水量、降水预报、气温、全国及七个区域雷达、FY4B 卫星云图及天气图，通过应用内完整官方网页查看，保留原站版权、图例、发布时间，不下载重发图片。
 - 天文：地平/赤道/隐藏坐标网格、旋转十字与持续选中、行星独立显隐、昴星团/仙女座星系大致中心、观星天气条件、亮星与行星示意、星点方位/高度/星等、亮星显示设置（北斗七星固定显示）、日月位置、月相、升落与曙暮光、流星雨活跃期参考与星图辐射点、指定年月日时分与前后15分钟/一天调整。本地天文计算为近似结果。
-- 地震：德国地学研究中心、欧洲—地中海地震中心及美国地质调查局全球近期目录，Wolfx 转发的中国地震台网目录默认关闭、阅读确认后可选。明确匹配的同次地震合并并保留各来源参数；离线缓存、本机距离、查询与排序、0.1 级震级滑块、手动参考位置与单次刷新定位。烈度优先显示来源公众震感，其次来源模型；符合范围时可本地估算震中 MMI，中国标度暂不换算。Wolfx 上游公开展示依据尚未完全确认，详见 [地震说明](docs/EARTHQUAKE-1.1.2.md)。无预警流。
+- 地震：德国地学研究中心、欧洲—地中海地震中心及美国地质调查局全球近期目录，Wolfx 转发的中国地震台网目录默认关闭、阅读确认后可选。明确匹配的同次地震合并并保留各来源参数；离线缓存、本机距离、查询与排序、0.1 级震级滑块、手动参考位置与单次刷新定位。烈度优先显示来源公众震感，其次来源模型；本地依原论文模型或扩展 GlobalQuake 参考算法估算震中 MMI，中国标度暂不换算。Wolfx 上游公开展示依据尚未完全确认，详见 [地震说明](docs/EARTHQUAKE-1.1.3.md)。无预警流。
 - 课程表：手动新增、修改、删除，课程名、地点、老师，学期、周次、单双周及任意自定义周、自定义上下课时间、周课表与今日课程。支持冲突检查，不含教务导入或桌面小组件。
 - 定位：可选 GPS 硬件或系统网络定位，前台读取 WGS84 经纬度、水平精度及可用海拔，默认切页或后台停止更新；可主动开启持续定位前台服务，提供通知和停止按钮，应用不上传坐标。网络模式需要设备支持系统网络位置服务及联网。结果年龄逐秒更新；自动定位最短请求间隔可选1秒至10分钟，系统可能延迟或提供缓存。
 - 图片背景支持拖动、缩放和选区确认，背景亮度向右增加图片可见程度；可选颜色描边、课程信息前缀、分级设置及每版本折叠的更新记录（重新进入默认全部收起）。设置逐级返回，选择保持当前页；支持一键恢复默认设置（保留课程、收藏及缓存，超出默认范围的课程保留必要周次/节次）。
@@ -27,7 +27,7 @@
 
 ## 安装与升级
 
-安装 `DaidaiToolbox-1.1.2.apk`。包名保持 `org.simpleweather.app`，versionCode 从 16 增至 17，沿用原开发签名，可覆盖 1.1.1 并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
+安装 `DaidaiToolbox-1.1.3.apk`。包名保持 `org.simpleweather.app`，versionCode 从 17 增至 18，沿用原开发签名，可覆盖 1.1.2 并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
 
 使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
@@ -36,7 +36,7 @@
 JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.1.2.apk
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.1.3.apk
 ```
 
 脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。
@@ -49,7 +49,7 @@ python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.1.2.apk
 python tests/run.py --json-jar C:/path/json-20240303.jar
 ```
 
-天气、地区、时区、缓存、节流与异常天气代码 51 项，课程模型、天文及显示顺序 149 项，地震 103 项，共 303 项。Java 源码在 `app/src/main/java/org/simpleweather/app/`，主要模块为 MainActivity、WeatherApi / Data / Store、ScheduleModel / Screen、GpsScreen、Astronomy / Screen、SkyGeometry / SkyLabels、MapScreen、SettingsScreen、BackgroundCropActivity、DisplayOrder。
+天气、地区、时区、缓存、节流与异常天气代码 51 项，课程模型、天文及显示顺序 149 项，地震 135 项，共 335 项。Java 源码在 `app/src/main/java/org/simpleweather/app/`，主要模块为 MainActivity、WeatherApi / Data / Store、ScheduleModel / Screen、GpsScreen、Astronomy / Screen、SkyGeometry / SkyLabels、MapScreen、SettingsScreen、BackgroundCropActivity、DisplayOrder。
 
 1.1.0 新增地震与持续定位，详情见 [数据与定位说明](docs/EARTHQUAKE-1.1.0.md)。历史版本“地震未接入”等描述仅指当时版本。
 
@@ -57,3 +57,6 @@ python tests/run.py --json-jar C:/path/json-20240303.jar
 
 
 1.1.2 地震设置与数据说明重新整理：参考位置改变自动更新距离、附近半径在区域内输入、日期带年份、时区使用 UTC 偏移，新增术语介绍。关于页将地震说明分段放在链接前，界面来源用中文名称。Wolfx 默认关闭（旧开关也需本版确认），并写明收到权利人停用要求后的配合措施。MMI 经验模型、USGS 限定参数范围及许可核查边界见 [1.1.2 说明](docs/EARTHQUAKE-1.1.2.md)。
+
+
+1.1.3 简化地震刷新区与设置入口，统一关于页段落间隔，升级后 MMI 默认置顶；术语解释处理方式与复核状态。旧 GlobalQuake 的 MIT 许可计算片段及 MMI 阈值用于扩展参考，随包保留版权声明，未接入其服务器或闭源新版本。具体模型选择、数值范围与局限见 [1.1.3 说明](docs/EARTHQUAKE-1.1.3.md)。

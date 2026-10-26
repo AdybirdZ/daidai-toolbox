@@ -22,6 +22,14 @@ final class EarthquakeIntensity {
         if(reported!=null)return "来源报告烈度 MMI "+roman(reported.reportedMmi)+String.format(Locale.ROOT,"（%.1f，公众震感汇总）",reported.reportedMmi);
         if(model!=null)return "估算烈度 MMI "+roman(model.modelMmi)+String.format(Locale.ROOT,"（%.1f，来源 ShakeMap 模型）",model.modelMmi);
         for(EarthquakeData.Report r:event.reports){if(!r.magnitudeType.toLowerCase(Locale.ROOT).startsWith("mw"))continue;if(!r.depthNote.equals("来源未说明深度是否固定")||Math.abs(r.depth-10)<.001)continue;double v=estimate(r.magnitude,r.depth,0);if(Double.isFinite(v))return "估算震中烈度 MMI "+roman(v)+String.format(Locale.ROOT,"（%.1f，本地经验模型）",v);}
-        return "估算烈度 MMI：参数不足或超出模型适用范围";
+        EarthquakeData.Report reference=event.main();
+        if(!Double.isFinite(reference.depth))for(EarthquakeData.Report r:event.reports)if(Double.isFinite(r.depth)){reference=r;break;}
+        int level=EarthquakeReferenceIntensity.level(EarthquakeReferenceIntensity.acceleration(reference.magnitude,reference.depth,0));
+        if(level>=0){
+            String assumptions=(!reference.magnitudeType.toLowerCase(Locale.ROOT).startsWith("mw")?"；按来源震级近似":"")+(!reference.depthNote.equals("来源未说明深度是否固定")||Math.abs(reference.depth-10)<.001?"；采用来源默认／固定深度":"");
+            if(level==0)return "估算震中烈度：未达模型的 MMI I 显示阈值（GlobalQuake 参考模型"+assumptions+"）";
+            return "估算震中烈度 MMI "+roman(level)+"（GlobalQuake 参考模型"+assumptions+"）";
+        }
+        return "估算烈度 MMI：缺少有效震级或深度";
     }
 }

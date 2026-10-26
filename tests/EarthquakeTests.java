@@ -19,7 +19,7 @@ public final class EarthquakeTests {
         check(g.id.equals("gfz2026uxnb")&&g.magnitudeType.equals("Mw")&&Math.abs(g.magnitude-5.98)<.001,"GEOFON preferred magnitude and ID preserved");
         check(g.depth==10&&Math.abs(g.latitude-32.482)<.0001,"QuakeML meters converted to km, coordinates not swapped");
         check(g.depthNote.contains("默认")&&gfz.get(1).depthNote.contains("固定"),"Potential default 10km and explicitly assigned depth identified separately");
-        check(g.review.contains("自动")&&g.updated>=g.time,"Evaluation mode and source creation time retained");
+        check(g.review.contains("自动解算")&&g.updated>=g.time,"Evaluation mode and source creation time retained");
         check(e.id.equals("20261025_0000153")&&e.magnitudeType.equals("mw")&&e.depth==10,"EMSC property depth retained, not negative GeoJSON elevation");
         check(e.agency.equals("GSRAS")&&e.updated>e.time,"EMSC contribution agency and revision time retained");
         check(EarthquakeData.instant("2026-10-25T11:25:58.0Z")==EarthquakeData.instant("2026-10-25T19:25:58+08:00"),"Explicit UTC and offsets refer to same instant");
@@ -35,7 +35,7 @@ public final class EarthquakeTests {
         wxRow.remove("EventID");String derived=EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString()).get(0).id;
         check(derived.equals(EarthquakeData.wolfx(new JSONObject().put("No23",wxRow).toString()).get(0).id),"Fallback ID remains stable when catalogue rows shift");
         wxRow.put("placeName",JSONObject.NULL).put("depth",JSONObject.NULL).put("type","automatic");w=EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString()).get(0);
-        check(w.region.equals("processed name")&&Double.isNaN(w.depth)&&w.review.contains("自动"),"Wolfx missing original name falls back, missing depth stays unavailable");
+        check(w.region.equals("processed name")&&Double.isNaN(w.depth)&&w.review.contains("自动解算"),"Wolfx missing original name falls back, missing depth stays unavailable");
         wxRow.put("latitude",true);boolean wxRejected=false;try{EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString());}catch(Exception ex){wxRejected=true;}check(wxRejected,"Wolfx boolean coordinates do not become valid epicentre");
         wxRejected=false;try{EarthquakeData.wolfx("{\"error\":\"maintenance\"}");}catch(Exception ex){wxRejected=true;}check(wxRejected,"Wolfx service error cannot replace cache with empty catalogue");
         wxRow.put("latitude",91);wxRejected=false;try{EarthquakeData.wolfx(new JSONObject().put("No1",wxRow).toString());}catch(Exception ex){wxRejected=true;}check(wxRejected,"Wolfx out-of-range coordinates rejected");
@@ -87,8 +87,18 @@ public final class EarthquakeTests {
         check(Math.abs(EarthquakeIntensity.estimate(5.5,15,0)-6.11191706995)<.00000001,"Published hypocentral IPE coefficients give independently calculated reference value (40-digit decimal calculation)");
         check(EarthquakeIntensity.estimate(5.5,15,50)<EarthquakeIntensity.estimate(5.5,15,0),"Predicted intensity decreases away from the epicentre");
         for(double[] v:new double[][]{{4.9,15,0},{8,15,0},{5.5,Double.NaN,0},{5.5,0,0},{5.5,31,0},{5.5,15,300},{5.5,15,-1}})check(Double.isNaN(EarthquakeIntensity.estimate(v[0],v[1],v[2])),"Unsupported IPE magnitude/depth/distance does not invent intensity");
-        us.depth=10;check(EarthquakeIntensity.label(intensityEvent,false).contains("参数不足"),"Potential default depth not treated as measured input to local IPE");
-        us.depth=15;us.magnitudeType="mb";check(EarthquakeIntensity.label(intensityEvent,false).contains("参数不足"),"mb not silently substituted for Mw");
+        us.depth=10;check(EarthquakeIntensity.label(intensityEvent,false).contains("采用来源默认／固定深度"),"Default depth is explicitly flagged in broad reference estimates");
+        us.depth=15;us.magnitudeType="mb";check(EarthquakeIntensity.label(intensityEvent,false).contains("按来源震级近似"),"mb approximation is explicit in broad reference estimate");
+        double[][] broadReferences={{2,10,.8094049649526324813},{4,15,7.623374803526101669},{6,100,9.402680817404358222},{9.5,10,10991.20359315588517}};
+        for(double[] ref:broadReferences)check(Math.abs(EarthquakeReferenceIntensity.acceleration(ref[0],ref[1],0)-ref[2])<Math.max(1e-10,ref[2]*1e-12),"Broad reference matches independently calculated 45-digit Decimal result");
+        check(EarthquakeReferenceIntensity.acceleration(4,15,100)<EarthquakeReferenceIntensity.acceleration(4,15,0),"Broad reference decays away from epicentre");
+        for(double[] invalid:new double[][]{{Double.NaN,10,0},{4,Double.NaN,0},{4,-1,0},{4,801,0},{4,10,-1},{11,10,0},{-3,10,0}})check(Double.isNaN(EarthquakeReferenceIntensity.acceleration(invalid[0],invalid[1],invalid[2])),"Invalid broad-reference input has no invented estimate");
+        for(double[] boundary:new double[][]{{.499999,0},{.5,1},{.999999,1},{1,2},{2.1,3},{5,4},{11,5},{26,6},{60,7},{140,8},{321.8,9},{740,10},{1702,11},{3000,12},{100000,12}})check(EarthquakeReferenceIntensity.level(boundary[0])==(int)boundary[1],"Old GlobalQuake MMI thresholds use lower-bound bins, not rounded continuous values");
+        check(EarthquakeReferenceIntensity.level(Double.NaN)==-1&&EarthquakeReferenceIntensity.level(-1)==-1,"Invalid acceleration not assigned an MMI level");
+        us.magnitudeType="M";us.magnitude=1;us.depth=10;check(EarthquakeIntensity.label(intensityEvent,false).contains("未达模型")&&!EarthquakeIntensity.label(intensityEvent,false).contains("MMI 0"),"Weak shaking below first display threshold does not invent MMI zero");
+        us.magnitude=4;check(EarthquakeIntensity.label(intensityEvent,false).contains("GlobalQuake")&&EarthquakeIntensity.label(intensityEvent,false).contains("按来源震级近似")&&EarthquakeIntensity.label(intensityEvent,false).contains("默认／固定"),"Small generic M event gets explicit broad-model assumptions");
+        us.depth=100;us.magnitude=6;us.magnitudeType="mww";check(EarthquakeIntensity.label(intensityEvent,false).contains("GlobalQuake"),"Deep event receives broad reference rather than extrapolating published shallow IPE");
+        us.depth=Double.NaN;check(EarthquakeIntensity.label(intensityEvent,false).contains("缺少有效"),"Missing depth still cannot receive a fictitious model result");
         usProps.put("mmi",0).put("cdi",13);us=EarthquakeData.usgs(usRoot.toString()).get(0);check(Double.isNaN(us.modelMmi)&&Double.isNaN(us.reportedMmi),"USGS no-data zero and out-of-range intensity rejected");
         usProps.put("cdi",5).put("felt",0);check(Double.isNaN(EarthquakeData.usgs(usRoot.toString()).get(0).reportedMmi),"No public reports means no fabricated reported intensity");
         usProps.put("net","xx");check(EarthquakeData.usgs(usRoot.toString()).isEmpty(),"Third-party preferred origins excluded even if USGS contributor query returned them");
