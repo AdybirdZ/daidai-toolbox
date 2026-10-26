@@ -14,7 +14,7 @@ final class EarthquakeData {
     static final String[] SOURCES={"GEOFON","EMSC","USGS","Wolfx"};
     static String sourceName(String source){return source.equals("Wolfx")?"中国地震台网（Wolfx 转发）":source.equals("GEOFON")?"德国地学研究中心":source.equals("EMSC")?"欧洲—地中海地震中心":source.equals("USGS")?"美国地质调查局":source;}
     static final class Report {
-        String source="",id="",region="",magnitudeType="M",agency="",review="未提供复核状态",depthNote="来源未说明深度是否固定";
+        String source="",id="",region="",magnitudeType="M",agency="",review="未提供复核状态",depthNote="";
         long time,updated;
         double latitude,longitude,magnitude,depth=Double.NaN,reportedMmi=Double.NaN,modelMmi=Double.NaN;
         int felt;
