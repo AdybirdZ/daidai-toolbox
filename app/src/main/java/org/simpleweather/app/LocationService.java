@@ -56,8 +56,9 @@ public final class LocationService extends Service implements LocationListener {
         if(Build.VERSION.SDK_INT>=31)builder.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE);Notification n=builder.build();
         if(Build.VERSION.SDK_INT>=29)startForeground(NOTICE,n,ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);else startForeground(NOTICE,n);foreground=true;
     }
-    private void save(Location l){
-        latest=new Location(l);SharedPreferences.Editor e=getSharedPreferences(STATE,0).edit().putLong("lat",Double.doubleToLongBits(l.getLatitude())).putLong("lon",Double.doubleToLongBits(l.getLongitude())).putLong("time",l.getTime()).putString("provider",l.getProvider());
+    private void save(Location l){record(this,l);}
+    static void record(Context context,Location l){
+        latest=new Location(l);SharedPreferences.Editor e=context.getSharedPreferences(STATE,0).edit().putLong("lat",Double.doubleToLongBits(l.getLatitude())).putLong("lon",Double.doubleToLongBits(l.getLongitude())).putLong("time",l.getTime()).putString("provider",l.getProvider());
         if(l.hasAccuracy())e.putFloat("accuracy",l.getAccuracy());else e.remove("accuracy");if(l.hasAltitude())e.putLong("altitude",Double.doubleToLongBits(l.getAltitude()));else e.remove("altitude");e.apply();
     }
     @Override public void onLocationChanged(Location l){if(!running)return;save(l);status="已获取 "+mode();}

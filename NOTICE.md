@@ -60,8 +60,18 @@ The application matches and filters event solutions, formats times/numbers and t
 
 Wolfx/CENC redistribution applicability is not confirmed; no Wolfx or earthquake early-warning stream is called in this version. Details: docs/EARTHQUAKE-1.1.0.md. Mathematical intensity estimates are not enabled without a validated applicable model.
 
-## Wolfx-relayed CENC recent catalogue in 1.1.1
+## Wolfx-relayed CENC recent catalogue in 1.1.1 (historical)
 
 The app now directly requests only https://api.wolfx.jp/cenc_eqlist.json (latest up to approximately 50 records), attributed as CENC via the unofficial Wolfx service. No early-warning stream is requested. Wolfx terms retain upstream rights; the applicability of CENC public-display / redistribution conditions to this product remains unconfirmed. Technical access, CORS, noncommercial use and disclaimers are not authorization. No CENC redistribution authorization is claimed. The source can be disabled independently in the app.
 
 GEOFON / EMSC CC BY 4.0 licensing does NOT extend to Wolfx / CENC. The code's MIT license does not cover third-party data. No live Wolfx catalogue is bundled as a public test fixture. The unverified `intensity` field is not shown as official maximum intensity or mechanically converted to Chinese intensity / MMI. Details and official terms links: [1.1.1 source and limits](docs/EARTHQUAKE-1.1.1.md).
+
+## Earthquake additions and consent in 1.1.2
+
+GEOFON / EMSC attribution above continues. USGS supplementary numerical event parameters are requested from https://earthquake.usgs.gov/fdsnws/event/1/ with contributor=us and retained only when the preferred origin network is us (USGS National Earthquake Information Center). The official feed invites application use; USGS federal-work context is supported by 17 USC 105. This is not a blanket public-domain claim for third-party ComCat contributions, imagery or entire databases. Only numerical factual parameters are displayed; no third-party images/prose are bundled. The USGS current copyright page returned HTTP 403 during this check; its full current text was not verified. See docs/EARTHQUAKE-1.1.2.md for evidence and limits.
+
+Source cdi values are community-reported intensity summaries, not official field-confirmed maximum intensities. ShakeMap mmi remains a model estimate. Neither is converted directly to Chinese seismic intensity. Only net=us summaries are accepted; no live USGS or Wolfx catalogue is distributed as a test fixture.
+
+Independent mathematical implementation: Allen, T. I., Wald, D. J. & Worden, C. B. (2012), “Intensity attenuation for active crustal regions”, Journal of Seismology 16, 409–433, DOI https://doi.org/10.1007/s10950-012-9278-7 . Hypocentral coefficients were verified against the publisher's Table 2. No OpenQuake/other third-party source code or paper figures/text are incorporated; this is not a new third-party software dependency. Model equations are applied conservatively and explicitly labeled estimates; no Chinese-intensity conversion is provided.
+
+Wolfx-relayed CENC access is now off by default and requires explicit in-app acknowledgment, including old enabled installations. The upstream public-display/redistribution applicability remains unconfirmed. Acknowledgment is not a copyright license. The app records the maintainer's commitment to stop the integration and remove maintained affected APKs if officials/rightsholders require it. No new authorization was obtained and no early-warning feed is requested.

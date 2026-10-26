@@ -11,14 +11,15 @@ import java.util.*;
 /** Parametric facts only. Different agencies' solutions are preserved, never averaged. */
 final class EarthquakeData {
     static final int LIMIT=3000;
-    static final String[] SOURCES={"GEOFON","EMSC","Wolfx"};
-    static String sourceName(String source){return source.equals("Wolfx")?"CENC（Wolfx 转发）":source;}
+    static final String[] SOURCES={"GEOFON","EMSC","USGS","Wolfx"};
+    static String sourceName(String source){return source.equals("Wolfx")?"中国地震台网（Wolfx 转发）":source.equals("GEOFON")?"德国地学研究中心":source.equals("EMSC")?"欧洲—地中海地震中心":source.equals("USGS")?"美国地质调查局":source;}
     static final class Report {
         String source="",id="",region="",magnitudeType="M",agency="",review="未提供复核状态",depthNote="来源未说明深度是否固定";
         long time,updated;
-        double latitude,longitude,magnitude,depth=Double.NaN;
+        double latitude,longitude,magnitude,depth=Double.NaN,reportedMmi=Double.NaN,modelMmi=Double.NaN;
+        int felt;
         String magnitudeLabel(){return magnitudeType+" "+String.format(Locale.ROOT,"%.1f",magnitude);}
-        String url(){String encoded;try{encoded=java.net.URLEncoder.encode(id,"UTF-8");}catch(Exception e){encoded="";}return source.equals("Wolfx")?"https://www.cenc.ac.cn/":source.equals("GEOFON")?"https://geofon.gfz.de/eqinfo/event.php?id="+encoded:"https://www.seismicportal.eu/eventdetails.html?unid="+encoded;}
+        String url(){String encoded;try{encoded=java.net.URLEncoder.encode(id,"UTF-8");}catch(Exception e){encoded="";}return source.equals("Wolfx")?"https://www.cenc.ac.cn/":source.equals("GEOFON")?"https://geofon.gfz.de/eqinfo/event.php?id="+encoded:source.equals("USGS")?"https://earthquake.usgs.gov/earthquakes/eventpage/"+encoded:"https://www.seismicportal.eu/eventdetails.html?unid="+encoded;}
     }
     static final class Event {
         final List<Report> reports=new ArrayList<>();
@@ -38,7 +39,7 @@ final class EarthquakeData {
     }
     private static boolean valid(Report r){return r.time>0&&!r.id.isEmpty()&&Double.isFinite(r.latitude)&&Math.abs(r.latitude)<=90&&Double.isFinite(r.longitude)&&Math.abs(r.longitude)<=180&&Double.isFinite(r.magnitude)&&r.magnitude>=-2&&r.magnitude<=10.5;}
     static List<Report> emsc(String raw)throws Exception{
-        JSONObject root=new JSONObject(raw);if(!root.optString("type").equals("FeatureCollection"))throw new IOException("EMSC 返回格式异常");
+        JSONObject root=new JSONObject(raw);if(!root.optString("type").equals("FeatureCollection"))throw new IOException("欧洲—地中海地震中心返回格式异常");
         JSONArray features=root.getJSONArray("features");List<Report> result=new ArrayList<>();int eligible=0;
         for(int i=0;i<features.length();i++)try{
             JSONObject f=features.getJSONObject(i),p=f.getJSONObject("properties");
@@ -49,10 +50,29 @@ final class EarthquakeData {
             if(r.depth<0||r.depth>800)r.depth=Double.NaN;
             if(valid(r))result.add(r);
         }catch(JSONException ignored){}
-        if(eligible>0&&result.isEmpty())throw new IOException("EMSC 事件参数无效");
+        if(eligible>0&&result.isEmpty())throw new IOException("欧洲—地中海地震中心事件参数无效");
         return result;
     }
     private static double number(JSONObject p,String key){Object v=p.opt(key);if(v==null||v==JSONObject.NULL||v instanceof Boolean)return Double.NaN;try{return Double.parseDouble(v.toString());}catch(Exception e){return Double.NaN;}}
+    static List<Report> usgs(String raw)throws Exception{
+        JSONObject root=new JSONObject(raw);if(!root.optString("type").equals("FeatureCollection"))throw new IOException("美国地质调查局返回格式异常");
+        JSONArray rows=root.getJSONArray("features");List<Report> out=new ArrayList<>();int eligible=0;
+        for(int i=0;i<rows.length();i++)try{
+            JSONObject f=rows.getJSONObject(i),p=f.getJSONObject("properties");
+            // Restrict to USGS NEIC solutions; contributor=us alone can also return other preferred origins.
+            if(!p.optString("type").equals("earthquake")||!p.optString("net").equals("us"))continue;
+            eligible++;JSONArray coordinates=f.getJSONObject("geometry").getJSONArray("coordinates");Report r=new Report();r.source="USGS";r.id=f.optString("id");r.time=epoch(p,"time");r.updated=epoch(p,"updated");
+            r.longitude=arrayNumber(coordinates,0);r.latitude=arrayNumber(coordinates,1);r.depth=arrayNumber(coordinates,2);r.magnitude=number(p,"mag");r.region=p.optString("place","未提供地区名称");r.agency="美国地质调查局国家地震信息中心（USGS / NEIC）";r.magnitudeType=p.optString("magType","M");if(r.magnitudeType.isEmpty())r.magnitudeType="M";
+            if(r.depth<0||r.depth>800)r.depth=Double.NaN;
+            r.reportedMmi=intensityNumber(number(p,"cdi"));r.modelMmi=intensityNumber(number(p,"mmi"));double felt=number(p,"felt");r.felt=Double.isFinite(felt)&&felt>=1?(int)Math.min(felt,Integer.MAX_VALUE):0;if(r.felt==0)r.reportedMmi=Double.NaN;
+            if(p.optString("status").equals("reviewed"))r.review="来源标记已复核";else if(p.optString("status").equals("automatic"))r.review="自动解，参数可能修订";
+            if(valid(r))out.add(r);
+        }catch(JSONException ignored){}
+        if(eligible>0&&out.isEmpty())throw new IOException("美国地质调查局事件参数无效");return out;
+    }
+    private static double arrayNumber(JSONArray a,int index){JSONObject wrapper=new JSONObject();try{wrapper.put("value",a.opt(index));}catch(JSONException e){return Double.NaN;}return number(wrapper,"value");}
+    private static long epoch(JSONObject p,String key){double n=number(p,key);return Double.isFinite(n)&&n>0&&n<253402300800000L?(long)n:0;}
+    private static double intensityNumber(double n){return Double.isFinite(n)&&n>=1&&n<=12?n:Double.NaN;}
     /** Wolfx documents catalogue times as UTC+8. Row numbers are not event IDs. */
     static long wolfxTime(String value){try{return LocalDateTime.parse(value,java.time.format.DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss").withResolverStyle(java.time.format.ResolverStyle.STRICT)).toInstant(ZoneOffset.ofHours(8)).toEpochMilli();}catch(Exception e){return 0;}}
     static List<Report> wolfx(String raw)throws Exception{
@@ -60,7 +80,7 @@ final class EarthquakeData {
         for(Iterator<String> it=root.keys();it.hasNext();){String key=it.next();if(!key.matches("No[1-9][0-9]*"))continue;rows++;JSONObject p=root.optJSONObject(key);if(p==null)continue;
             Report r=new Report();r.source="Wolfx";r.time=wolfxTime(p.optString("time"));r.updated=wolfxTime(p.optString("ReportTime"));r.latitude=number(p,"latitude");r.longitude=number(p,"longitude");r.magnitude=number(p,"magnitude");r.depth=number(p,"depth");
             r.id=p.optString("EventID","").trim();if(r.id.isEmpty()||r.id.equals("null"))r.id="derived:"+r.time+":"+r.latitude+":"+r.longitude;
-            r.region=p.optString("placeName","").trim();if(r.region.isEmpty()||r.region.equals("null"))r.region=p.optString("location","未提供地区名称");r.agency="CENC（经 Wolfx 转发，非官方接口）";
+            r.region=p.optString("placeName","").trim();if(r.region.isEmpty()||r.region.equals("null"))r.region=p.optString("location","未提供地区名称");r.agency="中国地震台网中心（经 Wolfx 转发，非官方接口）";
             String type=p.optString("type");if(type.equals("reviewed"))r.review="来源标记已复核";else if(type.equals("automatic"))r.review="自动解，参数可能修订";
             if(r.depth<0||r.depth>800)r.depth=Double.NaN;
             if(valid(r))result.add(r);
@@ -74,7 +94,7 @@ final class EarthquakeData {
         for(String feature:new String[]{"http://xml.org/sax/features/external-general-entities","http://xml.org/sax/features/external-parameter-entities","http://apache.org/xml/features/nonvalidating/load-external-dtd"})try{f.setFeature(feature,false);}catch(Exception ignored){}
         javax.xml.parsers.DocumentBuilder b=f.newDocumentBuilder();b.setEntityResolver((publicId,systemId)->{throw new org.xml.sax.SAXException("外部实体已禁用");});
         Document doc=b.parse(new ByteArrayInputStream(raw.getBytes(StandardCharsets.UTF_8)));
-        if(doc.getElementsByTagNameNS("*","eventParameters").getLength()==0)throw new IOException("GEOFON 返回格式异常");
+        if(doc.getElementsByTagNameNS("*","eventParameters").getLength()==0)throw new IOException("德国地学研究中心返回格式异常");
         NodeList events=doc.getElementsByTagNameNS("*","event");List<Report> result=new ArrayList<>();int eligible=0;
         for(int i=0;i<events.getLength();i++){
             Element e=(Element)events.item(i);String type=value(e,"type");if(!type.isEmpty()&&!type.equals("earthquake"))continue;
@@ -92,7 +112,7 @@ final class EarthquakeData {
             if(r.depth<0||r.depth>800)r.depth=Double.NaN;
             if(valid(r))result.add(r);
         }
-        if(eligible>0&&result.isEmpty())throw new IOException("GEOFON 事件参数无效");
+        if(eligible>0&&result.isEmpty())throw new IOException("德国地学研究中心事件参数无效");
         return result;
     }
     private static Element child(Element e,String name){if(e!=null)for(Node n=e.getFirstChild();n!=null;n=n.getNextSibling())if(n instanceof Element&&(name.equals(n.getLocalName())||name.equals(n.getNodeName())))return (Element)n;return null;}
