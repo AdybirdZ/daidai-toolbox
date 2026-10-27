@@ -99,8 +99,8 @@ public final class ToolboxTests {
         check(SkyGeometry.selectionAngle(0)==0&&SkyGeometry.selectionAngle(7500)==90&&SkyGeometry.selectionAngle(30000)==0,"Selection cross rotates clockwise once per 30 seconds");
         Set<String> starNames=new HashSet<>();for(Astronomy.Star star:Astronomy.STARS)starNames.add(star.name);
         check(starNames.containsAll(Arrays.asList("织女一","河鼓二","勾陈一"))&&!starNames.contains("织女星")&&!starNames.contains("牛郎星")&&!starNames.contains("北极星"),"Current star labels use the requested traditional catalog names");
-        check(Astronomy.DEEP_SKY.length==2&&Math.abs(Astronomy.DEEP_SKY[0].ra-56.75)<1e-6&&Math.abs(Astronomy.DEEP_SKY[1].dec-41.26875)<1e-6,"Two CC0 deep-sky centers match the attributed records");
-        for(Astronomy.Star object:Astronomy.DEEP_SKY){Instant transit=equinox;double longitude=Astronomy.norm(object.ra-Astronomy.sidereal(transit,0)+180)-180;double[] above=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude);double[] below=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude+180);check(above[0]>0&&below[0]<0,"Deep-sky center observes local horizon rather than being always visible: "+object.name);}
+        check(Astronomy.DEEP_SKY.length>=12&&Math.abs(Astronomy.DEEP_SKY[0].ra-56.75)<1e-6&&Math.abs(Astronomy.DEEP_SKY[1].dec-41.26875)<1e-6,"Expanded CC0 deep-sky catalogue preserves the two original centers");
+        for(Astronomy.Star object:Astronomy.DEEP_SKY){Instant transit=equinox;double longitude=Astronomy.norm(object.ra-Astronomy.sidereal(transit,0)+180)-180;double[] above=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude);double[] below=Astronomy.horizontal(object.ra,object.dec,transit,35,longitude+180);check(above[0]>0&&(object.dec>55?below[0]>0:below[0]<0),"Deep-sky center observes local horizon rather than being always visible: "+object.name);}
         double fullMag=Astronomy.moonMagnitudeEstimate(0,1,60.2666),halfMag=Astronomy.moonMagnitudeEstimate(90,1,60.2666);
         check(Math.abs(fullMag+12.7196)<.01&&halfMag>fullMag+2,"Lunar empirical magnitude reproduces reference full and half brightness");
         check(Math.abs(Astronomy.moonMagnitudeEstimate(0,1,120.5332)-fullMag-5*Math.log10(2))<1e-9,"Moon distance changes magnitude with inverse square illumination");
@@ -115,8 +115,19 @@ public final class ToolboxTests {
         List<SkyLabels.Placed> blocked=SkyLabels.place(Arrays.asList(high),Arrays.asList(new SkyLabels.Box(75,70,125,100)),300,300,8,2,1);
         check(blocked.size()==1&&blocked.get(0).baseline==116,"Reserved coordinate text makes label use only the fixed lower alternative");
         check(SkyLabels.place(Arrays.asList(new SkyLabels.Candidate("edge",2,100,40,-10,2)),Collections.emptyList(),300,300,8,2,1).isEmpty(),"Out-of-bounds labels hide instead of drifting sideways");
+        check(SkyVisibility.visible(true,false,4.6,4.6f,false),"Magnitude cutoff includes an exact tenth despite float preference precision");
+        check(!SkyVisibility.visible(true,true,4.61,4.6f,false),"Dimmer than the exact cutoff is hidden without rounding target magnitude");
+        check(SkyVisibility.visible(true,false,-1.46,-1.4f,false)&&!SkyVisibility.visible(true,true,-1.46,-1.5f,false),"Negative magnitudes obey lower-is-brighter comparison");
+        check(SkyVisibility.visible(false,true,8,0,false)&&!SkyVisibility.visible(false,false,-1,8,false),"Manual mode respects saved toggles independently of magnitude cutoff");
+        check(SkyVisibility.visible(true,false,Double.NaN,-2,true),"Sun and Moon are exempt from star magnitude filtering");
+        check(!SkyVisibility.visible(true,true,Double.NaN,8,false),"Unknown magnitudes do not pretend to pass a numeric cutoff");
+        check(SkyVisibility.limit(Float.NaN)==6&&SkyVisibility.limit(-8)==-2&&SkyVisibility.limit(10)==8&&SkyVisibility.limit(4.64f)==4.6f,"Magnitude setting has finite defaults, bounds and tenth steps");
+        Set<String> allNames=new HashSet<>();boolean catalogValid=true;
+        for(Astronomy.Star star:Astronomy.STARS)catalogValid&=allNames.add(star.name)&&Double.isFinite(star.ra)&&star.ra>=0&&star.ra<360&&Math.abs(star.dec)<=90&&Double.isFinite(star.mag);
+        check(catalogValid&&Astronomy.STARS.length>=40,"Expanded stellar catalogue has unique names and finite physical values");
+        for(Astronomy.Star object:Astronomy.DEEP_SKY)check(allNames.add(object.name)&&Double.isFinite(object.mag)&&object.mag<=7.0,"Bright deep-sky object has unique name and approximate integrated magnitude: "+object.name);
         int dipperCount=0;for(Astronomy.Star star:Astronomy.STARS)if(Astronomy.isDipper(star.name))dipperCount++;
-        check(dipperCount==7&&!Astronomy.isDipper("北极星"),"Only the seven Big Dipper stars are mandatory");
+        check(dipperCount==7&&!Astronomy.isDipper("北极星"),"Big Dipper membership identifies precisely seven stars");
         for(Astronomy.Shower shower:Astronomy.SHOWERS){
             LocalDate peak=shower.peak.atYear(2026);
             check(shower.activeOn(peak.minusDays(3))&&shower.activeOn(peak)&&shower.activeOn(peak.plusDays(3)),"Meteor window includes peak and both third days: "+shower.name);

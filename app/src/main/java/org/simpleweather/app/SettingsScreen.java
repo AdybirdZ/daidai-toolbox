@@ -28,11 +28,23 @@ final class SettingsScreen {
     void weather(){LinearLayout c=form();action(c,"栏目显示与排序",()->order(true));action(c,"查看图例",this::legend);dialog("天气设置",c);}
     private void astronomy(){LinearLayout c=form();action(c,"栏目显示与排序",()->order("astro"));action(c,"亮星显示设置",this::astronomyStars);action(c,"天球坐标设置",this::astronomyCoordinates);dialog("天文设置",c);}
     private void astronomyCoordinates(){String[] labels={"地平坐标系（默认）","赤道坐标系（北天极居中）","不显示坐标网格"};int current=prefs.getInt("astro_coordinates",0);new ToolDialog(a).setTitle("天球坐标设置").setSingleChoiceItems(labels,Math.max(0,Math.min(2,current)),(d,n)->{prefs.edit().putInt("astro_coordinates",n).apply();a.refreshScreen();}).setNegativeButton("返回",null).show();}
-    private void astronomyStars(){LinearLayout c=form();c.addView(a.text("默认全部亮星都显示。可以分别开关恒星、行星及深空天体；太阳、月球和北斗七星不受此设置影响。",13,a.MUTED,false));a.gap(c,12);
-        for(Astronomy.Star star:Astronomy.STARS){if(Astronomy.isDipper(star.name))continue;skyToggle(c,star.name,"astro_star_"+star.name);}
-        a.gap(c,12);c.addView(a.text("行星",16,a.INK,true));for(Astronomy.Planet planet:Astronomy.planets(java.time.Instant.now()))skyToggle(c,planet.name,"astro_planet_"+planet.name);
-        a.gap(c,12);c.addView(a.text("深空天体 · 大致中心",16,a.INK,true));for(Astronomy.Star object:Astronomy.DEEP_SKY)skyToggle(c,object.name,"astro_deep_"+object.name);
-        dialog("亮星显示设置",c);
+    private void astronomyStars(){
+        LinearLayout c=form();c.addView(a.text("显示方式默认为手动选择，保留已有开关。按星等筛选时独立使用星等上限，不改动手动选择。太阳和月球不参与筛选；北斗七星与其他恒星一样可设置和点选。",13,a.MUTED,false));a.gap(c,12);
+        RadioGroup modes=new RadioGroup(a);String[] names={"手动选择（默认）","按星等上限显示"};
+        for(int i=0;i<2;i++){RadioButton b=new RadioButton(a);b.setId(710+i);b.setText(names[i]);b.setTextSize(15);modes.addView(b,a.lp(-1,52));}
+        modes.check(prefs.getInt("astro_visibility_mode",0)==1?711:710);c.addView(modes);a.gap(c,12);
+        LinearLayout manual=a.column(),magnitude=a.column();
+        manual.addView(a.text("恒星 · 默认全部显示",16,a.INK,true));
+        for(Astronomy.Star star:Astronomy.STARS)skyToggle(manual,star.name+" · "+SkyVisibility.magnitude(star.mag),"astro_star_"+star.name);
+        a.gap(manual,12);manual.addView(a.text("行星 · 星等随时间变化",16,a.INK,true));for(Astronomy.Planet planet:Astronomy.planets(java.time.Instant.now()))skyToggle(manual,planet.name,"astro_planet_"+planet.name);
+        a.gap(manual,12);manual.addView(a.text("深空天体 · 近似总视星等",16,a.INK,true));for(Astronomy.Star object:Astronomy.DEEP_SKY)skyToggle(manual,object.name+" · "+SkyVisibility.magnitude(object.mag),"astro_deep_"+object.name);
+        TextView value=a.text("",16,a.INK,true);magnitude.addView(value);SeekBar slider=new SeekBar(a);slider.setMax(100);slider.setKeyProgressIncrement(1);slider.setProgress(Math.round((SkyVisibility.limit(prefs.getFloat("astro_magnitude_limit",6))+2)*10));
+        Runnable label=()->{String text=String.format(Locale.ROOT,"显示星等 ≤ %.1f",(slider.getProgress()-20)/10f);value.setText(text);slider.setContentDescription(text);};label.run();
+        Runnable repaint=()->{if(!a.isFinishing()&&!a.isDestroyed())a.refreshScreen();};
+        slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar b,int n,boolean user){label.run();if(user){prefs.edit().putFloat("astro_magnitude_limit",(n-20)/10f).apply();b.removeCallbacks(repaint);b.postDelayed(repaint,120);}}public void onStartTrackingTouch(SeekBar b){}public void onStopTrackingTouch(SeekBar b){b.removeCallbacks(repaint);repaint.run();}});magnitude.addView(slider,a.lp(-1,56));
+        magnitude.addView(a.text("默认上限为 6.0 等，范围 -2.0～8.0 等，步进 0.1。数越小越亮，只筛选本应用内置目标，不代表完整星表或实际肉眼可见。行星按天文页面所选时间的估算星等筛选；深空天体按近似总视星等筛选，光分散在较大区域，即使总星等较亮也可能难以看见。",13,a.MUTED,false));
+        boolean byMagnitude=prefs.getInt("astro_visibility_mode",0)==1;manual.setVisibility(byMagnitude?View.GONE:View.VISIBLE);magnitude.setVisibility(byMagnitude?View.VISIBLE:View.GONE);c.addView(manual);c.addView(magnitude);
+        modes.setOnCheckedChangeListener((g,id)->{boolean on=id==711;prefs.edit().putInt("astro_visibility_mode",on?1:0).apply();manual.setVisibility(on?View.GONE:View.VISIBLE);magnitude.setVisibility(on?View.VISIBLE:View.GONE);a.refreshScreen();});dialog("亮星显示设置",c);
     }
     private void skyToggle(LinearLayout c,String label,String key){CheckBox check=new CheckBox(a);check.setText(label);check.setTextSize(14);check.setChecked(prefs.getBoolean(key,true));check.setOnCheckedChangeListener((v,on)->{prefs.edit().putBoolean(key,on).apply();a.refreshScreen();});c.addView(check,a.lp(-1,52));}
     private void legend(){
@@ -56,7 +68,7 @@ final class SettingsScreen {
     private void locationInterval(){long interval=prefs.getLong("location_interval",5000);int current=0;for(int n=0;n<INTERVALS.length;n++)if(interval==INTERVALS[n])current=n;new ToolDialog(a).setTitle("自动定位时间间隔").setSingleChoiceItems(INTERVAL_NAMES,current,(d,n)->{prefs.edit().putLong("location_interval",INTERVALS[n]).apply();a.locationIntervalChanged();}).setNegativeButton("返回",null).show();}
     void maps(){String[] names={"全国（默认）","华北","东北","华东","华中","华南","西南","西北"};int selected=Math.max(0,Math.min(7,prefs.getInt("radar_region",0)));new ToolDialog(a).setTitle("天气地图 · 默认雷达").setSingleChoiceItems(names,selected,(d,n)->{prefs.edit().putInt("radar_region",n).apply();a.refreshScreen();}).setNegativeButton("返回",null).show();}
     private void cache(){LinearLayout c=form();c.addView(a.text("本机会保存最多 20 个地区的天气预报及最近查询的地震目录，供离线查看；应用内官方网页也可能保存网页资源、Cookie 与网站存储。地区搜索结果与当前天气还会暂存在内存中。\n\n清除缓存会删除天气预报、地震目录和上述应用内网页缓存及网站存储，丢弃清理前尚未完成的天气与地震请求结果。清理后首次查看需要重新联网。天气地图需点击上方图种重新加载，重新访问后可再次产生缓存。\n\n保留最近定位、课程表、背景图片、收藏及当前地区、所有设置、接口查询配额和限流等待记录。外部浏览器缓存由浏览器自行管理。",14,a.INK,false));a.gap(c,16);action(c,"清除缓存",()->new ToolDialog(a).setTitle("清除缓存？").setMessage("清除本机天气预报、地震目录、应用内网页缓存、Cookie 和网站存储。课程、收藏、背景与设置会保留。").setPositiveButton("清除",(d,n)->a.clearCache(()->{})).setNegativeButton("取消",null).show());dialog("缓存管理",c);}
-    private void about(){LinearLayout c=form();action(c,"版本更新记录",a::updates);action(c,"数据来源与隐私",a::about);c.addView(a.text("呆呆工具箱 1.1.5",14,a.MUTED,false));dialog("关于",c);}
+    private void about(){LinearLayout c=form();action(c,"版本更新记录",a::updates);action(c,"数据来源与隐私",a::about);c.addView(a.text("呆呆工具箱 1.1.6",14,a.MUTED,false));dialog("关于",c);}
     private void order(boolean weather){order(weather?"weather":"tab");}
     void earthquakeOrder(){order("quake");}
     private void order(String key){
