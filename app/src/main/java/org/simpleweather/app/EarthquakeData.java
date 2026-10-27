@@ -31,7 +31,12 @@ final class EarthquakeData {
         String sources(){StringJoiner s=new StringJoiner("、");for(Report r:reports)s.add(sourceName(r.source));return s.toString();}
         double maxMagnitude(){double m=-99;for(Report r:reports)m=Math.max(m,r.magnitude);return m;}
     }
-    private static int priority(Report r){return (r.review.contains("人工")?2:0)+(r.source.equals("GEOFON")?1:0);}
+    private static int priority(Report r){
+        // Prefer reviewed domestic reports, then all other reviewed reports equally.
+        // A domestic automatic/unknown report is not implicitly reviewed.
+        if(!EarthquakeDisplay.review(r).equals("已复核"))return 0;
+        return r.source.equals("Wolfx")||r.agency.trim().equalsIgnoreCase("CENC")||r.agency.startsWith("中国地震台网中心")?2:1;
+    }
     static long instant(String value){
         if(value==null||value.isEmpty())return 0;
         try{return Instant.parse(value.endsWith("Z")?value:value+"Z").toEpochMilli();}catch(Exception ignored){}

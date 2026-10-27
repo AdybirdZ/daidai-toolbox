@@ -9,5 +9,18 @@ final class EarthquakeDisplay {
         return "状态未知";
     }
     static String source(String code){return code.equals("Wolfx")?"中国地震台网":EarthquakeData.sourceName(code);}
-    static String sources(EarthquakeData.Event event){java.util.StringJoiner names=new java.util.StringJoiner("、");for(EarthquakeData.Report r:event.reports)names.add(source(r.source));return names.toString();}
+    static String source(EarthquakeData.Report report){
+        if(!report.source.equals("EMSC"))return source(report.source);
+        String name=EarthquakeAgencies.name(report.agency);
+        // An aggregation route is not necessarily the agency that calculated the origin.
+        if(name.equals("未提供贡献机构")||name.equals("机构中文名称待核对"))
+            return "欧洲—地中海地震中心（"+name+"）";
+        return name;
+    }
+    static String sources(EarthquakeData.Event event){
+        java.util.Set<String> names=new java.util.LinkedHashSet<>();
+        names.add(source(event.main()));
+        for(EarthquakeData.Report r:event.reports)names.add(source(r));
+        return String.join("、",names);
+    }
 }
