@@ -64,6 +64,10 @@ public class MainActivity extends Activity {
         preferences=getSharedPreferences("toolbox",0);
         if(preferences.getInt("settings_schema",0)<4){SharedPreferences.Editor e=preferences.edit();if(!preferences.contains("background_brightness"))e.putInt("background_brightness",100-Math.max(0,Math.min(100,preferences.getInt("shade",80))));if(preferences.getInt("radar_region",0)>7)e.putInt("radar_region",0);if(preferences.getInt("map_product",0)==4)e.putInt("map_product",0);e.remove("shade").putInt("settings_schema",4).apply();}
         if(preferences.getInt("star_names_schema",0)<1){String[][] renamed={{"织女星","织女一"},{"牛郎星","河鼓二"},{"北极星","勾陈一"}};SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_star_"+pair[0],newKey="astro_star_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);}e.putInt("star_names_schema",1).apply();}
+        if(preferences.getInt("deep_names_schema",0)<1){
+            String[][] renamed={{"昴星团","M45 昴星团"},{"仙女座星系","M31 仙女座星系"},{"鬼宿星团（M44）","M44 鬼宿星团"},{"武仙座球状星团（M13）","M13 武仙座球状星团"},{"野鸭星团（M11）","M11 野鸭星团"},{"猎户座大星云（M42）","M42 猎户座大星云"},{"波德星系（M81）","M81 波德星系"}};
+            SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_deep_"+pair[0],newKey="astro_deep_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);e.remove(oldKey);}e.putInt("deep_names_schema",1).apply();
+        }
         schedule=new ScheduleScreen(this);gps=new GpsScreen(this);earthquakes=new EarthquakeScreen(this);earthquakes.restoreState(state);
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
@@ -322,7 +326,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
-        updateEntry(c,"1.1.6 · 平板状态恢复与星空扩充","• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等。北斗七星支持点选与显示开关。\n• 亮星显示设置支持手动选择或按星等上限筛选，步进 0.1 等；原手动选择保留。\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。");
+        updateEntry(c,"1.1.6 · 平板状态恢复与星空扩充","• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等，名称统一为 M 编号在前。补齐参宿一至参宿七，保留旧名称的显示开关和选中。北斗七星支持点选与显示开关。\n• 亮星显示设置支持手动选择或按星等上限筛选，步进 0.1 等；原手动选择保留。\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。");
         updateEntry(c,"1.1.5 · 固定竖屏与地震来源优化","• 应用各页面固定竖屏，避免转动手机触发页面重建、栏目变化或已获取状态变化。\n• 同次地震优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知；同级采用较新结果，不再额外优先德国来源。\n• 地震列表显示智利、泰国等具体贡献机构的中文名，合并后去重；详情继续保留聚合平台与转发信息。");
         updateEntry(c,"1.1.4 · 地震信息简化与坐标统一","• 地震状态统一为已复核、自动结果、状态未知，详情保留来源处理标记。\n• 发生改为发生时刻，列表简化烈度及中国地震台网来源，模型和转发说明保留在详情；未达阈值时明确提示。\n• 仅保留 MMI，删除烈度标度设置及当前说明中的其他标度；不再显示来源未说明深度是否固定的空泛提示。\n• 贡献机构改用中文名，经纬度统一经度在前、纬度在后，使用 E/W/N/S 标明方向。更新状态改称最早一条。");
         updateEntry(c,"1.1.3 · 地震界面与扩展烈度参考","• 筛选与刷新仅保留刷新目录、刷新定位按钮，查询范围等统一从设置进入；时间选项统一称“最近 1 天”。移除地震设置内重复的数据来源与隐私入口。\n• 关于说明按统一的一行间隔分段。MMI 默认项置顶，本次升级统一切至 MMI 一次，之后保留手动选择。\n• 超出原论文模型保守条件时，对有有效震级和深度的记录使用 GlobalQuake 旧开源版参考算法，明确注明来源震级近似、默认／固定深度及弱震动显示阈值；不冒充正式最大烈度。保留 MIT 许可。\n• 自动解改为“自动解算”；术语中分别解释来源标记已复核、已复核和人工处理，删除主震、前震与余震段落。");

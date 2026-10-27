@@ -125,7 +125,8 @@ public final class ToolboxTests {
         Set<String> allNames=new HashSet<>();boolean catalogValid=true;
         for(Astronomy.Star star:Astronomy.STARS)catalogValid&=allNames.add(star.name)&&Double.isFinite(star.ra)&&star.ra>=0&&star.ra<360&&Math.abs(star.dec)<=90&&Double.isFinite(star.mag);
         check(catalogValid&&Astronomy.STARS.length>=40,"Expanded stellar catalogue has unique names and finite physical values");
-        for(Astronomy.Star object:Astronomy.DEEP_SKY)check(allNames.add(object.name)&&Double.isFinite(object.mag)&&object.mag<=7.0,"Bright deep-sky object has unique name and approximate integrated magnitude: "+object.name);
+        for(Astronomy.Star object:Astronomy.DEEP_SKY)check(allNames.add(object.name)&&object.name.matches("M[0-9]+ .+")&&Double.isFinite(object.mag)&&object.mag<=7.0,"Bright deep-sky object has unique name and approximate integrated magnitude: "+object.name);
+        check(allNames.containsAll(Arrays.asList("参宿一","参宿二","参宿三","参宿四","参宿五","参宿六","参宿七")),"All seven principal Orion stars are included");
         int dipperCount=0;for(Astronomy.Star star:Astronomy.STARS)if(Astronomy.isDipper(star.name))dipperCount++;
         check(dipperCount==7&&!Astronomy.isDipper("北极星"),"Big Dipper membership identifies precisely seven stars");
         for(Astronomy.Shower shower:Astronomy.SHOWERS){

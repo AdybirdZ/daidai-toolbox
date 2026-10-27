@@ -294,7 +294,7 @@
     "url": "https://www.wikidata.org/wiki/Q680341"
   },
   {
-    "name": "昴星团",
+    "name": "M45 昴星团",
     "kind": "deep-sky",
     "wikidataId": "Q13423",
     "raDegrees": 56.75,
@@ -309,7 +309,7 @@
     "coordinateRevision": 2556354817
   },
   {
-    "name": "仙女座星系",
+    "name": "M31 仙女座星系",
     "kind": "deep-sky",
     "wikidataId": "Q2469",
     "raDegrees": 10.6847083,
@@ -324,7 +324,7 @@
     "coordinateRevision": 2559463991
   },
   {
-    "name": "鬼宿星团（M44）",
+    "name": "M44 鬼宿星团",
     "kind": "deep-sky",
     "wikidataId": "Q13760",
     "raDegrees": 130.1,
@@ -338,7 +338,7 @@
     "url": "https://www.wikidata.org/wiki/Q13760"
   },
   {
-    "name": "武仙座球状星团（M13）",
+    "name": "M13 武仙座球状星团",
     "kind": "deep-sky",
     "wikidataId": "Q11312",
     "raDegrees": 250.423475,
@@ -352,7 +352,7 @@
     "url": "https://www.wikidata.org/wiki/Q11312"
   },
   {
-    "name": "野鸭星团（M11）",
+    "name": "M11 野鸭星团",
     "kind": "deep-sky",
     "wikidataId": "Q11294",
     "raDegrees": 282.7708,
@@ -478,7 +478,7 @@
     "url": "https://www.wikidata.org/wiki/Q78262275"
   },
   {
-    "name": "猎户座大星云（M42）",
+    "name": "M42 猎户座大星云",
     "kind": "deep-sky",
     "wikidataId": "Q13903",
     "raDegrees": 83.82208,
@@ -492,7 +492,7 @@
     "url": "https://www.wikidata.org/wiki/Q13903"
   },
   {
-    "name": "波德星系（M81）",
+    "name": "M81 波德星系",
     "kind": "deep-sky",
     "wikidataId": "Q81102410",
     "raDegrees": 148.88821939854,
@@ -504,5 +504,33 @@
     "license": "CC0-1.0",
     "retrievedOn": "2026-10-28",
     "url": "https://www.wikidata.org/wiki/Q81102410"
+  },
+  {
+    "name": "参宿五",
+    "kind": "star",
+    "wikidataId": "Q13066",
+    "raDegrees": 81.282763557,
+    "decDegrees": 6.349703264,
+    "visualMagnitude": 1.64,
+    "magnitudeBand": "Johnson V",
+    "magnitudeStatement": "Q13066$f67c61af-23cf-4f9c-8a2e-9d4c26912e7a",
+    "epoch": "J2000",
+    "license": "CC0-1.0",
+    "retrievedOn": "2026-10-28",
+    "url": "https://www.wikidata.org/wiki/Q13066"
+  },
+  {
+    "name": "参宿六",
+    "kind": "star",
+    "wikidataId": "Q14028",
+    "raDegrees": 86.93912016833,
+    "decDegrees": -9.66960491861,
+    "visualMagnitude": 2.06,
+    "magnitudeBand": "Johnson V",
+    "magnitudeStatement": "Q14028$6128671f-20f2-4126-9415-53c15150b576",
+    "epoch": "J2000",
+    "license": "CC0-1.0",
+    "retrievedOn": "2026-10-28",
+    "url": "https://www.wikidata.org/wiki/Q14028"
   }
 ]
