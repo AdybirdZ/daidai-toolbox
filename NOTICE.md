@@ -91,3 +91,5 @@ Status 1.2.0: independently implemented device-state features use Android platfo
 
 Status 1.2.1: sensor rates, sensor ordering, GNSS display ordering, local declination and battery values remain Android platform data. The app does not incorporate GPS Status code, assets, SDK or service. See docs/STATUS-1.2.1.md.
 
+Status 1.2.2: sensor frame-rate controls were removed; the app requests Android's fastest available sensor delay and reports device-provided values. Satellite labels use country/region plus constellation abbreviation. Battery/device visibility and ordering, current-sign selection, live saved-place age and one-shot form relocation are local UI behavior. Satellite reception pauses on section switch, lock screen, or background according to the setting and resumes when the status page returns. No GPS Status code, assets, SDK, satellite service or map data is incorporated. See docs/STATUS-1.2.2.md.
+

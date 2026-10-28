@@ -1,7 +1,13 @@
 package org.simpleweather.app;
 
+import android.Manifest;
 import android.content.*;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.widget.*;
 import java.util.*;
@@ -9,6 +15,10 @@ import java.util.*;
 final class StatusPlaces {
     private final MainActivity a;private final SharedPreferences store;private final Runnable changed;
     private android.app.AlertDialog manager;
+    private final Handler handler=new Handler(Looper.getMainLooper());
+    private LocationManager locationManager;
+    private LocationListener pendingLocation;
+    private Runnable pendingPermission;
     StatusPlaces(MainActivity a,Runnable changed){this.a=a;this.changed=changed;store=a.getSharedPreferences("status_places",0);}
     private String encoded;private List<StatusPlace> cached=Collections.emptyList();
     private List<StatusPlace> read(){String raw=store.getString("places","[]");if(!Objects.equals(raw,encoded)){cached=StatusPlace.decode(raw);encoded=raw;}return cached;}
@@ -22,10 +32,17 @@ final class StatusPlaces {
         EditText name=input(c,"地点名称（最多 60 字）",old!=null?old.name:"",false);
         EditText lon=input(c,"经度（负数 W / 正数 E）",old!=null?Double.toString(old.longitude):fix!=null?Double.toString(fix.getLongitude()):"",true);
         EditText lat=input(c,"纬度（负数 S / 正数 N）",old!=null?Double.toString(old.latitude):fix!=null?Double.toString(fix.getLatitude()):"",true);
-        if(fix!=null)c.addView(a.text("使用最近定位，距今 "+LocationService.ageSeconds(fix)+" 秒；"+(fix.hasAccuracy()?String.format(Locale.ROOT,"水平定位误差半径约 %.1f 米。",fix.getAccuracy()):"未提供精度。")+"请确认坐标。",13,a.MUTED,false));
+        TextView note=a.text(fix==null?"尚未有最近定位。请使用左下方“重新定位”自动填写坐标。":"使用最近定位，距今 "+LocationService.ageSeconds(fix)+" 秒；"+(fix.hasAccuracy()?String.format(Locale.ROOT,"水平定位误差半径约 %.1f 米。",fix.getAccuracy()):"未提供精度。")+"请确认坐标。",13,a.MUTED,false);c.addView(note);
+        Runnable ageTick=new Runnable(){public void run(){if(note.getWindowToken()!=null){Location current=LocationService.last(a);if(current!=null)note.setText("使用最近定位，距今 "+LocationService.ageSeconds(current)+" 秒；"+(current.hasAccuracy()?String.format(Locale.ROOT,"水平定位误差半径约 %.1f 米。",current.getAccuracy()):"未提供精度。")+"请确认坐标。");handler.postDelayed(this,1000);}}};handler.post(ageTick);
+        LinearLayout actions=a.row();TextView relocate=a.button("重新定位",false,()->requestLocation(lon,lat,note));actions.addView(relocate,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(actions,8);actions.addView(a.text("重新定位只更新此表单中的经纬度，不会自动修改已保存地点。",12,a.MUTED,false),new LinearLayout.LayoutParams(0,-2,2));c.addView(actions);a.gap(c,12);
         ScrollView scroll=new ScrollView(a);scroll.addView(c);android.app.AlertDialog d=new ToolDialog(a).setTitle(old==null?"保存地点":"编辑地点").setView(scroll).setNegativeButton("取消",null).setPositiveButton("保存",null).create();
-        d.setOnShowListener(v->d.getButton(-1).setOnClickListener(w->{try{StatusPlace p=new StatusPlace(old==null?UUID.randomUUID().toString():old.id,name.getText().toString(),Double.parseDouble(lon.getText().toString().trim()),Double.parseDouble(lat.getText().toString().trim()),old==null?System.currentTimeMillis():old.created);List<StatusPlace> rows=all();if(old!=null)rows.removeIf(x->x.id.equals(old.id));rows.add(p);store.edit().putString("selected",p.id).apply();save(rows);d.dismiss();a.toast("地点已保存，仅存于本机");}catch(Exception ex){a.toast("请填写 1～60 字名称，经度 -180～180、纬度 -90～90");}}));d.show();
+        d.setOnShowListener(v->d.getButton(-1).setOnClickListener(w->{try{StatusPlace p=new StatusPlace(old==null?UUID.randomUUID().toString():old.id,name.getText().toString(),Double.parseDouble(lon.getText().toString().trim()),Double.parseDouble(lat.getText().toString().trim()),old==null?System.currentTimeMillis():old.created);List<StatusPlace> rows=all();if(old!=null)rows.removeIf(x->x.id.equals(old.id));rows.add(p);store.edit().putString("selected",p.id).apply();save(rows);d.dismiss();a.toast("地点已保存，仅存于本机");}catch(Exception ex){a.toast("请填写 1～60 字名称，经度 -180～180、纬度 -90～90");}}));d.setOnDismissListener(v->{handler.removeCallbacks(ageTick);stopRequest();});d.show();
     }
+    private boolean network(){return a.preferences.getString("location_provider","gps").equals("network");}
+    private boolean permitted(){return a.checkSelfPermission(network()?Manifest.permission.ACCESS_COARSE_LOCATION:Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED;}
+    private void requestLocation(EditText lon,EditText lat,TextView note){if(!permitted()){pendingPermission=()->requestLocation(lon,lat,note);a.requestPermissions(network()?new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}:new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},47);return;}stopRequest();locationManager=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);String provider=network()?LocationManager.NETWORK_PROVIDER:LocationManager.GPS_PROVIDER;try{if(locationManager==null||!locationManager.getAllProviders().contains(provider)||!locationManager.isProviderEnabled(provider)){note.setText("所选定位方式未开启，请先打开系统定位设置。");return;}note.setText("正在重新定位，请稍候…");pendingLocation=new LocationListener(){public void onLocationChanged(Location l){LocationService.record(a,l);lon.setText(Double.toString(l.getLongitude()));lat.setText(Double.toString(l.getLatitude()));note.setText("已重新定位，距今 0 秒；"+(l.hasAccuracy()?String.format(Locale.ROOT,"水平定位误差半径约 %.1f 米。",l.getAccuracy()):"未提供精度。")+"请确认坐标。");stopRequest();}public void onProviderEnabled(String p){}public void onProviderDisabled(String p){}public void onStatusChanged(String p,int s,android.os.Bundle b){}};locationManager.requestLocationUpdates(provider,0,0,pendingLocation,Looper.getMainLooper());handler.postDelayed(()->{if(pendingLocation!=null){stopRequest();note.setText("重新定位超时，请检查权限、定位开关和环境后重试。");}},15000);}catch(SecurityException e){stopRequest();note.setText("定位权限不足，请重新授权。" );}catch(Exception e){stopRequest();note.setText("重新定位暂不可用，请检查系统设置。" );}}
+    private void stopRequest(){if(locationManager!=null&&pendingLocation!=null)try{locationManager.removeUpdates(pendingLocation);}catch(Exception ignored){}pendingLocation=null;}
+    void permissionResult(){Runnable r=pendingPermission;pendingPermission=null;if(r!=null){if(permitted())r.run();else a.toast("未授予定位权限，无法重新定位");}}
     void manage(){
         LinearLayout c=a.column();c.setPadding(a.dp(18),a.dp(8),a.dp(18),a.dp(18));
         List<StatusPlace> rows=all();c.addView(a.text("共 "+rows.size()+" 个地点 · 仅本机保存",13,a.MUTED,false));a.gap(c,12);

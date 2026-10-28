@@ -31,8 +31,8 @@ public final class StatusTests {
         double[] zenith=StatusMath.sky(90,120),east=StatusMath.sky(0,90),north=StatusMath.sky(0,0);
         check(close(zenith[0],0,1e-8)&&close(zenith[1],0,1e-8),"Zenith at sky center");
         check(close(east[0],1,1e-8)&&close(east[1],0,1e-8)&&north[1]==-1,"Azimuth maps to normalized sky coordinates");
-        check(StatusMath.constellation(1).equals("美国定位系统")&&StatusMath.constellation(5).equals("中国北斗")&&StatusMath.constellation(6).equals("欧洲伽利略")&&StatusMath.constellation(3).equals("俄罗斯定位系统"),"Android constellation identifiers mapped correctly");
-        check(StatusMath.constellation(99).equals("其他卫星系统")&&StatusMath.satelliteId(5,12).equals("卫星 12"),"Unknown systems retain honest fallback");
+        check(StatusMath.constellation(1).equals("美国 GPS")&&StatusMath.constellation(5).equals("中国 BDS")&&StatusMath.constellation(6).equals("欧洲 Galileo")&&StatusMath.constellation(3).equals("俄罗斯 GLONASS"),"Android constellation identifiers mapped correctly");
+        check(StatusMath.constellation(99).equals("其他系统")&&StatusMath.satelliteId(5,12).equals("卫星 12"),"Unknown systems retain honest fallback");
         StatusPlace p=new StatusPlace("id1","  寻宝地点  ",-122.4000000123,-33.8000000456,123);
         List<StatusPlace> rows=StatusPlace.decode(StatusPlace.encode(Arrays.asList(p)));
         check(rows.size()==1&&rows.get(0).name.equals("寻宝地点")&&rows.get(0).created==123,"Unicode waypoint round trip and trim");
@@ -48,4 +48,5 @@ public final class StatusTests {
         System.out.println("StatusTests: "+checks+" checks passed");
     }
 }
+
 
