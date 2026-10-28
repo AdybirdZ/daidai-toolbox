@@ -24,7 +24,7 @@ final class EarthquakeLocation implements LocationListener {
             manager=(LocationManager)a.getSystemService(android.content.Context.LOCATION_SERVICE);
             if(!manager.getAllProviders().contains(provider)){status="此设备不支持所选定位方式，请在定位设置中更改";changed.run();return;}
             if(!manager.isProviderEnabled(provider)){status="所选定位方式未开启，请打开手机系统定位";changed.run();return;}
-            waiting=true;status="正在刷新定位 · "+(network()?"网络定位":"GPS 硬件定位");
+            waiting=true;status="正在刷新定位 · "+(network()?"网络定位":"卫星硬件定位");
             manager.requestLocationUpdates(provider,0,0,this,Looper.getMainLooper());handler.postDelayed(timeout,30_000);changed.run();
         }catch(SecurityException ex){cancel();status="未获得所选方式所需定位权限";changed.run();}catch(Exception ex){cancel();status="定位暂不可用，保留上次位置";changed.run();}
     }

@@ -24,7 +24,7 @@ public final class LocationService extends Service implements LocationListener {
     static Location last(Context c){
         Location l=latest;if(l!=null)return new Location(l);
         SharedPreferences p=c.getSharedPreferences(STATE,0);if(!p.contains("lat"))return null;
-        try{l=new Location(p.getString("provider","gps"));l.setLatitude(Double.longBitsToDouble(p.getLong("lat",0)));l.setLongitude(Double.longBitsToDouble(p.getLong("lon",0)));l.setTime(p.getLong("time",0));if(p.contains("accuracy"))l.setAccuracy(p.getFloat("accuracy",0));if(p.contains("altitude"))l.setAltitude(Double.longBitsToDouble(p.getLong("altitude",0)));return l;}catch(Exception e){return null;}
+        try{l=new Location(p.getString("provider","gps"));l.setLatitude(Double.longBitsToDouble(p.getLong("lat",0)));l.setLongitude(Double.longBitsToDouble(p.getLong("lon",0)));l.setTime(p.getLong("time",0));if(p.contains("accuracy"))l.setAccuracy(p.getFloat("accuracy",0));if(p.contains("altitude"))l.setAltitude(Double.longBitsToDouble(p.getLong("altitude",0)));if(p.contains("speed"))l.setSpeed(p.getFloat("speed",0));if(p.contains("bearing"))l.setBearing(p.getFloat("bearing",0));if(p.contains("verticalAccuracy"))l.setVerticalAccuracyMeters(p.getFloat("verticalAccuracy",0));return l;}catch(Exception e){return null;}
     }
     static long ageSeconds(Location l){if(l==null)return 0;long elapsed=l.getElapsedRealtimeNanos();return Math.max(0,elapsed>0&&elapsed<=SystemClock.elapsedRealtimeNanos()?(SystemClock.elapsedRealtimeNanos()-elapsed)/1_000_000_000L:(System.currentTimeMillis()-l.getTime())/1000);}
     static void stop(Context c){c.stopService(new Intent(c,LocationService.class));running=false;status="定位已停止";}
@@ -46,7 +46,7 @@ public final class LocationService extends Service implements LocationListener {
         }catch(SecurityException e){status="定位权限不足，请重新授权";stopSelf();}catch(Exception e){status="定位暂不可用，请检查系统设置后重新开始";stopSelf();}
         return START_NOT_STICKY;
     }
-    private String mode(){return "network".equals(provider)?"网络定位":"GPS 硬件定位";}
+    private String mode(){return "network".equals(provider)?"网络定位":"卫星硬件定位";}
     private void promote(){
         NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);NotificationChannel channel=new NotificationChannel(CHANNEL,"持续定位",NotificationManager.IMPORTANCE_LOW);channel.setDescription("主动开始持续定位后显示，点击停止可结束定位");nm.createNotificationChannel(channel);
         Intent open=new Intent(this,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP).putExtra("open_location",true);
@@ -59,7 +59,7 @@ public final class LocationService extends Service implements LocationListener {
     private void save(Location l){record(this,l);}
     static void record(Context context,Location l){
         latest=new Location(l);SharedPreferences.Editor e=context.getSharedPreferences(STATE,0).edit().putLong("lat",Double.doubleToLongBits(l.getLatitude())).putLong("lon",Double.doubleToLongBits(l.getLongitude())).putLong("time",l.getTime()).putString("provider",l.getProvider());
-        if(l.hasAccuracy())e.putFloat("accuracy",l.getAccuracy());else e.remove("accuracy");if(l.hasAltitude())e.putLong("altitude",Double.doubleToLongBits(l.getAltitude()));else e.remove("altitude");e.apply();
+        if(l.hasAccuracy())e.putFloat("accuracy",l.getAccuracy());else e.remove("accuracy");if(l.hasAltitude())e.putLong("altitude",Double.doubleToLongBits(l.getAltitude()));else e.remove("altitude");if(l.hasSpeed())e.putFloat("speed",l.getSpeed());else e.remove("speed");if(l.hasBearing())e.putFloat("bearing",l.getBearing());else e.remove("bearing");if(l.hasVerticalAccuracy())e.putFloat("verticalAccuracy",l.getVerticalAccuracyMeters());else e.remove("verticalAccuracy");e.apply();
     }
     @Override public void onLocationChanged(Location l){if(!running)return;save(l);status="已获取 "+mode();}
     @Override public void onProviderDisabled(String p){status=mode()+"已关闭，正在等待开启";}
