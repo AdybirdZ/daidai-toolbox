@@ -18,7 +18,6 @@ final class StatusPlaces {
     private EditText input(LinearLayout c,String title,String value,boolean number){c.addView(a.text(title,14,a.INK,true));EditText e=new EditText(a);e.setSingleLine(true);e.setText(value);e.setContentDescription(title);e.setInputType(number?InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED:InputType.TYPE_CLASS_TEXT);c.addView(e,a.lp(-1,52));a.gap(c,12);return e;}
     void addCurrent(){Location fix=LocationService.last(a);if(fix==null){a.toast("请先获取定位，或手动添加地点");return;}edit(null,fix);}
     void edit(StatusPlace old,Location fix){
-        if(old==null&&all().size()>=StatusPlace.MAX){a.toast("最多保存 200 个地点，请先删除不需要的地点");return;}
         LinearLayout c=a.column();c.setPadding(a.dp(20),a.dp(8),a.dp(20),a.dp(12));
         EditText name=input(c,"地点名称（最多 60 字）",old!=null?old.name:"",false);
         EditText lon=input(c,"经度（负数 W / 正数 E）",old!=null?Double.toString(old.longitude):fix!=null?Double.toString(fix.getLongitude()):"",true);
@@ -29,7 +28,7 @@ final class StatusPlaces {
     }
     void manage(){
         LinearLayout c=a.column();c.setPadding(a.dp(18),a.dp(8),a.dp(18),a.dp(18));
-        List<StatusPlace> rows=all();c.addView(a.text("共 "+rows.size()+" / 200 个地点 · 仅本机保存",13,a.MUTED,false));a.gap(c,12);
+        List<StatusPlace> rows=all();c.addView(a.text("共 "+rows.size()+" 个地点 · 仅本机保存",13,a.MUTED,false));a.gap(c,12);
         if(rows.isEmpty())c.addView(a.text("尚未保存地点",15,a.INK,false));
         for(StatusPlace p:rows){c.addView(a.text(p.name,17,a.INK,true));a.gap(c,8);c.addView(a.text(CoordinateFormat.pair(p.longitude,p.latitude,6),13,a.MUTED,false));a.gap(c,10);LinearLayout buttons=a.row();
             buttons.addView(a.button("选为目标",false,()->{store.edit().putString("selected",p.id).apply();changed.run();if(manager!=null)manager.dismiss();a.toast("目标："+p.name);}),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(buttons,8);

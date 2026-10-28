@@ -21,6 +21,8 @@ final class StatusMath {
     static boolean satelliteAngles(double elevation,double azimuth){return Double.isFinite(elevation)&&elevation>=-90&&elevation<=90&&Double.isFinite(azimuth)&&azimuth>=0&&azimuth<=360;}
     static double[] sky(double elevation,double azimuth){double r=(90-elevation)/90,t=Math.toRadians(azimuth);return new double[]{r*Math.sin(t),-r*Math.cos(t)};}
     static String distanceText(double meters){return !Double.isFinite(meters)?"距离不可用":meters>=1000?String.format(java.util.Locale.ROOT,"%.2f km",meters/1000):String.format(java.util.Locale.ROOT,"%.1f 米",meters);}
-    static String constellation(int c){switch(c){case 1:return "美国 GPS";case 2:return "星基增强 SBAS";case 3:return "俄罗斯 GLONASS";case 4:return "日本 QZSS";case 5:return "中国北斗";case 6:return "欧洲伽利略";case 7:return "印度 NavIC";default:return "未知系统";}}
-    static String satelliteId(int c,int id){return (c==1?"G":c==3?"R":c==5?"C":c==6?"E":c==4?"J":c==7?"I":c==2?"S":"?")+id;}
+    /** Chinese display names; constellation abbreviations are deliberately not shown in the UI. */
+    static String constellation(int c){switch(c){case 1:return "美国定位系统";case 2:return "星基增强系统";case 3:return "俄罗斯定位系统";case 4:return "日本准天顶系统";case 5:return "中国北斗";case 6:return "欧洲伽利略";case 7:return "印度导航卫星系统";default:return "其他卫星系统";}}
+    static String satelliteId(int c,int id){return "卫星 "+id;}
+    static int constellationRank(int c,int[] order){for(int n=0;n<order.length;n++)if(order[n]==c)return n;return order.length+10;}
 }

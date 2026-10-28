@@ -88,3 +88,6 @@ The official announcement says development from 1.0.0 continues privately. This 
 Astronomy 1.1.6: added stellar coordinates and approximate Johnson V magnitudes, including integrated deep-sky magnitudes, from Wikidata structured data under CC0 1.0. Entity and statement attribution: docs/SKY-CATALOG-1.1.6.json and docs/ASTRONOMY-1.1.6.md. No third-party images or encyclopedia text incorporated.
 
 Status 1.2.0: independently implemented device-state features use Android platform APIs; no GPS Status code, images, SDK, satellite service or map data incorporated. User waypoints and sensor/receiver state remain on-device. API references and capability limits: docs/STATUS-1.2.0.md. No new third-party runtime dependencies.
+
+Status 1.2.1: sensor rates, sensor ordering, GNSS display ordering, local declination and battery values remain Android platform data. The app does not incorporate GPS Status code, assets, SDK or service. See docs/STATUS-1.2.1.md.
+

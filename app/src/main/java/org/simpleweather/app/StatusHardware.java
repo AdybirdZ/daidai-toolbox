@@ -14,7 +14,7 @@ final class StatusHardware implements SensorEventListener {
     final MainActivity a;private final SensorManager sensors;private final LocationManager locations;
     final Map<Integer,float[]> values=new HashMap<>();final Map<Integer,Integer> accuracy=new HashMap<>();
     final Map<Integer,Long> sampleAt=new HashMap<>();
-    boolean active,gnssRunning,gnssRequested;String gnssMessage="尚未开始卫星接收";
+    boolean active,gnssRunning,gnssRequested,gnssPaused;String gnssMessage="尚未开始卫星接收";
     double magneticHeading=Double.NaN,pitch=Double.NaN,roll=Double.NaN;boolean rotationVector;
     int compassAccuracy=SensorManager.SENSOR_STATUS_UNRELIABLE;long headingAt,gnssAt;
     final List<Satellite> satellites=new ArrayList<>();
@@ -34,9 +34,13 @@ final class StatusHardware implements SensorEventListener {
     void resume(boolean compass,boolean allSensors){
         if(active&&compass==compassWanted&&allSensors==allSensorsWanted)return;
         if(sensors!=null)sensors.unregisterListener(this);active=true;compassWanted=compass;allSensorsWanted=allSensors;magneticHeading=Double.NaN;headingAt=0;gravity=null;magnetic=null;matrixReady=false;lastDisplay=-1;
-        if(sensors!=null){Sensor vector=compass?sensor(Sensor.TYPE_ROTATION_VECTOR):null;rotationVector=vector!=null;if(vector!=null)sensors.registerListener(this,vector,SensorManager.SENSOR_DELAY_UI);for(int type:TYPES){boolean fallback=compass&&!rotationVector&&(type==Sensor.TYPE_ACCELEROMETER||type==Sensor.TYPE_MAGNETIC_FIELD);if(!allSensors&&!fallback)continue;Sensor sensor=sensor(type);if(sensor!=null)sensors.registerListener(this,sensor,SensorManager.SENSOR_DELAY_UI);}}
+        if(sensors!=null){int delay=sensorDelay();Sensor vector=compass?sensor(Sensor.TYPE_ROTATION_VECTOR):null;rotationVector=vector!=null;if(vector!=null)sensors.registerListener(this,vector,delay);for(int type:TYPES){boolean fallback=compass&&!rotationVector&&(type==Sensor.TYPE_ACCELEROMETER||type==Sensor.TYPE_MAGNETIC_FIELD);if(!allSensors&&!fallback)continue;if(allSensors&&!sensorEnabled(type)&&!fallback)continue;Sensor sensor=sensor(type);if(sensor!=null)sensors.registerListener(this,sensor,delay);}}
+        if(gnssPaused){gnssPaused=false;startGnss();}
     }
-    void pause(){active=false;if(sensors!=null)sensors.unregisterListener(this);stopGnss("已停止卫星接收 · 切页或后台即停止");gnssRequested=false;}
+    int sensorDelay(){int d=a.preferences.getInt("status_sensor_delay",SensorManager.SENSOR_DELAY_FASTEST);return d==SensorManager.SENSOR_DELAY_GAME||d==SensorManager.SENSOR_DELAY_UI||d==SensorManager.SENSOR_DELAY_NORMAL?d:SensorManager.SENSOR_DELAY_FASTEST;}
+    boolean sensorEnabled(int type){return a.preferences.getBoolean("status_sensor_show_"+type,true);}
+    void pause(){pause(a.preferences.getBoolean("status_receive_pause",true));}
+    void pause(boolean preserveReceive){active=false;if(sensors!=null)sensors.unregisterListener(this);if(preserveReceive&&(gnssRunning||gnssRequested)){try{if(locations!=null){locations.unregisterGnssStatusCallback(callback);locations.removeUpdates(fixes);}}catch(Exception ignored){}gnssRunning=false;gnssPaused=true;gnssMessage="卫星接收已暂停 · 返回状态页后继续";return;}stopGnss("已停止卫星接收 · 切页或后台即停止");gnssPaused=false;gnssRequested=false;}
     @Override public void onAccuracyChanged(Sensor s,int level){accuracy.put(s.getType(),level);if(s.getType()==(rotationVector?Sensor.TYPE_ROTATION_VECTOR:Sensor.TYPE_MAGNETIC_FIELD))compassAccuracy=level;}
     @Override public void onSensorChanged(SensorEvent e){if(!active)return;values.put(e.sensor.getType(),e.values.clone());sampleAt.put(e.sensor.getType(),SystemClock.elapsedRealtime());accuracy.put(e.sensor.getType(),e.accuracy);
         if(e.sensor.getType()==Sensor.TYPE_ACCELEROMETER)gravity=e.values.clone();if(e.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD)magnetic=e.values.clone();
@@ -50,7 +54,11 @@ final class StatusHardware implements SensorEventListener {
         int display=a.getWindowManager().getDefaultDisplay().getRotation();int x=SensorManager.AXIS_X,y=SensorManager.AXIS_Y;
         if(display==Surface.ROTATION_90){x=SensorManager.AXIS_Y;y=SensorManager.AXIS_MINUS_X;}else if(display==Surface.ROTATION_180){x=SensorManager.AXIS_MINUS_X;y=SensorManager.AXIS_MINUS_Y;}else if(display==Surface.ROTATION_270){x=SensorManager.AXIS_MINUS_Y;y=SensorManager.AXIS_X;}
         if(!SensorManager.remapCoordinateSystem(rotation,x,y,remapped))return;SensorManager.getOrientation(remapped,angles);
-        double current=Math.toDegrees(angles[0]);magneticHeading=display==lastDisplay?StatusMath.smooth(magneticHeading,current,.18):StatusMath.norm(current);lastDisplay=display;pitch=Math.toDegrees(angles[1]);roll=Math.toDegrees(angles[2]);
+        double current=Math.toDegrees(angles[0]);magneticHeading=display==lastDisplay?StatusMath.smooth(magneticHeading,current,.18):StatusMath.norm(current);lastDisplay=display;
+        // Android's positive pitch points toward the display bottom. The UI defines skyward as positive.
+        pitch=-Math.toDegrees(angles[1]);
+        // Positive roll is right side down; the UI reports left as negative and right as positive.
+        roll=Math.toDegrees(angles[2]);
     }
     boolean headingAvailable(){return active&&Double.isFinite(magneticHeading)&&SystemClock.elapsedRealtime()-headingAt<5000&&Math.abs(pitch)<80&&Math.abs(roll)<80;}
     String compassSource(){return rotationVector?"旋转矢量传感器":sensor(Sensor.TYPE_ACCELEROMETER)!=null&&sensor(Sensor.TYPE_MAGNETIC_FIELD)!=null?"加速度计 + 磁力计":"此设备缺少方向传感器";}
@@ -71,8 +79,9 @@ final class StatusHardware implements SensorEventListener {
         }catch(SecurityException e){stopGnss("需要精确定位权限，近似定位不足以读取卫星");}catch(Exception e){stopGnss("此设备或系统未提供卫星状态");}return false;
     }
     void permissionResult(){if(gnssRequested&&active){if(a.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED)startGnss();else stopGnss("未授予精确定位，不能读取卫星状态");}else stopGnss("卫星接收未开始");}
-    void stopGnss(String message){gnssRunning=false;gnssRequested=false;try{if(locations!=null){locations.unregisterGnssStatusCallback(callback);locations.removeUpdates(fixes);}}catch(Exception ignored){}satellites.clear();gnssAt=0;gnssMessage=message;}
-    List<Satellite> shown(){List<Satellite> rows=new ArrayList<>();for(Satellite s:satellites)if(a.preferences.getBoolean("status_constellation_"+s.constellation,true))rows.add(s);return rows;}
+    void stopGnss(String message){gnssRunning=false;gnssRequested=false;gnssPaused=false;try{if(locations!=null){locations.unregisterGnssStatusCallback(callback);locations.removeUpdates(fixes);}}catch(Exception ignored){}satellites.clear();gnssAt=0;gnssMessage=message;}
+    private int[] companyOrder(){String raw=a.preferences.getString("status_sat_company_order","5,1,6,3,4,7,2,0");ArrayList<Integer> out=new ArrayList<>();for(String token:raw.split(","))try{int n=Integer.parseInt(token.trim());if(!out.contains(n))out.add(n);}catch(Exception ignored){}for(int n:new int[]{5,1,6,3,4,7,2,0})if(!out.contains(n))out.add(n);int[] result=new int[out.size()];for(int n=0;n<out.size();n++)result[n]=out.get(n);return result;}
+    List<Satellite> shown(){List<Satellite> rows=new ArrayList<>();for(Satellite s:satellites)if(a.preferences.getBoolean("status_constellation_"+s.constellation,true))rows.add(s);final int[] order=companyOrder();String sort=a.preferences.getString("status_sat_sort","company");Comparator<Satellite> comparator=Comparator.comparingInt((Satellite s)->StatusMath.constellationRank(s.constellation,order)).thenComparingInt(s->s.svid);if("cn0".equals(sort))comparator=Comparator.comparingDouble((Satellite s)->Float.isFinite(s.cn0)?-s.cn0:Double.POSITIVE_INFINITY).thenComparingInt(s->StatusMath.constellationRank(s.constellation,order)).thenComparingInt(s->s.svid);rows.sort(comparator);return rows;}
     String sensorText(int type,String unit){Sensor s=sensor(type);if(s==null)return "设备未提供";float[] v=values.get(type);if(v==null||!sampleAt.containsKey(type))return "等待传感器结果";
         double maximum=s.getMaximumRange();for(float sample:v)if(!Float.isFinite(sample)||(Double.isFinite(maximum)&&maximum>0&&Math.abs(sample)>maximum*1.05+.01))return "设备返回无效数据";
         if(v.length>0){float sample=v[0];if(type==Sensor.TYPE_AMBIENT_TEMPERATURE&&sample< -273.15f||type==Sensor.TYPE_PRESSURE&&sample<=0||type==Sensor.TYPE_LIGHT&&sample<0||type==Sensor.TYPE_PROXIMITY&&sample<0||type==Sensor.TYPE_RELATIVE_HUMIDITY&&(sample<0||sample>100))return "设备返回无效数据";}

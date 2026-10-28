@@ -31,8 +31,8 @@ public final class StatusTests {
         double[] zenith=StatusMath.sky(90,120),east=StatusMath.sky(0,90),north=StatusMath.sky(0,0);
         check(close(zenith[0],0,1e-8)&&close(zenith[1],0,1e-8),"Zenith at sky center");
         check(close(east[0],1,1e-8)&&close(east[1],0,1e-8)&&north[1]==-1,"Azimuth maps to normalized sky coordinates");
-        check(StatusMath.constellation(1).equals("美国 GPS")&&StatusMath.constellation(5).equals("中国北斗")&&StatusMath.constellation(6).equals("欧洲伽利略")&&StatusMath.constellation(3).equals("俄罗斯 GLONASS"),"Android constellation identifiers mapped correctly");
-        check(StatusMath.constellation(99).equals("未知系统")&&StatusMath.satelliteId(5,12).equals("C12"),"Unknown systems retain honest fallback");
+        check(StatusMath.constellation(1).equals("美国定位系统")&&StatusMath.constellation(5).equals("中国北斗")&&StatusMath.constellation(6).equals("欧洲伽利略")&&StatusMath.constellation(3).equals("俄罗斯定位系统"),"Android constellation identifiers mapped correctly");
+        check(StatusMath.constellation(99).equals("其他卫星系统")&&StatusMath.satelliteId(5,12).equals("卫星 12"),"Unknown systems retain honest fallback");
         StatusPlace p=new StatusPlace("id1","  寻宝地点  ",-122.4000000123,-33.8000000456,123);
         List<StatusPlace> rows=StatusPlace.decode(StatusPlace.encode(Arrays.asList(p)));
         check(rows.size()==1&&rows.get(0).name.equals("寻宝地点")&&rows.get(0).created==123,"Unicode waypoint round trip and trim");
@@ -43,8 +43,9 @@ public final class StatusTests {
         boolean rejected=false;try{new StatusPlace("bad","x",Double.NaN,0,0);}catch(IllegalArgumentException ex){rejected=true;}check(rejected,"Nonfinite coordinates cannot be saved");
         rejected=false;try{new StatusPlace("bad"," ",0,0,0);}catch(IllegalArgumentException ex){rejected=true;}check(rejected,"Empty waypoint name rejected");
         StringBuilder longName=new StringBuilder();for(int i=0;i<61;i++)longName.append('字');rejected=false;try{new StatusPlace("bad",longName.toString(),0,0,0);}catch(IllegalArgumentException ex){rejected=true;}check(rejected,"Waypoint name length is bounded");
-        List<StatusPlace> tooMany=new ArrayList<>();for(int i=0;i<201;i++)tooMany.add(new StatusPlace("id"+i,"x",0,0,0));rejected=false;try{StatusPlace.encode(tooMany);}catch(IllegalArgumentException ex){rejected=true;}check(rejected,"Waypoint persistence has a bounded record count");
+        List<StatusPlace> many=new ArrayList<>();for(int i=0;i<201;i++)many.add(new StatusPlace("id"+i,"x",0,0,0));check(StatusPlace.decode(StatusPlace.encode(many)).size()==201,"Waypoint persistence has no artificial record count");
         check(StatusMath.distanceText(123).equals("123.0 米")&&StatusMath.distanceText(1234).equals("1.23 km"),"Distance units switch at one kilometer");
         System.out.println("StatusTests: "+checks+" checks passed");
     }
 }
+
