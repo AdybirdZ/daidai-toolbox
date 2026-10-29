@@ -18,6 +18,7 @@ final class RouteRecorder {
     private static boolean active; private static long last=-1; private static ArrayList<RoutePoint> points=new ArrayList<>();
     static void start(long interval){synchronized(LOCK){active=true;last=-1;points.clear();}}
     static boolean active(){synchronized(LOCK){return active;}}
+    static int size(){synchronized(LOCK){return points.size();}}
     static void stop(){synchronized(LOCK){active=false;last=-1;}}
     static void onLocation(Location l){if(l==null)return;synchronized(LOCK){if(!active)return;long t=l.getTime()>0?l.getTime():System.currentTimeMillis();long interval=RouteStore.intervalMs();if(last>=0&&t-last<interval)return;last=t;points.add(new RoutePoint(l.getLongitude(),l.getLatitude(),t,l.hasAccuracy()?l.getAccuracy():Float.NaN));}}
     static ArrayList<RoutePoint> points(){synchronized(LOCK){return new ArrayList<>(points);}}
@@ -37,16 +38,69 @@ final class RouteStore {
 }
 
 final class RouteCanvas extends View {
-    private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);private final MainActivity a;private ArrayList<RoutePoint> points=new ArrayList<>();private boolean center=true,selfCenter,move;private float zoom=1,panX,panY,lastX,lastY,pinchStart;private long downTime;private float downX,downY;private Runnable pointClick;
-    RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);}
-    void setPoints(List<RoutePoint> p){points=new ArrayList<>(p);if(center){panX=panY=0;}invalidate();}
-    void setCenter(boolean b){center=b;selfCenter=b;if(b){panX=panY=0;}invalidate();}
-    boolean isMove(){return move;}
-    void setMove(boolean b){move=b;requestParentDisallow(b);invalidate();}
-    private void requestParentDisallow(boolean disallow){ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(disallow);}
-    void onPointClick(Runnable r){pointClick=r;}
-    protected void onDraw(Canvas c){super.onDraw(c);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(a.dp(2));paint.setColor(0xFF246BCE);if(points.size()>1){for(int i=1;i<points.size();i++){float[] p1=xy(points.get(i-1)),p2=xy(points.get(i));c.drawLine(p1[0],p1[1],p2[0],p2[1],paint);}}paint.setStyle(Paint.Style.FILL);paint.setColor(0xFF246BCE);for(int i=0;i<points.size();i++){float[] q=xy(points.get(i));c.drawCircle(q[0],q[1],i==points.size()-1?a.dp(5):a.dp(3),paint);}if(points.isEmpty()){paint.setColor(a.MUTED);paint.setTextSize(a.dp(14));c.drawText("等待定位点…",a.dp(16),a.dp(30),paint);}}
-    private float[] xy(RoutePoint q){if(points.isEmpty())return new float[]{getWidth()/2f,getHeight()/2f};double minLon=Double.POSITIVE_INFINITY,maxLon=Double.NEGATIVE_INFINITY,minLat=Double.POSITIVE_INFINITY,maxLat=Double.NEGATIVE_INFINITY;for(RoutePoint p:points){minLon=Math.min(minLon,p.lon);maxLon=Math.max(maxLon,p.lon);minLat=Math.min(minLat,p.lat);maxLat=Math.max(maxLat,p.lat);}double cx=(minLon+maxLon)/2,cy=(minLat+maxLat)/2;if(selfCenter){Location current=LocationService.last(a);if(current!=null){cx=current.getLongitude();cy=current.getLatitude();}}double span=Math.max(maxLon-minLon,(maxLat-minLat)*1.35);if(span<0.0001)span=0.002;float scale=(float)(Math.min(getWidth(),getHeight())*.78/span*zoom);return new float[]{getWidth()/2f+(float)((q.lon-cx)*scale)+panX,getHeight()/2f-(float)((q.lat-cy)*scale)+panY};}
-    public boolean onTouchEvent(android.view.MotionEvent e){int action=e.getActionMasked();if(action==MotionEvent.ACTION_CANCEL){pinchStart=0;requestParentDisallow(false);return true;}if(action==MotionEvent.ACTION_POINTER_UP){pinchStart=0;return true;}if(e.getPointerCount()>1){requestParentDisallow(true);if(action==MotionEvent.ACTION_POINTER_DOWN||action==MotionEvent.ACTION_DOWN){float dx=e.getX(1)-e.getX(0),dy=e.getY(1)-e.getY(0);pinchStart=(float)Math.sqrt(dx*dx+dy*dy);lastX=pinchStart;downTime=System.currentTimeMillis();return true;}if(action==MotionEvent.ACTION_MOVE){float dx=e.getX(1)-e.getX(0),dy=e.getY(1)-e.getY(0);float d=(float)Math.sqrt(dx*dx+dy*dy);if(pinchStart>0){zoom=Math.max(.5f,Math.min(12,zoom*(d/Math.max(1,lastX))));}lastX=d;invalidate();}return true;}switch(action){case MotionEvent.ACTION_DOWN:requestParentDisallow(move);downX=lastX=e.getX();downY=lastY=e.getY();downTime=System.currentTimeMillis();return true;case MotionEvent.ACTION_MOVE:if(move){requestParentDisallow(true);panX+=e.getX()-lastX;panY+=e.getY()-lastY;lastX=e.getX();lastY=e.getY();invalidate();}return true;case MotionEvent.ACTION_UP:requestParentDisallow(false);if(!move&&System.currentTimeMillis()-downTime<300&&Math.hypot(e.getX()-downX,e.getY()-downY)<a.dp(12)&&pointClick!=null){int hit=nearest(e.getX(),e.getY());if(hit>=0){final RoutePoint q=points.get(hit);new ToolDialog(a).setTitle("路线定位点").setMessage("经度、纬度："+CoordinateFormat.pair(q.lon,q.lat,6)+"\n时间："+new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ROOT).format(new Date(q.time))+(Float.isFinite(q.accuracy)?"\n水平误差半径："+String.format(Locale.ROOT,"%.1f 米",q.accuracy):"" )).setPositiveButton("知道了",null).show();}}return true;}return true;}
-    private int nearest(float x,float y){int best=-1;float d=Float.MAX_VALUE;for(int i=0;i<points.size();i++){float[] q=xy(points.get(i));float n=(q[0]-x)*(q[0]-x)+(q[1]-y)*(q[1]-y);if(n<d){d=n;best=i;}}return d<a.dp(22)*a.dp(22)?best:-1;}
+    private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final MainActivity a;
+    private ArrayList<RoutePoint> points=new ArrayList<>();
+    private int visibleCount;
+    private double originLon,originLat,cosLat=1,span=.002;
+    private double viewLon,viewLat;
+    private boolean followSelf,dragged,multiTouch;
+    private float zoom=1,panX,panY,lastX,lastY,downX,downY;
+    RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);setContentDescription("路线画布，单指拖动，使用下方滑块缩放，点按记录点查看详情");}
+    void setRoute(List<RoutePoint> route,int count,boolean fit){
+        points=new ArrayList<>(route);visibleCount=Math.max(0,Math.min(points.size(),count));
+        if(!points.isEmpty()){
+            originLon=points.get(0).lon;originLat=points.get(0).lat;cosLat=Math.max(.01,Math.cos(Math.toRadians(originLat)));
+            double minX=0,maxX=0,minY=0,maxY=0;
+            for(RoutePoint p:points){double x=longitudeDelta(p.lon-originLon)*cosLat,y=p.lat-originLat;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
+            span=Math.max(maxX-minX,maxY-minY);if(span<.00001)span=.002;
+            if(fit){viewLon=originLon+(minX+maxX)/2/cosLat;viewLat=originLat+(minY+maxY)/2;panX=panY=0;followSelf=false;zoom=1;}
+        }
+        invalidate();
+    }
+    int pointCount(){return points.size();}
+    void showThrough(int index){visibleCount=Math.max(0,Math.min(points.size(),index+1));invalidate();}
+    void centerOn(int index){if(index<0||index>=points.size())return;RoutePoint q=points.get(index);viewLon=q.lon;viewLat=q.lat;followSelf=false;panX=panY=0;invalidate();}
+    void centerSelf(){Location fix=LocationService.last(a);if(fix==null){a.toast("请先获取当前位置");return;}followSelf=true;viewLon=fix.getLongitude();viewLat=fix.getLatitude();panX=panY=0;invalidate();}
+    void zoom(float value){zoom=Math.max(.25f,Math.min(64,value));invalidate();}
+    static double longitudeDelta(double value){return ((value+540)%360+360)%360-180;}
+    private void intercept(boolean disallow){ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(disallow);}
+    private float scale(){return (float)(Math.min(getWidth(),getHeight())*.78/span*zoom);}
+    private float[] xy(RoutePoint q){return new float[]{getWidth()/2f+(float)(longitudeDelta(q.lon-viewLon)*cosLat)*scale()+panX,getHeight()/2f-(float)(q.lat-viewLat)*scale()+panY};}
+    protected void onDraw(Canvas c){
+        super.onDraw(c);if(followSelf){Location fix=LocationService.last(a);if(fix!=null){viewLon=fix.getLongitude();viewLat=fix.getLatitude();}}
+        paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(a.dp(2));paint.setColor(0xFF246BCE);
+        for(int i=1;i<visibleCount;i++){float[] q=xy(points.get(i-1)),r=xy(points.get(i));c.drawLine(q[0],q[1],r[0],r[1],paint);}
+        paint.setStyle(Paint.Style.FILL);
+        for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));paint.setColor(i==visibleCount-1?0xFFE58323:0xFF246BCE);c.drawCircle(q[0],q[1],a.dp(i==visibleCount-1?5:3),paint);}
+        if(visibleCount==0){paint.setColor(a.MUTED);paint.setTextSize(a.dp(14));c.drawText("暂无路线定位点",a.dp(16),a.dp(30),paint);}
+    }
+    @Override public boolean onTouchEvent(MotionEvent e){
+        int action=e.getActionMasked();
+        if(action==MotionEvent.ACTION_DOWN){intercept(true);downX=lastX=e.getX();downY=lastY=e.getY();dragged=false;multiTouch=false;return true;}
+        if(action==MotionEvent.ACTION_CANCEL){intercept(false);return true;}
+        if(action==MotionEvent.ACTION_POINTER_DOWN){multiTouch=true;return true;}
+        if(action==MotionEvent.ACTION_POINTER_UP){int remaining=e.getActionIndex()==0?1:0;lastX=e.getX(remaining);lastY=e.getY(remaining);return true;}
+        if(action==MotionEvent.ACTION_MOVE){
+            intercept(true);if(e.getPointerCount()!=1)return true;
+            if(Math.hypot(e.getX()-downX,e.getY()-downY)>android.view.ViewConfiguration.get(a).getScaledTouchSlop())dragged=true;
+            if(dragged){followSelf=false;panX+=e.getX()-lastX;panY+=e.getY()-lastY;invalidate();}
+            lastX=e.getX();lastY=e.getY();return true;
+        }
+        if(action==MotionEvent.ACTION_UP){intercept(false);if(!dragged&&!multiTouch){performClick();select(e.getX(),e.getY());}return true;}
+        return true;
+    }
+    @Override public boolean performClick(){super.performClick();return true;}
+    private void select(float x,float y){
+        ArrayList<Integer> hits=new ArrayList<>();double limit=a.dp(20)*a.dp(20);
+        for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));double d=(q[0]-x)*(q[0]-x)+(q[1]-y)*(q[1]-y);if(d<=limit)hits.add(i);}
+        if(hits.isEmpty())return;
+        if(hits.size()==1){showPoint(hits.get(0));return;}
+        String[] labels=new String[hits.size()];for(int i=0;i<hits.size();i++)labels[i]="记录点 "+(hits.get(i)+1)+" / "+points.size();
+        new ToolDialog(a).setTitle("选择重叠或邻近的记录点").setItems(labels,(d,n)->showPoint(hits.get(n))).setNegativeButton("返回",null).show();
+    }
+    private void showPoint(int index){
+        RoutePoint q=points.get(index);java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss XXX",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone(a.displayZone(java.time.ZoneId.systemDefault())));
+        new ToolDialog(a).setTitle("记录点 "+(index+1)+" / "+points.size()).setMessage("经度、纬度："+CoordinateFormat.pair(q.lon,q.lat,6)+"\n记录时间："+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?"\n水平误差半径："+String.format(Locale.ROOT,"%.1f 米",q.accuracy):"")).setPositiveButton("知道了",null).show();
+    }
 }
