@@ -44,7 +44,7 @@ public final class WeatherApi {
     }
     public List<City> search(String query) throws Exception {
         String q = query.trim();
-        if (q.length() < 2 || q.length() > 80) throw new IOException("请输入 2–80 个字符的地区名称");
+        if (q.length() < 2 || q.length() > 80) throw new IOException("请输入 2～80 个字符的地区名称");
         JSONObject data = get(SEARCH_HOST + "?name=" + URLEncoder.encode(q, "UTF-8") + "&count=30&language=zh&format=json");
         List<City> list = new ArrayList<>(); JSONArray a = data.optJSONArray("results");
         if (a != null) for (int i = 0; i < a.length(); i++) try { list.add(new City(a.getJSONObject(i))); } catch (JSONException ignored) { }
@@ -54,7 +54,7 @@ public final class WeatherApi {
         long now = System.currentTimeMillis();
         if (now < blockedUntil) throw new IOException("请求过于频繁，请稍后再试");
         while (!calls.isEmpty() && calls.peekFirst() < now - 60_000) calls.removeFirst();
-        if (calls.size() >= 20) throw new IOException("操作过于频繁，请一分钟后再试");
+        if (calls.size() >= 20) throw new IOException("距上次请求不足 1 分钟，请稍后重试");
         if (policy != null) policy.reserve();
         calls.addLast(now);
     }

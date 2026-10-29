@@ -20,7 +20,7 @@ public final class WeatherStore implements WeatherApi.RequestPolicy {
         for(int i=0;i<windows.length;i++) {
             long bucket=now/windows[i],previous=prefs.getLong("quota_window_"+i,-1);
             int count=bucket==previous?prefs.getInt("quota_count_"+i,0):0;
-            if(bucket<previous||count>=limits[i])throw new IOException(i==2?"今日查询较多，请明天再试":"查询较频繁，请稍后再试");
+            if(bucket<previous||count>=limits[i])throw new IOException(i==2?"已达到今日查询限额，请明日重试":"请求过于频繁，请稍后重试");
             edit.putLong("quota_window_"+i,bucket).putInt("quota_count_"+i,count+1);
         }
         edit.apply();

@@ -102,6 +102,6 @@ final class RouteCanvas extends View {
     }
     private void showPoint(int index){
         RoutePoint q=points.get(index);java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss XXX",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone(a.displayZone(java.time.ZoneId.systemDefault())));
-        new ToolDialog(a).setTitle("记录点 "+(index+1)+" / "+points.size()).setMessage("经度、纬度："+CoordinateFormat.pair(q.lon,q.lat,6)+"\n记录时间："+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?"\n水平误差半径："+String.format(Locale.ROOT,"%.1f 米",q.accuracy):"")).setPositiveButton("知道了",null).show();
+        new ToolDialog(a).setTitle("记录点 "+(index+1)+" / "+points.size()).setMessage("坐标（经度、纬度）："+CoordinateFormat.pair(q.lon,q.lat,6)+"\n记录时间："+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?"\n水平误差半径："+String.format(Locale.ROOT,"%.1f 米",q.accuracy):"")).setPositiveButton("关闭",null).show();
     }
 }

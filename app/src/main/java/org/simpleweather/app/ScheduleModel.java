@@ -42,11 +42,11 @@ public final class ScheduleModel {
     }
     public String validateCourse(Course c){
         if(c.name.trim().isEmpty()||c.name.length()>60)return "课程名称必填，最多 60 个字";
-        if(c.room.length()>80||c.teacher.length()>80)return "地点和老师各最多 80 个字";
+        if(c.room.length()>80||c.teacher.length()>80)return "上课地点和任课教师各最多 80 个字";
         if(c.day<1||c.day>7)return "请选择星期";
         if(c.first<1||c.last<c.first||c.last>slots.size())return "结束节次不能早于开始节次";
         if(c.parity!=3&&(c.weekStart<1||c.weekEnd<c.weekStart||c.weekEnd>weeks))return "授课周次必须在学期范围内，结束周不能早于开始周";
-        if(c.parity<0||c.parity>3)return "请选择有效的授课周规则";
+        if(c.parity<0||c.parity>3)return "请选择有效的授课周设置";
         if(c.parity==3&&(c.customWeeks.isEmpty()||c.customWeeks.first()<1||c.customWeeks.last()>weeks))return "请选择学期范围内的自定义授课周";
         boolean any=false;for(int w=1;w<=weeks;w++)if(c.runs(w))any=true;
         if(!any)return "所选授课范围内没有符合单双周规则的周次";

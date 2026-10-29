@@ -61,20 +61,20 @@ final class StatusHardware implements SensorEventListener {
         roll=Math.toDegrees(angles[2]);
     }
     boolean headingAvailable(){return active&&Double.isFinite(magneticHeading)&&SystemClock.elapsedRealtime()-headingAt<5000&&Math.abs(pitch)<80&&Math.abs(roll)<80;}
-    String compassSource(){return rotationVector?"旋转矢量传感器":sensor(Sensor.TYPE_ACCELEROMETER)!=null&&sensor(Sensor.TYPE_MAGNETIC_FIELD)!=null?"加速度计 + 磁力计":"此设备缺少方向传感器";}
+    String compassSource(){return rotationVector?"旋转矢量传感器":sensor(Sensor.TYPE_ACCELEROMETER)!=null&&sensor(Sensor.TYPE_MAGNETIC_FIELD)!=null?"加速度计 + 磁力计":"设备未提供可用的方向传感器";}
     double declination(Location fix){if(fix==null||!StatusMath.coordinate(fix.getLongitude(),fix.getLatitude()))return Double.NaN;return new GeomagneticField((float)fix.getLatitude(),(float)fix.getLongitude(),fix.hasAltitude()?(float)fix.getAltitude():0,System.currentTimeMillis()).getDeclination();}
     double trueHeading(Location fix){double d=declination(fix);return headingAvailable()&&Double.isFinite(d)?StatusMath.norm(magneticHeading+d):Double.NaN;}
     private final LocationListener fixes=new LocationListener(){public void onLocationChanged(Location l){if(active&&gnssRunning){LocationService.record(a,l);}}public void onStatusChanged(String p,int s,Bundle b){}public void onProviderEnabled(String p){gnssMessage="卫星定位已开启，等待接收";}public void onProviderDisabled(String p){satellites.clear();gnssAt=0;gnssMessage="系统卫星定位已关闭";}};
     private final GnssStatus.Callback callback=new GnssStatus.Callback(){
         @Override public void onStarted(){if(gnssRunning)gnssMessage="正在接收 · 请在开阔处等待";}
-        @Override public void onStopped(){satellites.clear();gnssAt=0;if(gnssRunning)gnssMessage="卫星引擎已停止，等待系统恢复";}
+        @Override public void onStopped(){satellites.clear();gnssAt=0;if(gnssRunning)gnssMessage="卫星定位模块已停止，等待系统恢复";}
         @Override public void onFirstFix(int ms){if(gnssRunning)gnssMessage="已获得首次卫星定位";}
-        @Override public void onSatelliteStatusChanged(GnssStatus status){if(!active||!gnssRunning)return;Map<String,Satellite> unique=new LinkedHashMap<>();for(int i=0;i<status.getSatelliteCount();i++){Satellite s=new Satellite(status.getConstellationType(i),status.getSvid(i),status.getElevationDegrees(i),status.getAzimuthDegrees(i),status.getCn0DbHz(i),status.usedInFix(i));Satellite old=unique.get(s.key());if(old!=null)s=new Satellite(s.constellation,s.svid,s.elevation,s.azimuth,Math.max(s.cn0,old.cn0),s.used||old.used);unique.put(s.key(),s);}satellites.clear();satellites.addAll(unique.values());satellites.sort(Comparator.comparingInt((Satellite s)->s.constellation).thenComparingInt(s->s.svid));gnssAt=SystemClock.elapsedRealtime();gnssMessage=satellites.isEmpty()?"尚未报告卫星 · 接收不代表天空中没有卫星":"已收到设备卫星状态";}
+        @Override public void onSatelliteStatusChanged(GnssStatus status){if(!active||!gnssRunning)return;Map<String,Satellite> unique=new LinkedHashMap<>();for(int i=0;i<status.getSatelliteCount();i++){Satellite s=new Satellite(status.getConstellationType(i),status.getSvid(i),status.getElevationDegrees(i),status.getAzimuthDegrees(i),status.getCn0DbHz(i),status.usedInFix(i));Satellite old=unique.get(s.key());if(old!=null)s=new Satellite(s.constellation,s.svid,s.elevation,s.azimuth,Math.max(s.cn0,old.cn0),s.used||old.used);unique.put(s.key(),s);}satellites.clear();satellites.addAll(unique.values());satellites.sort(Comparator.comparingInt((Satellite s)->s.constellation).thenComparingInt(s->s.svid));gnssAt=SystemClock.elapsedRealtime();gnssMessage=satellites.isEmpty()?"设备尚未报告卫星，不表示天空中没有卫星":"已收到设备卫星状态";}
     };
     boolean startGnss(){
         gnssRequested=true;if(a.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){a.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},46);return false;}
         stopGnss("正在启动卫星接收");gnssRequested=true;
-        try{if(!active){gnssMessage="请回到状态页前台开始";return false;}if(locations==null||!locations.getAllProviders().contains(LocationManager.GPS_PROVIDER)){gnssMessage="此设备没有卫星定位提供程序";return false;}if(!locations.isProviderEnabled(LocationManager.GPS_PROVIDER)){gnssMessage="请先打开系统定位开关";return false;}
+        try{if(!active){gnssMessage="请在状态页处于前台时开始接收";return false;}if(locations==null||!locations.getAllProviders().contains(LocationManager.GPS_PROVIDER)){gnssMessage="此设备没有卫星定位提供程序";return false;}if(!locations.isProviderEnabled(LocationManager.GPS_PROVIDER)){gnssMessage="请先打开系统定位开关";return false;}
             gnssRunning=true;if(!locations.registerGnssStatusCallback(callback,new Handler(Looper.getMainLooper())))throw new IllegalStateException();locations.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,fixes,Looper.getMainLooper());gnssMessage="等待设备报告卫星 · 室内可能无信号";return true;
         }catch(SecurityException e){stopGnss("需要精确定位权限，近似定位不足以读取卫星");}catch(Exception e){stopGnss("此设备或系统未提供卫星状态");}return false;
     }

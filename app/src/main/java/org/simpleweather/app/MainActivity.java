@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=state==null?preferences.getInt("last_tab",0):state.getInt("toolbox_tab",preferences.getInt("last_tab",0));if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));navigationOffset=state.getInt("toolbox_navigation",0);pendingScrollY=state.getInt("toolbox_scroll",0);}if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<27)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",27).apply();}},700);
+        if(preferences.getInt("seen_version",0)<28)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",28).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
         navigation=row();navigation.setPadding(dp(8),dp(6),dp(8),dp(6));navigation.setBackground(shape(0xF2FFFFFF,0));host.addView(navigation,lp(-1,-2));renderNavigation();
     }
     static final String[] TAB_NAMES={"天气","课程表","状态","天气地图","天文","地震"};
-    static final String[] WEATHER_NAMES={"地区","当前天气","未来24小时","未来7天","天气详情","数据来源入口"};
+    static final String[] WEATHER_NAMES={"地区","当前天气","未来 24 小时","未来 7 天","天气详情","数据来源入口"};
     boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",false);}
     int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
     ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
@@ -186,14 +186,14 @@ public class MainActivity extends Activity {
     }
     private void emptyWeather() {
         LinearLayout c=card();c.setGravity(Gravity.CENTER);gap(c,20);c.addView(new WeatherIcon(this,-1,true),lp(110,110));gap(c,16);
-        c.addView(text(loading?"正在获取天气":"还没有天气数据",19,INK,true));gap(c,12);
-        TextView help=text(loading?"稍等片刻，看看这个地方的天气。":"联网后点击重试，也可以先切换地区。",13,MUTED,false);help.setGravity(Gravity.CENTER);c.addView(help);gap(c,20);
+        c.addView(text(loading?"正在获取天气":"暂无天气数据",19,INK,true));gap(c,12);
+        TextView help=text(loading?"正在请求天气数据，请稍候。":"请连接网络后重试，或选择其他地区。",13,MUTED,false);help.setGravity(Gravity.CENTER);c.addView(help);gap(c,20);
         if(!loading)c.addView(button("重新获取",true,()->load(true)));gap(c,18);gap(body,24);
     }
     private void hourly(Instant now) {
         LinearLayout c=card();section(c,"未来 24 小时","Open-Meteo ↗");
         List<Integer> indices=data.nextHours(now,24);
-        if(indices.isEmpty()){c.addView(text("缓存预报已过期，联网刷新后查看",13,MUTED,false));return;}
+        if(indices.isEmpty()){c.addView(text("缓存预报已过期，请联网刷新",13,MUTED,false));return;}
         HorizontalScrollView scroll=new HorizontalScrollView(this);scroll.setHorizontalScrollBarEnabled(false);LinearLayout hours=row();hours.setGravity(Gravity.TOP);
         ZoneId shownZone=displayZone(data.zone);int currentHour=now.atZone(shownZone).getHour();LocalDate today=now.atZone(shownZone).toLocalDate();
         for(int index:indices) {
@@ -226,7 +226,7 @@ public class MainActivity extends Activity {
         metricRow(c,"相对湿度",WeatherData.number(WeatherData.value(data.current,"relative_humidity_2m"))+"%","风速",WeatherData.number(WeatherData.value(data.current,"wind_speed_10m"))+" km/h");
         gap(c,19);line(c);gap(c,19);
         double uv=WeatherData.at(data.daily,"uv_index_max",today);
-        metricRow(c,"风向",WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")).isEmpty()?"—":WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")),"今日紫外线",Double.isFinite(uv)?String.format(Locale.ROOT,"%.1f",uv):"—");
+        metricRow(c,"风向",WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")).isEmpty()?"—":WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")),"今日最高紫外线指数",Double.isFinite(uv)?String.format(Locale.ROOT,"%.1f",uv):"—");
         gap(c,19);line(c);gap(c,19);
         metricRow(c,"日出",WeatherData.clock(WeatherData.textAt(data.daily,"sunrise",today)),"日落",WeatherData.clock(WeatherData.textAt(data.daily,"sunset",today)));
     }
@@ -235,7 +235,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.2.4",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · pre1.2.5",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -245,7 +245,7 @@ public class MainActivity extends Activity {
         long now=System.currentTimeMillis();
         if(!force&&cache!=null&&cache.fresh(now)) {data=cache;notice=cache.currentIsOld(Instant.now())?"当前显示的是较早的数据，可点击刷新更新。":"";if(weatherVisible())showWeather();return;}
         Long previous=attempts.get(key);
-        if(previous!=null&&now-previous<60_000){toast("刚刚更新过，请一分钟后再试");return;}
+        if(previous!=null&&now-previous<60_000){toast("距上次请求不足 1 分钟，请稍后重试");return;}
         attempts.put(key,now);inFlight.add(key);loading=true;notice="";if(weatherVisible())showWeather();final City requested=city;final int generation=cacheGeneration;
         workers.execute(()->{
             WeatherData received=null;String error=null;
@@ -253,7 +253,7 @@ public class MainActivity extends Activity {
             catch(Exception e){error=e instanceof java.io.IOException?e.getMessage():"天气数据暂不可用，请稍后重试";if(error==null||!error.matches(".*[\\u4e00-\\u9fff].*"))error="网络连接失败，请检查网络后重试";}
             final WeatherData result=received;final String failure=error;
             main.post(()->{if(dead)return;inFlight.remove(key);if(generation!=cacheGeneration){loading=inFlight.contains(city.key());if(weatherVisible())showWeather();return;}if(result!=null)store.save(requested,result);if(!city.key().equals(key))return;loading=false;
-                if(result!=null){data=result;notice="";if(force)toast("刷新成功！");}else{data=store.cached(requested);notice=data==null?failure:failure+"；当前显示上次保存的数据。";}
+                if(result!=null){data=result;notice="";if(force)toast("刷新成功");}else{data=store.cached(requested);notice=data==null?failure:failure+"；当前显示上次保存的数据。";}
                 if(weatherVisible())showWeather();
             });
         });
@@ -284,8 +284,8 @@ public class MainActivity extends Activity {
             List<City> matched=new ArrayList<>();Set<String> keys=new HashSet<>();
             for(City c:store.saved())if(c.matches(q)&&keys.add(c.key()))matched.add(c);
             for(City c:catalog)if(c.matches(q)&&keys.add(c.key()))matched.add(c);
-            results.addView(text(matched.isEmpty()?"点击搜索，查找更多地区":"本地匹配",15,INK,true));gap(results,10);cityList(matched);
-            gap(results,8);results.addView(text("点击“搜索”获取全球城市与区县结果。",12,MUTED,false));
+            results.addView(text(matched.isEmpty()?"搜索其他地区":"本地匹配",15,INK,true));gap(results,10);cityList(matched);
+            gap(results,8);results.addView(text("输入地区名称后，点击“搜索”查询城市或区县。",12,MUTED,false));
         }
     }
     private void cityList(List<City> cities) {
@@ -303,7 +303,7 @@ public class MainActivity extends Activity {
             for(City c:found)if(seen.add(c.key()))list.add(c);
             final String error=failure;
             main.post(()->{if(dead||!picking||version!=searchVersion)return;results.removeAllViews();
-                results.addView(text(error!=null?error:list.isEmpty()?"没有找到该地区，试试城市名或拼音。":"搜索结果 · 注意区分同名地区",14,error!=null?0xFF8B6021:INK,false));gap(results,14);cityList(list);
+                results.addView(text(error!=null?error:list.isEmpty()?"未找到匹配地区，请尝试城市名称或拼音。":"搜索结果 · 请核对同名地区所属区域",14,error!=null?0xFF8B6021:INK,false));gap(results,14);cityList(list);
             });
         });
     }
@@ -313,7 +313,7 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",27).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",28).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
@@ -327,16 +327,17 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"pre1.2.5 · 文字与排版优化（本地预览）","• 统一天气、天文、状态、地震、课程表及设置中的术语、操作提示和标点。\n• 修正卫星系统排序、天体信息、坐标、高度及时间显示说明，删除冗余和口语化表述。\n• 长说明统一采用固定段间距和行间距，明确数据来源、估算性质及使用限制。\n• 本版本仅在本地保存。");
         updateEntry(c,"1.2.4 · 状态刷新与路线修复","• 卫星明细和状态数值更新时保持页面阅读位置，避免重新布局跳回列表上方。\n• 路线缩放以路线框中心为基准，拖动后缩放也保持正确中心。\n• 状态页除 GPS 定位信息外，指南针、俯仰横滚、传感器、卫星显示、电池和设备信息每 50 毫秒刷新一次；数据以系统实际报告为准，GPS 与网络定位间隔保持原设置。\n• 删除已保存路线或本次未保存路线前，弹出“确定删除此路线吗？”确认框，取消保留路线。\n• 状态默认顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明，保留已自定义的排序。\n• 版本号 1.2.4 / versionCode 26，沿用原签名，可覆盖升级。");
         updateEntry(c,"1.2.3 · 路线绘制与全局设置","• 新增路线绘制：持续定位开启时按 2～60 秒记录真实位置点，支持缩放滑块、单指拖动、以自己为中心、点选记录点查看序号、坐标和时间，结束后可命名保存或删除并回放。\n• 俯仰和横滚改为大字显示，网络定位间隔设置名称更明确，普通说明文字禁止长按选择。\n• 保存地点重新定位说明和状态方向文案调整，设置新增全局设置，背景、描边和时间显示集中管理；时间显示同步到地震、天文等页面。\n• 版本号 1.2.3 / versionCode 25，可覆盖 1.2.2。\n• 本次维护合并开始/结束绘制按钮，移除移动模式与双指缩放；保存路线完整预览，支持逐点播放/暂停、暂停时前后与首尾跳转、1～20 个记录点/秒速度滑块，并修正名称输入框留白。" );
         updateEntry(c,"1.2.2 · 状态、缓存与地点改进","• 调整大雷暴伴冰雹图标，避免冰雹看起来从云中间斜向发射。\n• 状态使用说明中的定位设置按钮移到说明末尾；状态设置按默认栏目顺序整理，电池与设备信息支持显隐和排序。\n• 电池瞬时电流可选择系统原始符号或反转符号，默认采用 1.2.0 的系统原始符号；说明保留不同厂商定义不同。\n• 卫星名称改为国家或地区加英文缩写，切换栏目、锁屏和后台默认暂停，回到状态页面自动继续；移除传感器帧率设置。\n• 保存地点时年龄实时更新，新增重新定位按钮，只更新表单坐标；地点不设应用层数量上限。\n• 缓存管理显示当前缓存占用，设置入口顺序调整。" );
-        updateEntry(c,"1.2.1 · 状态页细化","• 新增传感器显隐与排序、卫星天空图方向跟随、卫星明细按载噪密度比或公司排序，以及电池健康、瞬时电流和重力传感器说明。\n• 修正俯仰、横滚定义，显示当前位置估算磁偏角；地面速度和移动方位改为大字。\n• 切换栏目、锁屏和后台默认暂停卫星接收，可改为停止；地点不设应用层数量上限。\n• versionName 1.2.1 / versionCode 23，可覆盖 1.2.0。");
+        updateEntry(c,"1.2.1 · 状态页细化","• 新增传感器显隐与排序、卫星天空图方向跟随、卫星明细按载噪密度比或卫星系统排序，以及电池健康、瞬时电流和重力传感器说明。\n• 修正俯仰、横滚定义，显示当前位置估算磁偏角；地面速度和移动方位改为大字。\n• 切换栏目、锁屏和后台默认暂停卫星接收，可改为停止；地点不设应用层数量上限。\n• versionName 1.2.1 / versionCode 23，可覆盖 1.2.0。");
         updateEntry(c,"1.2.0 · 状态与设备工具","• 定位升级为状态，保留原定位方式、间隔、前台服务与共享最近位置。\n• 新增 16 方位指南针、磁北与真北、俯仰横滚和校准提示；方向按屏幕旋转换算。\n• 新增设备接收的 GPS、北斗、伽利略、GLONASS 等卫星天空图、方位角、高度角、载噪密度比与参与定位状态，需设备支持及精确定位权限，切换栏目或后台停止卫星接收。\n• 本机保存地点、手动输入或保存当前位置，显示寻宝目标点、直线距离和方向；无道路地图或路线。\n• 新增陀螺仪三轴、加速度、重力、磁场、气压、环境光等设备可用传感器，电量、电池温度、电压及系统提供的电流、内存、存储和开机时长。\n• 状态栏目可显示与排序，卫星系统可筛选；数据仅本机处理，无第三方状态接口或代码。");
-        updateEntry(c,"1.1.6 · 平板状态恢复与星空扩充","• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等，名称统一为 M 编号在前。补齐参宿一至参宿七，保留旧名称的显示开关和选中。北斗七星支持点选与显示开关。\n• 亮星显示设置支持手动选择或按星等上限筛选，步进 0.1 等；原手动选择保留。\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。");
+        updateEntry(c,"1.1.6 · 平板状态恢复与星空扩充","• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等，名称统一为 M 编号在前。补齐参宿一至参宿七，保留旧名称的显示开关和选中。北斗七星支持点选与显示开关。\n• 亮星显示设置支持手动选择或按星等上限筛选，步长 0.1 等；原手动选择保留。\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。");
         updateEntry(c,"1.1.5 · 固定竖屏与地震来源优化","• 应用各页面固定竖屏，避免转动手机触发页面重建、栏目变化或已获取状态变化。\n• 同次地震优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知；同级采用较新结果，不再额外优先德国来源。\n• 地震列表显示智利、泰国等具体贡献机构的中文名，合并后去重；详情继续保留聚合平台与转发信息。");
         updateEntry(c,"1.1.4 · 地震信息简化与坐标统一","• 地震状态统一为已复核、自动结果、状态未知，详情保留来源处理标记。\n• 发生改为发生时刻，列表简化烈度及中国地震台网来源，模型和转发说明保留在详情；未达阈值时明确提示。\n• 仅保留 MMI，删除烈度标度设置及当前说明中的其他标度；不再显示来源未说明深度是否固定的空泛提示。\n• 贡献机构改用中文名，经纬度统一经度在前、纬度在后，使用 E/W/N/S 标明方向。更新状态改称最早一条。");
-        updateEntry(c,"1.1.3 · 地震界面与扩展烈度参考","• 筛选与刷新仅保留刷新目录、刷新定位按钮，查询范围等统一从设置进入；时间选项统一称“最近 1 天”。移除地震设置内重复的数据来源与隐私入口。\n• 关于说明按统一的一行间隔分段。MMI 默认项置顶，本次升级统一切至 MMI 一次，之后保留手动选择。\n• 超出原论文模型保守条件时，对有有效震级和深度的记录使用 GlobalQuake 旧开源版参考算法，明确注明来源震级近似、默认／固定深度及弱震动显示阈值；不冒充正式最大烈度。保留 MIT 许可。\n• 自动解改为“自动解算”；术语中分别解释来源标记已复核、已复核和人工处理，删除主震、前震与余震段落。");
-        updateEntry(c,"1.1.2 · 地震筛选、定位与烈度","• 最低震级改为 0～7、步进 0.1 的滑块，默认 M≥1.0；附近范围在查询区域内输入 50～5000 km。参考位置改为单选，手动经纬度条件显示，保存后自动更新距离。\n• 地震页可按定位设置刷新一次位置，显示经纬度；日期补全年份，排序说明更清楚，时区和数据说明合并进关于 → 数据来源与隐私，按段展示；新增地震术语介绍。\n• 新增美国地质调查局全球补充目录，明确匹配的同次地震合并；各机构使用中文名。Wolfx 默认关闭，须确认说明才启用；补充配合官方停用及下架的承诺。\n• 烈度区分公众震感报告、来源模型与本地 MMI 经验估算，不将模型当实测；中国标度暂不由 MMI 换算，超出估算范围时不强算。");
+        updateEntry(c,"1.1.3 · 地震界面与扩展烈度参考","• 筛选与刷新仅保留刷新目录、刷新定位按钮，查询范围等统一从设置进入；时间选项统一称“最近 1 天”。移除地震设置内重复的数据来源与隐私入口。\n• 关于说明按统一的一行间隔分段。MMI 默认项置顶，本次升级统一切至 MMI 一次，之后保留手动选择。\n• 超出原论文模型保守条件时，对有有效震级和深度的记录使用 GlobalQuake 旧开源版参考算法，明确注明来源震级近似、默认／固定深度及弱震动显示阈值；不作为正式最大烈度。保留 MIT 许可。\n• 自动解改为“自动解算”；术语中分别解释来源标记已复核、已复核和人工处理，删除主震、前震与余震段落。");
+        updateEntry(c,"1.1.2 · 地震筛选、定位与烈度","• 最低震级改为 0～7、步长 0.1 的滑块，默认 M≥1.0；附近范围在查询区域内输入 50～5000 km。参考位置改为单选，手动经纬度条件显示，保存后自动更新距离。\n• 地震页可按定位设置刷新一次位置，显示经纬度；日期补全年份，排序说明更清楚，时区和数据说明合并进关于 → 数据来源与隐私，按段展示；新增地震术语介绍。\n• 新增美国地质调查局全球补充目录，明确匹配的同次地震合并；各机构使用中文名。Wolfx 默认关闭，须确认说明才启用；补充配合官方停用及下架的承诺。\n• 烈度区分公众震感报告、来源模型与本地 MMI 经验估算，不将模型当实测；中国标度暂不由 MMI 换算，超出估算范围时不进行外推。");
         updateEntry(c,"1.1.1 · Wolfx 国内目录","• 接入 CENC（Wolfx 转发）近期最多 50 条目录，独立缓存、刷新与数据源开关；与 GEOFON、EMSC 明确匹配才合并，保留各来源参数。\n• 如实说明：上游公开展示适用依据尚未完全确认，不宣称已获 CENC 再发布授权；CORS 和非商业用途不等于授权。可关闭此来源，仅供参考。\n• 按北京时间解析发生及报告时刻；不承诺覆盖所选天数或完整收录；未采用未核实的 intensity 字段，未接入任何预警流。");
         updateEntry(c,"1.1.0 · 近期地震与持续定位","• 新增地震栏目：GEOFON 与 EMSC 双源近期目录、相近事件合并、震级类型、发生时间、深度、震中、地表距离及各来源详情。\n• 可设置时间范围、区域、最低震级、附近范围、排序、时区、烈度标度、列表字段、栏目顺序和前台刷新间隔；保留离线缓存，区分各来源更新与失败。\n• 来源使用 CC BY 4.0 并保留署名；Wolfx 国内目录的上游依据尚待确认，未启用，也未接入预警流。缺乏可靠烈度资料时不生成数值。\n• 定位新增“切换栏目和后台继续定位”，默认关闭；主动开启并开始后使用 Android 前台服务，提供持续通知和停止按钮。最近定位供地震距离本地计算，不上传。\n• 缓存管理新增地震目录，清理期间的旧请求不会回写。新增栏目保留原有底栏排序及其他设置。");
         updateEntry(c,"1.0.12 · 设置弹窗与地图按钮","• 设置弹窗直接在中央显示，取消系统滑入/退出动画。按钮间距与描边改为首次布局前完成，避免显示时再次调整尺寸。日期选择也使用相同处理，保留逐级返回和输入校验。\n• 天气地图的“浏览器”改为“在浏览器中打开”，与图种按钮保持相同宽高、圆角和间距，小屏可完整换行显示。\n• 扩展地震来源及调用许可调研，不在本版本接入地震功能。");
@@ -351,9 +352,9 @@ public class MainActivity extends Activity {
         updateEntry(c,"1.0.3 · 天文与布局修复","• 修复天文时间按钮重建页面时先回到顶部造成的闪屏，切换后保持原滚动位置。\r\n• 星图加入本地计算的水星、金星、火星、木星、土星、天王星和海王星，并显示行星星等。\r\n• 点击亮星或行星显示方位角、高度角和星等；新增亮星显示设置，北斗七星仍只作图示。\r\n• 流星雨按极大日前后3天标记活跃期并显示辐射点；来源与隐私链接、IMO 链接框和常用地区卡片统一留白。\r\n• 厦门、台北调整到香港之前。");
         updateEntry(c,"1.0.2 · 细节与定位改进","• 天文第一行按钮顺序固定为“-15分钟、当前、+15分钟”；太阳与月球标签按字号计算下移间距，避免遮挡圆点；统一使用“月球”。\r\n• 天气地图、天气代码、背景裁剪、描边颜色、设置逐级返回和定位间隔按本版本记录调整。\r\n• versionCode 升至 4，沿用包名与签名。");
         updateEntry(c,"1.0.1 · 自由布局与个性设置","• 分级设置、背景选区与缩放、可选颜色描边。\r\n• 天气栏目和底部栏目可显隐排序，新增独立天气地图与天文栏目（默认隐藏）。\r\n• 定位可选 GPS 硬件或网络定位。\r\n• 课程支持自定义授课周与信息前缀，时间改为数字输入。\r\n• 改进天气图标、摄氏度、居中排版、图例与刷新提示。\r\n• 天文支持指定年月日时分、前后15分钟和前后一天，保留滚动位置并区分曙光暮光。\r\n• 更新隐私说明，移除极光功能。");
-        updateEntry(c,"1.0.0 · 呆呆工具箱","• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\r\n• 新增手动周课表、自定义节次、地点、老师与单双周。\r\n• 新增手机图片背景及遮罩调整。\r\n• 新增前台 GPS 经纬度、水平精度与状态。\r\n• 新增官方全国降水、温度和分区雷达网页。\r\n• 新增观星条件、星图、日月位置、月相和曙暮光。\r\n• 整理来源与隐私，Open-Meteo 入口放在一起。\r\n• 页脚改为“呆呆鸟使用 Codex 制作”。");
+        updateEntry(c,"1.0.0 · 呆呆工具箱","• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\r\n• 新增手动周课表、自定义节次、地点、教师与单双周。\r\n• 新增手机图片背景及遮罩调整。\r\n• 新增前台 GPS 经纬度、水平精度与状态。\r\n• 新增官方全国降水、温度和分区雷达网页。\r\n• 新增观星条件、星图、日月位置、月相和曙暮光。\r\n• 整理来源与隐私，Open-Meteo 入口放在一起。\r\n• 页脚改为“呆呆鸟使用 Codex 制作”。");
         updateEntry(c,"0.1.0-test · 简天气测试版","早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。");
-        ScrollView scroll=new ScrollView(this);scroll.addView(c);new ToolDialog(this).setTitle("每个版本的更新内容").setView(scroll).setPositiveButton("知道了",null).show();
+        ScrollView scroll=new ScrollView(this);scroll.addView(c);new ToolDialog(this).setTitle("每个版本的更新内容").setView(scroll).setPositiveButton("关闭",null).show();
     }
     void clearCache(Runnable done){
         cacheGeneration++;searchVersion++;data=null;notice="";
@@ -369,13 +370,13 @@ public class MainActivity extends Activity {
     String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 1.2.4 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位默认切换栏目或后台即停止；可在设置中主动开启持续定位，开始后由前台服务工作并提供通知和停止入口。应用不上传定位坐标；最近一次定位保存在本机，地震距离也在本机计算。卫星硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\nOpen-Meteo 免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。");
-        EarthquakeInfo.paragraph(this,content,"状态与隐私：方向、传感器、电池和卫星状态来自 Android 官方设备接口，在状态页前台读取。卫星接收须主动开始及精确定位授权，切换栏目、锁屏或后台按设置暂停，回到状态页面自动继续；关闭自动继续后才会停止；独立于可选的持续定位服务。仅显示设备报告的卫星，不连接第三方星历或定位服务。方向和目标距离在本机计算；保存的地点、选中的目标仅存本机，清缓存或恢复默认设置保留，卸载应用会删除。无设备序列号、IMEI 或 MAC 读取。系统辅助定位和网络定位可能由系统服务联网，遵循系统规则。指南针与寻宝示意受传感器、磁场、定位及模型误差影响，不是专业测绘或安全导航工具。");
+        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 pre1.2.5 · 本地预览版 · 个人非商业使用\n\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
+        EarthquakeInfo.paragraph(this,content,"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。卫星接收须手动开始并获得精确定位权限，默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\n\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择仅存本机，清除缓存或恢复默认设置会保留，卸载应用将删除。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。");
         EarthquakeInfo.append(this,content);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");link(content,"Android · 卫星状态官方文档","https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,"Android · 传感器官方说明","https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,"天体坐标与星等 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
         EarthquakeInfo.links(this,content);
         gap(content,10);content.addView(text("参考开源项目",17,INK,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");
-        ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("知道了",null).show();
+        ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("关闭",null).show();
     }
     void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
     void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast("未找到可打开链接的浏览器");}}

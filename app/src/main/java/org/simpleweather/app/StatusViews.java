@@ -29,7 +29,7 @@ final class StatusViews {
         }
     }
     static final class Treasure extends Square {
-        final StatusHardware hw;final StatusPlaces places;Treasure(MainActivity a,StatusHardware hw,StatusPlaces places){super(a);this.hw=hw;this.places=places;setContentDescription("地点寻宝方位图 · 蓝点为保存的目标");}
+        final StatusHardware hw;final StatusPlaces places;Treasure(MainActivity a,StatusHardware hw,StatusPlaces places){super(a);this.hw=hw;this.places=places;setContentDescription("地点方位图 · 蓝点表示所选地点");}
         @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.37f;circle(c,x,y,r,0xFFDCE5F1,1);circle(c,x,y,r/2,0xFFDCE5F1,1);p.setColor(a.BLUE);c.drawCircle(x,y,a.dp(5),p);
             Location fix=LocationService.last(a);StatusPlace target=places.selected();double heading=hw.trueHeading(fix);boolean relative=Double.isFinite(heading);text(c,relative?"屏幕上沿":"真北向上",x,a.dp(20),13,a.MUTED);
             if(fix==null||target==null){text(c,fix==null?"请先获取当前位置":"请选择一个保存的地点",x,y+a.dp(30),14,a.MUTED);return;}
@@ -42,7 +42,7 @@ final class StatusViews {
     }
     static final class Sky extends Square {
         final StatusHardware hw;String selected="";final Runnable changed;final Map<String,float[]> hits=new HashMap<>();
-        Sky(MainActivity a,StatusHardware hw,Runnable changed){super(a);this.hw=hw;this.changed=changed;setContentDescription("定位卫星天空图 · 北上南下东右西左，圆周为地平线");setClickable(true);}
+        Sky(MainActivity a,StatusHardware hw,Runnable changed){super(a);this.hw=hw;this.changed=changed;setContentDescription("定位卫星天空图 · 关闭方向跟随后上北下南左西右东，圆周为地平线");setClickable(true);}
         static int color(int type){switch(type){case 1:return 0xFF246BCE;case 5:return 0xFFB64C37;case 6:return 0xFF337C68;case 3:return 0xFF8051B5;default:return 0xFF8A7021;}}
         @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.38f;hits.clear();for(int level=0;level<3;level++)circle(c,x,y,r*(3-level)/3,0xFFDCE5F1,1);
             double heading=0;boolean follow=a.preferences.getBoolean("status_satellite_rotate",true);if(follow){Location fix=LocationService.last(a);boolean trueNorth=a.preferences.getBoolean("status_true_north",false);double h=trueNorth?hw.trueHeading(fix):hw.magneticHeading;if(Double.isFinite(h))heading=h;}

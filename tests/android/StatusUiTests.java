@@ -32,7 +32,7 @@ public final class StatusUiTests extends Instrumentation {
         Bundle result=new Bundle();int code=Activity.RESULT_OK;
         try{
             prefs=getTargetContext().getSharedPreferences("toolbox",0);original=new HashMap<>(prefs.getAll());
-            SharedPreferences.Editor e=prefs.edit().putInt("seen_version",27).putInt("last_tab",2).putString("status_order","2,0,1,3,8,4,5,6,7");
+            SharedPreferences.Editor e=prefs.edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",2).putString("status_order","2,0,1,3,8,4,5,6,7");
             for(int n=0;n<9;n++)e.putBoolean("status_show_"+n,n==2);e.commit();
             Intent launch=new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity=startActivitySync(launch);waitForIdleSync();
@@ -49,7 +49,7 @@ public final class StatusUiTests extends Instrumentation {
         field(hardware,"gnssAt",SystemClock.elapsedRealtime());
     }
     private void satelliteScroll(){
-        ui(()->{satellites(70,0);TextView expand=text(activity.getWindow().getDecorView(),"展开 / 收起卫星明细");check(expand!=null,"satellite expand control exists");expand.performClick();expand.requestFocusFromTouch();});
+        ui(()->{satellites(70,0);TextView expand=text(activity.getWindow().getDecorView(),"展开或收起卫星明细");check(expand!=null,"satellite expand control exists");expand.performClick();expand.requestFocusFromTouch();});
         SystemClock.sleep(200);ui(()->scroll.scrollTo(0,5000));SystemClock.sleep(100);
         ui(()->{check(scroll.getScrollY()==5000,"can scroll far into satellite list");scroll.getViewTreeObserver().addOnPreDrawListener(()->{minScroll=Math.min(minScroll,scroll.getScrollY());maxScroll=Math.max(maxScroll,scroll.getScrollY());return true;});});
         for(int i=0;i<10;i++){final int round=i;ui(()->satellites(60+(round%3)*10,round));SystemClock.sleep(110);ui(()->check(scroll.getScrollY()==5000,"satellite count/signal update keeps reading position"));}

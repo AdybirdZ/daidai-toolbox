@@ -10,7 +10,7 @@ import java.util.*;
 public final class Astronomy {
     public static String skyDescription(Instant at,double lat,double lon){
         double sun=sunPosition(at,lat,lon)[0];boolean rising=sunPosition(at.plusSeconds(300),lat,lon)[0]>=sunPosition(at.minusSeconds(300),lat,lon)[0];String twilight=rising?"曙光":"暮光";
-        if(sun>=0)return "太阳在地平线上，天空较亮";
+        if(sun>=0)return "太阳在地平线上方，天空较亮";
         if(sun>=-6)return "民用"+twilight+"中，天空较亮";
         if(sun>=-12)return "航海"+twilight+"中，可寻找亮星";
         if(sun>=-18)return "天文"+twilight+"中，天色较暗";
@@ -124,7 +124,7 @@ public final class Astronomy {
         double edge=Math.sqrt(Math.max(0,1-y*y)),cycle=(phase%1+1)%1,k=cos(cycle*360);
         return cycle<=.5?new double[]{k*edge,edge}:new double[]{-edge,-k*edge};
     }
-    public static String phaseName(double phase){return new String[]{"新月","娥眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"}[(int)Math.floor(phase*8+.5)%8];}
+    public static String phaseName(double phase){return new String[]{"新月","蛾眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"}[(int)Math.floor(phase*8+.5)%8];}
     public static String compass(double az){return new String[]{"北","东北","东","东南","南","西南","西","西北"}[(int)Math.floor((norm(az)+22.5)/45)%8];}
     public static final class Event {public final Instant at;public final boolean rising;Event(Instant t,boolean r){at=t;rising=r;}}
     public static List<Event> crossings(LocalDate date,ZoneId zone,double lat,double lon,boolean lunar,double altitude){
