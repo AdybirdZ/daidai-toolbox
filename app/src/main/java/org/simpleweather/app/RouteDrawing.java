@@ -45,7 +45,8 @@ final class RouteCanvas extends View {
     private double originLon,originLat,cosLat=1,span=.002;
     private double viewLon,viewLat;
     private boolean followSelf,dragged,multiTouch;
-    private float zoom=1,panX,panY,lastX,lastY,downX,downY;
+    private final RouteViewport viewport=new RouteViewport();
+    private float lastX,lastY,downX,downY;
     RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);setContentDescription("路线画布，单指拖动，使用下方滑块缩放，点按记录点查看详情");}
     void setRoute(List<RoutePoint> route,int count,boolean fit){
         points=new ArrayList<>(route);visibleCount=Math.max(0,Math.min(points.size(),count));
@@ -54,19 +55,19 @@ final class RouteCanvas extends View {
             double minX=0,maxX=0,minY=0,maxY=0;
             for(RoutePoint p:points){double x=longitudeDelta(p.lon-originLon)*cosLat,y=p.lat-originLat;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
             span=Math.max(maxX-minX,maxY-minY);if(span<.00001)span=.002;
-            if(fit){viewLon=originLon+(minX+maxX)/2/cosLat;viewLat=originLat+(minY+maxY)/2;panX=panY=0;followSelf=false;zoom=1;}
+            if(fit){viewLon=originLon+(minX+maxX)/2/cosLat;viewLat=originLat+(minY+maxY)/2;viewport.reset();followSelf=false;}
         }
         invalidate();
     }
     int pointCount(){return points.size();}
     void showThrough(int index){visibleCount=Math.max(0,Math.min(points.size(),index+1));invalidate();}
-    void centerOn(int index){if(index<0||index>=points.size())return;RoutePoint q=points.get(index);viewLon=q.lon;viewLat=q.lat;followSelf=false;panX=panY=0;invalidate();}
-    void centerSelf(){Location fix=LocationService.last(a);if(fix==null){a.toast("请先获取当前位置");return;}followSelf=true;viewLon=fix.getLongitude();viewLat=fix.getLatitude();panX=panY=0;invalidate();}
-    void zoom(float value){zoom=Math.max(.25f,Math.min(64,value));invalidate();}
+    void centerOn(int index){if(index<0||index>=points.size())return;RoutePoint q=points.get(index);viewLon=q.lon;viewLat=q.lat;followSelf=false;viewport.center();invalidate();}
+    void centerSelf(){Location fix=LocationService.last(a);if(fix==null){a.toast("请先获取当前位置");return;}followSelf=true;viewLon=fix.getLongitude();viewLat=fix.getLatitude();viewport.center();invalidate();}
+    void zoom(float value){viewport.zoomTo(value);invalidate();}
     static double longitudeDelta(double value){return ((value+540)%360+360)%360-180;}
     private void intercept(boolean disallow){ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(disallow);}
-    private float scale(){return (float)(Math.min(getWidth(),getHeight())*.78/span*zoom);}
-    private float[] xy(RoutePoint q){return new float[]{getWidth()/2f+(float)(longitudeDelta(q.lon-viewLon)*cosLat)*scale()+panX,getHeight()/2f-(float)(q.lat-viewLat)*scale()+panY};}
+    private float scale(){return (float)(Math.min(getWidth(),getHeight())*.78/span*viewport.zoom);}
+    private float[] xy(RoutePoint q){return new float[]{getWidth()/2f+(float)(longitudeDelta(q.lon-viewLon)*cosLat)*scale()+viewport.panX,getHeight()/2f-(float)(q.lat-viewLat)*scale()+viewport.panY};}
     protected void onDraw(Canvas c){
         super.onDraw(c);if(followSelf){Location fix=LocationService.last(a);if(fix!=null){viewLon=fix.getLongitude();viewLat=fix.getLatitude();}}
         paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(a.dp(2));paint.setColor(0xFF246BCE);
@@ -84,7 +85,7 @@ final class RouteCanvas extends View {
         if(action==MotionEvent.ACTION_MOVE){
             intercept(true);if(e.getPointerCount()!=1)return true;
             if(Math.hypot(e.getX()-downX,e.getY()-downY)>android.view.ViewConfiguration.get(a).getScaledTouchSlop())dragged=true;
-            if(dragged){followSelf=false;panX+=e.getX()-lastX;panY+=e.getY()-lastY;invalidate();}
+            if(dragged){followSelf=false;viewport.pan(e.getX()-lastX,e.getY()-lastY);invalidate();}
             lastX=e.getX();lastY=e.getY();return true;
         }
         if(action==MotionEvent.ACTION_UP){intercept(false);if(!dragged&&!multiTouch){performClick();select(e.getX(),e.getY());}return true;}

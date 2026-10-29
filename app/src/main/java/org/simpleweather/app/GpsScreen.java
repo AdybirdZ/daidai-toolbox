@@ -17,7 +17,7 @@ final class GpsScreen {
     private final Handler handler=new Handler(Looper.getMainLooper());
     private TextView status,latitude,longitude,accuracy,altitude,age,speed,bearing,motion;
     private boolean visible,pendingPermission;
-    private final Runnable tick=new Runnable(){public void run(){if(visible){update();handler.postDelayed(this,16);}}};
+    private final Runnable tick=new Runnable(){public void run(){if(visible){long next=SystemClock.uptimeMillis()+50;update();handler.postAtTime(this,next);}}};
     GpsScreen(MainActivity activity){a=activity;hardware=new StatusHardware(a);places=new StatusPlaces(a,()->{lastSecond=-1;update();});routeStore=new RouteStore(a);}
     static final String[] SECTION_NAMES={"指南针","当前位置","定位卫星","地点","传感器","电池","设备与环境","使用说明","路线绘制"};
     private final StatusHardware hardware;
@@ -43,7 +43,7 @@ final class GpsScreen {
     void render(){
         status=latitude=longitude=accuracy=altitude=age=speed=bearing=motion=compassInfo=pitchView=rollView=satelliteStatus=satelliteInfo=satelliteDetails=treasureInfo=batteryInfo=deviceInfo=null;
         routeCanvas=null;routeInfo=null;routeToggle=null;replayControls=null;routeZoom=null;compass=null;treasure=null;sky=null;satelliteDetailBox=null;sensorViews.clear();batteryViews.clear();deviceViews.clear();lastSecond=-1;
-        for(int id:DisplayOrder.parse(a.preferences.getString("status_order",""),SECTION_NAMES.length)){
+        for(int id:DisplayOrder.status(a.preferences.getString("status_order",""))){
             if(!a.preferences.getBoolean("status_show_"+id,true))continue;
             switch(id){case 0:compassCard();break;case 1:locationCard();break;case 2:satellitesCard();break;case 3:placesCard();break;case 4:sensorsCard();break;case 5:batteryCard();break;case 6:deviceCard();break;case 7:infoCard();break;case 8:routeCard();break;}
             a.gap(a.body,16);
@@ -94,7 +94,7 @@ final class GpsScreen {
         replayControls.addView(transport);a.gap(replayControls,8);
         TextView rate=a.text("回放速度 · "+replay.speed()+" 个记录点/秒",14,a.INK,false);replayControls.addView(rate);
         SeekBar rateSlider=new SeekBar(a);rateSlider.setMax(19);rateSlider.setProgress(replay.speed()-1);rateSlider.setContentDescription("回放速度，1 至 20 个记录点每秒");rateSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar s,int n,boolean user){replay.speed(n+1,SystemClock.elapsedRealtime());rate.setText("回放速度 · "+(n+1)+" 个记录点/秒");updateReplay();}public void onStartTrackingTouch(SeekBar s){}public void onStopTrackingTouch(SeekBar s){}});replayControls.addView(rateSlider,a.lp(-1,48));c.addView(replayControls);
-        a.gap(c,10);c.addView(a.text("单指拖动路线，使用缩放滑块放大或缩小；双指不缩放。点按记录点查看序号、经纬度和记录时间。选择保存路线后先展示整条路线，点击播放从开头逐点形成；暂停时可逐点或跳转首尾，跳转后以该点为中心。默认每 5 秒记录位置，可在状态设置中调整为 2～60 秒；网络定位不能短于网络定位间隔。开始绘制前须开启持续定位，信号暂时丢失时不生成定位点，恢复后继续。路线仅保存在本机。",13,a.MUTED,false));
+        a.gap(c,10);c.addView(a.text("单指拖动路线，使用缩放滑块放大或缩小；双指不缩放。点按记录点查看序号、经纬度和记录时间。选择保存路线后先展示整条路线，点击播放从开头逐点形成；暂停时可逐点或跳转首尾，跳转后以该点为中心。缩放以路线框中心为基准。默认每 5 秒记录位置，可在状态设置中调整为 2～60 秒；网络定位不能短于网络定位间隔。开始绘制前须开启持续定位，信号暂时丢失时不生成定位点，恢复后继续。路线仅保存在本机。",13,a.MUTED,false));
         if(replay.loaded())updateReplay();else updateLiveRoute();
     }
     private TextView replayButton(LinearLayout row,String label,String description,Runnable action){if(row.getChildCount()>0)a.gapHorizontal(row,6);TextView b=a.button(label,false,action);b.setTextSize(16);b.setPadding(a.dp(2),a.dp(10),a.dp(2),a.dp(10));b.setContentDescription(description);row.addView(b,new LinearLayout.LayoutParams(0,-2,1));return b;}
@@ -117,10 +117,12 @@ final class GpsScreen {
         if(pts.isEmpty()){a.toast("没有收到有效定位点");return;}
         LinearLayout form=a.column();form.setPadding(a.dp(24),a.dp(8),a.dp(24),a.dp(8));
         EditText name=new EditText(a);name.setSingleLine(true);name.setHint("例如：晚间跑步");form.addView(name,a.lp(-1,-2));
-        new ToolDialog(a).setTitle("保存路线").setMessage("本次路线共有 "+pts.size()+" 个记录点。输入名称后保存，也可以删除本次路线。路线仅保存在本机。")
+        AlertDialog saveDialog=new ToolDialog(a).setTitle("保存路线").setMessage("本次路线共有 "+pts.size()+" 个记录点。输入名称后保存，也可以删除本次路线。路线仅保存在本机。")
             .setView(form).setPositiveButton("保存",(d,w)->{String n=name.getText().toString().trim();routeStore.save(n.isEmpty()?"未命名路线":n,pts);routeStatus="路线已保存 · "+pts.size()+" 个记录点";updateLiveRoute();})
-            .setNeutralButton("删除",(d,w)->{displayedRoute.clear();routeStatus="本次路线已删除";if(routeCanvas!=null)routeCanvas.setRoute(displayedRoute,0,true);updateLiveRoute();}).setNegativeButton("取消",null).show();
+            .setNeutralButton("删除",null).setNegativeButton("取消",null).show();
+        saveDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v->confirmRouteDeletion(()->{saveDialog.dismiss();displayedRoute.clear();routeStatus="本次路线已删除";if(routeCanvas!=null)routeCanvas.setRoute(displayedRoute,0,true);updateLiveRoute();}));
     }
+    private void confirmRouteDeletion(Runnable remove){new ToolDialog(a).setTitle("删除路线").setMessage("确定删除此路线吗？").setPositiveButton("删除",(d,w)->remove.run()).setNegativeButton("取消",null).show();}
     private void routeList(){
         if(RouteRecorder.active()){a.toast("请先结束当前绘制，再查看已保存路线");return;}
         LinearLayout c=a.column();c.setPadding(a.dp(20),a.dp(8),a.dp(20),a.dp(8));ArrayList<RouteStore.Saved> rows=routeStore.all();
@@ -128,7 +130,7 @@ final class GpsScreen {
         for(RouteStore.Saved row:rows){LinearLayout r=a.row();TextView open=a.button(row.name+" · "+row.points.size()+" 点",false,()->{
             dialog[0].dismiss();displayedRoute=new ArrayList<>(row.points);replayName=row.name;replay.load(row.points.size());
             if(routeCanvas!=null){routeCanvas.setRoute(displayedRoute,displayedRoute.size(),true);routeZoom.setProgress(80);}updateReplay();
-        });r.addView(open,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(r,8);r.addView(a.button("删除",false,()->{routeStore.remove(row.id);dialog[0].dismiss();a.toast("路线已删除");routeList();}),a.lp(72,48));c.addView(r);a.gap(c,8);}
+        });r.addView(open,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(r,8);r.addView(a.button("删除",false,()->confirmRouteDeletion(()->{routeStore.remove(row.id);dialog[0].dismiss();a.toast("路线已删除");routeList();})),a.lp(72,48));c.addView(r);a.gap(c,8);}
         ScrollView scroll=new ScrollView(a);scroll.addView(c);dialog[0]=new ToolDialog(a).setTitle("已保存路线").setView(scroll).setNegativeButton("返回",null).show();
     }
     private void seekRoute(int index){if(replay.playing())return;replay.seek(index);if(routeCanvas!=null)routeCanvas.centerOn(replay.index());updateReplay();}
@@ -182,8 +184,9 @@ final class GpsScreen {
     private void update(){
         if(!visible)return;
         if(compass!=null)compass.invalidate();if(treasure!=null)treasure.invalidate();if(routeCanvas!=null){if(RouteRecorder.active())updateLiveRoute();else if(replay.advance(SystemClock.elapsedRealtime()))updateReplay();}
+        a.updateReadingValues(()->{updateCompass();updateSatellites();updateTreasure();updateSensors();updateBattery();updateDevice();});
+        // Position refresh stays separate from the 50 ms device/sensor display loop.
         long second=SystemClock.elapsedRealtime()/1000;if(second==lastSecond)return;lastSecond=second;
-        updateCompass();updateSatellites();updateTreasure();updateSensors();updateBattery();updateDevice();
         if(status==null)return;set(status,hardware.gnssRunning&&!LocationService.running?"卫星接收中 · 位置由卫星接收更新":LocationService.status);Location fix=LocationService.last(a);if(fix==null){set(longitude,"—");set(latitude,"—");set(accuracy,"—");set(altitude,"—");set(speed,"—");set(bearing,"—");set(age,"等待定位结果");set(motion,"移动方位由定位结果提供，不是设备朝向。");return;}
         set(longitude,CoordinateFormat.longitude(fix.getLongitude(),6));set(latitude,CoordinateFormat.latitude(fix.getLatitude(),6));
         set(accuracy,fix.hasAccuracy()?String.format(Locale.ROOT,"%.1f 米",fix.getAccuracy()):"未提供精度");set(altitude,fix.hasAltitude()?String.format(Locale.ROOT,"%.1f 米",fix.getAltitude()):"未提供海拔");
@@ -215,7 +218,7 @@ final class GpsScreen {
         double heading=hardware.trueHeading(fix);if(Double.isFinite(heading)&&Double.isFinite(bearing)){double delta=StatusMath.delta(bearing,heading);info+=Math.abs(delta)<5?"\n目标大致在正前方":String.format(Locale.ROOT,"\n目标在%s %.0f°",delta>=0?"右侧":"左侧",Math.abs(delta));}
         info+="\n参考定位 "+LocationService.ageSeconds(fix)+" 秒前"+(LocationService.ageSeconds(fix)>30?" · 位置较旧，请刷新":"");if(fix.hasAccuracy())info+=String.format(Locale.ROOT," · 误差半径 %.1f 米",fix.getAccuracy());set(treasureInfo,info);
     }
-    private void updateSensors(){for(int n=0;n<StatusHardware.TYPES.length;n++){int type=StatusHardware.TYPES[n];set(sensorViews.get(type),hardware.sensorText(type,UNITS[n]));}}
+    private void updateSensors(){if(sensorViews.isEmpty())return;for(int n=0;n<StatusHardware.TYPES.length;n++){int type=StatusHardware.TYPES[n];set(sensorViews.get(type),hardware.sensorText(type,UNITS[n]));}}
     private static String chargeStatus(int status){switch(status){case BatteryManager.BATTERY_STATUS_CHARGING:return "充电中";case BatteryManager.BATTERY_STATUS_DISCHARGING:return "放电中";case BatteryManager.BATTERY_STATUS_FULL:return "已充满";case BatteryManager.BATTERY_STATUS_NOT_CHARGING:return "未充电";default:return "状态未知";}}
     private void updateBattery(){if(batteryViews.isEmpty())return;if(battery==null){for(TextView v:batteryViews.values())set(v,"系统未提供电池状态");return;}if(battery.hasExtra(BatteryManager.EXTRA_PRESENT)&&!battery.getBooleanExtra(BatteryManager.EXTRA_PRESENT,true)){for(TextView v:batteryViews.values())set(v,"系统报告没有电池");return;}
         int level=battery.getIntExtra(BatteryManager.EXTRA_LEVEL,-1),scale=battery.getIntExtra(BatteryManager.EXTRA_SCALE,-1),voltage=battery.getIntExtra(BatteryManager.EXTRA_VOLTAGE,-1),temperature=battery.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,Integer.MIN_VALUE),plugged=battery.getIntExtra(BatteryManager.EXTRA_PLUGGED,-1),health=battery.getIntExtra(BatteryManager.EXTRA_HEALTH,0);

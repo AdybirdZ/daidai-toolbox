@@ -4,6 +4,7 @@ import java.util.*;
 
 /** Stable IDs let display preferences survive renaming and future additions. */
 public final class DisplayOrder {
+    public static List<Integer> status(String saved){return parse(saved.trim().isEmpty()?"0,1,2,3,8,4,5,6,7":saved,9);}
     public static List<Integer> parse(String saved,int count){
         List<Integer> order=new ArrayList<>();
         for(String token:saved.split(","))try{int id=Integer.parseInt(token.trim());if(id>=0&&id<count&&!order.contains(id))order.add(id);}catch(Exception ignored){}

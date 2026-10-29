@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=state==null?preferences.getInt("last_tab",0):state.getInt("toolbox_tab",preferences.getInt("last_tab",0));if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));navigationOffset=state.getInt("toolbox_navigation",0);pendingScrollY=state.getInt("toolbox_scroll",0);}if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<26)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",26).apply();}},700);
+        if(preferences.getInt("seen_version",0)<27)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",27).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
         FrameLayout frame=new FrameLayout(this);host.addView(frame,new LinearLayout.LayoutParams(-1,0,1));
         body=column();body.setPadding(dp(20),dp(18),dp(20),dp(28));
         if(tab==3){pageScroll=null;body.setPadding(dp(12),dp(12),dp(12),0);frame.addView(body,new FrameLayout.LayoutParams(-1,-1));}
-        else{pageScroll=new ScrollView(this);pageScroll.setFillViewport(true);pageScroll.setClipToPadding(false);pageScroll.setVerticalScrollBarEnabled(false);final int restore=pendingScrollY;pendingScrollY=-1;pageScroll.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){public void onLayoutChange(View v,int l,int t,int r,int b,int ol,int ot,int or,int ob){if(restore>=0){v.scrollTo(0,restore);v.removeOnLayoutChangeListener(this);}}});FrameLayout.LayoutParams fit=new FrameLayout.LayoutParams(Math.min(getResources().getDisplayMetrics().widthPixels,dp(620)),-1,Gravity.CENTER_HORIZONTAL);frame.addView(pageScroll,fit);pageScroll.addView(body);}
+        else{pageScroll=new ReadingScrollView(this);pageScroll.setFillViewport(true);pageScroll.setClipToPadding(false);pageScroll.setVerticalScrollBarEnabled(false);final int restore=pendingScrollY;pendingScrollY=-1;pageScroll.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){public void onLayoutChange(View v,int l,int t,int r,int b,int ol,int ot,int or,int ob){if(restore>=0){v.scrollTo(0,restore);v.removeOnLayoutChangeListener(this);}}});FrameLayout.LayoutParams fit=new FrameLayout.LayoutParams(Math.min(getResources().getDisplayMetrics().widthPixels,dp(620)),-1,Gravity.CENTER_HORIZONTAL);frame.addView(pageScroll,fit);pageScroll.addView(body);}
         pageHeader();
         navigation=row();navigation.setPadding(dp(8),dp(6),dp(8),dp(6));navigation.setBackground(shape(0xF2FFFFFF,0));host.addView(navigation,lp(-1,-2));renderNavigation();
     }
@@ -117,6 +117,7 @@ public class MainActivity extends Activity {
     int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
     ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
     List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),TAB_NAMES.length);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3||id==5))result.add(id);if(result.isEmpty())result.add(0);return result;}
+    void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
     void refreshScreen(){List<Integer> visible=visibleTabs();if(!visible.contains(tab))tab=visible.get(0);switchTab(tab);}
     private void pageHeader(){
         TextView title=text("呆呆工具箱 · "+TAB_NAMES[tab],25,INK,true);body.addView(title);gap(body,7);body.addView(text("呆呆鸟使用 Codex 制作",12,MUTED,false));gap(body,12);
@@ -234,7 +235,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.2.3",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · v1.2.4",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -312,7 +313,7 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",26).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",27).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
@@ -326,6 +327,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"1.2.4 · 状态刷新与路线修复","• 卫星明细和状态数值更新时保持页面阅读位置，避免重新布局跳回列表上方。\n• 路线缩放以路线框中心为基准，拖动后缩放也保持正确中心。\n• 状态页除 GPS 定位信息外，指南针、俯仰横滚、传感器、卫星显示、电池和设备信息每 50 毫秒刷新一次；数据以系统实际报告为准，GPS 与网络定位间隔保持原设置。\n• 删除已保存路线或本次未保存路线前，弹出“确定删除此路线吗？”确认框，取消保留路线。\n• 状态默认顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明，保留已自定义的排序。\n• 版本号 1.2.4 / versionCode 26，沿用原签名，可覆盖升级。");
         updateEntry(c,"1.2.3 · 路线绘制与全局设置","• 新增路线绘制：持续定位开启时按 2～60 秒记录真实位置点，支持缩放滑块、单指拖动、以自己为中心、点选记录点查看序号、坐标和时间，结束后可命名保存或删除并回放。\n• 俯仰和横滚改为大字显示，网络定位间隔设置名称更明确，普通说明文字禁止长按选择。\n• 保存地点重新定位说明和状态方向文案调整，设置新增全局设置，背景、描边和时间显示集中管理；时间显示同步到地震、天文等页面。\n• 版本号 1.2.3 / versionCode 25，可覆盖 1.2.2。\n• 本次维护合并开始/结束绘制按钮，移除移动模式与双指缩放；保存路线完整预览，支持逐点播放/暂停、暂停时前后与首尾跳转、1～20 个记录点/秒速度滑块，并修正名称输入框留白。" );
         updateEntry(c,"1.2.2 · 状态、缓存与地点改进","• 调整大雷暴伴冰雹图标，避免冰雹看起来从云中间斜向发射。\n• 状态使用说明中的定位设置按钮移到说明末尾；状态设置按默认栏目顺序整理，电池与设备信息支持显隐和排序。\n• 电池瞬时电流可选择系统原始符号或反转符号，默认采用 1.2.0 的系统原始符号；说明保留不同厂商定义不同。\n• 卫星名称改为国家或地区加英文缩写，切换栏目、锁屏和后台默认暂停，回到状态页面自动继续；移除传感器帧率设置。\n• 保存地点时年龄实时更新，新增重新定位按钮，只更新表单坐标；地点不设应用层数量上限。\n• 缓存管理显示当前缓存占用，设置入口顺序调整。" );
         updateEntry(c,"1.2.1 · 状态页细化","• 新增传感器显隐与排序、卫星天空图方向跟随、卫星明细按载噪密度比或公司排序，以及电池健康、瞬时电流和重力传感器说明。\n• 修正俯仰、横滚定义，显示当前位置估算磁偏角；地面速度和移动方位改为大字。\n• 切换栏目、锁屏和后台默认暂停卫星接收，可改为停止；地点不设应用层数量上限。\n• versionName 1.2.1 / versionCode 23，可覆盖 1.2.0。");
@@ -367,7 +369,7 @@ public class MainActivity extends Activity {
     String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 1.2.3 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位默认切换栏目或后台即停止；可在设置中主动开启持续定位，开始后由前台服务工作并提供通知和停止入口。应用不上传定位坐标；最近一次定位保存在本机，地震距离也在本机计算。卫星硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\nOpen-Meteo 免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。");
+        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 1.2.4 · 个人非商业版\r\n\r\n天气由 Open-Meteo 提供；地区检索基于 GeoNames。两者均按 CC BY 4.0 署名。应用对返回数据进行了中文描述、取整、单位标注与排版。\r\n\r\n当前天气为数值模型估算，非气象台站现场观测，也不替代官方预警。日期、小时与日出日落均按所选地区的当地时区显示。\r\n\r\n隐私：无需账号。定位默认切换栏目或后台即停止；可在设置中主动开启持续定位，开始后由前台服务工作并提供通知和停止入口。应用不上传定位坐标；最近一次定位保存在本机，地震距离也在本机计算。卫星硬件模式无需应用联网；网络定位依赖系统位置服务与网络，系统可能向其服务商发送 IP、基站或 Wi-Fi 信息；课程表与导入的背景图只保存在手机内部。天气查询需要联网。你的 IP、搜索词及所选地区坐标会发送给 Open-Meteo。收藏与天气缓存保存在本机；没有广告、统计或自建服务器。\r\n\r\nOpen-Meteo 免费 API 仅限非商业使用。天气缓存 15 分钟，手动刷新间隔至少 1 分钟；服务限流时暂停请求。商业用途应另行取得服务授权。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。天文计算为本地近似结果。官方网页会按其自身规则处理访问数据。");
         EarthquakeInfo.paragraph(this,content,"状态与隐私：方向、传感器、电池和卫星状态来自 Android 官方设备接口，在状态页前台读取。卫星接收须主动开始及精确定位授权，切换栏目、锁屏或后台按设置暂停，回到状态页面自动继续；关闭自动继续后才会停止；独立于可选的持续定位服务。仅显示设备报告的卫星，不连接第三方星历或定位服务。方向和目标距离在本机计算；保存的地点、选中的目标仅存本机，清缓存或恢复默认设置保留，卸载应用会删除。无设备序列号、IMEI 或 MAC 读取。系统辅助定位和网络定位可能由系统服务联网，遵循系统规则。指南针与寻宝示意受传感器、磁场、定位及模型误差影响，不是专业测绘或安全导航工具。");
         EarthquakeInfo.append(this,content);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");link(content,"Android · 卫星状态官方文档","https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,"Android · 传感器官方说明","https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,"天体坐标与星等 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
