@@ -75,7 +75,7 @@ final class EarthquakeScreen {
     private int dayIndex(){for(int i=0;i<DAY_VALUES.length;i++)if(DAY_VALUES[i]==days())return i;return 2;}
     private int area(){return Math.max(0,Math.min(2,p.getInt("quake_area",0)));}
     private int sort(){return Math.max(0,Math.min(2,p.getInt("quake_sort",0)));}
-    private ZoneId zone(){return EarthquakeOptions.zone(p.getInt("quake_timezone",0));}
+    private ZoneId zone(){return EarthquakeOptions.zone(p.getInt("global_time_mode",p.getInt("quake_timezone",0)));}
     private String time(long t){return EarthquakeOptions.time(t,zone());}
 
     private double[] reference(){
@@ -114,7 +114,7 @@ final class EarthquakeScreen {
     }
     private void details(EarthquakeData.Event event){
         LinearLayout c=form();EarthquakeData.Report main=event.main();c.addView(a.text(region(main.region),18,a.INK,true));a.gap(c,12);c.addView(a.text("不同来源的震级类型、深度和位置可能不同。本应用不取平均；优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知，同级采用较新结果。中国地震台网的自动速报不视为已复核。列表显示具体贡献机构，聚合平台与转发信息保留在下方。近时近地且匹配明确才合并，密集余震可能仍分开显示。",13,a.MUTED,false));a.gap(c,16);
-        for(EarthquakeData.Report r:event.reports){c.addView(a.text(EarthquakeData.sourceName(r.source)+" · "+r.magnitudeLabel(),17,a.BLUE,true));a.gap(c,9);TextView info=a.text("事件 ID："+r.id+"\n发生时间："+time(r.time)+"\n"+(r.source.equals("Wolfx")?"来源报告时间：":r.source.equals("GEOFON")?"来源参数生成时刻：":"来源更新时间：")+time(r.updated)+"\n"+EarthquakeOptions.offset(zone(),r.time)+"\n震中："+region(r.region)+("\n"+CoordinateFormat.pair(r.longitude,r.latitude,5))+"\n"+depth(r)+(r.depthNote.isEmpty()?"":"\n"+r.depthNote)+"\n"+distance(r)+"\n状态："+EarthquakeDisplay.review(r)+(EarthquakeDisplay.review(r).equals("状态未知")?"":"\n来源处理标记："+r.review)+(r.agency.isEmpty()?"":"\n贡献机构："+EarthquakeAgencies.name(r.agency)),14,a.INK,false);info.setTextIsSelectable(true);c.addView(info);a.gap(c,10);a.link(c,EarthquakeData.sourceName(r.source)+(r.source.equals("Wolfx")?" · 中国地震台网中心官网":" · 查看原始详情"),r.url());if(r.source.equals("Wolfx")){a.link(c,"Wolfx · 目录接口说明","https://wolfx.jp/zh/docs/open-api/");c.addView(a.text("这是机构官网入口，并非此事件的官方详情链接。转发参数仅供参考；未采用接口中含义及标度尚未核实的 intensity 字段。",13,a.MUTED,false));}a.gap(c,12);}
+        for(EarthquakeData.Report r:event.reports){c.addView(a.text(EarthquakeData.sourceName(r.source)+" · "+r.magnitudeLabel(),17,a.BLUE,true));a.gap(c,9);TextView info=a.text("事件 ID："+r.id+"\n发生时间："+time(r.time)+"\n"+(r.source.equals("Wolfx")?"来源报告时间：":r.source.equals("GEOFON")?"来源参数生成时刻：":"来源更新时间：")+time(r.updated)+"\n"+EarthquakeOptions.offset(zone(),r.time)+"\n震中："+region(r.region)+("\n"+CoordinateFormat.pair(r.longitude,r.latitude,5))+"\n"+depth(r)+(r.depthNote.isEmpty()?"":"\n"+r.depthNote)+"\n"+distance(r)+"\n状态："+EarthquakeDisplay.review(r)+(EarthquakeDisplay.review(r).equals("状态未知")?"":"\n来源处理标记："+r.review)+(r.agency.isEmpty()?"":"\n贡献机构："+EarthquakeAgencies.name(r.agency)),14,a.INK,false);c.addView(info);a.gap(c,10);a.link(c,EarthquakeData.sourceName(r.source)+(r.source.equals("Wolfx")?" · 中国地震台网中心官网":" · 查看原始详情"),r.url());if(r.source.equals("Wolfx")){a.link(c,"Wolfx · 目录接口说明","https://wolfx.jp/zh/docs/open-api/");c.addView(a.text("这是机构官网入口，并非此事件的官方详情链接。转发参数仅供参考；未采用接口中含义及标度尚未核实的 intensity 字段。",13,a.MUTED,false));}a.gap(c,12);}
         c.addView(a.text(EarthquakeIntensity.label(event),14,a.INK,false));a.gap(c,10);c.addView(a.text("来源公众震感汇总不等同于官方实测最大烈度；来源模型与本地经验模型始终标为估算。本应用烈度统一采用修订麦加利烈度（MMI）。相关计算范围、限制及许可见关于 → 数据来源与隐私。",13,a.MUTED,false));dialog("地震详情",c);
     }
 
@@ -153,7 +153,7 @@ final class EarthquakeScreen {
         action(c,"查询区域",this::areaSettings);
         action(c,"最低震级",this::magnitudeSettings);
 
-        action(c,"排序方式",()->choose("排序方式",SORTS,sort(),n->{p.edit().putInt("quake_sort",n).apply();changed();}));action(c,"时间显示",()->choose("时间显示",new String[]{"手机当地时间（默认）","北京时间","UTC"},p.getInt("quake_timezone",0),n->{p.edit().putInt("quake_timezone",n).apply();changed();}));
+        action(c,"排序方式",()->choose("排序方式",SORTS,sort(),n->{p.edit().putInt("quake_sort",n).apply();changed();}));
         action(c,"自动刷新间隔",()->choose("自动刷新间隔 · 仅页面前台",new String[]{"关闭","5 分钟","15 分钟（默认）","30 分钟","1 小时"},index(new int[]{0,300000,900000,1800000,3600000},(int)p.getLong("quake_interval",900000)),n->{p.edit().putLong("quake_interval",new long[]{0,300000,900000,1800000,3600000}[n]).apply();changed();}));
         action(c,"距离计算参考位置",this::referenceSettings);action(c,"列表信息显示",this::fields);action(c,"栏目显示与排序",()->new SettingsScreen(a).earthquakeOrder());action(c,"数据源",this::sources);action(c,"地震术语介绍",()->EarthquakeInfo.terms(a));action(c,"清除地震缓存",()->new ToolDialog(a).setTitle("清除地震缓存？").setMessage("仅删除已下载的地震目录，保留设置、最近定位和来源限流记录。").setPositiveButton("清除",(d,n)->{a.toast(clear()?"地震缓存已清除":"部分地震缓存未能删除");}).setNegativeButton("取消",null).show());
         dialog("地震设置",c);

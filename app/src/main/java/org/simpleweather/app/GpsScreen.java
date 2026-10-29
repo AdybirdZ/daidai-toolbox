@@ -8,6 +8,7 @@ import android.location.*;
 import android.os.*;
 import android.provider.Settings;
 import android.widget.*;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /** Location service control and display. The Activity never owns background callbacks. */
@@ -17,12 +18,14 @@ final class GpsScreen {
     private TextView status,latitude,longitude,accuracy,altitude,age,speed,bearing,motion;
     private boolean visible,pendingPermission;
     private final Runnable tick=new Runnable(){public void run(){if(visible){update();handler.postDelayed(this,16);}}};
-    GpsScreen(MainActivity activity){a=activity;hardware=new StatusHardware(a);places=new StatusPlaces(a,()->{lastSecond=-1;update();});}
-    static final String[] SECTION_NAMES={"指南针","当前位置","定位卫星","地点","传感器","电池","设备与环境","使用说明"};
+    GpsScreen(MainActivity activity){a=activity;hardware=new StatusHardware(a);places=new StatusPlaces(a,()->{lastSecond=-1;update();});routeStore=new RouteStore(a);}
+    static final String[] SECTION_NAMES={"指南针","当前位置","定位卫星","地点","传感器","电池","设备与环境","使用说明","路线绘制"};
     private final StatusHardware hardware;
     private final StatusPlaces places;
+    private final RouteStore routeStore;
+    private RouteCanvas routeCanvas; private TextView routeInfo; private ArrayList<RoutePoint> displayedRoute=new ArrayList<>();
     private StatusViews.Compass compass;private StatusViews.Treasure treasure;private StatusViews.Sky sky;
-    private TextView compassInfo,satelliteStatus,satelliteInfo,satelliteDetails,treasureInfo,batteryInfo,deviceInfo;
+    private TextView compassInfo,pitchView,rollView,satelliteStatus,satelliteInfo,satelliteDetails,treasureInfo,batteryInfo,deviceInfo;
     private LinearLayout satelliteDetailBox;private boolean details,pendingSatellite,batteryRegistered;
     private Intent battery;
     private long lastSecond=-1;
@@ -34,18 +37,18 @@ final class GpsScreen {
     static final String[] DEVICE_LABELS={"设备","Android","安全更新","内存可用 / 总量","应用所在存储可用 / 总量","开机时长（含休眠）","当前窗口"};
     private final BroadcastReceiver batteryReceiver=new BroadcastReceiver(){public void onReceive(Context c,Intent i){battery=i;}};
     void render(){
-        status=latitude=longitude=accuracy=altitude=age=speed=bearing=motion=compassInfo=satelliteStatus=satelliteInfo=satelliteDetails=treasureInfo=batteryInfo=deviceInfo=null;
+        status=latitude=longitude=accuracy=altitude=age=speed=bearing=motion=compassInfo=pitchView=rollView=satelliteStatus=satelliteInfo=satelliteDetails=treasureInfo=batteryInfo=deviceInfo=null;
         compass=null;treasure=null;sky=null;satelliteDetailBox=null;sensorViews.clear();batteryViews.clear();deviceViews.clear();lastSecond=-1;
         for(int id:DisplayOrder.parse(a.preferences.getString("status_order",""),SECTION_NAMES.length)){
             if(!a.preferences.getBoolean("status_show_"+id,true))continue;
-            switch(id){case 0:compassCard();break;case 1:locationCard();break;case 2:satellitesCard();break;case 3:placesCard();break;case 4:sensorsCard();break;case 5:batteryCard();break;case 6:deviceCard();break;case 7:infoCard();break;}
+            switch(id){case 0:compassCard();break;case 1:locationCard();break;case 2:satellitesCard();break;case 3:placesCard();break;case 4:sensorsCard();break;case 5:batteryCard();break;case 6:deviceCard();break;case 7:infoCard();break;case 8:routeCard();break;}
             a.gap(a.body,16);
         }
         if(sky==null){pendingSatellite=false;hardware.stopGnss("卫星区域已隐藏，接收已停止");}
         resume();
     }
     private LinearLayout card(String title){LinearLayout c=a.card();c.addView(a.text(title,18,a.INK,true));a.gap(c,12);return c;}
-    private void compassCard(){LinearLayout c=card("指南针");compass=new StatusViews.Compass(a,hardware);c.addView(compass,a.lp(-1,-2));compassInfo=a.text("等待方向传感器",14,a.MUTED,false);c.addView(compassInfo);a.gap(c,12);c.addView(a.text("屏幕上沿为朝向，请平放设备。远离磁铁、金属和电器，必要时缓慢做 8 字校准；真北需最近定位估算磁偏角。",13,a.MUTED,false));}
+    private void compassCard(){LinearLayout c=card("指南针");compass=new StatusViews.Compass(a,hardware);c.addView(compass,a.lp(-1,-2));compassInfo=a.text("等待方向传感器",14,a.MUTED,false);c.addView(compassInfo);a.gap(c,10);pitchView=a.text("俯仰 —",25,a.INK,true);rollView=a.text("横滚 —",25,a.INK,true);c.addView(pitchView);a.gap(c,6);c.addView(rollView);a.gap(c,12);c.addView(a.text("屏幕上沿为朝向，请平放设备。远离磁铁、金属和电器，必要时缓慢做 8 字校准；真北需最近定位估算磁偏角。俯仰屏幕上方向天上为正，横滚向左为负、向右为正。",13,a.MUTED,false));}
     private void locationCard(){
         LinearLayout c=a.card();c.addView(a.text("当前位置",18,a.INK,true));a.gap(c,12);status=a.text(LocationService.status,14,a.MUTED,false);c.addView(status);a.gap(c,22);
         longitude=value(c,"经度 · WGS84");latitude=value(c,"纬度 · WGS84");accuracy=value(c,"水平定位误差半径");altitude=value(c,"海拔 · 相对 WGS84 椭球");speed=value(c,"地面速度");bearing=value(c,"移动方位");age=a.text("等待定位结果",12,a.MUTED,false);c.addView(age);a.gap(c,10);motion=a.text("移动方位由定位结果提供，不是设备朝向。",13,a.MUTED,false);c.addView(motion);a.gap(c,16);
@@ -54,9 +57,9 @@ final class GpsScreen {
     private void satellitesCard(){LinearLayout c=card("定位卫星 · 设备接收状态");satelliteStatus=a.text(hardware.gnssMessage,14,a.MUTED,false);c.addView(satelliteStatus);a.gap(c,12);
         LinearLayout actions=a.row();actions.addView(a.button("开始卫星接收",true,this::startSatellites),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(actions,8);actions.addView(a.button("停止卫星接收",false,()->{pendingSatellite=false;hardware.stopGnss("卫星接收已停止");lastSecond=-1;update();}),new LinearLayout.LayoutParams(0,-2,1));c.addView(actions);a.gap(c,12);
         sky=new StatusViews.Sky(a,hardware,this::satelliteSelection);sky.selected=selectedSatellite;c.addView(sky,a.lp(-1,-2));
-        c.addView(a.text("北在上、南在下、东在右、西在左；圆周为高度角 0°，中心为 90°；方位角从真北起顺时针。颜色按卫星系统区分，实心表示参与本次定位，空心表示未参与。点卫星查看参数。",13,a.MUTED,false));a.gap(c,12);
+        c.addView(a.text("上北下南左西右东；圆周为高度角 0°，中心为 90°；方位角从真北起顺时针。颜色按卫星系统区分，实心表示参与本次定位，空心表示未参与。点卫星查看参数。",13,a.MUTED,false));a.gap(c,12);
         satelliteInfo=a.text("尚未选中卫星",14,a.INK,false);c.addView(satelliteInfo);a.gap(c,12);
-        c.addView(a.button("展开 / 收起卫星明细",false,()->{details=!details;if(satelliteDetailBox!=null)satelliteDetailBox.setVisibility(details?android.view.View.VISIBLE:android.view.View.GONE);lastSecond=-1;update();}));a.gap(c,10);satelliteDetailBox=a.column();satelliteDetails=a.text("等待设备数据",13,a.INK,false);satelliteDetails.setTextIsSelectable(true);satelliteDetailBox.addView(satelliteDetails);satelliteDetailBox.setVisibility(details?android.view.View.VISIBLE:android.view.View.GONE);c.addView(satelliteDetailBox);
+        c.addView(a.button("展开 / 收起卫星明细",false,()->{details=!details;if(satelliteDetailBox!=null)satelliteDetailBox.setVisibility(details?android.view.View.VISIBLE:android.view.View.GONE);lastSecond=-1;update();}));a.gap(c,10);satelliteDetailBox=a.column();satelliteDetails=a.text("等待设备数据",13,a.INK,false);satelliteDetailBox.addView(satelliteDetails);satelliteDetailBox.setVisibility(details?android.view.View.VISIBLE:android.view.View.GONE);c.addView(satelliteDetailBox);
         a.gap(c,12);c.addView(a.text("仅显示芯片与 Android 报告的卫星，不推算完整星座。请授予精确定位；网络定位本身没有卫星状态，按钮会单独开启前台卫星接收。切换栏目、锁屏或后台时按设置暂停，回到状态页面后自动继续，不受持续定位设置影响。系统辅助定位可能使用网络；应用不下载星历。",13,a.MUTED,false));
     }
     private void startSatellites(){if(a.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){pendingSatellite=true;a.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},46);return;}pendingSatellite=false;hardware.startGnss();lastSecond=-1;update();}
@@ -68,17 +71,23 @@ final class GpsScreen {
         c.addView(a.button("保存当前位置",true,places::addCurrent));a.gap(c,10);c.addView(a.button("手动添加地点",false,()->places.edit(null,null)));a.gap(c,10);c.addView(a.button("选择 / 管理地点",false,places::manage));a.gap(c,12);
         c.addView(a.text("蓝点是所选地点，中心是你；外圈自动缩放。方向传感器与最近位置有效时，顶部跟随设备上沿朝向；否则真北向上。只计算直线地表距离和初始方位，不提供道路、障碍物或路线。定位和磁场误差会影响方向，不能用于安全关键导航。地点仅在本机保存，清缓存或恢复默认设置不删除；卸载应用会丢失。",13,a.MUTED,false));
     }
+    private void routeCard(){LinearLayout c=card("路线绘制");routeInfo=a.text(RouteRecorder.active()?"正在记录路线":"尚未开始记录路线",14,a.INK,false);c.addView(routeInfo);a.gap(c,10);routeCanvas=new RouteCanvas(a);routeCanvas.setPoints(RouteRecorder.active()?RouteRecorder.points():displayedRoute);c.addView(routeCanvas,a.lp(-1,320));a.gap(c,10);
+        LinearLayout actions=a.row();TextView start=a.button("开始绘制",true,this::startRoute);TextView stop=a.button("结束绘制",false,this::stopRoute);actions.addView(start,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(actions,8);actions.addView(stop,new LinearLayout.LayoutParams(0,-2,1));c.addView(actions);a.gap(c,8);
+        LinearLayout viewActions=a.row();TextView center=a.button("以自己为中心",false,()->{if(routeCanvas!=null)routeCanvas.setCenter(true);});viewActions.addView(center,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(viewActions,8);TextView move=a.button("移动视角",false,()->{if(routeCanvas!=null)routeCanvas.setMove(true);});viewActions.addView(move,new LinearLayout.LayoutParams(0,-2,1));c.addView(viewActions);a.gap(c,8);c.addView(a.button("查看 / 回放已保存路线",false,this::routeList));a.gap(c,10);c.addView(a.text("默认每 5 秒记录一个定位点，可在状态设置中调整为 2～60 秒；网络定位不能短于网络定位间隔。必须开启“切换栏目和后台继续定位”并保持持续定位，定位暂时失败时会暂停，恢复信号后自动继续。路线点只保存在本机。",13,a.MUTED,false));}
+    private void startRoute(){if(!a.preferences.getBoolean("location_continuous",false)||!LocationService.running){a.toast("请先开启切换栏目和后台继续定位并开始定位");return;}RouteRecorder.start(a.preferences.getInt("route_interval",5));if(routeInfo!=null)routeInfo.setText("正在记录路线 · 等待定位点");}
+    private void stopRoute(){if(!RouteRecorder.active()){a.toast("当前没有正在记录的路线");return;}RouteRecorder.stop();ArrayList<RoutePoint> pts=RouteRecorder.points();displayedRoute=pts;if(routeCanvas!=null)routeCanvas.setPoints(pts);if(pts.isEmpty()){if(routeInfo!=null)routeInfo.setText("没有收到有效定位点");return;}EditText name=new EditText(a);name.setSingleLine(true);name.setHint("例如：晚间跑步");new ToolDialog(a).setTitle("保存路线").setMessage("本次路线共有 "+pts.size()+" 个定位点。输入名称后保存，也可以删除本次路线。\n路线点仅保存在本机。").setView(name).setPositiveButton("保存",(d,w)->{String n=name.getText().toString().trim();routeStore.save(n.isEmpty()?"未命名路线":n,pts);if(routeInfo!=null)routeInfo.setText("路线已保存 · "+pts.size()+" 个定位点");}).setNeutralButton("删除",null).setNegativeButton("取消",null).show();}
+    private void routeList(){LinearLayout c=a.column();ArrayList<RouteStore.Saved> rows=routeStore.all();if(rows.isEmpty())c.addView(a.text("尚无已保存路线。",14,a.MUTED,false));for(RouteStore.Saved row:rows){LinearLayout r=a.row();TextView open=a.button(row.name+" · "+row.points.size()+" 点",false,()->{displayedRoute=new ArrayList<>(row.points);if(routeCanvas!=null){routeCanvas.setPoints(row.points);routeCanvas.setCenter(true);}if(routeInfo!=null)routeInfo.setText("回放："+row.name+" · "+row.points.size()+" 个定位点");});r.addView(open,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(r,8);r.addView(a.button("删除",false,()->{routeStore.remove(row.id);a.toast("路线已删除");routeList();}),a.lp(72,48));c.addView(r);a.gap(c,8);}ScrollView s=new ScrollView(a);s.addView(c);new ToolDialog(a).setTitle("已保存路线").setView(s).setNegativeButton("返回",null).show();}
     static final String[] SENSOR_NAMES={"陀螺仪 · 角速度","加速度计 · 含重力","线性加速度 · 不含重力","重力传感器","磁场","气压","环境光","距离传感器","环境温度","相对湿度"};
     static final String[] UNITS={"rad/s","m/s²","m/s²","m/s²","μT","hPa","lx","cm","℃","%"};
     private void sensorsCard(){LinearLayout c=card("传感器");java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_sensor_order",""),StatusHardware.TYPES.length);for(int index:order){int type=StatusHardware.TYPES[index];if(!a.preferences.getBoolean("status_sensor_show_"+type,true))continue;c.addView(a.text(SENSOR_NAMES[index],15,a.INK,true));a.gap(c,8);TextView data=a.text("等待结果",14,a.MUTED,false);c.addView(data);sensorViews.put(type,data);android.hardware.Sensor s=hardware.sensor(type);if(s!=null){a.gap(c,5);c.addView(a.text(s.getName(),11,a.MUTED,false));}a.gap(c,16);}if(sensorViews.isEmpty())c.addView(a.text("已在设置中隐藏所有传感器。",14,a.MUTED,false));c.addView(a.text("系统使用尽可能高的传感器采样频率，实际仍受硬件和系统调度影响。轴固定于设备自然方向，不随屏幕旋转：X 向右、Y 向上、Z 垂直屏幕向外；陀螺仪记录绕各轴的角速度，不是角度。加速度计含重力，适合检测设备整体受力和倾斜；重力传感器只给系统估算的重力方向，已滤除线性运动，适合指南针和姿态参考；线性加速度则尽量去掉重力，用于观察运动。环境温度不等于电池温度。未安装或系统未开放的传感器显示“设备未提供”。",13,a.MUTED,false));}
-    private void batteryCard(){LinearLayout c=card("电池");java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_battery_order",""),BATTERY_LABELS.length);for(int id:order){if(!a.preferences.getBoolean("status_battery_show_"+id,true))continue;c.addView(a.text(BATTERY_LABELS[id],12,a.MUTED,false));a.gap(c,6);TextView value=a.text("等待系统电池状态",15,a.INK,true);value.setTextIsSelectable(true);batteryViews.put(id,value);c.addView(value);a.gap(c,16);}if(batteryViews.isEmpty())c.addView(a.text("已在设置中隐藏所有电池信息。",14,a.MUTED,false));c.addView(a.text("健康状态依据 Android BatteryManager.EXTRA_HEALTH 的系统返回值；这只是电池管理芯片的状态，不等于实际容量或安全保证。瞬时电流可在状态设置中选择符号；不同厂商定义不同。系统未提供的字段不显示为零。",13,a.MUTED,false));}
-    private void deviceCard(){LinearLayout c=card("设备与环境");java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_device_order",""),DEVICE_LABELS.length);for(int id:order){if(!a.preferences.getBoolean("status_device_show_"+id,true))continue;c.addView(a.text(DEVICE_LABELS[id],12,a.MUTED,false));a.gap(c,6);TextView value=a.text("读取系统信息",14,a.INK,false);value.setTextIsSelectable(true);deviceViews.put(id,value);c.addView(value);a.gap(c,16);}if(deviceViews.isEmpty())c.addView(a.text("已在设置中隐藏所有设备信息。",14,a.MUTED,false));}
+    private void batteryCard(){LinearLayout c=card("电池");java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_battery_order",""),BATTERY_LABELS.length);for(int id:order){if(!a.preferences.getBoolean("status_battery_show_"+id,true))continue;c.addView(a.text(BATTERY_LABELS[id],12,a.MUTED,false));a.gap(c,6);TextView value=a.text("等待系统电池状态",15,a.INK,true);batteryViews.put(id,value);c.addView(value);a.gap(c,16);}if(batteryViews.isEmpty())c.addView(a.text("已在设置中隐藏所有电池信息。",14,a.MUTED,false));c.addView(a.text("健康状态依据 Android BatteryManager.EXTRA_HEALTH 的系统返回值；这只是电池管理芯片的状态，不等于实际容量或安全保证。瞬时电流可在状态设置中选择符号；不同厂商定义不同。系统未提供的字段不显示为零。",13,a.MUTED,false));}
+    private void deviceCard(){LinearLayout c=card("设备与环境");java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_device_order",""),DEVICE_LABELS.length);for(int id:order){if(!a.preferences.getBoolean("status_device_show_"+id,true))continue;c.addView(a.text(DEVICE_LABELS[id],12,a.MUTED,false));a.gap(c,6);TextView value=a.text("读取系统信息",14,a.INK,false);deviceViews.put(id,value);c.addView(value);a.gap(c,16);}if(deviceViews.isEmpty())c.addView(a.text("已在设置中隐藏所有设备信息。",14,a.MUTED,false));}
     private void infoCard(){
         LinearLayout info=a.card();info.addView(a.text("状态使用说明",17,a.INK,true));a.gap(info,12);info.addView(a.text("默认只在状态页前台工作，切换栏目、锁屏或离开应用会暂停状态页接收；设置中可改为停止，回到状态页后按选择恢复或等待再次开始。设置→状态可开启“切换栏目和后台继续定位”；开启后仍需点击开始，运行时提供持续定位通知，可在通知或本页停止；未允许通知时，系统可能仅在活动应用管理中显示服务。系统省电、权限变化或强制停止仍可能中断定位；关闭此选项后回到默认行为。应用不上传经纬度。\n\n水平定位误差半径为 Android 提供的估计（约 68% 置信水平），不是实际偏差保证。\n\n卫星硬件模式：接收设备支持的卫星信号，应用无需联网，室内或遮挡处可能无法获得信号；天空图只显示设备实际报告的卫星。\n\n网络模式：需系统支持网络位置服务且保持网络连接。系统可能把 IP、基站或 Wi-Fi 信息发给其定位服务商，适用系统与服务商规则。没有网络位置提供程序的设备无法使用此模式。\n\n当系统定位结果不含海拔字段时，显示“未提供海拔”；常见于网络定位仅提供平面位置、设备或定位服务未返回高度时。这不表示海拔为零。海拔存在时为 WGS84 椭球高，不等同于海拔基准面上的正高。\n\n经纬度为 WGS84，不做地图坐标偏移。显示顺序为经度、纬度；E 为东经、W 为西经、N 为北纬、S 为南纬。地震距离在本机利用最近定位计算，未定位也能查询全球目录。自动定位间隔是请求系统更新的最短间隔，系统可能延迟或返回缓存；距上次定位时间按实际结果计算。",13,a.MUTED,false));
         a.gap(info,12);info.addView(a.text("状态页的指南针、传感器和电池读取只在本页前台工作；不读取设备序列号、IMEI、MAC、已安装应用或通信内容。卫星图只可视化设备接收信息，不提供测绘底图、测量成果、基站改正数或无线电发射。权限与数据范围详见设置 → 关于 → 数据来源与隐私。",13,a.MUTED,false));
         a.gap(info,12);info.addView(a.button("打开手机定位设置",false,()->a.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))));a.gap(info,8);info.addView(a.button("打开应用权限设置",false,()->a.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName())))));
     }
-    private TextView value(LinearLayout c,String title){c.addView(a.text(title,12,a.MUTED,false));a.gap(c,8);TextView t=a.text("—",25,a.INK,true);t.setTextIsSelectable(true);c.addView(t);a.gap(c,20);return t;}
+    private TextView value(LinearLayout c,String title){c.addView(a.text(title,12,a.MUTED,false));a.gap(c,8);TextView t=a.text("—",25,a.INK,true);c.addView(t);a.gap(c,20);return t;}
     private boolean network(){return a.preferences.getString("location_provider","gps").equals("network");}
     private String mode(){return network()?"网络定位":"卫星硬件定位";}
     void configurationChanged(){hardware.configurationChanged();lastSecond=-1;update();}
@@ -102,7 +111,7 @@ final class GpsScreen {
     private void set(TextView view,String value){if(view!=null&&!value.contentEquals(view.getText()))view.setText(value);}
     private void update(){
         if(!visible)return;
-        if(compass!=null)compass.invalidate();if(treasure!=null)treasure.invalidate();
+        if(compass!=null)compass.invalidate();if(treasure!=null)treasure.invalidate();if(routeCanvas!=null&&RouteRecorder.active()){displayedRoute=RouteRecorder.points();routeCanvas.setPoints(displayedRoute);}
         long second=SystemClock.elapsedRealtime()/1000;if(second==lastSecond)return;lastSecond=second;
         updateCompass();updateSatellites();updateTreasure();updateSensors();updateBattery();updateDevice();
         if(status==null)return;set(status,hardware.gnssRunning&&!LocationService.running?"卫星接收中 · 位置由卫星接收更新":LocationService.status);Location fix=LocationService.last(a);if(fix==null){set(longitude,"—");set(latitude,"—");set(accuracy,"—");set(altitude,"—");set(speed,"—");set(bearing,"—");set(age,"等待定位结果");set(motion,"移动方位由定位结果提供，不是设备朝向。");return;}
@@ -120,7 +129,8 @@ final class GpsScreen {
         String info=hardware.compassSource()+" · "+quality;
         if(hardware.headingAvailable()&&Double.isFinite(heading))info+="\n朝向 "+StatusMath.direction(heading)+String.format(Locale.ROOT," · %.1f°",StatusMath.norm(heading));
         else info+="\n"+(trueNorth&&fix==null?"真北需要最近定位，请开始定位":"请平放设备并等待有效方向");
-        if(Double.isFinite(hardware.pitch))info+=String.format(Locale.ROOT,"\n俯仰 %.1f°（屏幕上方向天上为正） · 横滚 %.1f°（向左负，向右正）",hardware.pitch,hardware.roll);
+        if(pitchView!=null)set(pitchView,Double.isFinite(hardware.pitch)?String.format(Locale.ROOT,"俯仰 %.1f°",hardware.pitch):"俯仰 —");
+        if(rollView!=null)set(rollView,Double.isFinite(hardware.roll)?String.format(Locale.ROOT,"横滚 %.1f°",hardware.roll):"横滚 —");
         if(fix!=null&&Double.isFinite(hardware.declination(fix)))info+=String.format(Locale.ROOT,"\n当前位置估算磁偏角 %.1f° · 参考定位 %d 秒前",hardware.declination(fix),LocationService.ageSeconds(fix));set(compassInfo,info);
     }
     private void updateSatellites(){if(satelliteStatus==null)return;int total=hardware.satellites.size(),used=0;for(StatusHardware.Satellite s:hardware.satellites)if(s.used)used++;

@@ -17,7 +17,7 @@ final class AstronomyScreen {
     private final ZoneId zone;
     private TextView selectedInfo;
 
-    AstronomyScreen(MainActivity a,City city,WeatherData data,Instant at,Consumer<Instant> change){this.a=a;this.city=city;this.data=data;this.at=at;this.change=change;ZoneId z;try{z=ZoneId.of(data!=null?data.zone.getId():city.timezone);}catch(Exception e){z=ZoneId.of("UTC");}zone=z;}
+    AstronomyScreen(MainActivity a,City city,WeatherData data,Instant at,Consumer<Instant> change){this.a=a;this.city=city;this.data=data;this.at=at;this.change=change;ZoneId z;try{z=ZoneId.of(data!=null?data.zone.getId():city.timezone);}catch(Exception e){z=ZoneId.of("UTC");}int tm=a.preferences.getInt("global_time_mode",0);if(tm==1)z=ZoneId.of("Asia/Shanghai");else if(tm==2)z=ZoneOffset.UTC;zone=z;}
     static final String[] SECTION_NAMES={"时间控制","观星条件","当地星空","选中的星星信息","月球信息","日月与行星位置","当天日月事件与曙暮光","流星雨","计算说明与来源"};
     void render(){
         a.body.addView(a.text(city.label()+" · "+at.atZone(zone).format(DateTimeFormatter.ofPattern("yyyy年M月d日 HH:mm"))+" 当地时间",14,a.MUTED,false));a.gap(a.body,12);

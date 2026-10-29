@@ -58,7 +58,7 @@ public final class LocationService extends Service implements LocationListener {
     }
     private void save(Location l){record(this,l);}
     static void record(Context context,Location l){
-        latest=new Location(l);SharedPreferences.Editor e=context.getSharedPreferences(STATE,0).edit().putLong("lat",Double.doubleToLongBits(l.getLatitude())).putLong("lon",Double.doubleToLongBits(l.getLongitude())).putLong("time",l.getTime()).putString("provider",l.getProvider());
+        latest=new Location(l);RouteRecorder.onLocation(l);SharedPreferences.Editor e=context.getSharedPreferences(STATE,0).edit().putLong("lat",Double.doubleToLongBits(l.getLatitude())).putLong("lon",Double.doubleToLongBits(l.getLongitude())).putLong("time",l.getTime()).putString("provider",l.getProvider());
         if(l.hasAccuracy())e.putFloat("accuracy",l.getAccuracy());else e.remove("accuracy");if(l.hasAltitude())e.putLong("altitude",Double.doubleToLongBits(l.getAltitude()));else e.remove("altitude");if(l.hasSpeed())e.putFloat("speed",l.getSpeed());else e.remove("speed");if(l.hasBearing())e.putFloat("bearing",l.getBearing());else e.remove("bearing");if(l.hasVerticalAccuracy())e.putFloat("verticalAccuracy",l.getVerticalAccuracyMeters());else e.remove("verticalAccuracy");e.apply();
     }
     @Override public void onLocationChanged(Location l){if(!running)return;save(l);status="已获取 "+mode();}

@@ -1,4 +1,4 @@
-# 呆呆工具箱 1.2.2
+# 呆呆工具箱 1.2.3
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用 Codex 制作。
 
@@ -27,9 +27,11 @@
 
 1.2.2 调整状态页：大雷暴伴冰雹图标的冰雹位置、电池电流符号选择、国家加英文缩写的卫星名称、切换栏目/锁屏/后台暂停并回到状态页自动继续、保存地点实时年龄和重新定位；移除传感器帧率设置，电池与设备信息可显隐排序，缓存管理显示占用，设置主顺序固定。应用保持竖屏，平板也不会因配置变化旋转。
 
+1.2.3 新增状态页路线绘制：持续定位时按 2～60 秒记录位置点，路线可缩放、以自己为中心、移动视角、点选查看经纬度和时间，结束后可命名保存或删除并回放。俯仰与横滚改为大字显示，网络定位间隔设置名称更明确，所有普通说明文字禁止长按选择。保存地点的重新定位说明更清楚；状态方向说明统一为“上北下南左西右东”。设置新增全局设置，背景、描边和时间显示集中管理，时间显示对地震、天文等页面统一生效。恢复了 1.2.1 的更新记录。
+
 ## 安装与升级
 
-安装 `DaidaiToolbox-1.2.2.apk`。包名保持 `org.simpleweather.app`，versionCode 从 23 增至 24，沿用原开发签名，可覆盖 1.2.1 并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
+安装 `DaidaiToolbox-1.2.3.apk`。包名保持 `org.simpleweather.app`，versionCode 从 24 增至 25，沿用原开发签名，可覆盖 1.2.2 并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
 
 使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
@@ -38,7 +40,7 @@
 JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.2.2.apk
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.2.3.apk
 ```
 
 脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。

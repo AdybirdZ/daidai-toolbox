@@ -12,7 +12,7 @@ final class EarthquakeInfo {
     static void append(MainActivity a,LinearLayout c){
         c.addView(a.text("地震数据与说明",17,a.INK,true));a.gap(c,12);
         paragraph(a,c,"近期震后目录查询，不提供预警、地震波倒计时或后台地震通知。查询不保证不漏报或固定发布延迟，空列表不表示没有地震，参数可能修订。默认最低震级为 M≥1.0，滑块可设 M≥0.0～M≥7.0；这只是筛选门槛，不是来源完整收录承诺。中国及周边采用经度 70° E～140° E、纬度 15° N～55° N 的宽范围，不是行政边界。");
-        int option=a.preferences.getInt("quake_timezone",0);java.time.ZoneId zone=EarthquakeOptions.zone(option);
+        int option=a.preferences.getInt("global_time_mode",a.preferences.getInt("quake_timezone",0));java.time.ZoneId zone=EarthquakeOptions.zone(option);
         paragraph(a,c,"时间显示："+EarthquakeOptions.offset(zone,System.currentTimeMillis())+"（"+(option==0?"跟随手机时区":option==1?"北京时间":"协调世界时")+"）。日期均带年份；选择采用夏令时的时区时，各事件按发生日期的实际偏移显示。中国地震台网转发目录按 UTC+08:00 解析后转换。距离为参考位置到震中的地表大圆距离，不是震源距离，在本机计算。参考位置改变后自动更新列表；地震页“刷新定位”按状态设置中的定位方式取一次位置，不需要先进入状态页，不会自动开启持续定位。");
         paragraph(a,c,"来源：德国地学研究中心 GEOFON（GFZ / GEVN）与欧洲—地中海地震中心（EMSC / SeismicPortal）按 CC BY 4.0 署名。Event locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks. 美国地质调查局（USGS）全球补充目录仅保留其国家地震信息中心的参数（net=us）；不复制第三方图像或作品，不将整个聚合目录概称为自创公有领域数据。匹配、筛选、时间格式化和少量地名翻译由本应用处理；合并保留各来源原参数，不平均震级。各来源并非完全独立。列表优先显示具体贡献机构，聚合平台与转发信息保留在详情。同次地震优先采用中国地震台网的已复核结果，其次其他已复核结果，最后自动结果或状态未知，同级采用较新结果；不因来自中国地震台网就认定已复核。");
         paragraph(a,c,"烈度：优先显示美国地质调查局的公众震感汇总（cdi，标明“来源报告烈度”，不是官方实测认定）；其 ShakeMap 模型字段 mmi 仍标“估算烈度”。本地估算指震中参考值，不是最大烈度、不是参考位置处的烈度。来源更新后自动采用当前有效值，模型结果无论是否复核都不冒充实测。本应用只使用修订麦加利烈度（MMI），列表省略标度和模型括号，详情保留完整说明。");
