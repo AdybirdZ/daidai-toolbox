@@ -3,6 +3,7 @@ package org.simpleweather.app;
 import android.graphics.*;
 import android.view.*;
 import android.widget.*;
+import android.hardware.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -29,7 +30,7 @@ final class AstronomyScreen {
             switch(id){
                 case 0:timeControl();break;
                 case 1:observing();break;
-                case 2:LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);sky.addView(a.text(view.chartNote(),12,a.MUTED,false));break;
+                case 2:LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);sky.addView(a.button(a.preferences.getBoolean("astro_align_sky",false)?"关闭对准天空":"对准天空",false,()->{a.preferences.edit().putBoolean("astro_align_sky",!a.preferences.getBoolean("astro_align_sky",false)).apply();a.refreshScreen();}),a.lp(-1,48));a.gap(sky,8);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);sky.addView(a.text(view.chartNote(),12,a.MUTED,false));break;
                 case 3:LinearLayout info=a.card();info.addView(a.text("选中的天体信息",17,a.INK,true));a.gap(info,10);info.addView(selectedInfo);break;
                 case 4:moonInfo();break;
                 case 5:positions();break;
@@ -112,14 +113,15 @@ final class AstronomyScreen {
         }
     }
     private static final class Hit {final Target target;final float x,y;Hit(Target t,float x,float y){target=t;this.x=x;this.y=y;}}
-    private static final class Sky extends View {
+    private static final class Sky extends View implements SensorEventListener {
         private final MainActivity a;private final Instant at;private final LocalDate localDate;private final double lat,lon;private final Paint p=new Paint(3);private final Consumer<String> select;private final List<Hit> hits=new ArrayList<>();private final List<Target> targets=new ArrayList<>();private final List<SkyLabels.Box> labelBoxes=new ArrayList<>();private final List<SkyLabels.Candidate> labels=new ArrayList<>();private final Map<String,Integer> labelColors=new HashMap<>();private final int mode;
-        private String selected;private float downX,downY;private boolean dragged;
+        private String selected;private float downX,downY;private boolean dragged;private float heading;private SensorManager sensors;private boolean aligned;
         Sky(MainActivity a,Instant at,double lat,double lon,LocalDate localDate,Consumer<String> select){super(a);this.a=a;this.at=at;this.localDate=localDate;this.lat=lat;this.lon=lon;this.select=select;mode=Math.max(0,Math.min(2,a.preferences.getInt("astro_coordinates",0)));selected=a.preferences.getString("astro_selected","");
             for(Astronomy.Star s:Astronomy.STARS)targets.add(new Target(s.name,"astro_star_"+s.name,s.ra,s.dec,s.mag,0,true,at,lat,lon));
             for(Astronomy.Planet planet:Astronomy.planets(at))targets.add(new Target(planet.name,"astro_planet_"+planet.name,planet.ra,planet.dec,planet.magnitude,1,true,at,lat,lon));
             for(Astronomy.Star object:Astronomy.DEEP_SKY)targets.add(new Target(object.name,"astro_deep_"+object.name,object.ra,object.dec,object.mag,2,true,at,lat,lon));
             targets.add(new Target("太阳",3,at,lat,lon));targets.add(new Target("月球",4,at,lat,lon));
+            aligned=a.preferences.getBoolean("astro_align_sky",false);if(aligned){sensors=(SensorManager)a.getSystemService(android.content.Context.SENSOR_SERVICE);Sensor rotation=sensors==null?null:sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);if(rotation!=null)sensors.registerListener(this,rotation,SensorManager.SENSOR_DELAY_GAME);}
             updateDescription();setClickable(true);
         }
         private void updateDescription(){setContentDescription("当地星图 · "+(mode==1?"赤道坐标系，北天极居中":mode==2?"不显示坐标网格":"地平坐标系，北上东左")+(selected.isEmpty()?"":" · 选中 "+selected));}
@@ -128,7 +130,7 @@ final class AstronomyScreen {
         private Target selection(){for(Target t:targets)if(t.name.equals(selected)&&t.selectable)return t;return null;}
         String selectionDescription(){Target t=selection();if(t==null)return "点击星空中的太阳、月球、亮星、行星或深空天体中心，查看方位角和高度角。北斗七星也可点选，并受显示设置控制。";
             return t.name+(t.kind==2?" · 大致中心":"")+"\n高度角 "+String.format(Locale.ROOT,"%.1f°",t.alt)+" · 方位角 "+String.format(Locale.ROOT,"%.1f°",t.az)+" "+Astronomy.compass(t.az)+"\n赤经 "+String.format(Locale.ROOT,"%.2fh",t.ra/15)+" · 赤纬 "+String.format(Locale.ROOT,"%.2f°",t.dec)+(t.kind==3?"":t.kind==4?(Double.isFinite(t.mag)?"\n视星等约 "+String.format(Locale.ROOT,"%.1f",t.mag)+"（V 波段估算）\n不含大气消光、地球照及月食影响。":"\n视星等：近新月，暂不估算"):(t.kind==2?"\n近似总视星等："+SkyVisibility.magnitude(t.mag)+"（参考值）\n扩展天体的光分散在较大区域，总星等不等同于肉眼可见程度。":"\n视星等 "+String.format(Locale.ROOT,"%.2f",t.mag)))+(t.alt<0?"\n当前在地平线下，保留选中但不绘制十字。":!enabled(t)?"\n当前显示模式已隐藏此天体，保留选中但不绘制十字。":"");}
-        private float[] xy(float cx,float cy,float r,double ra,double dec,double alt,double az){double[] q=mode==1?SkyGeometry.northPolar(ra,dec):SkyGeometry.horizontal(alt,az);return new float[]{cx+(float)q[0]*r,cy+(float)q[1]*r};}
+        private float[] xy(float cx,float cy,float r,double ra,double dec,double alt,double az){double[] q=mode==1?SkyGeometry.northPolar(ra,dec):SkyGeometry.horizontal(alt,az);if(aligned&&mode==0){double z=Math.toRadians(heading);double x=q[0]*Math.cos(z)-q[1]*Math.sin(z),y=q[0]*Math.sin(z)+q[1]*Math.cos(z);q[0]=x;q[1]=y;}return new float[]{cx+(float)q[0]*r,cy+(float)q[1]*r};}
         private void label(Canvas c,String text,float x,float y,int color,float size){p.setColor(color);p.setStyle(Paint.Style.FILL);p.setTextSize(size*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(x>getWidth()*.8f?Paint.Align.RIGHT:x<getWidth()*.2f?Paint.Align.LEFT:Paint.Align.CENTER);c.drawText(text,x,y,p);float w=p.measureText(text),left=p.getTextAlign()==Paint.Align.RIGHT?x-w:p.getTextAlign()==Paint.Align.LEFT?x:x-w/2;labelBoxes.add(new SkyLabels.Box(left-a.dp(2),y+p.getFontMetrics().ascent-a.dp(1),left+w+a.dp(2),y+p.getFontMetrics().descent+a.dp(1)));}
         private void objectLabel(String text,float x,float y,int color){p.setTextSize((mode==1?9:10)*getResources().getDisplayMetrics().scaledDensity);labels.add(new SkyLabels.Candidate(text,x,y,p.measureText(text),p.getFontMetrics().ascent,p.getFontMetrics().descent));labelColors.put(text,color);}
         private void drawObjectLabels(Canvas c){
@@ -159,6 +161,9 @@ final class AstronomyScreen {
             if(chosen!=null){c.save();c.rotate(SkyGeometry.selectionAngle(android.os.SystemClock.uptimeMillis()),chosen.x,chosen.y);p.setColor(0xFF8CEAF5);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(1.5f));for(int arm=0;arm<4;arm++){c.drawLine(chosen.x+a.dp(8),chosen.y,chosen.x+a.dp(16),chosen.y,p);c.rotate(90,chosen.x,chosen.y);}c.restore();p.setStyle(Paint.Style.FILL);if(isShown()&&hasWindowFocus()&&getWindowVisibility()==VISIBLE)postInvalidateDelayed(33);}
         }
         @Override public void onWindowFocusChanged(boolean focused){super.onWindowFocusChanged(focused);if(focused)invalidate();}
+        @Override public void onSensorChanged(SensorEvent event){if(event.sensor.getType()!=Sensor.TYPE_ROTATION_VECTOR)return;float[] matrix=new float[9];SensorManager.getRotationMatrixFromVector(matrix,event.values);float[] orientation=new float[3];SensorManager.getOrientation(matrix,orientation);heading=(float)Math.toDegrees(orientation[0]);invalidate();}
+        @Override public void onAccuracyChanged(Sensor sensor,int accuracy){}
+        @Override protected void onDetachedFromWindow(){if(sensors!=null)sensors.unregisterListener(this);super.onDetachedFromWindow();}
         @Override public boolean onTouchEvent(MotionEvent e){if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getX();downY=e.getY();dragged=false;return true;}if(e.getActionMasked()==MotionEvent.ACTION_MOVE){if(Math.hypot(e.getX()-downX,e.getY()-downY)>ViewConfiguration.get(getContext()).getScaledTouchSlop())dragged=true;return true;}if(e.getActionMasked()==MotionEvent.ACTION_CANCEL){dragged=true;return true;}if(e.getActionMasked()!=MotionEvent.ACTION_UP)return true;if(dragged)return true;
             Hit best=null;float d=Float.MAX_VALUE;for(Hit h:hits){float dx=e.getX()-h.x,dy=e.getY()-h.y,dist=dx*dx+dy*dy;if(dist<d){d=dist;best=h;}}float threshold=a.dp(24);if(best!=null&&d<=threshold*threshold){selected=best.target.name;a.preferences.edit().putString("astro_selected",selected).apply();select.accept(selectionDescription());updateDescription();invalidate();performClick();}return true;}
         @Override public boolean performClick(){super.performClick();return true;}

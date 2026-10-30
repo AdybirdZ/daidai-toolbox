@@ -22,6 +22,19 @@ public final class City {
         return admin + (country.isEmpty() ? "" : " · " + country);
     }
     public String key() { return String.format(Locale.ROOT, "%.5f_%.5f", latitude, longitude); }
+    /** Stable place key used to collapse duplicate geocoder rows.  Geocoders may
+     * return the same city once from the bundled directory and once remotely,
+     * with slightly different precision or an omitted 市 suffix. */
+    public String placeKey() {
+        String value=(label()+" "+admin).toLowerCase(Locale.ROOT).replaceAll("[\\s,，、·.。\\-]", "");
+        value=value.replaceAll("(市|区|县|镇|乡|旗)$", "");
+        return value;
+    }
+    public boolean samePlace(City other) {
+        if(other==null)return false;
+        double dlat=latitude-other.latitude,dlon=(longitude-other.longitude)*Math.cos(Math.toRadians((latitude+other.latitude)/2));
+        return placeKey().equals(other.placeKey()) || dlat*dlat+dlon*dlon < 0.12*0.12;
+    }
     public boolean matches(String query) {
         String q = query.trim().toLowerCase(Locale.ROOT);
         return (name + " " + alias + " " + admin + " " + country).toLowerCase(Locale.ROOT).contains(q);

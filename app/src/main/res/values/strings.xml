@@ -20,7 +20,7 @@
     <string name="action_close">关闭</string>
     <string name="updates_title">每个版本的更新内容</string>
     <string name="about_title">数据来源与隐私</string>
-    <string name="about_version">呆呆工具箱 1.2.7 · 个人非商业使用</string>
+    <string name="about_version">呆呆工具箱 1.2.8 · 个人非商业使用</string>
     <string name="source_open_meteo">天气：Open-Meteo · CC BY 4.0 ↗</string>
     <string name="unknown_weather">天气未知</string>
     <string name="language_title">语言</string>
