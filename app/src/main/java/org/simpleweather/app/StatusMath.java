@@ -21,6 +21,7 @@ final class StatusMath {
     static boolean satelliteAngles(double elevation,double azimuth){return Double.isFinite(elevation)&&elevation>=-90&&elevation<=90&&Double.isFinite(azimuth)&&azimuth>=0&&azimuth<=360;}
     static double[] sky(double elevation,double azimuth){double r=(90-elevation)/90,t=Math.toRadians(azimuth);return new double[]{r*Math.sin(t),-r*Math.cos(t)};}
     static String distanceText(double meters){return !Double.isFinite(meters)?"距离不可用":meters>=1000?String.format(java.util.Locale.ROOT,"%.2f km",meters/1000):String.format(java.util.Locale.ROOT,"%.1f 米",meters);}
+    static double placeRange(double targetMeters,double farthestMeters){double meters=Double.isFinite(targetMeters)?targetMeters:farthestMeters;return meters<=100?100:meters<=1000?1000:Math.pow(10,Math.ceil(Math.log10(meters)));}
     /** Chinese display names; constellation abbreviations are deliberately not shown in the UI. */
     static String constellation(int c){switch(c){case 1:return "美国 GPS";case 2:return "星基增强 SBAS";case 3:return "俄罗斯 GLONASS";case 4:return "日本 QZSS";case 5:return "中国 BDS";case 6:return "欧洲 Galileo";case 7:return "印度 NavIC";default:return "其他系统";}}
     static String satelliteId(int c,int id){return "卫星 "+id;}

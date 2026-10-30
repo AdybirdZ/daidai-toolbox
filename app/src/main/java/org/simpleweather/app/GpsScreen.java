@@ -18,12 +18,14 @@ final class GpsScreen {
     private TextView status,latitude,longitude,accuracy,altitude,verticalAccuracy,age,speed,bearing,motion,locationToggle,satelliteToggle;
     private boolean visible,pendingPermission,locationStarting;
     private final Runnable tick=new Runnable(){public void run(){if(visible){long next=SystemClock.uptimeMillis()+50;update();handler.postAtTime(this,next);}}};
-    GpsScreen(MainActivity activity){a=activity;hardware=new StatusHardware(a);places=new StatusPlaces(a,()->{lastSecond=-1;update();});routeStore=new RouteStore(a);}
+    GpsScreen(MainActivity activity){a=activity;hardware=new StatusHardware(a);places=new StatusPlaces(a,()->{lastSecond=-1;update();});routeStore=new RouteStore(a);transfer=new StatusTransfer(a,routeStore,places);}
     static final String[] SECTION_NAMES={"指南针","当前位置","定位卫星","地点","传感器","电池","设备与环境","使用说明","路线绘制"};
     private final StatusHardware hardware;
     private final StatusPlaces places;
     private final RouteStore routeStore;
-    private RouteCanvas routeCanvas; private TextView routeInfo,routeToggle,playToggle,previousPoint,nextPoint,firstPoint,lastPoint;
+    private final StatusTransfer transfer;
+    void fileResult(int request,int result,Intent intent){transfer.result(request,result,intent);}
+    private RouteCanvas routeCanvas; private TextView routeInfo,routeToggle,routeFollow,playToggle,previousPoint,nextPoint,firstPoint,lastPoint;
     private LinearLayout replayControls;private SeekBar routeZoom;
     private final RoutePlayback replay=new RoutePlayback();
     private String routeStatus="尚未开始记录路线",replayName="";
@@ -42,7 +44,7 @@ final class GpsScreen {
     private final BroadcastReceiver batteryReceiver=new BroadcastReceiver(){public void onReceive(Context c,Intent i){battery=i;}};
     void render(){
         status=latitude=longitude=accuracy=altitude=verticalAccuracy=locationToggle=satelliteToggle=age=speed=bearing=motion=compassInfo=pitchView=rollView=satelliteStatus=satelliteInfo=satelliteDetails=treasureInfo=batteryInfo=deviceInfo=null;
-        routeCanvas=null;routeInfo=null;routeToggle=null;replayControls=null;routeZoom=null;compass=null;treasure=null;sky=null;satelliteDetailBox=null;sensorViews.clear();batteryViews.clear();deviceViews.clear();lastSecond=-1;
+        routeCanvas=null;routeInfo=null;routeToggle=null;replayControls=null;routeZoom=null;routeFollow=null;compass=null;treasure=null;sky=null;satelliteDetailBox=null;sensorViews.clear();batteryViews.clear();deviceViews.clear();lastSecond=-1;
         for(int id:DisplayOrder.status(a.preferences.getString("status_order",""))){
             if(!a.preferences.getBoolean("status_show_"+id,true))continue;
             switch(id){case 0:compassCard();break;case 1:locationCard();break;case 2:satellitesCard();break;case 3:placesCard();break;case 4:sensorsCard();break;case 5:batteryCard();break;case 6:deviceCard();break;case 7:infoCard();break;case 8:routeCard();break;}
@@ -72,17 +74,19 @@ final class GpsScreen {
     private void satelliteSelection(){if(satelliteInfo==null||sky==null)return;selectedSatellite=sky.selected;for(StatusHardware.Satellite s:hardware.shown())if(s.key().equals(sky.selected)){set(satelliteInfo,satelliteLine(s));return;}set(satelliteInfo,sky.selected.isEmpty()?"尚未选中卫星":"所选卫星当前未报告或已被隐藏");}
     private String satelliteLine(StatusHardware.Satellite s){return s.label()+"\n高度角 "+(s.validAngles()?String.format(Locale.ROOT,"%.1f° · 方位角 %.1f° %s",s.elevation,s.azimuth,StatusMath.direction(s.azimuth))+(s.elevation<0?" · 地平线以下":""):"未提供有效角度")+"\n载噪密度比 "+(Float.isFinite(s.cn0)&&s.cn0>0?String.format(Locale.ROOT,"%.1f dB-Hz",s.cn0):"未提供")+" · "+(s.used?"参与本次定位":"未参与本次定位");}
     private void placesCard(){LinearLayout c=card("地点");treasureInfo=a.text("请选择保存的地点",14,a.INK,false);c.addView(treasureInfo);a.gap(c,12);treasure=new StatusViews.Treasure(a,hardware,places);c.addView(treasure,a.lp(-1,-2));
-        c.addView(a.button("保存当前位置",true,places::addCurrent));a.gap(c,10);c.addView(a.button("手动添加地点",false,()->places.edit(null,null)));a.gap(c,10);c.addView(a.button("选择 / 管理地点",false,places::manage));a.gap(c,12);
-        c.addView(a.text("各地点按所设颜色显示，圆环标记所选目标，中心表示当前位置，外圈比例按可见地点的最远距离自动调整。可在地点管理中设置颜色及显示状态，点击图中地点可选为目标。方向传感器与最近定位有效时，图形随设备朝向旋转；否则真北向上。距离为地表大圆距离，方位为起点处的初始方位角，不包含道路或障碍物信息。定位与磁场误差会影响结果，不用于安全导航。地点仅保存在本机，清除缓存或恢复默认设置不会删除；卸载应用将删除这些数据。",13,a.MUTED,false));
+        c.addView(a.button("保存当前位置",true,places::addCurrent));a.gap(c,10);c.addView(a.button("手动添加地点",false,()->places.edit(null,null)));a.gap(c,10);c.addView(a.button("选择 / 管理地点",false,places::manage));a.gap(c,10);transferButtons(c,"places");a.gap(c,12);
+        c.addView(a.text("各地点按所设颜色显示，圆环标记所选目标，中心表示当前位置，外圈比例以所选目标的距离为准；未选择目标时按最远可见地点调整。超出外圈的其他地点以较小圆点显示在外圈上。可在地点管理中设置颜色及显示状态，点击图中地点可选为目标。方向传感器与最近定位有效时，图形随设备朝向旋转；否则真北向上。距离为地表大圆距离，方位为起点处的初始方位角，不包含道路或障碍物信息。定位与磁场误差会影响结果，不用于安全导航。地点默认保存在本机，可导入或导出本应用 JSON 文件。清除缓存或恢复默认设置不会删除；卸载应用将删除这些数据。",13,a.MUTED,false));
     }
+    private void transferButtons(LinearLayout c,String kind){LinearLayout row=a.row();String title=kind.equals("routes")?"路线":"地点";row.addView(a.button("导入"+title,false,()->transfer.importFile(kind)),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(row,8);row.addView(a.button("导出"+title,false,()->transfer.exportFile(kind)),new LinearLayout.LayoutParams(0,-2,1));c.addView(row);}
+    private void syncRouteViewport(){if(routeCanvas==null)return;if(routeFollow!=null)set(routeFollow,routeCanvas.following()?"解除跟随当前位置":"跟随当前位置");if(routeZoom!=null)routeZoom.setProgress(RouteViewport.progressAt(routeCanvas.sideMeters()));}
     private void routeCard(){
         LinearLayout c=card("路线绘制");routeInfo=a.text(routeStatus,14,a.INK,false);c.addView(routeInfo);a.gap(c,10);
         routeCanvas=new RouteCanvas(a);routeCanvas.playback(replay.loaded());if(RouteRecorder.active())displayedRoute=RouteRecorder.points();
-        routeCanvas.setRoute(displayedRoute,replay.loaded()?replay.index()+1:displayedRoute.size(),true);c.addView(routeCanvas,a.lp(-1,320));a.gap(c,10);
+        routeCanvas.setRoute(displayedRoute,replay.loaded()?replay.index()+1:displayedRoute.size(),true);c.addView(routeCanvas,a.lp(-1,-2));routeCanvas.changed=this::syncRouteViewport;a.gap(c,10);
         LinearLayout actions=a.row();routeToggle=a.button(RouteRecorder.active()?"结束绘制":"开始绘制",true,()->{if(RouteRecorder.active())stopRoute();else startRoute();});
-        actions.addView(routeToggle,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(actions,8);actions.addView(a.button("以当前位置为中心",false,()->routeCanvas.centerSelf()),new LinearLayout.LayoutParams(0,-2,1));c.addView(actions);a.gap(c,8);
-        LinearLayout zoomRow=a.row();zoomRow.addView(a.text("缩放",14,a.INK,false));routeZoom=new SeekBar(a);routeZoom.setMax(320);routeZoom.setProgress(80);routeZoom.setContentDescription("路线缩放");
-        routeZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar s,int n,boolean user){if(routeCanvas!=null)routeCanvas.zoom((float)Math.pow(2,(n-80)/40.0));}public void onStartTrackingTouch(SeekBar s){}public void onStopTrackingTouch(SeekBar s){}});
+        actions.addView(routeToggle,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(actions,8);routeFollow=a.button("跟随当前位置",false,()->{if(routeCanvas.following())routeCanvas.stopFollowing();else routeCanvas.centerSelf();syncRouteViewport();});actions.addView(routeFollow,new LinearLayout.LayoutParams(0,-2,1));c.addView(actions);a.gap(c,8);
+        LinearLayout zoomRow=a.row();zoomRow.addView(a.text("缩放",14,a.INK,false));routeZoom=new SeekBar(a);routeZoom.setMax(RouteViewport.SLIDER_MAX);routeZoom.setProgress(RouteViewport.progressAt(routeCanvas.sideMeters()));routeZoom.setContentDescription("路线缩放");
+        routeZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar s,int n,boolean user){if(user&&routeCanvas!=null)routeCanvas.sideMeters(RouteViewport.metersAt(n));}public void onStartTrackingTouch(SeekBar s){}public void onStopTrackingTouch(SeekBar s){}});
         zoomRow.addView(routeZoom,new LinearLayout.LayoutParams(0,a.dp(48),1));c.addView(zoomRow);a.gap(c,8);
         c.addView(a.button("查看 / 回放已保存路线",false,this::routeList));a.gap(c,8);
         replayControls=a.column();LinearLayout transport=a.row();
@@ -93,20 +97,20 @@ final class GpsScreen {
         lastPoint=replayButton(transport,"▶▶","跳到最后",()->seekRoute(replay.size()-1));
         replayControls.addView(transport);a.gap(replayControls,8);
         TextView rate=a.text("回放速度 · "+replay.speed()+" 个记录点/秒",14,a.INK,false);replayControls.addView(rate);
-        SeekBar rateSlider=new SeekBar(a);rateSlider.setMax(19);rateSlider.setProgress(replay.speed()-1);rateSlider.setContentDescription("回放速度，1 至 20 个记录点每秒");rateSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar s,int n,boolean user){replay.speed(n+1,SystemClock.elapsedRealtime());rate.setText("回放速度 · "+(n+1)+" 个记录点/秒");updateReplay();}public void onStartTrackingTouch(SeekBar s){}public void onStopTrackingTouch(SeekBar s){}});replayControls.addView(rateSlider,a.lp(-1,48));c.addView(replayControls);
-        a.gap(c,10);TextParagraphs.append(a,c,"单指拖动可平移路线，拖动缩放滑块可放大或缩小；缩放以路线框中心为基准，不支持双指缩放。点击记录点可查看序号、坐标和记录时刻。\n\n选择已保存路线后，首先显示完整路线；点击播放后从起点逐点显示。回放时点击“以当前位置为中心”将持续跟随橙色回放点，拖动画布可取消跟随。暂停时可逐点切换或跳转至首尾记录点，跳转后以该点为中心。\n\n默认每 5 秒记录一次定位结果，可在状态设置中调整为 2～60 秒；使用网络定位时，有效记录间隔不短于网络定位间隔。开始绘制前须开启持续定位并开始定位。未收到有效定位结果时暂停记录，恢复后继续。路线仅保存在本机。",13,a.MUTED);
+        SeekBar rateSlider=new SeekBar(a);rateSlider.setMax(19);rateSlider.setProgress(replay.speed()-1);rateSlider.setContentDescription("回放速度，1 至 20 个记录点每秒");rateSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar s,int n,boolean user){replay.speed(n+1,SystemClock.elapsedRealtime());rate.setText("回放速度 · "+(n+1)+" 个记录点/秒");updateReplay();}public void onStartTrackingTouch(SeekBar s){}public void onStopTrackingTouch(SeekBar s){}});replayControls.addView(rateSlider,a.lp(-1,48));c.addView(replayControls);a.gap(c,10);transferButtons(c,"routes");
+        a.gap(c,10);TextParagraphs.append(a,c,"单指拖动可平移路线，拖动缩放滑块可调整范围；最左端画框边长为 30 米，最右端为 10 千米。边缘刻度随缩放变化，缩放以路线框中心为基准，不支持双指缩放。点击记录点可查看序号、坐标和记录时刻。\n\n选择已保存路线后，首先预览路线；点击播放后从起点逐点显示。点击“跟随当前位置”后，回放时持续跟随橙色记录点，实时记录时跟随设备位置；再次点击或拖动画布可解除跟随。暂停时可逐点切换或跳转至首尾记录点，跳转后以该点为中心。\n\n默认每 5 秒记录一次定位结果，可在状态设置中调整为 2～60 秒；使用网络定位时，有效记录间隔不短于网络定位间隔。开始绘制前须开启持续定位并开始定位。未收到有效定位结果时暂停记录，恢复后继续。路线默认保存在本机，可导入或导出本应用 JSON 文件。",13,a.MUTED);
         if(replay.loaded())updateReplay();else updateLiveRoute();
     }
     private TextView replayButton(LinearLayout row,String label,String description,Runnable action){if(row.getChildCount()>0)a.gapHorizontal(row,6);TextView b=a.button(label,false,action);b.setTextSize(16);b.setPadding(a.dp(2),a.dp(10),a.dp(2),a.dp(10));b.setContentDescription(description);row.addView(b,new LinearLayout.LayoutParams(0,-2,1));return b;}
     private void startRoute(){
         if(!a.preferences.getBoolean("location_continuous",false)||!LocationService.running){a.toast("请先在状态设置中开启持续定位，并开始定位");return;}
         replay.load(0);if(routeCanvas!=null)routeCanvas.playback(false);displayedRoute.clear();RouteRecorder.start(a.preferences.getInt("route_interval",5));routeStatus="正在记录路线 · 等待定位点";
-        if(routeCanvas!=null){routeCanvas.setRoute(displayedRoute,0,true);routeZoom.setProgress(80);}updateLiveRoute();
+        if(routeCanvas!=null){routeCanvas.setRoute(displayedRoute,0,true);syncRouteViewport();}updateLiveRoute();
     }
     private void updateLiveRoute(){
         if(replayControls!=null)replayControls.setVisibility(android.view.View.GONE);
         if(RouteRecorder.active()){
-            if(routeCanvas!=null&&routeCanvas.pointCount()!=RouteRecorder.size()){displayedRoute=RouteRecorder.points();routeCanvas.setRoute(displayedRoute,displayedRoute.size(),routeCanvas.pointCount()==0);}
+            if(routeCanvas!=null&&routeCanvas.pointCount()!=RouteRecorder.size()){displayedRoute=RouteRecorder.points();routeCanvas.setRoute(displayedRoute,displayedRoute.size(),routeCanvas.pointCount()==0&&!routeCanvas.following());}
             routeStatus=displayedRoute.isEmpty()?"正在记录路线 · 等待定位点":"正在记录路线 · "+displayedRoute.size()+" 个记录点";
         }
         set(routeInfo,routeStatus);set(routeToggle,RouteRecorder.active()?"结束绘制":"开始绘制");
@@ -117,7 +121,7 @@ final class GpsScreen {
         if(pts.isEmpty()){a.toast("未收到有效定位点");return;}
         LinearLayout form=a.column();form.setPadding(a.dp(24),a.dp(8),a.dp(24),a.dp(8));
         EditText name=new EditText(a);name.setSingleLine(true);name.setHint("例如：晚间跑步");form.addView(name,a.lp(-1,-2));
-        AlertDialog saveDialog=new ToolDialog(a).setTitle("保存路线").setMessage("本次路线共有 "+pts.size()+" 个记录点。输入名称后保存，也可以删除本次路线。路线仅保存在本机。")
+        AlertDialog saveDialog=new ToolDialog(a).setTitle("保存路线").setMessage("本次路线共有 "+pts.size()+" 个记录点。输入名称后保存，也可以删除本次路线。路线默认保存在本机，可自行导入或导出。")
             .setView(form).setPositiveButton("保存",(d,w)->{String n=name.getText().toString().trim();routeStore.save(n.isEmpty()?"未命名路线":n,pts);routeStatus="路线已保存 · "+pts.size()+" 个记录点";updateLiveRoute();})
             .setNeutralButton("删除",null).setNegativeButton("取消",null).show();
         saveDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v->confirmRouteDeletion(()->{saveDialog.dismiss();displayedRoute.clear();routeStatus="本次路线已删除";if(routeCanvas!=null)routeCanvas.setRoute(displayedRoute,0,true);updateLiveRoute();}));
@@ -129,15 +133,14 @@ final class GpsScreen {
         final AlertDialog[] dialog=new AlertDialog[1];if(rows.isEmpty())c.addView(a.text("暂无已保存路线。",14,a.MUTED,false));
         for(RouteStore.Saved row:rows){LinearLayout r=a.row();TextView open=a.button(row.name+" · "+row.points.size()+" 点",false,()->{
             dialog[0].dismiss();displayedRoute=new ArrayList<>(row.points);replayName=row.name;replay.load(row.points.size());
-            if(routeCanvas!=null){routeCanvas.setRoute(displayedRoute,displayedRoute.size(),true);routeZoom.setProgress(80);}updateReplay();
+            if(routeCanvas!=null){routeCanvas.setRoute(displayedRoute,displayedRoute.size(),true);syncRouteViewport();}updateReplay();
         });r.addView(open,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(r,8);r.addView(a.button("删除",false,()->confirmRouteDeletion(()->{routeStore.remove(row.id);dialog[0].dismiss();a.toast("路线已删除");routeList();})),a.lp(72,48));c.addView(r);a.gap(c,8);}
         ScrollView scroll=new ScrollView(a);scroll.addView(c);dialog[0]=new ToolDialog(a).setTitle("已保存路线").setView(scroll).setNegativeButton("返回",null).show();
     }
-    private void seekRoute(int index){if(replay.playing())return;replay.seek(index);if(routeCanvas!=null)routeCanvas.centerOn(replay.index());updateReplay();}
+    private void seekRoute(int index){if(replay.playing())return;replay.seek(index);if(routeCanvas!=null){if(routeCanvas.following())routeCanvas.showThrough(replay.index());else routeCanvas.centerOn(replay.index());}syncRouteViewport();updateReplay();}
     private void togglePlayback(){
         if(replay.playing())replay.pause();else{
-            boolean follow=routeCanvas!=null&&routeCanvas.following();boolean restart=replay.index()>=replay.size()-1;replay.play(SystemClock.elapsedRealtime());
-            if(restart&&routeCanvas!=null){routeCanvas.setRoute(displayedRoute,replay.index()+1,true);routeZoom.setProgress(80);if(follow)routeCanvas.centerSelf();}
+            replay.play(SystemClock.elapsedRealtime());
         }
         updateReplay();
     }
@@ -187,7 +190,7 @@ final class GpsScreen {
         if(locationStarting&&(LocationService.running||!"正在启动定位…".equals(LocationService.status)))locationStarting=false;
         set(locationToggle,LocationService.running||locationStarting||pendingPermission?"停止定位":"开始定位");
         set(satelliteToggle,hardware.gnssRunning||pendingSatellite?"停止卫星接收":"开始卫星接收");
-        if(compass!=null)compass.invalidate();if(treasure!=null)treasure.invalidate();if(routeCanvas!=null){if(RouteRecorder.active())updateLiveRoute();else if(replay.advance(SystemClock.elapsedRealtime()))updateReplay();}
+        if(compass!=null)compass.invalidate();if(treasure!=null)treasure.invalidate();if(routeCanvas!=null){if(RouteRecorder.active())updateLiveRoute();else if(replay.advance(SystemClock.elapsedRealtime()))updateReplay();if(routeCanvas.following())routeCanvas.invalidate();}
         a.updateReadingValues(()->{updateCompass();updateSatellites();updateTreasure();updateSensors();updateBattery();updateDevice();});
         // Position refresh stays separate from the 50 ms device/sensor display loop.
         long second=SystemClock.elapsedRealtime()/1000;if(second==lastSecond)return;lastSecond=second;
@@ -196,13 +199,13 @@ final class GpsScreen {
         set(accuracy,fix.hasAccuracy()?String.format(Locale.ROOT,"%.1f 米",fix.getAccuracy()):"未提供精度");set(altitude,fix.hasAltitude()?String.format(Locale.ROOT,"%.1f 米",fix.getAltitude()):"未提供海拔");
         set(verticalAccuracy,fix.hasVerticalAccuracy()?String.format(Locale.ROOT,"%.1f 米",fix.getVerticalAccuracyMeters()):"未提供垂直精度");
         set(speed,fix.hasSpeed()?String.format(Locale.ROOT,"%.2f m/s · %.1f km/h",fix.getSpeed(),fix.getSpeed()*3.6):"未提供");
-        set(bearing,fix.hasBearing()?String.format(Locale.ROOT,"%.1f° · %s（真北）",fix.getBearing(),StatusMath.direction(fix.getBearing())):"未提供");
+        set(bearing,fix.hasBearing()?String.format(Locale.ROOT,"%.1f° · %s",fix.getBearing(),StatusMath.direction(fix.getBearing())):"未提供");
         set(motion,"移动方位由定位结果提供，不是设备朝向。");
         long seconds=LocationService.ageSeconds(fix);String actual="network".equals(fix.getProvider())?"网络定位":"卫星硬件定位";set(age,actual+" · 距上次定位 "+seconds+" 秒"+(seconds>30?" · 结果较旧":""));
         if(LocationService.running&&seconds>30)set(status,"等待新信号 · 下方为上次定位");
     }
     private void updateCompass(){
-        if(compassInfo==null)return;Location fix=LocationService.last(a);boolean trueNorth=a.preferences.getBoolean("status_true_north",false);double heading=trueNorth?hardware.trueHeading(fix):hardware.magneticHeading;
+        if(compassInfo==null)return;Location fix=LocationService.last(a);boolean trueNorth=a.preferences.getBoolean("status_true_north",true);double heading=trueNorth?hardware.trueHeading(fix):hardware.magneticHeading;
         String quality=hardware.compassAccuracy==3?"精度较高":hardware.compassAccuracy==2?"精度中等":hardware.compassAccuracy==1?"精度较低，请校准":"方向精度不可靠，请校准";
         String info=hardware.compassSource()+" · "+quality;
         if(hardware.headingAvailable()&&Double.isFinite(heading))info+="\n朝向 "+StatusMath.direction(heading)+String.format(Locale.ROOT," · %.1f°",StatusMath.norm(heading));

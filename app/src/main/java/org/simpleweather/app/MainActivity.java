@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=state==null?preferences.getInt("last_tab",0):state.getInt("toolbox_tab",preferences.getInt("last_tab",0));if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));navigationOffset=state.getInt("toolbox_navigation",0);pendingScrollY=state.getInt("toolbox_scroll",0);}if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<29)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",29).apply();}},700);
+        if(preferences.getInt("seen_version",0)<30)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",30).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -235,7 +235,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.2.5",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text("数据来源与隐私 · v1.2.6",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -313,7 +313,7 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",29).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",30).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
@@ -327,6 +327,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"1.2.6 · 路线与地点导入导出","• 已保存路线和地点可通过系统文件选择器导入或导出 JSON 文件，导入前确认，保留原记录并跳过重复内容。\n• 指南针默认采用真北，设置中默认选项置于首位；当前位置的移动方位去除括号标记。\n• 修复路线播放到末尾后重新播放导致缩放改变的问题。\n• 路线框增加边缘刻度，缩放滑块范围为边长 30 米至 10 千米。\n• 路线跟随按钮切换“跟随当前位置”和“解除跟随当前位置”，回放时跟随橙色记录点。\n• 地点图按所选目标确定外圈范围，超出范围的其他地点以较小圆点显示在外圈。\n• 版本号 1.2.6，沿用原签名。");
         updateEntry(c,"1.2.5 · 文字优化与状态交互","• 优化各页面文字、专业术语、操作提示与说明排版，统一长说明段间距。\n• 路线回放居中后持续跟随橙色记录点，拖动画布可取消跟随。\n• 定位与卫星接收分别合并开始和停止按钮；开始卫星接收时自动启动当前位置更新，可正常开始路线绘制。\n• 垂直定位误差半径在海拔下方以大字显示。\n• 保存地点可选择颜色和是否在图中显示，支持同时绘制多个地点并点选目标。\n• 重叠或邻近路线记录点的详情使用“返回”按钮，返回后保留记录点选择界面。\n• 版本号 1.2.5，沿用原签名。");
         updateEntry(c,"1.2.4 · 状态刷新与路线修复","• 卫星明细和状态数值更新时保持页面阅读位置，避免重新布局跳回列表上方。\n• 路线缩放以路线框中心为基准，拖动后缩放也保持正确中心。\n• 状态页除 GPS 定位信息外，指南针、俯仰横滚、传感器、卫星显示、电池和设备信息每 50 毫秒刷新一次；数据以系统实际报告为准，GPS 与网络定位间隔保持原设置。\n• 删除已保存路线或本次未保存路线前，弹出“确定删除此路线吗？”确认框，取消保留路线。\n• 状态默认顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明，保留已自定义的排序。\n• 版本号 1.2.4 / versionCode 26，沿用原签名，可覆盖升级。");
         updateEntry(c,"1.2.3 · 路线绘制与全局设置","• 新增路线绘制：持续定位开启时按 2～60 秒记录真实位置点，支持缩放滑块、单指拖动、以自己为中心、点选记录点查看序号、坐标和时间，结束后可命名保存或删除并回放。\n• 俯仰和横滚改为大字显示，网络定位间隔设置名称更明确，普通说明文字禁止长按选择。\n• 保存地点重新定位说明和状态方向文案调整，设置新增全局设置，背景、描边和时间显示集中管理；时间显示同步到地震、天文等页面。\n• 版本号 1.2.3 / versionCode 25，可覆盖 1.2.2。\n• 本次维护合并开始/结束绘制按钮，移除移动模式与双指缩放；保存路线完整预览，支持逐点播放/暂停、暂停时前后与首尾跳转、1～20 个记录点/秒速度滑块，并修正名称输入框留白。" );
@@ -370,8 +371,8 @@ public class MainActivity extends Activity {
     String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 1.2.5 · 个人非商业使用\n\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
-        EarthquakeInfo.paragraph(this,content,"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\n\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择仅存本机，清除缓存或恢复默认设置会保留，卸载应用将删除。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。");
+        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 1.2.6 · 个人非商业使用\n\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
+        EarthquakeInfo.paragraph(this,content,"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\n\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择默认存于本机，清除缓存或恢复默认设置会保留，卸载应用将删除。主动导出的 JSON 文件包含坐标、时间和名称，地点还包含颜色及显示状态；文件保存位置由用户通过系统选择器指定，云盘等提供方适用其自身隐私规则。导入在本机处理，不上传文件。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。");
         EarthquakeInfo.append(this,content);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");link(content,"Android · 卫星状态官方文档","https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,"Android · 传感器官方说明","https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,"天体坐标与星等 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
         EarthquakeInfo.links(this,content);
@@ -398,7 +399,7 @@ public class MainActivity extends Activity {
     @Override protected void onPause(){if(earthquakes!=null)earthquakes.pause();if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
     @Override protected void onResume(){super.onResume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();else if(request==44)gps.notificationPermissionResult();else if(request==45)earthquakes.locationPermissionResult();else if(request==46)gps.satellitePermissionResult();else if(request==47)gps.placesPermissionResult();}
-    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
+    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){gps.fileResult(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
     @Override protected void onDestroy(){dead=true;if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.pause();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }
 

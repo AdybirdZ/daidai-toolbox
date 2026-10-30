@@ -1,6 +1,6 @@
-# 呆呆工具箱 1.2.5
+# 呆呆工具箱 1.2.6
 
-1.2.5 安装包、源码包和更新说明见 [GitHub Release](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/v1.2.5)。本版状态交互见 [版本说明](docs/STATUS-1.2.5.md)，文字与排版调整见 [说明](docs/TEXT-pre1.2.5.md)。
+1.2.6 已在本地构建，GitHub 当前已发布版为 1.2.5。本版导入导出、路线范围和交互调整见 [版本说明](docs/STATUS-1.2.6.md)。
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用 Codex 制作。
 
@@ -35,7 +35,7 @@
 
 ## 安装与升级
 
-安装 `DaidaiToolbox-1.2.5.apk`。包名保持 `org.simpleweather.app`，versionCode 升至 28，沿用原开发签名，可覆盖 1.2.4 或 pre1.2.5 并保留地区、收藏、旧课表及背景。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
+安装 `DaidaiToolbox-1.2.6.apk`。包名保持 `org.simpleweather.app`，versionCode 升至 29，沿用原开发签名，可覆盖 1.2.5 并保留地区、收藏、课表、背景、地点及路线。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
 
 使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
@@ -44,7 +44,7 @@
 JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.2.5.apk
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.2.6.apk
 ```
 
 脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。

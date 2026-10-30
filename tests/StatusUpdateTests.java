@@ -17,7 +17,7 @@ public final class StatusUpdateTests {
             v.zoomTo(target);double ratio=v.zoom/oldZoom;
             close(120*v.zoom+v.panX,beforeX*ratio,"zoom scales X offset around canvas center after drag");
             close(-46*v.zoom+v.panY,beforeY*ratio,"zoom scales Y offset around canvas center after drag");
-            check(v.zoom>=.25f&&v.zoom<=64,"zoom stays within range");
+            check(v.zoom>=.1f&&v.zoom<=1000f/30,"zoom stays within range");
             v.zoomTo(1);close(v.panX,71,"returning zoom restores horizontal offset");close(v.panY,-35,"returning zoom restores vertical offset");
         }
         RouteViewport v=new RouteViewport();v.pan(-37,53);v.zoomTo(2);v.pan(15,-9);v.zoomTo(4);

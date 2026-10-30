@@ -19,7 +19,7 @@ final class StatusViews {
     static final class Compass extends Square {
         final StatusHardware hw;Compass(MainActivity a,StatusHardware hw){super(a);this.hw=hw;setContentDescription("指南针表盘 · 顶部代表屏幕上沿朝向");}
         @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.37f;circle(c,x,y,r,0xFFDCE5F1,2);
-            boolean available=hw.headingAvailable();Location fix=LocationService.last(a);boolean wantTrue=a.preferences.getBoolean("status_true_north",false);double heading=wantTrue?hw.trueHeading(fix):hw.magneticHeading;
+            boolean available=hw.headingAvailable();Location fix=LocationService.last(a);boolean wantTrue=a.preferences.getBoolean("status_true_north",true);double heading=wantTrue?hw.trueHeading(fix):hw.magneticHeading;
             if(!available||!Double.isFinite(heading)){text(c,"等待方向",x,y,19,a.MUTED);text(c,"请平放设备，远离磁性物体",x,y+a.dp(27),12,a.MUTED);return;}
             for(int angle=0;angle<360;angle+=15){float[] s=point(x,y,r,angle-heading),e=point(x,y,r-a.dp(angle%90==0?13:6),angle-heading);p.setStrokeWidth(a.dp(2));p.setColor(angle==0?0xFFD24646:a.MUTED);c.drawLine(s[0],s[1],e[0],e[1],p);}
             for(int i=0;i<4;i++){float[] q=point(x,y,r+a.dp(17),i*90-heading);text(c,new String[]{"北","东","南","西"}[i],q[0],q[1]+a.dp(5),16,i==0?0xFFD24646:a.INK);}
@@ -36,11 +36,11 @@ final class StatusViews {
             if(fix==null){text(c,"请先获取当前位置",x,y+a.dp(30),14,a.MUTED);return;}
             List<StatusPlace> rows=places.shown();if(rows.isEmpty()){text(c,"暂无可显示地点",x,y+a.dp(30),14,a.MUTED);return;}
             double farthest=0;for(StatusPlace q:rows)farthest=Math.max(farthest,StatusMath.distance(fix.getLongitude(),fix.getLatitude(),q.longitude,q.latitude));
-            double range=farthest<=100?100:farthest<=1000?1000:Math.pow(10,Math.ceil(Math.log10(farthest)));
+            double range=StatusMath.placeRange(target==null?Double.NaN:StatusMath.distance(fix.getLongitude(),fix.getLatitude(),target.longitude,target.latitude),farthest);
             List<SkyLabels.Candidate> labels=new ArrayList<>();Map<String,Integer> colors=new HashMap<>();
             for(StatusPlace place:rows){double meters=StatusMath.distance(fix.getLongitude(),fix.getLatitude(),place.longitude,place.latitude),bearing=StatusMath.bearing(fix.getLongitude(),fix.getLatitude(),place.longitude,place.latitude);
                 double display=relative?bearing-heading:bearing;if(!Double.isFinite(display))display=0;
-                float[] q=point(x,y,(float)(r*Math.min(.95,meters/range)),display);hits.put(place.id,q);p.setStyle(Paint.Style.FILL);p.setColor(place.color);c.drawCircle(q[0],q[1],a.dp(7),p);
+                boolean outside=meters>range;float[] q=point(x,y,(float)(r*Math.min(1,meters/range)),display);hits.put(place.id,q);p.setStyle(Paint.Style.FILL);p.setColor(place.color);c.drawCircle(q[0],q[1],a.dp(outside?3:7),p);
                 if(target!=null&&place.id.equals(target.id))circle(c,q[0],q[1],a.dp(12),place.color,2);
                 p.setTextSize(a.dp(12));Paint.FontMetrics fm=p.getFontMetrics();labels.add(new SkyLabels.Candidate(place.id,q[0],q[1],p.measureText(place.name),fm.ascent,fm.descent));colors.put(place.id,place.color);
             }
@@ -57,7 +57,7 @@ final class StatusViews {
         Sky(MainActivity a,StatusHardware hw,Runnable changed){super(a);this.hw=hw;this.changed=changed;setContentDescription("定位卫星天空图 · 关闭方向跟随后上北下南左西右东，圆周为地平线");setClickable(true);}
         static int color(int type){switch(type){case 1:return 0xFF246BCE;case 5:return 0xFFB64C37;case 6:return 0xFF337C68;case 3:return 0xFF8051B5;default:return 0xFF8A7021;}}
         @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.38f;hits.clear();for(int level=0;level<3;level++)circle(c,x,y,r*(3-level)/3,0xFFDCE5F1,1);
-            double heading=0;boolean follow=a.preferences.getBoolean("status_satellite_rotate",true);if(follow){Location fix=LocationService.last(a);boolean trueNorth=a.preferences.getBoolean("status_true_north",false);double h=trueNorth?hw.trueHeading(fix):hw.magneticHeading;if(Double.isFinite(h))heading=h;}
+            double heading=0;boolean follow=a.preferences.getBoolean("status_satellite_rotate",true);if(follow){Location fix=LocationService.last(a);boolean trueNorth=a.preferences.getBoolean("status_true_north",true);double h=trueNorth?hw.trueHeading(fix):hw.magneticHeading;if(Double.isFinite(h))heading=h;}
             p.setColor(0xFFDCE5F1);p.setStrokeWidth(a.dp(1));float[] east=point(x,y,r,90-heading),west=point(x,y,r,270-heading),north=point(x,y,r,0-heading),south=point(x,y,r,180-heading);c.drawLine(west[0],west[1],east[0],east[1],p);c.drawLine(north[0],north[1],south[0],south[1],p);
             float[] qn=point(x,y,r+a.dp(12),0-heading),qs=point(x,y,r+a.dp(22),180-heading),qe=point(x,y,r+a.dp(17),90-heading),qw=point(x,y,r+a.dp(17),270-heading);text(c,"北",qn[0],qn[1]-a.dp(2),14,a.INK);text(c,"南",qs[0],qs[1]+a.dp(7),14,a.INK);text(c,"东",qe[0],qe[1]+a.dp(5),14,a.INK);text(c,"西",qw[0],qw[1]+a.dp(5),14,a.INK);
             text(c,"60°",x+a.dp(14),y-r/3+a.dp(13),10,a.MUTED);text(c,"30°",x+a.dp(14),y-r*2/3+a.dp(13),10,a.MUTED);

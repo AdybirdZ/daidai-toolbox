@@ -12,6 +12,10 @@ import android.view.*;
 import android.widget.*;
 import android.text.*;
 import java.lang.reflect.*;
+import org.json.*;
+import android.net.Uri;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,7 +44,7 @@ public final class StatusUiTests extends Instrumentation {
             Intent launch=new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity=startActivitySync(launch);waitForIdleSync();
             gps=field(activity,"gps");hardware=field(gps,"hardware");scroll=(ScrollView)field(activity,"pageScroll");
-            satelliteScroll();zoomCenter();defaultOrder();refreshRates();playbackFollowing();placeMarkers();locationControls();pointDialogs();
+            satelliteScroll();zoomCenter();defaultOrder();refreshRates();playbackFollowing();placeMarkers();locationControls();pointDialogs();routeRangeAndRestart();northAndBearing();fileInterchange();
             result.putString("stream","\nPASS: "+checks+" native Android checks; satellite updates keep scroll "+minScroll+".."+maxScroll+"; pitch="+pitchUpdates.size()+", sensor="+sensorUpdates.size()+", GPS="+positionUpdates.size()+" updates.\n");
         }catch(Throwable error){code=Activity.RESULT_CANCELED;result.putString("stream","\nFAIL: "+android.util.Log.getStackTraceString(error));}
         finally{if(activity!=null)ui(()->{call(gps,"stopLocation",new Class[]{});activity.finish();});if(original!=null){SharedPreferences.Editor e=prefs.edit().clear();for(Map.Entry<String,?> item:original.entrySet()){String k=item.getKey();Object v=item.getValue();if(v instanceof String)e.putString(k,(String)v);else if(v instanceof Integer)e.putInt(k,(Integer)v);else if(v instanceof Long)e.putLong(k,(Long)v);else if(v instanceof Float)e.putFloat(k,(Float)v);else if(v instanceof Boolean)e.putBoolean(k,(Boolean)v);else if(v instanceof Set)e.putStringSet(k,(Set<String>)v);}e.commit();}}
@@ -64,7 +68,7 @@ public final class StatusUiTests extends Instrumentation {
             ArrayList<Object> points=new ArrayList<>();points.add(make("RoutePoint",new Class[]{double.class,double.class,long.class,float.class},120.6,31.3,1L,3f));points.add(make("RoutePoint",new Class[]{double.class,double.class,long.class,float.class},120.61,31.31,2L,3f));
             View view=(View)canvas;view.layout(0,0,400,320);call(canvas,"setRoute",new Class[]{java.util.List.class,int.class,boolean.class},points,2,true);
             long now=SystemClock.uptimeMillis();for(int[] event:new int[][]{{MotionEvent.ACTION_DOWN,200,160},{MotionEvent.ACTION_MOVE,250,200},{MotionEvent.ACTION_UP,250,200}}){MotionEvent m=MotionEvent.obtain(now,now,event[0],event[1],event[2],0);view.onTouchEvent(m);m.recycle();}
-            float[] before=(float[])call(canvas,"xy",new Class[]{type("RoutePoint")},points.get(0));call(canvas,"zoom",new Class[]{float.class},2f);float[] after=(float[])call(canvas,"xy",new Class[]{type("RoutePoint")},points.get(0));
+            float[] before=(float[])call(canvas,"xy",new Class[]{type("RoutePoint")},points.get(0));call(canvas,"zoom",new Class[]{float.class},2f*(Float)field(field(canvas,"viewport"),"zoom"));float[] after=(float[])call(canvas,"xy",new Class[]{type("RoutePoint")},points.get(0));
             near(after[0]-200,(before[0]-200)*2,"actual Canvas zoom pivots at horizontal viewport center after pan");near(after[1]-160,(before[1]-160)*2,"actual Canvas zoom pivots at vertical viewport center after pan");
         });
     }
@@ -106,9 +110,11 @@ public final class StatusUiTests extends Instrumentation {
     private void placeMarkers(){
         SharedPreferences store=getTargetContext().getSharedPreferences("status_places",0);String old=store.getString("places","[]"),selected=store.getString("selected","");
         try{ui(()->{
-            store.edit().putString("places","[{\"id\":\"a\",\"name\":\"红点\",\"lon\":20.001,\"lat\":-20,\"color\":-4704714,\"visible\":true},{\"id\":\"b\",\"name\":\"绿点\",\"lon\":20,\"lat\":-19.999,\"color\":-14123936,\"visible\":true},{\"id\":\"c\",\"name\":\"隐藏点\",\"lon\":20.002,\"lat\":-20,\"visible\":false}]").putString("selected","a").commit();
+            store.edit().putString("places","[{\"id\":\"a\",\"name\":\"红点\",\"lon\":20.0003,\"lat\":-20,\"color\":-4704714,\"visible\":true},{\"id\":\"b\",\"name\":\"绿点\",\"lon\":20,\"lat\":-19.998,\"color\":-14123936,\"visible\":true},{\"id\":\"c\",\"name\":\"隐藏点\",\"lon\":20.002,\"lat\":-20,\"visible\":false}]").putString("selected","a").commit();
             Object places=field(gps,"places"),chart=make("StatusViews$Treasure",new Class[]{type("MainActivity"),type("StatusHardware"),type("StatusPlaces")},activity,hardware,places);View view=(View)chart;view.layout(0,0,600,600);draw(view);
             Map<String,float[]> hits=(Map)field(chart,"hits");check(hits.size()==2&&hits.containsKey("a")&&hits.containsKey("b")&&!hits.containsKey("c"),"multiple visible places plot together; hidden target excluded");
+            float[] targetBefore=hits.get("a").clone(),far=hits.get("b");near(Math.hypot(far[0]-300,far[1]-300),222,"far place is on outer ring while selected target is near");
+            call(places,"visibility",new Class[]{String.class,boolean.class},"b",false);draw(view);float[] targetAfter=((Map<String,float[]>)field(chart,"hits")).get("a");near(targetBefore[0],targetAfter[0],"far visible place does not change selected target scale");near(targetBefore[1],targetAfter[1],"target vertical scale independent of far places");call(places,"visibility",new Class[]{String.class,boolean.class},"b",true);
             call(places,"visibility",new Class[]{String.class,boolean.class},"c",true);draw(view);check(((Map)field(chart,"hits")).size()==3,"visibility setting immediately adds marker");
             call(places,"visibility",new Class[]{String.class,boolean.class},"a",false);draw(view);check(!((Map)field(chart,"hits")).containsKey("a"),"selected target still obeys hidden setting");
         });}finally{store.edit().putString("places",old).putString("selected",selected).commit();}
@@ -132,5 +138,49 @@ public final class StatusUiTests extends Instrumentation {
         View choices=rootWith("选择重叠或邻近的记录点");check(choices!=null,"overlap point picker opened");ListView list=list(choices);if(list==null)throw new AssertionError("picker list missing");list.performItemClick(null,0,0);
         View detail=rootWith("记录点 1 / 4");check(detail!=null&&text(detail,"返回")!=null,"point detail uses return button");text(detail,"返回").performClick();check(choices.isShown()&&rootWith("选择重叠或邻近的记录点")!=null,"return restores existing overlap picker");text(choices,"返回").performClick();
     });}
+
+
+    private void routeRangeAndRestart(){
+        ui(()->{
+            SharedPreferences.Editor e=prefs.edit();for(int n=0;n<9;n++)e.putBoolean("status_show_"+n,n==8);e.apply();call(activity,"switchTab",new Class[]{int.class},2);
+            Object canvas=field(gps,"routeCanvas"),replay=field(gps,"replay");ArrayList<Object> points=routePoints();field(gps,"displayedRoute",points);field(gps,"replayName","回归测试");call(replay,"load",new Class[]{int.class},4);call(canvas,"setRoute",new Class[]{List.class,int.class,boolean.class},points,4,true);call(gps,"updateReplay",new Class[]{});
+            call(canvas,"sideMeters",new Class[]{double.class},333.0);SeekBar slider=(SeekBar)field(gps,"routeZoom");int before=slider.getProgress();
+            TextView follow=(TextView)field(gps,"routeFollow");check(follow.getText().toString().equals("跟随当前位置"),"following initially off");follow.performClick();check(follow.getText().toString().equals("解除跟随当前位置"),"follow button toggles on");
+            call(gps,"togglePlayback",new Class[]{});near((Double)call(canvas,"sideMeters",new Class[]{}),333,"restart at last frame preserves scale");check(slider.getProgress()==before,"restart retains slider thumb");check((Boolean)call(canvas,"following",new Class[]{}),"restart retains following");check((Integer)call(replay,"index",new Class[]{})==0,"restart still starts from first recorded point");call(replay,"pause",new Class[]{});
+            follow.performClick();check(follow.getText().toString().equals("跟随当前位置")&&!(Boolean)call(canvas,"following",new Class[]{}),"follow button toggles off without moving or zooming");near((Double)call(canvas,"sideMeters",new Class[]{}),333,"turning following off retains scale");
+            View view=(View)canvas;view.layout(0,0,600,600);call(canvas,"sideMeters",new Class[]{double.class},30.0);near((Double)call(canvas,"sideMeters",new Class[]{}),30,"native minimum side length");check(slider.getProgress()==0,"minimum side synchronized to slider left");
+            call(canvas,"sideMeters",new Class[]{double.class},10000.0);near((Double)call(canvas,"sideMeters",new Class[]{}),10000,"native maximum side length");check(slider.getProgress()==slider.getMax(),"maximum side synchronized to slider right");
+            call(canvas,"sideMeters",new Class[]{double.class},30.0);double lon=(Double)field(canvas,"viewLon"),lat=(Double)field(canvas,"viewLat");Object p=make("RoutePoint",new Class[]{double.class,double.class,long.class,float.class},lon,lat+30/(Math.PI*6371008.8/180),1L,1f);float[] q=(float[])call(canvas,"xy",new Class[]{type("RoutePoint")},p);near(q[1],-300,"30 physical meters span one full square canvas side");
+            draw(view);view.measure(View.MeasureSpec.makeMeasureSpec(600,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(320,View.MeasureSpec.EXACTLY));check(view.getMeasuredHeight()==600,"route frame measures square");
+        });
+    }
+    private void northAndBearing(){ui(()->{
+        prefs.edit().remove("status_true_north").putBoolean("status_show_1",true).apply();Object settings=make("SettingsScreen",new Class[]{type("MainActivity")},activity);call(settings,"statusNorth",new Class[]{});View root=rootWith("指南针北向");ListView options=list(root);check(options.getCheckedItemPosition()==0,"true north default is first choice");check(options.getAdapter().getItem(0).toString().startsWith("真北（默认"),"default north option displayed before magnetic north");text(root,"返回").performClick();
+        call(activity,"switchTab",new Class[]{int.class},2);Location fix=new Location("gps");fix.setLongitude(120);fix.setLatitude(31);fix.setBearing(72);fix.setTime(System.currentTimeMillis());try{Method m=type("LocationService").getDeclaredMethod("record",Context.class,Location.class);m.setAccessible(true);m.invoke(null,activity,fix);}catch(Exception ex){throw new RuntimeException(ex);}field(gps,"lastSecond",-1L);call(gps,"update",new Class[]{});String bearing=((TextView)field(gps,"bearing")).getText().toString();check(bearing.contains("72.0°")&&!bearing.contains("真北")&&!bearing.contains("磁北"),"moving bearing omits north suffix");
+    });}
+    private void waitTransfer(Object transfer){for(int n=0;n<100;n++){AtomicReference<Boolean> busy=new AtomicReference<>();ui(()->busy.set((Boolean)field(transfer,"busy")));if(!busy.get())return;SystemClock.sleep(50);}throw new AssertionError("file operation timed out");}
+    private View awaitRoot(String title){for(int n=0;n<100;n++){AtomicReference<View> found=new AtomicReference<>();ui(()->found.set(rootWith(title)));if(found.get()!=null&&text(found.get(),"导入")!=null)return found.get();SystemClock.sleep(50);}throw new AssertionError("missing dialog "+title);}
+    private void deliverFile(Object transfer,int request,File file,String kind){ui(()->{field(transfer,"kind",kind);field(transfer,"busy",true);call(activity,"onActivityResult",new Class[]{int.class,int.class,Intent.class},request,Activity.RESULT_OK,new Intent().setData(Uri.fromFile(file)));});}
+    private void documentPicker(Object transfer,String kind,boolean importing){
+        AtomicReference<Intent> captured=new AtomicReference<>();ActivityMonitor monitor=new ActivityMonitor(){@Override public ActivityResult onStartActivity(Intent intent){if((importing?Intent.ACTION_OPEN_DOCUMENT:Intent.ACTION_CREATE_DOCUMENT).equals(intent.getAction())){captured.set(intent);return new ActivityResult(Activity.RESULT_CANCELED,null);}return null;}};addMonitor(monitor);
+        try{ui(()->call(transfer,importing?"importFile":"exportFile",new Class[]{String.class},kind));for(int n=0;n<100&&captured.get()==null;n++)SystemClock.sleep(50);check(captured.get()!=null,"system document picker launched for "+kind);waitTransfer(transfer);Intent intent=captured.get();check(intent.hasCategory(Intent.CATEGORY_OPENABLE),"picker only requests openable documents");check(importing||"application/json".equals(intent.getType()),"export file has JSON MIME type");}finally{removeMonitor(monitor);}
+    }
+    private void fileInterchange()throws Exception {
+        SharedPreferences places=getTargetContext().getSharedPreferences("status_places",0),routes=getTargetContext().getSharedPreferences("status_routes",0);String oldPlaces=places.getString("places","[]"),oldSelected=places.getString("selected",""),oldRoutes=routes.getString("routes","[]");Object transfer=field(gps,"transfer");File file=new File(getTargetContext().getCacheDir(),"status-transfer-regression.json");
+        try{
+            String row="{\"id\":\"qa-place\",\"name\":\"测试地点\",\"lon\":120,\"lat\":31,\"created\":1000,\"color\":-4704714,\"visible\":false}";
+            JSONObject document=new JSONObject().put("format","daidai-toolbox-status").put("version",1).put("kind","places").put("coordinateSystem","WGS84").put("records",new JSONArray().put(new JSONObject(row)));byte[] bytes=document.toString().getBytes(StandardCharsets.UTF_8);
+            ui(()->{field(transfer,"kind","places");field(transfer,"busy",true);field(transfer,"pending",bytes);call(activity,"onActivityResult",new Class[]{int.class,int.class,Intent.class},60,Activity.RESULT_OK,new Intent().setData(Uri.fromFile(file)));});waitTransfer(transfer);check(Arrays.equals(java.nio.file.Files.readAllBytes(file.toPath()),bytes),"export result writes exact JSON via content resolver");
+            places.edit().putString("places","[]").putString("selected","").commit();deliverFile(transfer,61,file,"places");final View confirm=awaitRoot("导入地点");ui(()->text(confirm,"取消").performClick());waitTransfer(transfer);check(places.getString("places","[]").equals("[]"),"cancel import preserves store");
+            deliverFile(transfer,61,file,"places");final View firstConfirm=awaitRoot("导入地点");ui(()->text(firstConfirm,"导入").performClick());waitTransfer(transfer);JSONArray restored=new JSONArray(places.getString("places","[]"));check(restored.length()==1&&!restored.getJSONObject(0).getBoolean("visible")&&restored.getJSONObject(0).getInt("color")==-4704714,"file import restores place color and hidden state");check(places.getString("selected","missing").equals(""),"import does not change target selection");
+            deliverFile(transfer,61,file,"places");final View again=awaitRoot("导入地点");ui(()->text(again,"导入").performClick());waitTransfer(transfer);check(new JSONArray(places.getString("places","[]")).length()==1,"reimporting file does not duplicate saved places");
+            java.nio.file.Files.write(file.toPath(),"{bad".getBytes(StandardCharsets.UTF_8));String previous=places.getString("places","");deliverFile(transfer,61,file,"places");waitTransfer(transfer);check(previous.equals(places.getString("places","")),"malformed file leaves existing records intact");
+            JSONObject route=new JSONObject().put("id","qa-route").put("name","测试路线").put("points",new JSONArray().put(new JSONObject().put("lon",120).put("lat",31).put("time",1000).put("accuracy",3.25)).put(new JSONObject().put("lon",120.001).put("lat",31.001).put("time",2000)));
+            document.put("kind","routes").put("records",new JSONArray().put(route));java.nio.file.Files.write(file.toPath(),document.toString().getBytes(StandardCharsets.UTF_8));routes.edit().putString("routes","[]").commit();deliverFile(transfer,61,file,"routes");final View routeConfirm=awaitRoot("导入路线");ui(()->text(routeConfirm,"导入").performClick());waitTransfer(transfer);
+            Object store=field(gps,"routeStore");AtomicReference<Object> saved=new AtomicReference<>();ui(()->saved.set(((ArrayList)call(store,"all",new Class[]{})).get(0)));check(((ArrayList)field(saved.get(),"points")).size()==2,"imported saved route can be opened by actual RouteStore");Object point=((ArrayList)field(saved.get(),"points")).get(0);near((Float)field(point,"accuracy"),3.25,"route accuracy restored by storage reader");
+            documentPicker(transfer,"routes",false);documentPicker(transfer,"places",false);documentPicker(transfer,"routes",true);
+            ui(()->{field(transfer,"busy",true);call(activity,"onActivityResult",new Class[]{int.class,int.class,Intent.class},61,Activity.RESULT_CANCELED,null);});check(!(Boolean)field(transfer,"busy"),"cancelling file picker resets pending operation");
+        }finally{places.edit().putString("places",oldPlaces).putString("selected",oldSelected).commit();routes.edit().putString("routes",oldRoutes).commit();file.delete();}
+    }
 
 }

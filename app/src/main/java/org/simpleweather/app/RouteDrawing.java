@@ -31,10 +31,12 @@ final class RouteStore {
     private final SharedPreferences p;
     RouteStore(Context c){p=c.getSharedPreferences(PREF,0);RouteStoreHolder.context=c.getApplicationContext();}
     static final class Saved {String id,name;ArrayList<RoutePoint> points=new ArrayList<>();}
-    ArrayList<Saved> all(){ArrayList<Saved> out=new ArrayList<>();try{JSONArray rows=new JSONArray(p.getString("routes","[]"));for(int i=0;i<rows.length();i++){JSONObject r=rows.optJSONObject(i);if(r==null)continue;Saved s=new Saved();s.id=r.optString("id",UUID.randomUUID().toString());s.name=r.optString("name","未命名路线");JSONArray ps=r.optJSONArray("points");if(ps!=null)for(int n=0;n<ps.length();n++){JSONObject q=ps.optJSONObject(n);if(q!=null) s.points.add(new RoutePoint(q.optDouble("lon"),q.optDouble("lat"),q.optLong("time"),Float.NaN));}if(!s.points.isEmpty())out.add(s);}}catch(Exception ignored){}return out;}
+    ArrayList<Saved> all(){ArrayList<Saved> out=new ArrayList<>();try{JSONArray rows=new JSONArray(p.getString("routes","[]"));for(int i=0;i<rows.length();i++){JSONObject r=rows.optJSONObject(i);if(r==null)continue;Saved s=new Saved();s.id=r.optString("id",UUID.randomUUID().toString());s.name=r.optString("name","未命名路线");JSONArray ps=r.optJSONArray("points");if(ps!=null)for(int n=0;n<ps.length();n++){JSONObject q=ps.optJSONObject(n);if(q!=null) s.points.add(new RoutePoint(q.optDouble("lon"),q.optDouble("lat"),q.optLong("time"),q.has("accuracy")?(float)q.optDouble("accuracy"):Float.NaN));}if(!s.points.isEmpty())out.add(s);}}catch(Exception ignored){}return out;}
     void save(String name,List<RoutePoint> points){try{JSONArray rows=new JSONArray();for(Saved old:all())rows.put(encode(old.id,old.name,old.points));rows.put(encode(UUID.randomUUID().toString(),name,points));p.edit().putString("routes",rows.toString()).apply();}catch(Exception ignored){}}
     void remove(String id){try{JSONArray rows=new JSONArray();for(Saved old:all())if(!old.id.equals(id))rows.put(encode(old.id,old.name,old.points));p.edit().putString("routes",rows.toString()).apply();}catch(Exception ignored){}}
-    private JSONObject encode(String id,String name,List<RoutePoint> points)throws JSONException{JSONObject r=new JSONObject();r.put("id",id);r.put("name",name);JSONArray ps=new JSONArray();for(RoutePoint q:points){JSONObject x=new JSONObject();x.put("lon",q.lon);x.put("lat",q.lat);x.put("time",q.time);ps.put(x);}r.put("points",ps);return r;}
+    JSONArray exportRows()throws JSONException{JSONArray rows=new JSONArray();for(Saved saved:all())rows.put(encode(saved.id,saved.name,saved.points));return rows;}
+    boolean importRows(JSONArray rows){return p.edit().putString("routes",rows.toString()).commit();}
+    private JSONObject encode(String id,String name,List<RoutePoint> points)throws JSONException{JSONObject r=new JSONObject();r.put("id",id);r.put("name",name);JSONArray ps=new JSONArray();for(RoutePoint q:points){JSONObject x=new JSONObject();x.put("lon",q.lon);x.put("lat",q.lat);x.put("time",q.time);if(Float.isFinite(q.accuracy)&&q.accuracy>=0)x.put("accuracy",q.accuracy);ps.put(x);}r.put("points",ps);return r;}
 }
 
 final class RouteCanvas extends View {
@@ -45,9 +47,11 @@ final class RouteCanvas extends View {
     private double originLon,originLat,cosLat=1,span=.002;
     private double viewLon,viewLat;
     private boolean followSelf,playback,dragged,multiTouch;
+    Runnable changed=()->{};
     private final RouteViewport viewport=new RouteViewport();
     private float lastX,lastY,downX,downY;
     RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);setContentDescription("路线画布，单指拖动，使用下方滑块缩放，点按记录点查看详情");}
+    @Override protected void onMeasure(int width,int height){int size=MeasureSpec.getSize(width);setMeasuredDimension(size,size);}
     void setRoute(List<RoutePoint> route,int count,boolean fit){
         points=new ArrayList<>(route);visibleCount=Math.max(0,Math.min(points.size(),count));
         if(!points.isEmpty()){
@@ -55,9 +59,9 @@ final class RouteCanvas extends View {
             double minX=0,maxX=0,minY=0,maxY=0;
             for(RoutePoint p:points){double x=longitudeDelta(p.lon-originLon)*cosLat,y=p.lat-originLat;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
             span=Math.max(maxX-minX,maxY-minY);if(span<.00001)span=.002;
-            if(fit){viewLon=originLon+(minX+maxX)/2/cosLat;viewLat=originLat+(minY+maxY)/2;viewport.reset();followSelf=false;}
+            if(fit){viewLon=originLon+(minX+maxX)/2/cosLat;viewLat=originLat+(minY+maxY)/2;viewport.center();viewport.sideMeters(Math.max(30,span*RouteViewport.METERS_PER_DEGREE/.78));followSelf=false;}
         }
-        invalidate();
+        changed.run();invalidate();
     }
     int pointCount(){return points.size();}
     void showThrough(int index){visibleCount=Math.max(0,Math.min(points.size(),index+1));updateFollow();invalidate();}
@@ -65,19 +69,35 @@ final class RouteCanvas extends View {
     boolean following(){return followSelf;}
     private boolean updateFollow(){if(!followSelf)return false;if(playback){if(visibleCount==0)return false;RoutePoint q=points.get(visibleCount-1);viewLon=q.lon;viewLat=q.lat;}else{Location fix=LocationService.last(a);if(fix==null)return false;viewLon=fix.getLongitude();viewLat=fix.getLatitude();}viewport.center();return true;}
     void centerOn(int index){if(index<0||index>=points.size())return;RoutePoint q=points.get(index);viewLon=q.lon;viewLat=q.lat;followSelf=false;viewport.center();invalidate();}
-    void centerSelf(){followSelf=true;if(!updateFollow()){followSelf=false;a.toast(playback?"暂无回放记录点":"请先获取当前位置");return;}invalidate();}
-    void zoom(float value){viewport.zoomTo(value);invalidate();}
+    void stopFollowing(){followSelf=false;changed.run();invalidate();}
+    void centerSelf(){followSelf=true;if(!updateFollow()){followSelf=false;a.toast(playback?"暂无回放记录点":"请先获取当前位置");return;}changed.run();invalidate();}
+    void zoom(float value){viewport.zoomTo(value);changed.run();invalidate();}
+    double sideMeters(){return viewport.sideMeters();}
+    void sideMeters(double value){viewport.sideMeters(value);changed.run();invalidate();}
     static double longitudeDelta(double value){return ((value+540)%360+360)%360-180;}
     private void intercept(boolean disallow){ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(disallow);}
-    private float scale(){return (float)(Math.min(getWidth(),getHeight())*.78/span*viewport.zoom);}
+    private float scale(){return (float)(Math.min(getWidth(),getHeight())*RouteViewport.METERS_PER_DEGREE/viewport.sideMeters());}
     private float[] xy(RoutePoint q){return new float[]{getWidth()/2f+(float)(longitudeDelta(q.lon-viewLon)*cosLat)*scale()+viewport.panX,getHeight()/2f-(float)(q.lat-viewLat)*scale()+viewport.panY};}
     protected void onDraw(Canvas c){
         super.onDraw(c);updateFollow();
+        int clip=c.save();c.clipRect(a.dp(1),a.dp(1),getWidth()-a.dp(1),getHeight()-a.dp(1));
         paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(a.dp(2));paint.setColor(0xFF246BCE);
         for(int i=1;i<visibleCount;i++){float[] q=xy(points.get(i-1)),r=xy(points.get(i));c.drawLine(q[0],q[1],r[0],r[1],paint);}
         paint.setStyle(Paint.Style.FILL);
         for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));paint.setColor(i==visibleCount-1?0xFFE58323:0xFF246BCE);c.drawCircle(q[0],q[1],a.dp(i==visibleCount-1?5:3),paint);}
-        if(visibleCount==0){paint.setColor(a.MUTED);paint.setTextSize(a.dp(14));c.drawText("暂无路线定位点",a.dp(16),a.dp(30),paint);}
+        if(visibleCount==0){paint.setColor(a.MUTED);paint.setTextSize(a.dp(14));paint.setTextAlign(Paint.Align.LEFT);c.drawText("暂无路线定位点",a.dp(16),a.dp(45),paint);}
+        c.restoreToCount(clip);drawRuler(c);
+    }
+    private String distance(double meters){return meters>=1000?String.format(Locale.ROOT,"%.2f km",meters/1000):String.format(Locale.ROOT,"%.0f m",meters);}
+    private void drawRuler(Canvas c){
+        float w=getWidth(),h=getHeight(),tick=a.dp(5);double side=sideMeters(),rough=side/4,base=Math.pow(10,Math.floor(Math.log10(rough))),step=base;
+        for(double multiple:new double[]{1,2,5,10})if(base*multiple<=rough)step=base*multiple;
+        paint.setColor(0xFF718097);paint.setStrokeWidth(a.dp(1));paint.setStyle(Paint.Style.STROKE);c.drawRect(.5f,.5f,w-.5f,h-.5f,paint);paint.setStyle(Paint.Style.FILL);paint.setTextSize(a.dp(10));
+        for(double m=0;m<=side+.0001;m+=step){float x=(float)(m/side*w),y=h-(float)(m/side*h);c.drawLine(x,0,x,tick,paint);c.drawLine(x,h,x,h-tick,paint);c.drawLine(0,y,tick,y,paint);c.drawLine(w,y,w-tick,y,paint);
+            if(m>0&&x<w-a.dp(30)){paint.setTextAlign(Paint.Align.CENTER);c.drawText(distance(m),x,h-a.dp(8),paint);}
+            if(m>0&&y>a.dp(30)){paint.setTextAlign(Paint.Align.LEFT);c.drawText(distance(m),a.dp(8),y+a.dp(3),paint);}
+        }
+        paint.setTextAlign(Paint.Align.RIGHT);paint.setTextSize(a.dp(11));c.drawText("边长 "+distance(side),w-a.dp(10),a.dp(19),paint);paint.setTextAlign(Paint.Align.LEFT);
     }
     @Override public boolean onTouchEvent(MotionEvent e){
         int action=e.getActionMasked();
@@ -88,7 +108,7 @@ final class RouteCanvas extends View {
         if(action==MotionEvent.ACTION_MOVE){
             intercept(true);if(e.getPointerCount()!=1)return true;
             if(Math.hypot(e.getX()-downX,e.getY()-downY)>android.view.ViewConfiguration.get(a).getScaledTouchSlop())dragged=true;
-            if(dragged){followSelf=false;viewport.pan(e.getX()-lastX,e.getY()-lastY);invalidate();}
+            if(dragged){if(followSelf){followSelf=false;changed.run();}viewport.pan(e.getX()-lastX,e.getY()-lastY);invalidate();}
             lastX=e.getX();lastY=e.getY();return true;
         }
         if(action==MotionEvent.ACTION_UP){intercept(false);if(!dragged&&!multiTouch){performClick();select(e.getX(),e.getY());}return true;}

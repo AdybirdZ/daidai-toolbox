@@ -24,6 +24,8 @@ final class StatusPlaces {
     private List<StatusPlace> read(){String raw=store.getString("places","[]");if(!Objects.equals(raw,encoded)){cached=StatusPlace.decode(raw);encoded=raw;}return cached;}
     List<StatusPlace> all(){return new ArrayList<>(read());}
     List<StatusPlace> shown(){List<StatusPlace> rows=new ArrayList<>();for(StatusPlace p:read())if(p.visible)rows.add(p);return rows;}
+    org.json.JSONArray exportRows()throws org.json.JSONException{return new org.json.JSONArray(StatusPlace.encode(StatusPlace.decode(store.getString("places","[]"))));}
+    boolean importRows(org.json.JSONArray rows){boolean saved=store.edit().putString("places",rows.toString()).commit();if(saved){changed.run();if(manager!=null&&manager.isShowing()){manager.dismiss();manage();}}return saved;}
     void select(String id){store.edit().putString("selected",id).apply();changed.run();}
     private void visibility(String id,boolean shown){List<StatusPlace> rows=all();for(int i=0;i<rows.size();i++)if(rows.get(i).id.equals(id))rows.set(i,rows.get(i).withVisibility(shown));store.edit().putString("places",StatusPlace.encode(rows)).apply();changed.run();}
     StatusPlace selected(){String id=store.getString("selected","");for(StatusPlace p:read())if(p.id.equals(id))return p;return null;}
