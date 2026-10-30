@@ -1,62 +1,35 @@
-# 呆呆工具箱工作区
+# 呆呆工具箱 1.2.9
 
-今后统一在本目录开发。当前正式版为 **1.2.6 / versionCode 29**，已发布至 GitHub，唯一当前源码为 `source/`。
+1.2.9 是中文正式版，面向个人、非商业使用。英文资源只用于本地 `pre2.0.0-1` 内测包，未上传 GitHub。
 
-- [安装 1.2.6 APK](releases/1.2.6/DaidaiToolbox-1.2.6.apk) · [1.2.6 更新说明](releases/1.2.6/DaidaiToolbox-1.2.6-notes.md)
-- [本地预览 pre2.0.0-1 APK](releases/pre2.0.0-1/DaidaiToolbox-pre2.0.0-1.apk) · [本地更新说明](releases/pre2.0.0-1/DaidaiToolbox-pre2.0.0-1-notes.md)（未上传 GitHub）
-- [GitHub 发布页](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/v1.2.6)
-- [所有版本与下载索引](releases/README.md)
-- [当前源码说明](source/README.md) · [更新记录](source/CHANGELOG.md) · [数据授权](source/docs/DATA-LICENSE.md)
-- [目录与迁移说明](docs/目录与迁移说明.md)
-- [GitHub 仓库](https://github.com/AdybirdZ/daidai-toolbox)
+## 功能
 
-| 目录 | 用途 |
-| --- | --- |
-| `source/` | 唯一当前源码，保留原 Git 历史、远程仓库及全部版本标签 |
-| `prototypes/` | 音乐、局域网传话、离线计算器三个独立原型；未合并、未上传，详见其 README |
-| `releases/版本号/` | 各版本 APK、源码包、说明、校验文件；未上传版本使用本地交付校验值 |
-| `scripts/` | 从本工作区直接运行的构建、测试、发布文件校验与模拟器入口 |
-| `tools/` | Android SDK、模拟器数据、测试依赖、SDK 下载包 |
-| `references/` | 天气战士、时光课程表参考仓库及数据/许可研究资料 |
-| `docs/` | 工作区说明、资源迁移记录与验证结果 |
-| `private/` | 本地签名备份，不能公开上传 |
-| `work/` | 今后产生的临时 APK、日志和测试截图 |
-| `archive/` | 整理前的旧源码、不同内容的同名文件、旧输出、旧发布脚本和测试资料 |
+- **天气**：地区搜索、收藏、当前天气、逐小时和逐日预报。天气数据来自 Open-Meteo，地区目录包含中国大陆、香港、澳门、台湾及海外检索结果。
+- **天气地图**：通过中央气象台官方网页查看降水、气温、雷达、卫星云图和天气图，不下载或转发受限图片。
+- **天文**：本地近似计算的星图、日月行星、月相、曙暮光和流星雨参考。星图支持选择天体、地平/赤道坐标和按设备旋转矢量对准；对准时中心红色实体十字表示手机当前朝向，可在设置中选择外置相机方向或手机上沿方向。
+- **状态**：指南针、定位、卫星状态、传感器、电池、设备信息、地点和路线绘制。环境光可使用系统传感器或相机亮度样本；相机读取不显示预览窗口，默认不在切换栏目、锁屏或后台继续工作。
+- **课程表**：手动设置学期、周次、课程、地点、教师和上课时间，不连接教务系统。
+- **地震**：近期目录与本机距离、MMI 估算，来源及适用边界见 `docs/DATA-LICENSE.md`。
 
-在本目录打开 PowerShell 后：
+## 1.2.9 变更
 
-```powershell
-# 运行核心测试
-.\scripts\test.ps1
+- 全局设置新增主要文字、说明文字、强调文字、按钮背景和按钮文字颜色。预设包括红、橙、黄、绿、青、蓝、紫、黑、白，也支持 `#RRGGBB`；无法识别的历史颜色自动回退为蓝色。
+- 天文对准天空改用设备旋转矢量传感器，并以红色实体十字标示当前朝向。
+- 环境光相机改为无界面后台采样，新增是否在切换栏目、锁屏和后台继续读取的设置，默认关闭。
+- 整理状态页说明的顺序和分段，明确环境温度与下方电池栏目中的电池温度含义；删除天气详情和星图中的重复说明。
+- 规范地区目录名称与别名，甘孜统一为“甘孜藏族自治州”，并加强离线目录与在线结果的去重。
 
-# 构建当前源码，输出到 work/builds/版本号/，不覆盖已发布 APK
-.\scripts\build.ps1
+## 数据与隐私
 
-# 核验所有归档的正式发布文件
-python .\scripts\verify-releases.py
+天气查询需要联网；Open-Meteo 免费 API 仅限非商业使用。天气地图在应用内打开中央气象台官方页面，访问数据按原站规则处理。课程、背景、收藏、地点、路线和配置保存在本机；应用不上传定位坐标。应用没有账号、广告、统计 SDK 或自建服务器。
 
-# 启动已有测试模拟器，日志输出到 work/logs/
-.\scripts\start-emulator.ps1
+数据许可和参考项目见 `docs/DATA-LICENSE.md`、`NOTICE.md`。新数据源必须在文档中写明来源、许可和限制。
 
-# 查看当前源码状态
-git -C .\source status
-```
-
-构建需要本机已有的 Python 与 JDK 17+。SDK 和测试 jar 已保存在 `tools/`。模拟器工具使用 `Q:` 映射到本工作区的 `tools/`，以避开 Android 模拟器的中文路径问题；启动脚本不会覆盖其他用途的 Q 盘映射。模拟器设备为 `emulator-5580`，结束测试可执行：
+## 构建与测试
 
 ```powershell
-.\tools\android-sdk\platform-tools\adb.exe -s emulator-5580 emu kill
+python scripts/test.ps1
+python scripts/build.ps1
 ```
 
-1.2.4 已通过 545 项核心检查与 19 项原生 Android 检查并完成模拟器与原签名构建验证，见 [本版验证记录](source/TESTING.md)。此前文件夹整理的记录见 [迁移验证结果](docs/migration-2026-10-25/validation.json)。
-
-签名继续使用 `source/.signing/development.jks`，本地备份在 `private/signing/`。不要生成新密钥替换它，否则新包不能覆盖已有安装。发布包保持原样；后续版本确认测试通过后另建版本目录。
-
-工作区根目录不是第二个 Git 仓库。提交应用源码时使用 `git -C source …`，避免把 SDK、模拟器、签名和归档一起上传。
-
-新增功能原型的本地入口：[原型说明](prototypes/README.md) · [音乐、计算器 0.1.0](work/prototypes/0.1.0/) · [传话 0.2.0（蓝牙 / 局域网）](work/prototypes/0.2.0/)。构建用 `python prototypes/build.py all`，核心测试用 `python prototypes/test.py`。原型不占用正式版版本号，正式工具箱的英语支持目前仅在规划中。
-
-
-## 1.2.9 说明
-
-本版新增全局文字与按钮配色、红色实体对准天空十字、无界面相机环境光采样及后台持续读取选项；整理状态页说明并规范甘孜藏族自治州名称与地区去重。正式版仅含中文资源，英文翻译保留在本地 pre2.0.0-1。
+构建使用工作区 `tools/android-sdk` 和本地开发签名；签名私钥、SDK、缓存不进入公开源码包。正式 APK、源码包、更新说明和校验文件位于 `releases/1.2.9/`，GitHub 项目为 [AdybirdZ/daidai-toolbox](https://github.com/AdybirdZ/daidai-toolbox)。
