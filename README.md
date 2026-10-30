@@ -1,6 +1,6 @@
 # 呆呆工具箱 1.2.6
 
-1.2.6 已在本地构建，GitHub 当前已发布版为 1.2.5。本版导入导出、路线范围和交互调整见 [版本说明](docs/STATUS-1.2.6.md)。
+1.2.6 安装包、源码包及更新说明见 [GitHub Release](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/v1.2.6)。本版导入导出、路线范围和交互调整见 [版本说明](docs/STATUS-1.2.6.md)。
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用 Codex 制作。
 
