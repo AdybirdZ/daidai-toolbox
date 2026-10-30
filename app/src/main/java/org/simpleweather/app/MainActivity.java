@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=state==null?preferences.getInt("last_tab",0):state.getInt("toolbox_tab",preferences.getInt("last_tab",0));if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));navigationOffset=state.getInt("toolbox_navigation",0);pendingScrollY=state.getInt("toolbox_scroll",0);}if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<30)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",30).apply();}},700);
+        if(preferences.getInt("seen_version",0)<31)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",31).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -111,24 +111,28 @@ public class MainActivity extends Activity {
         pageHeader();
         navigation=row();navigation.setPadding(dp(8),dp(6),dp(8),dp(6));navigation.setBackground(shape(0xF2FFFFFF,0));host.addView(navigation,lp(-1,-2));renderNavigation();
     }
-    static final String[] TAB_NAMES={"天气","课程表","状态","天气地图","天文","地震"};
-    static final String[] WEATHER_NAMES={"地区","当前天气","未来 24 小时","未来 7 天","天气详情","数据来源入口"};
+    static final int[] TAB_NAME_IDS={R.string.tab_weather,R.string.tab_schedule,R.string.tab_status,R.string.tab_weather_map,R.string.tab_astronomy,R.string.tab_earthquake};
+    static final int[] WEATHER_NAME_IDS={R.string.weather_area,R.string.weather_current,R.string.weather_hourly,R.string.weather_daily,R.string.weather_details,R.string.weather_sources};
+    String tabName(int id){return getString(TAB_NAME_IDS[id]);}
+    String weatherName(int id){return getString(WEATHER_NAME_IDS[id]);}
+    String[] tabNames(){String[] out=new String[TAB_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=tabName(i);return out;}
+    String[] weatherNames(){String[] out=new String[WEATHER_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=weatherName(i);return out;}
     boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",false);}
     int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
     ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
-    List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),TAB_NAMES.length);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3||id==5))result.add(id);if(result.isEmpty())result.add(0);return result;}
+    List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),TAB_NAME_IDS.length);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3||id==5))result.add(id);if(result.isEmpty())result.add(0);return result;}
     void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
     void refreshScreen(){List<Integer> visible=visibleTabs();if(!visible.contains(tab))tab=visible.get(0);switchTab(tab);}
     private void pageHeader(){
-        TextView title=text("呆呆工具箱 · "+TAB_NAMES[tab],25,INK,true);body.addView(title);gap(body,7);body.addView(text("呆呆鸟使用 Codex 制作",12,MUTED,false));gap(body,12);
-        LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button("地区",false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button("设置",false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button("新增课程",true,()->schedule.addCourse()));}body.addView(actions);gap(body,16);
+        TextView title=text("呆呆工具箱 · "+tabName(tab),25,INK,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
+        LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->schedule.addCourse()));}body.addView(actions);gap(body,16);
     }
     void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
     private void renderNavigation(){
         navigation.removeAllViews();List<Integer> visible=visibleTabs();navigation.setVisibility(visible.size()<2?View.GONE:View.VISIBLE);if(visible.size()<2)return;
         navigationOffset=Math.max(0,Math.min(navigationOffset,Math.max(0,visible.size()-3)));
         if(visible.size()>=5){TextView left=button("‹",false,()->{navigationOffset=Math.max(0,navigationOffset-1);renderNavigation();});left.setContentDescription("底栏向左翻页");left.setEnabled(navigationOffset>0);left.setAlpha(navigationOffset>0?1:.35f);left.setPadding(0,0,0,0);navigation.addView(left,lp(40,50));}
-        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(TAB_NAMES[id],false,()->switchTab(id));item.setContentDescription("切换到"+TAB_NAMES[id]);item.setMaxLines(1);item.setHorizontallyScrolling(false);item.setAutoSizeTextTypeUniformWithConfiguration(10,visible.size()==4?12:14,1,android.util.TypedValue.COMPLEX_UNIT_SP);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(MUTED);tap(item,Color.TRANSPARENT,16,()->switchTab(id));}if(navigation.getChildCount()>0)gapHorizontal(navigation,6);navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
+        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(tabName(id),false,()->switchTab(id));item.setContentDescription("切换到"+tabName(id));item.setMaxLines(1);item.setHorizontallyScrolling(false);item.setAutoSizeTextTypeUniformWithConfiguration(10,visible.size()==4?12:14,1,android.util.TypedValue.COMPLEX_UNIT_SP);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(MUTED);tap(item,Color.TRANSPARENT,16,()->switchTab(id));}if(navigation.getChildCount()>0)gapHorizontal(navigation,6);navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
         if(visible.size()>=5){TextView right=button("›",false,()->{navigationOffset=Math.min(visible.size()-3,navigationOffset+1);renderNavigation();});right.setContentDescription("底栏向右翻页");right.setEnabled(navigationOffset<visible.size()-3);right.setAlpha(navigationOffset<visible.size()-3?1:.35f);right.setPadding(0,0,0,0);gapHorizontal(navigation,6);navigation.addView(right,lp(40,50));}
     }
 
@@ -142,7 +146,7 @@ public class MainActivity extends Activity {
         tab=0;picking=false;searchVersion++;startScreen();
         if(!notice.isEmpty()){TextView n=text(notice,14,0xFF8B6021,false);n.setPadding(dp(14),dp(12),dp(14),dp(12));n.setBackground(shape(0xFFFFF3DD,14));body.addView(n);gap(body,12);}
         Instant now=Instant.now();int today=data==null?0:data.todayIndex(now);
-        for(int id:DisplayOrder.parse(preferences.getString("weather_order",""),WEATHER_NAMES.length)){
+        for(int id:DisplayOrder.parse(preferences.getString("weather_order",""),WEATHER_NAME_IDS.length)){
             if(!preferences.getBoolean("weather_show_"+id,true))continue;
             if(id==0)weatherLocation();
             else if(id==5)footer();
@@ -180,7 +184,7 @@ public class MainActivity extends Activity {
         ZoneId shownZone=displayZone(data.zone);String updated=DateTimeFormatter.ofPattern("M月d日 HH:mm").withZone(shownZone).format(data.currentTime);
         hero.addView(text("数据时刻 "+updated+" · "+(preferences.getInt("global_time_mode",0)==0?"地区当地时间":preferences.getInt("global_time_mode",0)==1?"北京时间":"协调世界时"),11,0xFF617D9E,false));
         gap(hero,8);
-        LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text("天气：Open-Meteo · CC BY 4.0 ↗",11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
+        LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text(getString(R.string.source_open_meteo),11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
 
 
     }
@@ -235,7 +239,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text("数据来源与隐私 · v1.2.6",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text(getString(R.string.about_title)+" · pre2.0.0-1",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -313,7 +317,7 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",30).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",31).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
@@ -327,35 +331,36 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
-        updateEntry(c,"1.2.6 · 路线与地点导入导出","• 已保存路线和地点可通过系统文件选择器导入或导出 JSON 文件，导入前确认，保留原记录并跳过重复内容。\n• 指南针默认采用真北，设置中默认选项置于首位；当前位置的移动方位去除括号标记。\n• 修复路线播放到末尾后重新播放导致缩放改变的问题。\n• 路线框增加边缘刻度，缩放滑块范围为边长 30 米至 10 千米。\n• 路线跟随按钮切换“跟随当前位置”和“解除跟随当前位置”，回放时跟随橙色记录点。\n• 地点图按所选目标确定外圈范围，超出范围的其他地点以较小圆点显示在外圈。\n• 版本号 1.2.6，沿用原签名。");
-        updateEntry(c,"1.2.5 · 文字优化与状态交互","• 优化各页面文字、专业术语、操作提示与说明排版，统一长说明段间距。\n• 路线回放居中后持续跟随橙色记录点，拖动画布可取消跟随。\n• 定位与卫星接收分别合并开始和停止按钮；开始卫星接收时自动启动当前位置更新，可正常开始路线绘制。\n• 垂直定位误差半径在海拔下方以大字显示。\n• 保存地点可选择颜色和是否在图中显示，支持同时绘制多个地点并点选目标。\n• 重叠或邻近路线记录点的详情使用“返回”按钮，返回后保留记录点选择界面。\n• 版本号 1.2.5，沿用原签名。");
-        updateEntry(c,"1.2.4 · 状态刷新与路线修复","• 卫星明细和状态数值更新时保持页面阅读位置，避免重新布局跳回列表上方。\n• 路线缩放以路线框中心为基准，拖动后缩放也保持正确中心。\n• 状态页除 GPS 定位信息外，指南针、俯仰横滚、传感器、卫星显示、电池和设备信息每 50 毫秒刷新一次；数据以系统实际报告为准，GPS 与网络定位间隔保持原设置。\n• 删除已保存路线或本次未保存路线前，弹出“确定删除此路线吗？”确认框，取消保留路线。\n• 状态默认顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明，保留已自定义的排序。\n• 版本号 1.2.4 / versionCode 26，沿用原签名，可覆盖升级。");
-        updateEntry(c,"1.2.3 · 路线绘制与全局设置","• 新增路线绘制：持续定位开启时按 2～60 秒记录真实位置点，支持缩放滑块、单指拖动、以自己为中心、点选记录点查看序号、坐标和时间，结束后可命名保存或删除并回放。\n• 俯仰和横滚改为大字显示，网络定位间隔设置名称更明确，普通说明文字禁止长按选择。\n• 保存地点重新定位说明和状态方向文案调整，设置新增全局设置，背景、描边和时间显示集中管理；时间显示同步到地震、天文等页面。\n• 版本号 1.2.3 / versionCode 25，可覆盖 1.2.2。\n• 本次维护合并开始/结束绘制按钮，移除移动模式与双指缩放；保存路线完整预览，支持逐点播放/暂停、暂停时前后与首尾跳转、1～20 个记录点/秒速度滑块，并修正名称输入框留白。" );
-        updateEntry(c,"1.2.2 · 状态、缓存与地点改进","• 调整大雷暴伴冰雹图标，避免冰雹看起来从云中间斜向发射。\n• 状态使用说明中的定位设置按钮移到说明末尾；状态设置按默认栏目顺序整理，电池与设备信息支持显隐和排序。\n• 电池瞬时电流可选择系统原始符号或反转符号，默认采用 1.2.0 的系统原始符号；说明保留不同厂商定义不同。\n• 卫星名称改为国家或地区加英文缩写，切换栏目、锁屏和后台默认暂停，回到状态页面自动继续；移除传感器帧率设置。\n• 保存地点时年龄实时更新，新增重新定位按钮，只更新表单坐标；地点不设应用层数量上限。\n• 缓存管理显示当前缓存占用，设置入口顺序调整。" );
-        updateEntry(c,"1.2.1 · 状态页细化","• 新增传感器显隐与排序、卫星天空图方向跟随、卫星明细按载噪密度比或卫星系统排序，以及电池健康、瞬时电流和重力传感器说明。\n• 修正俯仰、横滚定义，显示当前位置估算磁偏角；地面速度和移动方位改为大字。\n• 切换栏目、锁屏和后台默认暂停卫星接收，可改为停止；地点不设应用层数量上限。\n• versionName 1.2.1 / versionCode 23，可覆盖 1.2.0。");
-        updateEntry(c,"1.2.0 · 状态与设备工具","• 定位升级为状态，保留原定位方式、间隔、前台服务与共享最近位置。\n• 新增 16 方位指南针、磁北与真北、俯仰横滚和校准提示；方向按屏幕旋转换算。\n• 新增设备接收的 GPS、北斗、伽利略、GLONASS 等卫星天空图、方位角、高度角、载噪密度比与参与定位状态，需设备支持及精确定位权限，切换栏目或后台停止卫星接收。\n• 本机保存地点、手动输入或保存当前位置，显示寻宝目标点、直线距离和方向；无道路地图或路线。\n• 新增陀螺仪三轴、加速度、重力、磁场、气压、环境光等设备可用传感器，电量、电池温度、电压及系统提供的电流、内存、存储和开机时长。\n• 状态栏目可显示与排序，卫星系统可筛选；数据仅本机处理，无第三方状态接口或代码。");
-        updateEntry(c,"1.1.6 · 平板状态恢复与星空扩充","• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等，名称统一为 M 编号在前。补齐参宿一至参宿七，保留旧名称的显示开关和选中。北斗七星支持点选与显示开关。\n• 亮星显示设置支持手动选择或按星等上限筛选，步长 0.1 等；原手动选择保留。\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。");
-        updateEntry(c,"1.1.5 · 固定竖屏与地震来源优化","• 应用各页面固定竖屏，避免转动手机触发页面重建、栏目变化或已获取状态变化。\n• 同次地震优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知；同级采用较新结果，不再额外优先德国来源。\n• 地震列表显示智利、泰国等具体贡献机构的中文名，合并后去重；详情继续保留聚合平台与转发信息。");
-        updateEntry(c,"1.1.4 · 地震信息简化与坐标统一","• 地震状态统一为已复核、自动结果、状态未知，详情保留来源处理标记。\n• 发生改为发生时刻，列表简化烈度及中国地震台网来源，模型和转发说明保留在详情；未达阈值时明确提示。\n• 仅保留 MMI，删除烈度标度设置及当前说明中的其他标度；不再显示来源未说明深度是否固定的空泛提示。\n• 贡献机构改用中文名，经纬度统一经度在前、纬度在后，使用 E/W/N/S 标明方向。更新状态改称最早一条。");
-        updateEntry(c,"1.1.3 · 地震界面与扩展烈度参考","• 筛选与刷新仅保留刷新目录、刷新定位按钮，查询范围等统一从设置进入；时间选项统一称“最近 1 天”。移除地震设置内重复的数据来源与隐私入口。\n• 关于说明按统一的一行间隔分段。MMI 默认项置顶，本次升级统一切至 MMI 一次，之后保留手动选择。\n• 超出原论文模型保守条件时，对有有效震级和深度的记录使用 GlobalQuake 旧开源版参考算法，明确注明来源震级近似、默认／固定深度及弱震动显示阈值；不作为正式最大烈度。保留 MIT 许可。\n• 自动解改为“自动解算”；术语中分别解释来源标记已复核、已复核和人工处理，删除主震、前震与余震段落。");
-        updateEntry(c,"1.1.2 · 地震筛选、定位与烈度","• 最低震级改为 0～7、步长 0.1 的滑块，默认 M≥1.0；附近范围在查询区域内输入 50～5000 km。参考位置改为单选，手动经纬度条件显示，保存后自动更新距离。\n• 地震页可按定位设置刷新一次位置，显示经纬度；日期补全年份，排序说明更清楚，时区和数据说明合并进关于 → 数据来源与隐私，按段展示；新增地震术语介绍。\n• 新增美国地质调查局全球补充目录，明确匹配的同次地震合并；各机构使用中文名。Wolfx 默认关闭，须确认说明才启用；补充配合官方停用及下架的承诺。\n• 烈度区分公众震感报告、来源模型与本地 MMI 经验估算，不将模型当实测；中国标度暂不由 MMI 换算，超出估算范围时不进行外推。");
-        updateEntry(c,"1.1.1 · Wolfx 国内目录","• 接入 CENC（Wolfx 转发）近期最多 50 条目录，独立缓存、刷新与数据源开关；与 GEOFON、EMSC 明确匹配才合并，保留各来源参数。\n• 如实说明：上游公开展示适用依据尚未完全确认，不宣称已获 CENC 再发布授权；CORS 和非商业用途不等于授权。可关闭此来源，仅供参考。\n• 按北京时间解析发生及报告时刻；不承诺覆盖所选天数或完整收录；未采用未核实的 intensity 字段，未接入任何预警流。");
-        updateEntry(c,"1.1.0 · 近期地震与持续定位","• 新增地震栏目：GEOFON 与 EMSC 双源近期目录、相近事件合并、震级类型、发生时间、深度、震中、地表距离及各来源详情。\n• 可设置时间范围、区域、最低震级、附近范围、排序、时区、烈度标度、列表字段、栏目顺序和前台刷新间隔；保留离线缓存，区分各来源更新与失败。\n• 来源使用 CC BY 4.0 并保留署名；Wolfx 国内目录的上游依据尚待确认，未启用，也未接入预警流。缺乏可靠烈度资料时不生成数值。\n• 定位新增“切换栏目和后台继续定位”，默认关闭；主动开启并开始后使用 Android 前台服务，提供持续通知和停止按钮。最近定位供地震距离本地计算，不上传。\n• 缓存管理新增地震目录，清理期间的旧请求不会回写。新增栏目保留原有底栏排序及其他设置。");
-        updateEntry(c,"1.0.12 · 设置弹窗与地图按钮","• 设置弹窗直接在中央显示，取消系统滑入/退出动画。按钮间距与描边改为首次布局前完成，避免显示时再次调整尺寸。日期选择也使用相同处理，保留逐级返回和输入校验。\n• 天气地图的“浏览器”改为“在浏览器中打开”，与图种按钮保持相同宽高、圆角和间距，小屏可完整换行显示。\n• 扩展地震来源及调用许可调研，不在本版本接入地震功能。");
-        updateEntry(c,"1.0.11 · 间距与栏目管理","• 统一底栏、排序、时间控制、课表、裁剪和弹窗按钮间距，地区名称不再重复打开选择器，搜索按钮移到输入框外。\n• 常用地区新增莫斯科、巴黎，保持每行三列等宽。调整背景裁剪标题与说明，课表入口改为“学期设置”。\n• 版本记录按版本折叠，每次进入默认收起；新增缓存管理，保留课程、收藏、背景、设置与限流记录。\n• 天文新增“时间控制”卡片及栏目显示与排序设置，切换时间保留星图选中与滚动位置。\n• 课表跳周改为输入周次；缩小工具箱图标，四周留白。地震功能仅调研，未加入本版本。");
-        updateEntry(c,"1.0.10 · 星空与月球信息","• 当地星空改为随屏幕宽度扩展的正方形，放大坐标。标签只在星点正上方或正下方，冲突时隐藏标签但星点仍可选中。\n• “星点信息”改为“选中的星星信息”；太阳和月球可选中，太阳不显示星等，月球显示本地估算视星等。\n• 新增独立“月球信息”，移入月相、照亮比例、近似月龄及距下次满月时间，并绘制随所选时间更新的月相示意。\n• 天气地图在卫星云图后新增中央气象台“天气图”原页入口。\n• 课程信息前缀各项的默认选项移到最前，保留原选择。");
-        updateEntry(c,"1.0.9 · 天球坐标与星图选中","• 精简天气图例说明，WMO 专业表统一称“电码”，修正未知天气提示。\n• 调整默认文案；课表三个信息前缀默认显示完整名称，定位默认间隔改为 5 秒。\n• 天文设置新增行星与深空天体显示开关，以及地平坐标、北天极居中的赤道坐标、不显示坐标网格三种模式。\n• 选中天体显示缓慢顺时针旋转的断开十字，调整时间保留选中；天体落到地平线下时隐藏十字。\n• 恒星名改为织女一、河鼓二、勾陈一，保留原来的显隐偏好；新增昴星团、仙女座星系大致中心，采用 CC0 坐标离线换算。\n• 定位改为“水平定位误差半径”，移除正负号，说明未提供海拔的情况。");
-        updateEntry(c,"1.0.8 · 默认设置与来源补充","• 57、67 改为“中或大冻毛毛雨”“中或大冻雨”。\n• 补齐中英文间距；设置中标注默认值。描边默认关闭，颜色入口简化为“设置描边颜色”，网络定位去掉括号说明。\n• 数据来源与隐私新增天气战士 · 全球版、拾光课程表参考项目，最底部新增本项目 GitHub 链接。\n• 新课表与恢复默认采用 17 周、12 节上下课时间；升级保留已有课表与自定义时间。");
-        updateEntry(c,"1.0.7 · 雷暴命名与 WMO 原文","• 95、96、97、99分别改为“小或中雷暴”“小或中雷暴伴冰雹”“大雷暴”“大雷暴伴冰雹”，按 WMO 原文区分雷暴强度。\n• 99的日夜图标各增加两个冰雹圆点，共四个。\n• 图例说明中的“数字”改为“数”，补充数值代码与本地翻译、模型计算及 WMO 命名依据。\n• 图例底部新增 WMO 官方英文电码原文链接。其他代码的差异已整理供后续版本参考。");
-        updateEntry(c,"1.0.6 · 天气图例与代码说明","• 天气图例说明最右侧数字的含义，补充代码不连续的原因及官方天气代码文档链接。\n• 按当前官方文档说明96、99代码取决于模型的冰雹预报能力，补齐97强雷暴的名称与图标。\n• 大冻雨云朵下方改为三个深蓝色斜线雨点。\n• 说明“天气未知”的触发条件；缺失、无效或未识别代码统一显示问号，避免误画为晴天或普通云朵。");
-        updateEntry(c,"1.0.5 · 星空与天气图例完善","• 北斗七星移出亮星显示设置，在地平线上方时固定显示，旧的隐藏开关不再影响它们。\n• 当地星空加入参考极大日及前后3天的流星雨辐射点，用橙色十字圆环标注；与下方流星雨列表使用同一日期判断。\n• 删除数据来源与隐私中的中国天气网入口，统一链接间距；地区数据署名框增加四边留白。\n• 少云图标缩小云朵；沉积雾凇的雾加入深蓝雪花；云内雪花提高对比度；中、大阵雨与大阵雪按对应雨雪等级修正数量；95改称“小或中雷雨”。");
+        updateEntry(c,"pre2.0.0-1 · 多语言资源整理","• 将应用名称、底部导航、天气栏目、常用操作和来源入口迁移到 Android 语言资源，中文默认显示保持不变。\r\n• 增加 values-en 初始语言资源作为后续英文翻译入口；未完成的文本会回退到中文资源。\r\n• 资源键仅用于显示文字，课程、地点、接口字段、偏好键和天体内部标识继续保持稳定，不受语言切换影响。\r\n• 版本号 pre2.0.0-1 / versionCode 30，仅本地预览版，不上传 GitHub。");
+        updateEntry(c,"1.2.6 · 路线与地点导入导出","• 已保存路线和地点可通过系统文件选择器导入或导出 JSON 文件，导入前确认，保留原记录并跳过重复内容。\r\n• 指南针默认采用真北，设置中默认选项置于首位；当前位置的移动方位去除括号标记。\r\n• 修复路线播放到末尾后重新播放导致缩放改变的问题。\r\n• 路线框增加边缘刻度，缩放滑块范围为边长 30 米至 10 千米。\r\n• 路线跟随按钮切换“跟随当前位置”和“解除跟随当前位置”，回放时跟随橙色记录点。\r\n• 地点图按所选目标确定外圈范围，超出范围的其他地点以较小圆点显示在外圈。\r\n• 版本号 1.2.6，沿用原签名。");
+        updateEntry(c,"1.2.5 · 文字优化与状态交互","• 优化各页面文字、专业术语、操作提示与说明排版，统一长说明段间距。\r\n• 路线回放居中后持续跟随橙色记录点，拖动画布可取消跟随。\r\n• 定位与卫星接收分别合并开始和停止按钮；开始卫星接收时自动启动当前位置更新，可正常开始路线绘制。\r\n• 垂直定位误差半径在海拔下方以大字显示。\r\n• 保存地点可选择颜色和是否在图中显示，支持同时绘制多个地点并点选目标。\r\n• 重叠或邻近路线记录点的详情使用“返回”按钮，返回后保留记录点选择界面。\r\n• 版本号 1.2.5，沿用原签名。");
+        updateEntry(c,"1.2.4 · 状态刷新与路线修复","• 卫星明细和状态数值更新时保持页面阅读位置，避免重新布局跳回列表上方。\r\n• 路线缩放以路线框中心为基准，拖动后缩放也保持正确中心。\r\n• 状态页除 GPS 定位信息外，指南针、俯仰横滚、传感器、卫星显示、电池和设备信息每 50 毫秒刷新一次；数据以系统实际报告为准，GPS 与网络定位间隔保持原设置。\r\n• 删除已保存路线或本次未保存路线前，弹出“确定删除此路线吗？”确认框，取消保留路线。\r\n• 状态默认顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明，保留已自定义的排序。\r\n• 版本号 1.2.4 / versionCode 26，沿用原签名，可覆盖升级。");
+        updateEntry(c,"1.2.3 · 路线绘制与全局设置","• 新增路线绘制：持续定位开启时按 2～60 秒记录真实位置点，支持缩放滑块、单指拖动、以自己为中心、点选记录点查看序号、坐标和时间，结束后可命名保存或删除并回放。\r\n• 俯仰和横滚改为大字显示，网络定位间隔设置名称更明确，普通说明文字禁止长按选择。\r\n• 保存地点重新定位说明和状态方向文案调整，设置新增全局设置，背景、描边和时间显示集中管理；时间显示同步到地震、天文等页面。\r\n• 版本号 1.2.3 / versionCode 25，可覆盖 1.2.2。\r\n• 本次维护合并开始/结束绘制按钮，移除移动模式与双指缩放；保存路线完整预览，支持逐点播放/暂停、暂停时前后与首尾跳转、1～20 个记录点/秒速度滑块，并修正名称输入框留白。" );
+        updateEntry(c,"1.2.2 · 状态、缓存与地点改进","• 调整大雷暴伴冰雹图标，避免冰雹看起来从云中间斜向发射。\r\n• 状态使用说明中的定位设置按钮移到说明末尾；状态设置按默认栏目顺序整理，电池与设备信息支持显隐和排序。\r\n• 电池瞬时电流可选择系统原始符号或反转符号，默认采用 1.2.0 的系统原始符号；说明保留不同厂商定义不同。\r\n• 卫星名称改为国家或地区加英文缩写，切换栏目、锁屏和后台默认暂停，回到状态页面自动继续；移除传感器帧率设置。\r\n• 保存地点时年龄实时更新，新增重新定位按钮，只更新表单坐标；地点不设应用层数量上限。\r\n• 缓存管理显示当前缓存占用，设置入口顺序调整。" );
+        updateEntry(c,"1.2.1 · 状态页细化","• 新增传感器显隐与排序、卫星天空图方向跟随、卫星明细按载噪密度比或卫星系统排序，以及电池健康、瞬时电流和重力传感器说明。\r\n• 修正俯仰、横滚定义，显示当前位置估算磁偏角；地面速度和移动方位改为大字。\r\n• 切换栏目、锁屏和后台默认暂停卫星接收，可改为停止；地点不设应用层数量上限。\r\n• versionName 1.2.1 / versionCode 23，可覆盖 1.2.0。");
+        updateEntry(c,"1.2.0 · 状态与设备工具","• 定位升级为状态，保留原定位方式、间隔、前台服务与共享最近位置。\r\n• 新增 16 方位指南针、磁北与真北、俯仰横滚和校准提示；方向按屏幕旋转换算。\r\n• 新增设备接收的 GPS、北斗、伽利略、GLONASS 等卫星天空图、方位角、高度角、载噪密度比与参与定位状态，需设备支持及精确定位权限，切换栏目或后台停止卫星接收。\r\n• 本机保存地点、手动输入或保存当前位置，显示寻宝目标点、直线距离和方向；无道路地图或路线。\r\n• 新增陀螺仪三轴、加速度、重力、磁场、气压、环境光等设备可用传感器，电量、电池温度、电压及系统提供的电流、内存、存储和开机时长。\r\n• 状态栏目可显示与排序，卫星系统可筛选；数据仅本机处理，无第三方状态接口或代码。");
+        updateEntry(c,"1.1.6 · 平板状态恢复与星空扩充","• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\r\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等，名称统一为 M 编号在前。补齐参宿一至参宿七，保留旧名称的显示开关和选中。北斗七星支持点选与显示开关。\r\n• 亮星显示设置支持手动选择或按星等上限筛选，步长 0.1 等；原手动选择保留。\r\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。");
+        updateEntry(c,"1.1.5 · 固定竖屏与地震来源优化","• 应用各页面固定竖屏，避免转动手机触发页面重建、栏目变化或已获取状态变化。\r\n• 同次地震优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知；同级采用较新结果，不再额外优先德国来源。\r\n• 地震列表显示智利、泰国等具体贡献机构的中文名，合并后去重；详情继续保留聚合平台与转发信息。");
+        updateEntry(c,"1.1.4 · 地震信息简化与坐标统一","• 地震状态统一为已复核、自动结果、状态未知，详情保留来源处理标记。\r\n• 发生改为发生时刻，列表简化烈度及中国地震台网来源，模型和转发说明保留在详情；未达阈值时明确提示。\r\n• 仅保留 MMI，删除烈度标度设置及当前说明中的其他标度；不再显示来源未说明深度是否固定的空泛提示。\r\n• 贡献机构改用中文名，经纬度统一经度在前、纬度在后，使用 E/W/N/S 标明方向。更新状态改称最早一条。");
+        updateEntry(c,"1.1.3 · 地震界面与扩展烈度参考","• 筛选与刷新仅保留刷新目录、刷新定位按钮，查询范围等统一从设置进入；时间选项统一称“最近 1 天”。移除地震设置内重复的数据来源与隐私入口。\r\n• 关于说明按统一的一行间隔分段。MMI 默认项置顶，本次升级统一切至 MMI 一次，之后保留手动选择。\r\n• 超出原论文模型保守条件时，对有有效震级和深度的记录使用 GlobalQuake 旧开源版参考算法，明确注明来源震级近似、默认／固定深度及弱震动显示阈值；不作为正式最大烈度。保留 MIT 许可。\r\n• 自动解改为“自动解算”；术语中分别解释来源标记已复核、已复核和人工处理，删除主震、前震与余震段落。");
+        updateEntry(c,"1.1.2 · 地震筛选、定位与烈度","• 最低震级改为 0～7、步长 0.1 的滑块，默认 M≥1.0；附近范围在查询区域内输入 50～5000 km。参考位置改为单选，手动经纬度条件显示，保存后自动更新距离。\r\n• 地震页可按定位设置刷新一次位置，显示经纬度；日期补全年份，排序说明更清楚，时区和数据说明合并进关于 → 数据来源与隐私，按段展示；新增地震术语介绍。\r\n• 新增美国地质调查局全球补充目录，明确匹配的同次地震合并；各机构使用中文名。Wolfx 默认关闭，须确认说明才启用；补充配合官方停用及下架的承诺。\r\n• 烈度区分公众震感报告、来源模型与本地 MMI 经验估算，不将模型当实测；中国标度暂不由 MMI 换算，超出估算范围时不进行外推。");
+        updateEntry(c,"1.1.1 · Wolfx 国内目录","• 接入 CENC（Wolfx 转发）近期最多 50 条目录，独立缓存、刷新与数据源开关；与 GEOFON、EMSC 明确匹配才合并，保留各来源参数。\r\n• 如实说明：上游公开展示适用依据尚未完全确认，不宣称已获 CENC 再发布授权；CORS 和非商业用途不等于授权。可关闭此来源，仅供参考。\r\n• 按北京时间解析发生及报告时刻；不承诺覆盖所选天数或完整收录；未采用未核实的 intensity 字段，未接入任何预警流。");
+        updateEntry(c,"1.1.0 · 近期地震与持续定位","• 新增地震栏目：GEOFON 与 EMSC 双源近期目录、相近事件合并、震级类型、发生时间、深度、震中、地表距离及各来源详情。\r\n• 可设置时间范围、区域、最低震级、附近范围、排序、时区、烈度标度、列表字段、栏目顺序和前台刷新间隔；保留离线缓存，区分各来源更新与失败。\r\n• 来源使用 CC BY 4.0 并保留署名；Wolfx 国内目录的上游依据尚待确认，未启用，也未接入预警流。缺乏可靠烈度资料时不生成数值。\r\n• 定位新增“切换栏目和后台继续定位”，默认关闭；主动开启并开始后使用 Android 前台服务，提供持续通知和停止按钮。最近定位供地震距离本地计算，不上传。\r\n• 缓存管理新增地震目录，清理期间的旧请求不会回写。新增栏目保留原有底栏排序及其他设置。");
+        updateEntry(c,"1.0.12 · 设置弹窗与地图按钮","• 设置弹窗直接在中央显示，取消系统滑入/退出动画。按钮间距与描边改为首次布局前完成，避免显示时再次调整尺寸。日期选择也使用相同处理，保留逐级返回和输入校验。\r\n• 天气地图的“浏览器”改为“在浏览器中打开”，与图种按钮保持相同宽高、圆角和间距，小屏可完整换行显示。\r\n• 扩展地震来源及调用许可调研，不在本版本接入地震功能。");
+        updateEntry(c,"1.0.11 · 间距与栏目管理","• 统一底栏、排序、时间控制、课表、裁剪和弹窗按钮间距，地区名称不再重复打开选择器，搜索按钮移到输入框外。\r\n• 常用地区新增莫斯科、巴黎，保持每行三列等宽。调整背景裁剪标题与说明，课表入口改为“学期设置”。\r\n• 版本记录按版本折叠，每次进入默认收起；新增缓存管理，保留课程、收藏、背景、设置与限流记录。\r\n• 天文新增“时间控制”卡片及栏目显示与排序设置，切换时间保留星图选中与滚动位置。\r\n• 课表跳周改为输入周次；缩小工具箱图标，四周留白。地震功能仅调研，未加入本版本。");
+        updateEntry(c,"1.0.10 · 星空与月球信息","• 当地星空改为随屏幕宽度扩展的正方形，放大坐标。标签只在星点正上方或正下方，冲突时隐藏标签但星点仍可选中。\r\n• “星点信息”改为“选中的星星信息”；太阳和月球可选中，太阳不显示星等，月球显示本地估算视星等。\r\n• 新增独立“月球信息”，移入月相、照亮比例、近似月龄及距下次满月时间，并绘制随所选时间更新的月相示意。\r\n• 天气地图在卫星云图后新增中央气象台“天气图”原页入口。\r\n• 课程信息前缀各项的默认选项移到最前，保留原选择。");
+        updateEntry(c,"1.0.9 · 天球坐标与星图选中","• 精简天气图例说明，WMO 专业表统一称“电码”，修正未知天气提示。\r\n• 调整默认文案；课表三个信息前缀默认显示完整名称，定位默认间隔改为 5 秒。\r\n• 天文设置新增行星与深空天体显示开关，以及地平坐标、北天极居中的赤道坐标、不显示坐标网格三种模式。\r\n• 选中天体显示缓慢顺时针旋转的断开十字，调整时间保留选中；天体落到地平线下时隐藏十字。\r\n• 恒星名改为织女一、河鼓二、勾陈一，保留原来的显隐偏好；新增昴星团、仙女座星系大致中心，采用 CC0 坐标离线换算。\r\n• 定位改为“水平定位误差半径”，移除正负号，说明未提供海拔的情况。");
+        updateEntry(c,"1.0.8 · 默认设置与来源补充","• 57、67 改为“中或大冻毛毛雨”“中或大冻雨”。\r\n• 补齐中英文间距；设置中标注默认值。描边默认关闭，颜色入口简化为“设置描边颜色”，网络定位去掉括号说明。\r\n• 数据来源与隐私新增天气战士 · 全球版、拾光课程表参考项目，最底部新增本项目 GitHub 链接。\r\n• 新课表与恢复默认采用 17 周、12 节上下课时间；升级保留已有课表与自定义时间。");
+        updateEntry(c,"1.0.7 · 雷暴命名与 WMO 原文","• 95、96、97、99分别改为“小或中雷暴”“小或中雷暴伴冰雹”“大雷暴”“大雷暴伴冰雹”，按 WMO 原文区分雷暴强度。\r\n• 99的日夜图标各增加两个冰雹圆点，共四个。\r\n• 图例说明中的“数字”改为“数”，补充数值代码与本地翻译、模型计算及 WMO 命名依据。\r\n• 图例底部新增 WMO 官方英文电码原文链接。其他代码的差异已整理供后续版本参考。");
+        updateEntry(c,"1.0.6 · 天气图例与代码说明","• 天气图例说明最右侧数字的含义，补充代码不连续的原因及官方天气代码文档链接。\r\n• 按当前官方文档说明96、99代码取决于模型的冰雹预报能力，补齐97强雷暴的名称与图标。\r\n• 大冻雨云朵下方改为三个深蓝色斜线雨点。\r\n• 说明“天气未知”的触发条件；缺失、无效或未识别代码统一显示问号，避免误画为晴天或普通云朵。");
+        updateEntry(c,"1.0.5 · 星空与天气图例完善","• 北斗七星移出亮星显示设置，在地平线上方时固定显示，旧的隐藏开关不再影响它们。\r\n• 当地星空加入参考极大日及前后3天的流星雨辐射点，用橙色十字圆环标注；与下方流星雨列表使用同一日期判断。\r\n• 删除数据来源与隐私中的中国天气网入口，统一链接间距；地区数据署名框增加四边留白。\r\n• 少云图标缩小云朵；沉积雾凇的雾加入深蓝雪花；云内雪花提高对比度；中、大阵雨与大阵雪按对应雨雪等级修正数量；95改称“小或中雷雨”。");
         updateEntry(c,"1.0.4 · 行星算法校准","• 按参考项目 weather-fighter-global 的 JPL 简化开普勒元素重算地心行星位置，修正行星出现在错误方位的问题。\r\n• 行星坐标使用行星日心坐标减地球日心坐标，并统一黄道到赤道坐标转换；水星到海王星的星等公式同步校准。\r\n• 版本号升至 1.0.4，保留下面各版本的独立更新说明。");
         updateEntry(c,"1.0.3 · 天文与布局修复","• 修复天文时间按钮重建页面时先回到顶部造成的闪屏，切换后保持原滚动位置。\r\n• 星图加入本地计算的水星、金星、火星、木星、土星、天王星和海王星，并显示行星星等。\r\n• 点击亮星或行星显示方位角、高度角和星等；新增亮星显示设置，北斗七星仍只作图示。\r\n• 流星雨按极大日前后3天标记活跃期并显示辐射点；来源与隐私链接、IMO 链接框和常用地区卡片统一留白。\r\n• 厦门、台北调整到香港之前。");
         updateEntry(c,"1.0.2 · 细节与定位改进","• 天文第一行按钮顺序固定为“-15分钟、当前、+15分钟”；太阳与月球标签按字号计算下移间距，避免遮挡圆点；统一使用“月球”。\r\n• 天气地图、天气代码、背景裁剪、描边颜色、设置逐级返回和定位间隔按本版本记录调整。\r\n• versionCode 升至 4，沿用包名与签名。");
         updateEntry(c,"1.0.1 · 自由布局与个性设置","• 分级设置、背景选区与缩放、可选颜色描边。\r\n• 天气栏目和底部栏目可显隐排序，新增独立天气地图与天文栏目（默认隐藏）。\r\n• 定位可选 GPS 硬件或网络定位。\r\n• 课程支持自定义授课周与信息前缀，时间改为数字输入。\r\n• 改进天气图标、摄氏度、居中排版、图例与刷新提示。\r\n• 天文支持指定年月日时分、前后15分钟和前后一天，保留滚动位置并区分曙光暮光。\r\n• 更新隐私说明，移除极光功能。");
         updateEntry(c,"1.0.0 · 呆呆工具箱","• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\r\n• 新增手动周课表、自定义节次、地点、教师与单双周。\r\n• 新增手机图片背景及遮罩调整。\r\n• 新增前台 GPS 经纬度、水平精度与状态。\r\n• 新增官方全国降水、温度和分区雷达网页。\r\n• 新增观星条件、星图、日月位置、月相和曙暮光。\r\n• 整理来源与隐私，Open-Meteo 入口放在一起。\r\n• 页脚改为“呆呆鸟使用 Codex 制作”。");
         updateEntry(c,"0.1.0-test · 简天气测试版","早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。");
-        ScrollView scroll=new ScrollView(this);scroll.addView(c);new ToolDialog(this).setTitle("每个版本的更新内容").setView(scroll).setPositiveButton("关闭",null).show();
+        ScrollView scroll=new ScrollView(this);scroll.addView(c);new ToolDialog(this).setTitle(getString(R.string.updates_title)).setView(scroll).setPositiveButton("关闭",null).show();
     }
     void clearCache(Runnable done){
         cacheGeneration++;searchVersion++;data=null;notice="";
@@ -371,13 +376,13 @@ public class MainActivity extends Activity {
     String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 1.2.6 · 个人非商业使用\n\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
-        EarthquakeInfo.paragraph(this,content,"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\n\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择默认存于本机，清除缓存或恢复默认设置会保留，卸载应用将删除。主动导出的 JSON 文件包含坐标、时间和名称，地点还包含颜色及显示状态；文件保存位置由用户通过系统选择器指定，云盘等提供方适用其自身隐私规则。导入在本机处理，不上传文件。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。");
+        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 pre2.0.0-1 · 个人非商业使用\r\n\r\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\r\n\r\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\r\n\r\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\r\n\r\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
+        EarthquakeInfo.paragraph(this,content,"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\r\n\r\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择默认存于本机，清除缓存或恢复默认设置会保留，卸载应用将删除。主动导出的 JSON 文件包含坐标、时间和名称，地点还包含颜色及显示状态；文件保存位置由用户通过系统选择器指定，云盘等提供方适用其自身隐私规则。导入在本机处理，不上传文件。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。");
         EarthquakeInfo.append(this,content);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");link(content,"Android · 卫星状态官方文档","https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,"Android · 传感器官方说明","https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,"天体坐标与星等 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
         EarthquakeInfo.links(this,content);
         gap(content,10);content.addView(text("参考开源项目",17,INK,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");
-        ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle("数据来源与隐私").setView(scroll).setPositiveButton("关闭",null).show();
+        ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle(getString(R.string.about_title)).setView(scroll).setPositiveButton("关闭",null).show();
     }
     void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
     void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast("未找到可打开链接的浏览器");}}

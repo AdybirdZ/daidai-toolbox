@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Stable resource names are the translation interface. Keep keys unchanged when adding a locale. -->
+    <string name="app_name">呆呆工具箱</string>
+    <string name="app_footer">呆呆鸟使用 Codex 制作</string>
+    <string name="tab_weather">天气</string>
+    <string name="tab_schedule">课程表</string>
+    <string name="tab_status">状态</string>
+    <string name="tab_weather_map">天气地图</string>
+    <string name="tab_astronomy">天文</string>
+    <string name="tab_earthquake">地震</string>
+    <string name="weather_area">地区</string>
+    <string name="weather_current">当前天气</string>
+    <string name="weather_hourly">未来 24 小时</string>
+    <string name="weather_daily">未来 7 天</string>
+    <string name="weather_details">天气详情</string>
+    <string name="weather_sources">数据来源入口</string>
+    <string name="action_settings">设置</string>
+    <string name="action_add_course">新增课程</string>
+    <string name="action_close">关闭</string>
+    <string name="updates_title">每个版本的更新内容</string>
+    <string name="about_title">数据来源与隐私</string>
+    <string name="about_version">呆呆工具箱 pre2.0.0-1 · 个人非商业使用</string>
+    <string name="source_open_meteo">天气：Open-Meteo · CC BY 4.0 ↗</string>
+    <string name="unknown_weather">天气未知</string>
+</resources>

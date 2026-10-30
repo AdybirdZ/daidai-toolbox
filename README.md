@@ -1,6 +1,6 @@
-# 呆呆工具箱 1.2.6
+# 呆呆工具箱 pre2.0.0-1（本地预览）
 
-1.2.6 安装包、源码包及更新说明见 [GitHub Release](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/v1.2.6)。本版导入导出、路线范围和交互调整见 [版本说明](docs/STATUS-1.2.6.md)。
+本地预览包、源码包及更新说明见工作区根目录 `releases/pre2.0.0-1/`。本版仅整理多语言资源结构，正式版 1.2.6 仍以 GitHub Release 为准。
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用 Codex 制作。
 
@@ -33,9 +33,13 @@
 
 1.2.3 新增状态页路线绘制：持续定位时按 2～60 秒记录位置点，路线可用滑块缩放、单指拖动、以自己为中心，点选查看记录点序号、经纬度和时间，结束后可命名保存或删除并逐点回放（1～20 个记录点/秒，暂停时可前后或首尾跳转）。俯仰与横滚改为大字显示，网络定位间隔设置名称更明确，所有普通说明文字禁止长按选择。保存地点的重新定位说明更清楚；状态方向说明统一为“上北下南左西右东”。设置新增全局设置，背景、描边和时间显示集中管理，时间显示对地震、天文等页面统一生效。恢复了 1.2.1 的更新记录。
 
+## 多语言资源
+
+界面显示文字从 `app/src/main/res/values/strings.xml` 开始维护；英文入口位于 `values-en/strings.xml`。新增语言时复制 `values-en` 为对应 Android 语言目录（例如 `values-ja`），保留相同资源键，只翻译资源值。不要翻译偏好键、JSON 字段、来源 ID、URL、课程内容或天体内部标识。当前只迁移了工具箱外壳和首批常用文字，其余页面会回退到中文，后续可以按页面逐步迁移。
+
 ## 安装与升级
 
-安装 `DaidaiToolbox-1.2.6.apk`。包名保持 `org.simpleweather.app`，versionCode 升至 29，沿用原开发签名，可覆盖 1.2.5 并保留地区、收藏、课表、背景、地点及路线。更早的“简天气”测试包原标 1.0.0，现统一归为 `0.1.0-test` 测试版；重新归档的测试 APK 已修正版本及名称。
+安装本地预览包 `DaidaiToolbox-pre2.0.0-1.apk`。包名保持 `org.simpleweather.app`，versionCode 为 30，沿用原开发签名，可覆盖 1.2.6 并保留地区、收藏、课表、背景、地点及路线。正式版 1.2.6 的 GitHub 发布文件保持不变。
 
 使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
@@ -44,7 +48,7 @@
 JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.2.6.apk
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-pre2.0.0-1.apk
 ```
 
 脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。
