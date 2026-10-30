@@ -26,12 +26,20 @@ public final class City {
      * return the same city once from the bundled directory and once remotely,
      * with slightly different precision or an omitted 市 suffix. */
     public String placeKey() {
-        String value=(label()+" "+admin).toLowerCase(Locale.ROOT).replaceAll("[\\s,，、·.。\\-]", "");
-        value=value.replaceAll("(市|区|县|镇|乡|旗)$", "");
-        return value;
+        return canonical(label(), admin);
     }
     private String nameKey() {
-        return label().toLowerCase(Locale.ROOT).replaceAll("[\\s,，、·.。\\-]", "").replaceAll("(市|区|县|镇|乡|旗)$", "");
+        return canonical(label(), "");
+    }
+    /** Normalize aliases returned by offline and online geocoders.  The same
+     * Chinese prefecture can otherwise appear once with its full autonomous
+     * region name and once as a shortened name (for example 甘孜). */
+    private static String canonical(String raw,String admin) {
+        String value=(raw+" "+admin).toLowerCase(Locale.ROOT).replaceAll("[\\s,，、·.。\\-]", "");
+        if(value.contains("甘孜") && (value.contains("四川") || value.equals("甘孜"))) return "甘孜藏族自治州";
+        value=value.replace("藏族市","藏族自治州");
+        value=value.replaceAll("(市|区|县|镇|乡|旗)$", "");
+        return value;
     }
     public boolean samePlace(City other) {
         if(other==null)return false;

@@ -20,11 +20,9 @@
     <string name="action_close">关闭</string>
     <string name="updates_title">每个版本的更新内容</string>
     <string name="about_title">数据来源与隐私</string>
-    <string name="about_version">呆呆工具箱 1.2.8 · 个人非商业使用</string>
+    <string name="about_version">呆呆工具箱 1.2.9 · 个人非商业使用</string>
     <string name="source_open_meteo">天气：Open-Meteo · CC BY 4.0 ↗</string>
     <string name="unknown_weather">天气未知</string>
     <string name="language_title">语言</string>
-    <string name="language_unavailable">目前只有中文，在 2.0.0 实装，敬请期待。系统语言为英文时，预览版的部分界面会显示英文。</string>
-    <string name="uv_description">今日最高紫外线指数为 %1$.1f。紫外线指数用于表示紫外线辐射强度，数值越高，暴露风险越高；它是天气模型估算值，不是实时地面观测。</string>
-    <string name="uv_missing">今日最高紫外线指数暂无数据。紫外线指数由天气模型提供，缺失时不会自行估算。</string>
+    <string name="language_unavailable">目前只有中文，正式多语言支持计划在 2.0.0 实装，敬请期待。英文资源目前仅用于本地内测包，暂未上传 GitHub。</string>
 </resources>

@@ -11,7 +11,7 @@ import java.util.*;
 
 /** Foreground-only sensors and user-started GNSS status; never uploads or downloads orbit data. */
 final class StatusHardware implements SensorEventListener {
-    final MainActivity a;private final SensorManager sensors;private final LocationManager locations;
+    final MainActivity a;private final SensorManager sensors;private final LocationManager locations;private CameraLightReader cameraReader;
     final Map<Integer,float[]> values=new HashMap<>();final Map<Integer,Integer> accuracy=new HashMap<>();
     final Map<Integer,Long> sampleAt=new HashMap<>();
     boolean active,gnssRunning,gnssRequested,gnssPaused;String gnssMessage="尚未开始卫星接收";
@@ -30,17 +30,19 @@ final class StatusHardware implements SensorEventListener {
     }
     StatusHardware(MainActivity a){this.a=a;sensors=(SensorManager)a.getSystemService(Context.SENSOR_SERVICE);locations=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);}
     Sensor sensor(int type){return sensors==null?null:sensors.getDefaultSensor(type);}
-    private boolean compassWanted,allSensorsWanted;
+    private boolean compassWanted,allSensorsWanted,cameraWanted;
     void resume(boolean compass,boolean allSensors){
-        if(active&&compass==compassWanted&&allSensors==allSensorsWanted)return;
-        if(sensors!=null)sensors.unregisterListener(this);active=true;compassWanted=compass;allSensorsWanted=allSensors;magneticHeading=Double.NaN;headingAt=0;gravity=null;magnetic=null;matrixReady=false;lastDisplay=-1;
-        if(sensors!=null){int delay=sensorDelay();Sensor vector=compass?sensor(Sensor.TYPE_ROTATION_VECTOR):null;rotationVector=vector!=null;if(vector!=null)sensors.registerListener(this,vector,delay);boolean cameraLight="camera".equals(a.preferences.getString("status_light_source","sensor"));for(int type:TYPES){boolean fallback=compass&&!rotationVector&&(type==Sensor.TYPE_ACCELEROMETER||type==Sensor.TYPE_MAGNETIC_FIELD);if(type==Sensor.TYPE_LIGHT&&cameraLight)continue;if(!allSensors&&!fallback)continue;if(allSensors&&!sensorEnabled(type)&&!fallback)continue;Sensor sensor=sensor(type);if(sensor!=null)sensors.registerListener(this,sensor,delay);}}
+        boolean requestedCamera="camera".equals(a.preferences.getString("status_light_source","sensor"));
+        if(active&&compass==compassWanted&&allSensors==allSensorsWanted&&requestedCamera==cameraWanted)return;
+        if(sensors!=null)sensors.unregisterListener(this);if(cameraReader!=null){cameraReader.stop();cameraReader=null;}active=true;compassWanted=compass;allSensorsWanted=allSensors;cameraWanted=requestedCamera;magneticHeading=Double.NaN;headingAt=0;gravity=null;magnetic=null;matrixReady=false;lastDisplay=-1;
+        boolean cameraLight=requestedCamera;if(cameraLight){cameraReader=new CameraLightReader(a);cameraReader.start();}
+        if(sensors!=null){int delay=sensorDelay();Sensor vector=compass?sensor(Sensor.TYPE_ROTATION_VECTOR):null;rotationVector=vector!=null;if(vector!=null)sensors.registerListener(this,vector,delay);for(int type:TYPES){boolean fallback=compass&&!rotationVector&&(type==Sensor.TYPE_ACCELEROMETER||type==Sensor.TYPE_MAGNETIC_FIELD);if(type==Sensor.TYPE_LIGHT&&cameraLight)continue;if(!allSensors&&!fallback)continue;if(allSensors&&!sensorEnabled(type)&&!fallback)continue;Sensor sensor=sensor(type);if(sensor!=null)sensors.registerListener(this,sensor,delay);}}
         if(gnssPaused){gnssPaused=false;startGnss();}
     }
     int sensorDelay(){return SensorManager.SENSOR_DELAY_FASTEST;}
     boolean sensorEnabled(int type){return a.preferences.getBoolean("status_sensor_show_"+type,true);}
     void pause(){pause(a.preferences.getBoolean("status_receive_pause",true));}
-    void pause(boolean preserveReceive){active=false;if(sensors!=null)sensors.unregisterListener(this);if(preserveReceive&&(gnssRunning||gnssRequested)){try{if(locations!=null){locations.unregisterGnssStatusCallback(callback);locations.removeUpdates(fixes);}}catch(Exception ignored){}gnssRunning=false;gnssPaused=true;gnssMessage="卫星接收已暂停 · 回到状态页面后继续";return;}stopGnss("已停止卫星接收 · 切换栏目或后台停止");gnssPaused=false;gnssRequested=false;}
+    void pause(boolean preserveReceive){active=false;if(sensors!=null)sensors.unregisterListener(this);boolean keepCamera=a.preferences.getBoolean("status_camera_background",false);if(!keepCamera&&cameraReader!=null){cameraReader.stop();cameraReader=null;}if(preserveReceive&&(gnssRunning||gnssRequested)){try{if(locations!=null){locations.unregisterGnssStatusCallback(callback);locations.removeUpdates(fixes);}}catch(Exception ignored){}gnssRunning=false;gnssPaused=true;gnssMessage="卫星接收已暂停 · 回到状态页面后继续";return;}stopGnss("已停止卫星接收 · 切换栏目或后台停止");gnssPaused=false;gnssRequested=false;}
     @Override public void onAccuracyChanged(Sensor s,int level){accuracy.put(s.getType(),level);if(s.getType()==(rotationVector?Sensor.TYPE_ROTATION_VECTOR:Sensor.TYPE_MAGNETIC_FIELD))compassAccuracy=level;}
     @Override public void onSensorChanged(SensorEvent e){if(!active)return;values.put(e.sensor.getType(),e.values.clone());sampleAt.put(e.sensor.getType(),SystemClock.elapsedRealtime());accuracy.put(e.sensor.getType(),e.accuracy);
         if(e.sensor.getType()==Sensor.TYPE_ACCELEROMETER)gravity=e.values.clone();if(e.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD)magnetic=e.values.clone();
@@ -82,7 +84,7 @@ final class StatusHardware implements SensorEventListener {
     void stopGnss(String message){gnssRunning=false;gnssRequested=false;gnssPaused=false;try{if(locations!=null){locations.unregisterGnssStatusCallback(callback);locations.removeUpdates(fixes);}}catch(Exception ignored){}satellites.clear();gnssAt=0;gnssMessage=message;}
     private int[] companyOrder(){String raw=a.preferences.getString("status_sat_company_order","5,1,6,3,4,7,2,0");ArrayList<Integer> out=new ArrayList<>();for(String token:raw.split(","))try{int n=Integer.parseInt(token.trim());if(!out.contains(n))out.add(n);}catch(Exception ignored){}for(int n:new int[]{5,1,6,3,4,7,2,0})if(!out.contains(n))out.add(n);int[] result=new int[out.size()];for(int n=0;n<out.size();n++)result[n]=out.get(n);return result;}
     List<Satellite> shown(){List<Satellite> rows=new ArrayList<>();for(Satellite s:satellites)if(a.preferences.getBoolean("status_constellation_"+s.constellation,true))rows.add(s);final int[] order=companyOrder();String sort=a.preferences.getString("status_sat_sort","company");Comparator<Satellite> comparator=Comparator.comparingInt((Satellite s)->StatusMath.constellationRank(s.constellation,order)).thenComparingInt(s->s.svid);if("cn0".equals(sort))comparator=Comparator.comparingDouble((Satellite s)->Float.isFinite(s.cn0)?-s.cn0:Double.POSITIVE_INFINITY).thenComparingInt(s->StatusMath.constellationRank(s.constellation,order)).thenComparingInt(s->s.svid);rows.sort(comparator);return rows;}
-    String sensorText(int type,String unit){if(type==Sensor.TYPE_LIGHT&&"camera".equals(a.preferences.getString("status_light_source","sensor")))return "已选择相机环境光，请点击“启动相机测量”";Sensor s=sensor(type);if(s==null)return "设备未提供";float[] v=values.get(type);if(v==null||!sampleAt.containsKey(type))return "等待传感器结果";
+    String sensorText(int type,String unit){if(type==Sensor.TYPE_LIGHT&&"camera".equals(a.preferences.getString("status_light_source","sensor"))){float sample=a.preferences.getFloat("status_camera_lux_sample",-1);return sample<0?"相机环境光等待首帧":"相机亮度样本 "+String.format(Locale.ROOT,"%.0f / 255",sample)+" · 仅作相对参考";}Sensor s=sensor(type);if(s==null)return "设备未提供";float[] v=values.get(type);if(v==null||!sampleAt.containsKey(type))return "等待传感器结果";
         double maximum=s.getMaximumRange();for(float sample:v)if(!Float.isFinite(sample)||(Double.isFinite(maximum)&&maximum>0&&Math.abs(sample)>maximum*1.05+.01))return "设备返回无效数据";
         if(v.length>0){float sample=v[0];if(type==Sensor.TYPE_AMBIENT_TEMPERATURE&&sample< -273.15f||type==Sensor.TYPE_PRESSURE&&sample<=0||type==Sensor.TYPE_LIGHT&&sample<0||type==Sensor.TYPE_PROXIMITY&&sample<0||type==Sensor.TYPE_RELATIVE_HUMIDITY&&(sample<0||sample>100))return "设备返回无效数据";}
         long age=(SystemClock.elapsedRealtime()-sampleAt.get(type))/1000;String old=age>5?" · "+age+" 秒前":"";
