@@ -93,6 +93,37 @@ public final class CoreTests {
         check(map.get("宿迁市")!=null&&map.get("宿迁市").admin.contains("江苏"),"Suqian has a Chinese city label");
         check(map.get("苏州市")!=null&&map.get("姑苏区")!=null&&map.get("虎丘区")!=null&&map.get("吴中区")!=null&&map.get("相城区")!=null&&map.get("吴江区")!=null,"Suzhou districts are bundled");
         check(map.size()==catalog.length(),"Bundled city labels are unique");
+        Map<String,Integer> kinds=new HashMap<>();Set<String> identities=new HashSet<>();Map<Long,String> ids=new HashMap<>();List<City> directory=new ArrayList<>(map.values());
+        for(int i=0;i<catalog.length();i++){
+            JSONObject row=catalog.getJSONObject(i);City c=new City(row);String kind=row.optString("kind","");kinds.put(kind,kinds.getOrDefault(kind,0)+1);
+            if(!kind.isEmpty())check(identities.add(c.placeId),"Each administrative identity occurs once: "+c.label());
+            for(long id:c.geonamesIds)check(ids.put(id,c.label())==null,"A GeoNames identity cannot be assigned to two different places");
+            check(!c.excludedAdministrativeArea(),"No autonomous prefecture, region or league result: "+c.label());
+            check(City.resolve(directory,c).key().equals(c.key()),"Canonical resolution is idempotent");
+        }
+        check(kinds.get("municipality")==4&&kinds.get("prefecture-city")==293&&kinds.get("county-city")==398,"Mainland coverage matches official 2025 totals plus the verified 2026 Caohu addition");
+        check(kinds.get("taiwan-city")==23&&kinds.get("special-region")==2&&kinds.get("district")==6,"Taiwan, Hong Kong, Macau and Suzhou districts are included");
+        check(map.containsKey("头份市")&&map.containsKey("员林市"),"Taiwan includes the two cities missing from the old list");
+        check(!map.containsKey("甘孜藏族自治州")&&map.containsKey("康定市"),"Prefecture removed while its cities remain");
+        for(String old:new String[]{"龙海市","藁城市","鹿泉市","冀州市","金坛市","海门市","普兰店市","莱芜市","即墨市","蓬莱市","偃师市","潞城市","奉化市"}){
+            int found=0;for(City c:directory)if(c.matches(old))found++;check(found==1,"Former city search has exactly one current district: "+old);
+        }
+        for(String n:new String[]{"通化市","苏州市","宿迁市","宿州市","朝阳市","康定市"}){
+            City c=map.get(n);JSONObject remote=c.json();remote.remove("placeId");remote.remove("geonamesIds");remote.put("name",n.substring(0,n.length()-1)).put("alias","").put("latitude",c.latitude+.001).put("longitude",c.longitude+.001);
+            City online=new City(remote);check(City.resolve(directory,online)==c,"Geocoder suffix variant resolves to one canonical city: "+n);
+            for(long id:c.geonamesIds){JSONObject byId=online.json().put("id",id).put("name","External spelling");check(City.resolve(directory,new City(byId))==c,"GeoNames populated/admin identities resolve to the same city");}
+        }
+        City tonghua=map.get("通化市");City county=new City(new JSONObject().put("name","通化县").put("country","中国").put("admin1","吉林省").put("latitude",tonghua.latitude).put("longitude",tonghua.longitude));
+        check(!tonghua.samePlace(county)&&City.resolve(directory,county)==county,"Same-name city and county must never be merged by proximity");
+        City otherProvince=new City(new JSONObject().put("name","通化市").put("country","中国").put("admin1","河北省").put("latitude",tonghua.latitude).put("longitude",tonghua.longitude));
+        check(!tonghua.samePlace(otherProvince)&&City.resolve(directory,otherProvince)==otherProvince,"Province boundaries prevent false same-name merges");
+        City hidden=new City(new JSONObject().put("name","甘孜").put("country","中国").put("admin1","四川省").put("feature_code","ADM2").put("latitude",30).put("longitude",102));
+        check(hidden.excludedAdministrativeArea(),"Short online prefecture labels cannot bypass exclusion");
+        check(Math.abs(map.get("图们市").longitude-129.84)<.05,"Tumen rejects erroneous 118-degree encyclopedia coordinate");
+        check(Math.abs(map.get("龙南市").latitude-24.90)<.05,"Longnan rejects erroneous 25-degree coordinate");
+        check(Math.abs(map.get("山南市").latitude-29.24)<.05,"Shannan uses the city seat rather than its vast administrative centroid");
+        check(Math.abs(map.get("茫崖市").longitude-90.857)<.05,"Mangya uses Huatugou seat rather than old Mangya town");
+        check(Math.abs(map.get("草湖市").longitude-76.015)<.05,"Caohu uses the officially named town near Kashgar, not a homonym hundreds of km away");
         System.out.println("PASS: "+checks+" behavioral checks");
     }
 }

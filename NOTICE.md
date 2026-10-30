@@ -95,3 +95,10 @@ Status 1.2.2: sensor frame-rate controls were removed; the app requests Android'
 
 Status 1.2.3: route drawing uses only Android LocationManager callbacks already requested by the user's continuous location setting. Points are sampled locally, stored as small JSON records after the user names and saves a route, and are never uploaded or matched to a map service. The route view, zoom, panning and point details are independently implemented. Global time formatting is a preference applied to pages that format event times; weather forecasts retain each selected location's data timezone. See docs/STATUS-1.2.3.md.
 
+
+
+## 1.2.10 城市目录与配置恢复
+
+城市目录结合 GeoNames（CC BY 4.0）、Wikidata 结构化坐标（CC0）及草湖镇的 OpenStreetMap 坐标（© OpenStreetMap contributors，ODbL 1.0）；合并目录数据库按 ODbL 1.0 提供，GeoNames 等原有署名保留，应用代码的 MIT 许可不替代数据许可。行政区划基础名录的 WTFPL 许可随 APK 保留。逐项来源及核查范围见 [城市目录说明](docs/CITY-CATALOG.md)。不接入 OSM 地图、在线地理服务或新运行时依赖。
+
+全配置导入导出通过系统文件选择器在本机处理，含设置、背景、收藏、地点、路线与课表，可能包含精确坐标及记录时间。导入不会恢复权限、最近定位、缓存、接口限流或 Wolfx 阅读确认，不自动启动持续定位或相机后台采样。旧版文件没有背景时保留当前背景。

@@ -11,6 +11,7 @@ import java.nio.file.Files;
 public final class WeatherStore implements WeatherApi.RequestPolicy {
     private final Context context;
     private final SharedPreferences prefs;
+    private List<City> directory;
     public WeatherStore(Context context) { this.context = context; prefs = context.getSharedPreferences("weather", 0); }
     @Override public synchronized void reserve() throws IOException {
         long now=System.currentTimeMillis();
@@ -27,21 +28,21 @@ public final class WeatherStore implements WeatherApi.RequestPolicy {
     }
     @Override public void blockUntil(long timestamp) {prefs.edit().putLong("network_blocked_until",timestamp).apply();}
     public City selected(City fallback) {
-        try { return new City(new JSONObject(prefs.getString("selected", ""))); } catch (Exception e) { return fallback; }
+        try { City c=City.resolve(catalog(),new City(new JSONObject(prefs.getString("selected", ""))));return c.excludedAdministrativeArea()?fallback:c; } catch (Exception e) { return fallback; }
     }
     public void select(City city) { prefs.edit().putString("selected", city.json().toString()).apply(); }
     public List<City> saved() {
         List<City> out = new ArrayList<>();
         try {
             JSONArray array = new JSONArray(prefs.getString("saved", "[]"));
-            for (int i=0;i<array.length();i++) try { out.add(new City(array.getJSONObject(i))); } catch (Exception ignored) { }
+            for (int i=0;i<array.length();i++) try { City c=City.resolve(catalog(),new City(array.getJSONObject(i)));boolean duplicate=false;for(City old:out)if(old.samePlace(c)){duplicate=true;break;}if(!duplicate&&!c.excludedAdministrativeArea())out.add(c); } catch (Exception ignored) { }
         } catch (Exception ignored) { }
         return out;
     }
-    public boolean isSaved(City city) { for(City c:saved()) if(c.key().equals(city.key())) return true; return false; }
+    public boolean isSaved(City city) { for(City c:saved()) if(c.samePlace(city)) return true; return false; }
     public boolean toggle(City city) {
         List<City> cities=saved(); boolean removed=false;
-        for(int i=cities.size()-1;i>=0;i--) if(cities.get(i).key().equals(city.key())) {cities.remove(i);removed=true;}
+        for(int i=cities.size()-1;i>=0;i--) if(cities.get(i).samePlace(city)) {cities.remove(i);removed=true;}
         if(!removed) { if(cities.size()>=20) cities.remove(0); cities.add(city); }
         JSONArray array=new JSONArray();for(City c:cities)array.put(c.json());
         prefs.edit().putString("saved",array.toString()).apply();return !removed;
@@ -68,6 +69,7 @@ public final class WeatherStore implements WeatherApi.RequestPolicy {
     }
     public synchronized boolean clearCache(){return ForecastCache.clear(context.getFilesDir());}
     public List<City> catalog() {
+        if(directory!=null)return directory;
         List<City> cities=new ArrayList<>();
         try(InputStream in=context.getAssets().open("cities.json")) {
             ByteArrayOutputStream bytes=new ByteArrayOutputStream();byte[] buffer=new byte[4096];int n;
@@ -75,6 +77,6 @@ public final class WeatherStore implements WeatherApi.RequestPolicy {
             JSONArray array=new JSONArray(new String(bytes.toByteArray(),StandardCharsets.UTF_8));
             for(int i=0;i<array.length();i++) cities.add(new City(array.getJSONObject(i)));
         } catch(Exception ignored) { }
-        return cities;
+        directory=cities;return directory;
     }
 }

@@ -1,0 +1,6 @@
+City directory database: Open Database License 1.0 (ODbL), https://opendatacommons.org/licenses/odbl/1-0/ . Source and machine-readable database: https://github.com/AdybirdZ/daidai-toolbox/blob/main/app/src/main/assets/cities.json .
+GeoNames: CC BY 4.0, https://www.geonames.org/ ; labels and identities modified.
+Wikidata structured coordinates: CC0 1.0, https://www.wikidata.org/wiki/Wikidata:Licensing .
+Caohu town representative coordinate: © OpenStreetMap contributors, ODbL 1.0, https://www.openstreetmap.org/relation/20460283 .
+Administrative-divisions-of-China: WTFPL, see Administrative-divisions-WTFPL.txt.
+Per-record provenance: docs/CITY-CATALOG-1.2.10.json and docs/CITY-CATALOG.md in the source repository. These data licenses are separate from the application's MIT code license.

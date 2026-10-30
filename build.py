@@ -31,6 +31,7 @@ def main():
     opts = parser.parse_args()
     if not opts.sdk:
         parser.error('Set --sdk or ANDROID_HOME to your Android SDK directory.')
+    run([sys.executable, ROOT / 'tests/release_checks.py'])
     sdk = Path(opts.sdk).resolve()
     platform = sdk / 'platforms/android-35/android.jar'
     tools = sdk / 'build-tools/35.0.0'

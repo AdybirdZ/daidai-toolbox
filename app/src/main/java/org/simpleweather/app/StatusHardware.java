@@ -41,6 +41,7 @@ final class StatusHardware implements SensorEventListener {
     }
     int sensorDelay(){return SensorManager.SENSOR_DELAY_FASTEST;}
     boolean sensorEnabled(int type){return a.preferences.getBoolean("status_sensor_show_"+type,true);}
+    void shutdown(){pause(false);if(cameraReader!=null){cameraReader.stop();cameraReader=null;}}
     void pause(){pause(a.preferences.getBoolean("status_receive_pause",true));}
     void pause(boolean preserveReceive){active=false;if(sensors!=null)sensors.unregisterListener(this);boolean keepCamera=a.preferences.getBoolean("status_camera_background",false);if(!keepCamera&&cameraReader!=null){cameraReader.stop();cameraReader=null;}if(preserveReceive&&(gnssRunning||gnssRequested)){try{if(locations!=null){locations.unregisterGnssStatusCallback(callback);locations.removeUpdates(fixes);}}catch(Exception ignored){}gnssRunning=false;gnssPaused=true;gnssMessage="卫星接收已暂停 · 回到状态页面后继续";return;}stopGnss("已停止卫星接收 · 切换栏目或后台停止");gnssPaused=false;gnssRequested=false;}
     @Override public void onAccuracyChanged(Sensor s,int level){accuracy.put(s.getType(),level);if(s.getType()==(rotationVector?Sensor.TYPE_ROTATION_VECTOR:Sensor.TYPE_MAGNETIC_FIELD))compassAccuracy=level;}

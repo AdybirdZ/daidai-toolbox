@@ -171,6 +171,7 @@ final class GpsScreen {
     private boolean network(){return a.preferences.getString("location_provider","gps").equals("network");}
     private String mode(){return network()?"网络定位":"卫星硬件定位";}
     void configurationChanged(){hardware.configurationChanged();lastSecond=-1;update();}
+    void stopForImport(){pause();hardware.shutdown();LocationService.stop(a);}
     void modeChanged(){locationStarting=false;pendingPermission=false;pendingSatellite=false;LocationService.stop(a);hardware.stopGnss("定位方式已修改，卫星接收已停止");}
     void intervalChanged(){if(LocationService.running)startService();}
     void continuousChanged(){if(LocationService.running)startService();}
