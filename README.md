@@ -1,6 +1,6 @@
-# 呆呆工具箱 1.2.7（本地开发分支）
+# 呆呆工具箱 1.2.7
 
-本版源码包含 1.2.7 的本地改动；英文预览包覆盖保存在工作区根目录 `releases/pre2.0.0-1/`，不上传 GitHub。
+1.2.7 中文正式版已发布到 GitHub，英文翻译预览仍只保存在本地工作区。
 
 原生 Android 个人非商业工具箱，Android 8.0+，Java，无第三方运行时依赖。页脚：呆呆鸟使用 Codex 制作。
 
@@ -35,11 +35,11 @@
 
 ## 多语言资源
 
-界面显示文字从 `app/src/main/res/values/strings.xml` 开始维护；英文入口位于 `values-en/strings.xml`。新增语言时复制 `values-en` 为对应 Android 语言目录（例如 `values-ja`），保留相同资源键，只翻译资源值。不要翻译偏好键、JSON 字段、来源 ID、URL、课程内容或天体内部标识。当前只迁移了工具箱外壳和首批常用文字，其余页面会回退到中文，后续可以按页面逐步迁移。
+界面显示文字从 `app/src/main/res/values/strings.xml` 维护。1.2.7 只发布中文资源；英文翻译预览目录不进入正式源码包，后续在 2.0.0 完成语言资源迁移。不要翻译偏好键、JSON 字段、来源 ID、URL、课程内容或天体内部标识。
 
 ## 安装与升级
 
-安装本地预览包 `DaidaiToolbox-pre2.0.0-1.apk`。包名保持 `org.simpleweather.app`，包内版本为 1.2.7 / versionCode 31，沿用原开发签名，可覆盖 1.2.6 并保留地区、收藏、课表、背景、地点及路线。正式版 1.2.6 的 GitHub 发布文件保持不变。
+安装 `DaidaiToolbox-1.2.7.apk`。包名保持 `org.simpleweather.app`，versionCode 为 31，沿用原开发签名，可覆盖 1.2.6 并保留地区、收藏、课表、背景、地点及路线。
 
 使用本机开发签名，适合个人侧载。保存签名私钥才能继续覆盖升级；源码压缩包不含私钥，重新构建生成的不同密钥不能覆盖本次 APK。不是已提交商店的发行包。
 
@@ -48,7 +48,7 @@
 JDK 17+、Python 3、Google Android SDK `platforms;android-35` 和 `build-tools;35.0.0`：
 
 ```powershell
-python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-pre2.0.0-1.apk
+python build.py --sdk C:/Android/Sdk --out build/DaidaiToolbox-1.2.7.apk
 ```
 
 脚本执行 aapt2、javac、D8、zipalign、apksigner。首次创建 `.signing/development.jks`，开发密码为 `android`，勿公开私钥。Windows 含中文路径已验证。macOS/Linux 需对应平台 SDK，未实测。Android Studio 可打开 Gradle 配置（AGP 8.7.3 / Gradle 8.9，未附 wrapper），本次只验证脚本构建。
