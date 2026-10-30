@@ -124,7 +124,7 @@ public class MainActivity extends Activity {
     void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
     void refreshScreen(){List<Integer> visible=visibleTabs();if(!visible.contains(tab))tab=visible.get(0);switchTab(tab);}
     private void pageHeader(){
-        TextView title=text("呆呆工具箱 · "+tabName(tab),25,INK,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
+        TextView title=text(getString(R.string.app_name)+" · "+tabName(tab),25,INK,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
         LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->schedule.addCourse()));}body.addView(actions);gap(body,16);
     }
     void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
