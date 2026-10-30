@@ -30,10 +30,13 @@ public final class City {
         value=value.replaceAll("(市|区|县|镇|乡|旗)$", "");
         return value;
     }
+    private String nameKey() {
+        return label().toLowerCase(Locale.ROOT).replaceAll("[\\s,，、·.。\\-]", "").replaceAll("(市|区|县|镇|乡|旗)$", "");
+    }
     public boolean samePlace(City other) {
         if(other==null)return false;
         double dlat=latitude-other.latitude,dlon=(longitude-other.longitude)*Math.cos(Math.toRadians((latitude+other.latitude)/2));
-        return placeKey().equals(other.placeKey()) || dlat*dlat+dlon*dlon < 0.12*0.12;
+        return placeKey().equals(other.placeKey()) || (nameKey().equals(other.nameKey()) && dlat*dlat+dlon*dlon < 0.12*0.12);
     }
     public boolean matches(String query) {
         String q = query.trim().toLowerCase(Locale.ROOT);
