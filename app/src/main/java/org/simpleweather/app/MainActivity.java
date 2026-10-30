@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=state==null?preferences.getInt("last_tab",0):state.getInt("toolbox_tab",preferences.getInt("last_tab",0));if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));navigationOffset=state.getInt("toolbox_navigation",0);pendingScrollY=state.getInt("toolbox_scroll",0);}if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);switchTab(tab);load(false);
-        if(preferences.getInt("seen_version",0)<31)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",31).apply();}},700);
+        if(preferences.getInt("seen_version",0)<32)main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",32).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -233,13 +233,16 @@ public class MainActivity extends Activity {
         metricRow(c,"风向",WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")).isEmpty()?"—":WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")),"今日最高紫外线指数",Double.isFinite(uv)?String.format(Locale.ROOT,"%.1f",uv):"—");
         gap(c,19);line(c);gap(c,19);
         metricRow(c,"日出",WeatherData.clock(WeatherData.textAt(data.daily,"sunrise",today)),"日落",WeatherData.clock(WeatherData.textAt(data.daily,"sunset",today)));
+        gap(c,19);line(c);gap(c,14);
+        String uvText=Double.isFinite(uv)?getString(R.string.uv_description,uv):getString(R.string.uv_missing);
+        c.addView(text(uvText,13,MUTED,false));
     }
     private void metricRow(LinearLayout parent,String a,String av,String b,String bv) {
         LinearLayout r=row();String[] labels={a,b},values={av,bv};
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text(getString(R.string.about_title)+" · pre2.0.0-1",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text(getString(R.string.about_title)+" · 1.2.7",12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -282,7 +285,6 @@ public class MainActivity extends Activity {
         results.removeAllViews();String q=query.trim();
         if(q.isEmpty()) {
             List<City> saved=store.saved();if(!saved.isEmpty()){results.addView(text("我的地区",16,INK,true));gap(results,10);cityList(saved);gap(results,22);}
-            results.addView(text("常用地区",16,INK,true));gap(results,12);
             for(int i=0;i<catalog.size();i+=3){LinearLayout r=row();r.setPadding(0,dp(4),0,dp(4));for(int col=0;col<3;col++){if(col>0)gapHorizontal(r,8);int j=i+col;if(j>=catalog.size()){r.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));continue;}City c=catalog.get(j);TextView chip=button(c.label(),false,()->choose(c));chip.setTextSize(13);chip.setPadding(dp(4),dp(10),dp(4),dp(10));r.addView(chip,new LinearLayout.LayoutParams(0,-2,1));}results.addView(r);}
         } else {
             List<City> matched=new ArrayList<>();Set<String> keys=new HashSet<>();
@@ -317,7 +319,7 @@ public class MainActivity extends Activity {
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void settings(){new SettingsScreen(this).show();}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",31).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",32).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
@@ -331,6 +333,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"1.2.7 · 语言资源、地区目录与地点管理","• 将新增界面文字纳入 XML 语言资源；全局设置新增语言入口，当前完整语言仍为中文，2.0.0 再提供正式语言切换。\r\n• 地区选择页移除“常用地区”，扩充中国大陆、香港、澳门和台湾的中文城市目录；城市名称统一使用规范后缀，补充宿迁市及苏州下辖地区，并去除重复地点。\r\n• 保存地点支持上移、下移排序；编辑地点保留原来的列表位置。\r\n• 天气详情底部增加今日最高紫外线指数说明。\r\n• 版本号 1.2.7 / versionCode 31。英文预览包仅在本地覆盖 pre2.0.0-1，不上传 GitHub。");
         updateEntry(c,"pre2.0.0-1 · 多语言资源整理","• 将应用名称、底部导航、天气栏目、常用操作和来源入口迁移到 Android 语言资源，中文默认显示保持不变。\r\n• 增加 values-en 初始语言资源作为后续英文翻译入口；未完成的文本会回退到中文资源。\r\n• 资源键仅用于显示文字，课程、地点、接口字段、偏好键和天体内部标识继续保持稳定，不受语言切换影响。\r\n• 版本号 pre2.0.0-1 / versionCode 30，仅本地预览版，不上传 GitHub。");
         updateEntry(c,"1.2.6 · 路线与地点导入导出","• 已保存路线和地点可通过系统文件选择器导入或导出 JSON 文件，导入前确认，保留原记录并跳过重复内容。\r\n• 指南针默认采用真北，设置中默认选项置于首位；当前位置的移动方位去除括号标记。\r\n• 修复路线播放到末尾后重新播放导致缩放改变的问题。\r\n• 路线框增加边缘刻度，缩放滑块范围为边长 30 米至 10 千米。\r\n• 路线跟随按钮切换“跟随当前位置”和“解除跟随当前位置”，回放时跟随橙色记录点。\r\n• 地点图按所选目标确定外圈范围，超出范围的其他地点以较小圆点显示在外圈。\r\n• 版本号 1.2.6，沿用原签名。");
         updateEntry(c,"1.2.5 · 文字优化与状态交互","• 优化各页面文字、专业术语、操作提示与说明排版，统一长说明段间距。\r\n• 路线回放居中后持续跟随橙色记录点，拖动画布可取消跟随。\r\n• 定位与卫星接收分别合并开始和停止按钮；开始卫星接收时自动启动当前位置更新，可正常开始路线绘制。\r\n• 垂直定位误差半径在海拔下方以大字显示。\r\n• 保存地点可选择颜色和是否在图中显示，支持同时绘制多个地点并点选目标。\r\n• 重叠或邻近路线记录点的详情使用“返回”按钮，返回后保留记录点选择界面。\r\n• 版本号 1.2.5，沿用原签名。");
@@ -376,7 +379,7 @@ public class MainActivity extends Activity {
     String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 pre2.0.0-1 · 个人非商业使用\r\n\r\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\r\n\r\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\r\n\r\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\r\n\r\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
+        EarthquakeInfo.paragraph(this,content,"呆呆工具箱 1.2.7 · 个人非商业使用\r\n\r\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\r\n\r\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\r\n\r\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\r\n\r\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
         EarthquakeInfo.paragraph(this,content,"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\r\n\r\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择默认存于本机，清除缓存或恢复默认设置会保留，卸载应用将删除。主动导出的 JSON 文件包含坐标、时间和名称，地点还包含颜色及显示状态；文件保存位置由用户通过系统选择器指定，云盘等提供方适用其自身隐私规则。导入在本机处理，不上传文件。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。");
         EarthquakeInfo.append(this,content);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");link(content,"Android · 卫星状态官方文档","https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,"Android · 传感器官方说明","https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,"天体坐标与星等 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");

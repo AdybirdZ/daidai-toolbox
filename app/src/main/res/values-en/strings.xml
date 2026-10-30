@@ -20,7 +20,11 @@
     <string name="action_close">Close</string>
     <string name="updates_title">Version history</string>
     <string name="about_title">Sources and privacy</string>
-    <string name="about_version">Daidai Toolbox pre2.0.0-1 · personal non-commercial use</string>
+    <string name="about_version">Daidai Toolbox 1.2.7 · personal non-commercial use</string>
     <string name="source_open_meteo">Weather: Open-Meteo · CC BY 4.0 ↗</string>
     <string name="unknown_weather">Unknown weather</string>
+    <string name="language_title">Language</string>
+    <string name="language_unavailable">Chinese is currently the only complete language. More languages will be implemented in 2.0.0. Parts of the preview use English when the system language is English.</string>
+    <string name="uv_description">Today’s maximum UV index is %1$.1f. The UV index describes ultraviolet radiation intensity; higher values indicate greater exposure risk. It is a weather-model estimate, not a ground observation.</string>
+    <string name="uv_missing">Today’s maximum UV index is unavailable. It is supplied by the weather model and is not estimated locally when missing.</string>
 </resources>

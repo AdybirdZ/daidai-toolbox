@@ -84,12 +84,15 @@ public final class CoreTests {
         JSONArray catalog=new JSONArray(new String(Files.readAllBytes(Paths.get(args[1])),StandardCharsets.UTF_8));
         Map<String,City> map=new HashMap<>();for(int i=0;i<catalog.length();i++){City c=new City(catalog.getJSONObject(i));map.put(c.label(),c);}
         check(map.size()>=40,"Bundled city selection works offline");
-        check(map.get("长沙").admin.contains("湖南"),"Changsha preset is Hunan, not a namesake town");
-        check(map.get("青岛").admin.contains("山东"),"Qingdao preset is Shandong");
-        check(map.get("大连").admin.contains("辽宁"),"Dalian preset is Liaoning");
-        check(map.get("长春").admin.contains("吉林"),"Changchun preset is Jilin");
-        check(map.get("海口").latitude<21,"Haikou preset is Hainan");
+        check(map.get("长沙市").admin.contains("湖南"),"Changsha preset is Hunan, not a namesake town");
+        check(map.get("青岛市").admin.contains("山东"),"Qingdao preset is Shandong");
+        check(map.get("大连市").admin.contains("辽宁"),"Dalian preset is Liaoning");
+        check(map.get("长春市").admin.contains("吉林"),"Changchun preset is Jilin");
+        check(map.get("海口市").latitude<21,"Haikou preset is Hainan");
         check(map.get("纽约").longitude<-70&&map.get("纽约").longitude>-80,"New York preset is New York City");
+        check(map.get("宿迁市")!=null&&map.get("宿迁市").admin.contains("江苏"),"Suqian has a Chinese city label");
+        check(map.get("苏州市")!=null&&map.get("姑苏区")!=null&&map.get("虎丘区")!=null&&map.get("吴中区")!=null&&map.get("相城区")!=null&&map.get("吴江区")!=null,"Suzhou districts are bundled");
+        check(map.size()==catalog.length(),"Bundled city labels are unique");
         System.out.println("PASS: "+checks+" behavioral checks");
     }
 }
