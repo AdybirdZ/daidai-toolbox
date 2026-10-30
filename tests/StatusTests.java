@@ -45,6 +45,15 @@ public final class StatusTests {
         StringBuilder longName=new StringBuilder();for(int i=0;i<61;i++)longName.append('字');rejected=false;try{new StatusPlace("bad",longName.toString(),0,0,0);}catch(IllegalArgumentException ex){rejected=true;}check(rejected,"Waypoint name length is bounded");
         List<StatusPlace> many=new ArrayList<>();for(int i=0;i<201;i++)many.add(new StatusPlace("id"+i,"x",0,0,0));check(StatusPlace.decode(StatusPlace.encode(many)).size()==201,"Waypoint persistence has no artificial record count");
         check(StatusMath.distanceText(123).equals("123.0 米")&&StatusMath.distanceText(1234).equals("1.23 km"),"Distance units switch at one kilometer");
+        StatusPlace legacy=StatusPlace.decode("[{\"id\":\"old\",\"name\":\"旧地点\",\"lon\":120,\"lat\":31}]").get(0);
+        check(legacy.visible&&legacy.color==StatusPlace.DEFAULT_COLOR,"Legacy places default to visible blue without data loss");
+        StatusPlace colored=new StatusPlace("red","红点",120,31,456,0xFFB83636,false);
+        StatusPlace restored=StatusPlace.decode(StatusPlace.encode(Arrays.asList(colored))).get(0);
+        check(!restored.visible&&restored.color==0xFFB83636&&restored.created==456,"Color and hidden setting persist across round trip");
+        StatusPlace shown=restored.withVisibility(true);
+        check(shown.visible&&shown.id.equals(restored.id)&&shown.color==restored.color&&shown.longitude==restored.longitude,"Visibility update preserves identity, color and coordinates");
+        check(!restored.visible,"Visibility change leaves original snapshot intact");
+        check(new StatusPlace("opaque","点",0,0,0,0x00246BCE,true).color==0xFF246BCE,"Saved marker colors remain opaque and visible");
         System.out.println("StatusTests: "+checks+" checks passed");
     }
 }

@@ -44,7 +44,7 @@ final class RouteCanvas extends View {
     private int visibleCount;
     private double originLon,originLat,cosLat=1,span=.002;
     private double viewLon,viewLat;
-    private boolean followSelf,dragged,multiTouch;
+    private boolean followSelf,playback,dragged,multiTouch;
     private final RouteViewport viewport=new RouteViewport();
     private float lastX,lastY,downX,downY;
     RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);setContentDescription("路线画布，单指拖动，使用下方滑块缩放，点按记录点查看详情");}
@@ -60,16 +60,19 @@ final class RouteCanvas extends View {
         invalidate();
     }
     int pointCount(){return points.size();}
-    void showThrough(int index){visibleCount=Math.max(0,Math.min(points.size(),index+1));invalidate();}
+    void showThrough(int index){visibleCount=Math.max(0,Math.min(points.size(),index+1));updateFollow();invalidate();}
+    void playback(boolean value){playback=value;}
+    boolean following(){return followSelf;}
+    private boolean updateFollow(){if(!followSelf)return false;if(playback){if(visibleCount==0)return false;RoutePoint q=points.get(visibleCount-1);viewLon=q.lon;viewLat=q.lat;}else{Location fix=LocationService.last(a);if(fix==null)return false;viewLon=fix.getLongitude();viewLat=fix.getLatitude();}viewport.center();return true;}
     void centerOn(int index){if(index<0||index>=points.size())return;RoutePoint q=points.get(index);viewLon=q.lon;viewLat=q.lat;followSelf=false;viewport.center();invalidate();}
-    void centerSelf(){Location fix=LocationService.last(a);if(fix==null){a.toast("请先获取当前位置");return;}followSelf=true;viewLon=fix.getLongitude();viewLat=fix.getLatitude();viewport.center();invalidate();}
+    void centerSelf(){followSelf=true;if(!updateFollow()){followSelf=false;a.toast(playback?"暂无回放记录点":"请先获取当前位置");return;}invalidate();}
     void zoom(float value){viewport.zoomTo(value);invalidate();}
     static double longitudeDelta(double value){return ((value+540)%360+360)%360-180;}
     private void intercept(boolean disallow){ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(disallow);}
     private float scale(){return (float)(Math.min(getWidth(),getHeight())*.78/span*viewport.zoom);}
     private float[] xy(RoutePoint q){return new float[]{getWidth()/2f+(float)(longitudeDelta(q.lon-viewLon)*cosLat)*scale()+viewport.panX,getHeight()/2f-(float)(q.lat-viewLat)*scale()+viewport.panY};}
     protected void onDraw(Canvas c){
-        super.onDraw(c);if(followSelf){Location fix=LocationService.last(a);if(fix!=null){viewLon=fix.getLongitude();viewLat=fix.getLatitude();}}
+        super.onDraw(c);updateFollow();
         paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(a.dp(2));paint.setColor(0xFF246BCE);
         for(int i=1;i<visibleCount;i++){float[] q=xy(points.get(i-1)),r=xy(points.get(i));c.drawLine(q[0],q[1],r[0],r[1],paint);}
         paint.setStyle(Paint.Style.FILL);
@@ -98,10 +101,11 @@ final class RouteCanvas extends View {
         if(hits.isEmpty())return;
         if(hits.size()==1){showPoint(hits.get(0));return;}
         String[] labels=new String[hits.size()];for(int i=0;i<hits.size();i++)labels[i]="记录点 "+(hits.get(i)+1)+" / "+points.size();
-        new ToolDialog(a).setTitle("选择重叠或邻近的记录点").setItems(labels,(d,n)->showPoint(hits.get(n))).setNegativeButton("返回",null).show();
+        android.app.AlertDialog choices=new ToolDialog(a).setTitle("选择重叠或邻近的记录点").setItems(labels,null).setNegativeButton("返回",null).show();
+        choices.getListView().setOnItemClickListener((parent,view,n,id)->showPoint(hits.get(n)));
     }
     private void showPoint(int index){
         RoutePoint q=points.get(index);java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss XXX",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone(a.displayZone(java.time.ZoneId.systemDefault())));
-        new ToolDialog(a).setTitle("记录点 "+(index+1)+" / "+points.size()).setMessage("坐标（经度、纬度）："+CoordinateFormat.pair(q.lon,q.lat,6)+"\n记录时间："+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?"\n水平误差半径："+String.format(Locale.ROOT,"%.1f 米",q.accuracy):"")).setPositiveButton("关闭",null).show();
+        new ToolDialog(a).setTitle("记录点 "+(index+1)+" / "+points.size()).setMessage("坐标（经度、纬度）："+CoordinateFormat.pair(q.lon,q.lat,6)+"\n记录时间："+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?"\n水平误差半径："+String.format(Locale.ROOT,"%.1f 米",q.accuracy):"")).setNegativeButton("返回",null).show();
     }
 }

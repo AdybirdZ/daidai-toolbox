@@ -29,16 +29,28 @@ final class StatusViews {
         }
     }
     static final class Treasure extends Square {
-        final StatusHardware hw;final StatusPlaces places;Treasure(MainActivity a,StatusHardware hw,StatusPlaces places){super(a);this.hw=hw;this.places=places;setContentDescription("地点方位图 · 蓝点表示所选地点");}
-        @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.37f;circle(c,x,y,r,0xFFDCE5F1,1);circle(c,x,y,r/2,0xFFDCE5F1,1);p.setColor(a.BLUE);c.drawCircle(x,y,a.dp(5),p);
+        final StatusHardware hw;final StatusPlaces places;final Map<String,float[]> hits=new LinkedHashMap<>();
+        Treasure(MainActivity a,StatusHardware hw,StatusPlaces places){super(a);this.hw=hw;this.places=places;setContentDescription("地点方位图 · 按所设颜色显示地点，圆环表示所选目标");setClickable(true);}
+        @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.37f;hits.clear();circle(c,x,y,r,0xFFDCE5F1,1);circle(c,x,y,r/2,0xFFDCE5F1,1);p.setColor(a.BLUE);c.drawCircle(x,y,a.dp(5),p);
             Location fix=LocationService.last(a);StatusPlace target=places.selected();double heading=hw.trueHeading(fix);boolean relative=Double.isFinite(heading);text(c,relative?"屏幕上沿":"真北向上",x,a.dp(20),13,a.MUTED);
-            if(fix==null||target==null){text(c,fix==null?"请先获取当前位置":"请选择一个保存的地点",x,y+a.dp(30),14,a.MUTED);return;}
-            double meters=StatusMath.distance(fix.getLongitude(),fix.getLatitude(),target.longitude,target.latitude),bearing=StatusMath.bearing(fix.getLongitude(),fix.getLatitude(),target.longitude,target.latitude);double range=meters<=100?100:meters<=1000?1000:Math.pow(10,Math.ceil(Math.log10(meters)));
-            double display=relative?bearing-heading:bearing;if(!Double.isFinite(display))display=0;
-            float[] q=point(x,y,(float)(r*Math.min(.95,meters/range)),display);p.setColor(a.BLUE);c.drawCircle(q[0],q[1],a.dp(8),p);circle(c,q[0],q[1],a.dp(12),0xFF99BBEE,1);
+            if(fix==null){text(c,"请先获取当前位置",x,y+a.dp(30),14,a.MUTED);return;}
+            List<StatusPlace> rows=places.shown();if(rows.isEmpty()){text(c,"暂无可显示地点",x,y+a.dp(30),14,a.MUTED);return;}
+            double farthest=0;for(StatusPlace q:rows)farthest=Math.max(farthest,StatusMath.distance(fix.getLongitude(),fix.getLatitude(),q.longitude,q.latitude));
+            double range=farthest<=100?100:farthest<=1000?1000:Math.pow(10,Math.ceil(Math.log10(farthest)));
+            List<SkyLabels.Candidate> labels=new ArrayList<>();Map<String,Integer> colors=new HashMap<>();
+            for(StatusPlace place:rows){double meters=StatusMath.distance(fix.getLongitude(),fix.getLatitude(),place.longitude,place.latitude),bearing=StatusMath.bearing(fix.getLongitude(),fix.getLatitude(),place.longitude,place.latitude);
+                double display=relative?bearing-heading:bearing;if(!Double.isFinite(display))display=0;
+                float[] q=point(x,y,(float)(r*Math.min(.95,meters/range)),display);hits.put(place.id,q);p.setStyle(Paint.Style.FILL);p.setColor(place.color);c.drawCircle(q[0],q[1],a.dp(7),p);
+                if(target!=null&&place.id.equals(target.id))circle(c,q[0],q[1],a.dp(12),place.color,2);
+                p.setTextSize(a.dp(12));Paint.FontMetrics fm=p.getFontMetrics();labels.add(new SkyLabels.Candidate(place.id,q[0],q[1],p.measureText(place.name),fm.ascent,fm.descent));colors.put(place.id,place.color);
+            }
+            for(SkyLabels.Placed label:SkyLabels.place(labels,Collections.emptyList(),getWidth(),getHeight(),a.dp(13),a.dp(2),a.dp(1))){String name="";for(StatusPlace q:rows)if(q.id.equals(label.candidate.id)){name=q.name;break;}text(c,name,label.candidate.x,label.baseline,12,colors.get(label.candidate.id));}
             for(int i=0;i<4;i++){float[] n=point(x,y,r+a.dp(15),i*90-(relative?heading:0));text(c,new String[]{"北","东","南","西"}[i],n[0],n[1]+a.dp(4),13,a.MUTED);}
             text(c,"外圈 "+StatusMath.distanceText(range),x,getHeight()-a.dp(8),12,a.MUTED);
         }
+        private float downX,downY;
+        @Override public boolean onTouchEvent(MotionEvent e){if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getX();downY=e.getY();return true;}if(e.getActionMasked()==MotionEvent.ACTION_UP){if(Math.hypot(e.getX()-downX,e.getY()-downY)>a.dp(12))return true;List<StatusPlace> nearby=new ArrayList<>();for(StatusPlace place:places.shown()){float[] q=hits.get(place.id);if(q!=null&&Math.hypot(e.getX()-q[0],e.getY()-q[1])<=a.dp(22))nearby.add(place);}if(nearby.size()==1)places.select(nearby.get(0).id);else if(nearby.size()>1){String[] names=new String[nearby.size()];for(int i=0;i<names.length;i++)names[i]=nearby.get(i).name;new ToolDialog(a).setTitle("选择地点").setItems(names,(d,n)->places.select(nearby.get(n).id)).setNegativeButton("返回",null).show();}performClick();return true;}return true;}
+        @Override public boolean performClick(){super.performClick();return true;}
     }
     static final class Sky extends Square {
         final StatusHardware hw;String selected="";final Runnable changed;final Map<String,float[]> hits=new HashMap<>();
