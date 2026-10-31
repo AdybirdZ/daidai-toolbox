@@ -102,3 +102,9 @@ Status 1.2.3: route drawing uses only Android LocationManager callbacks already 
 城市目录结合 GeoNames（CC BY 4.0）、Wikidata 结构化坐标（CC0）及草湖镇的 OpenStreetMap 坐标（© OpenStreetMap contributors，ODbL 1.0）；合并目录数据库按 ODbL 1.0 提供，GeoNames 等原有署名保留，应用代码的 MIT 许可不替代数据许可。行政区划基础名录的 WTFPL 许可随 APK 保留。逐项来源及核查范围见 [城市目录说明](docs/CITY-CATALOG.md)。不接入 OSM 地图、在线地理服务或新运行时依赖。
 
 全配置导入导出通过系统文件选择器在本机处理，含设置、背景、收藏、地点、路线与课表，可能包含精确坐标及记录时间。导入不会恢复权限、最近定位、缓存、接口限流或 Wolfx 阅读确认，不自动启动持续定位或相机后台采样。旧版文件没有背景时保留当前背景。
+
+## 1.2.11 本机相机与设备指向
+
+Camera2 用于读取本机相机 Y 平面相对亮度，支持时固定曝光时间与感光度；否则尝试锁定自动曝光，界面如实报告状态。没有新增权限、在线数据源或第三方运行时依赖，不保存相机画面。设备方向使用 Android 旋转矢量和 GeomagneticField，本地修正磁偏角后在所选地区的地平星图显示，不上传姿态数据。
+
+官方接口说明：[手动传感器能力](https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)、[自动曝光锁定](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#CONTROL_AE_LOCK)、[曝光时间](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#SENSOR_EXPOSURE_TIME)。固定曝光不能替代照度标定。

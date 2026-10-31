@@ -41,7 +41,7 @@ public final class ConfigurationUiTests extends Instrumentation {
             prefs("status_routes").edit().putString("routes","[{\"id\":\"config-route\",\"name\":\"配置路线\",\"points\":[{\"lon\":120.6,\"lat\":31.3,\"time\":1000},{\"lon\":120.7,\"lat\":31.4,\"time\":2000}]}]").commit();
             try(FileOutputStream out=new FileOutputStream(image)){Bitmap bitmap=Bitmap.createBitmap(8,12,Bitmap.Config.ARGB_8888);bitmap.eraseColor(Color.BLUE);bitmap.compress(Bitmap.CompressFormat.PNG,100,out);bitmap.recycle();}
             activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();transfer=field(activity,"configuration");
-            check("1.2.10".equals(call(activity,"versionName",new Class[]{})),"About version comes from actual installed package");
+            check(getTargetContext().getPackageManager().getPackageInfo(getTargetContext().getPackageName(),0).versionName.equals(call(activity,"versionName",new Class[]{})),"About version comes from actual installed package");
             searchChecks();
             File exported=new File(getTargetContext().getCacheDir(),"configuration-ui.json");AtomicReference<Intent> picker=new AtomicReference<>();
             ActivityMonitor exportMonitor=new ActivityMonitor(){@Override public ActivityResult onStartActivity(Intent i){if(Intent.ACTION_CREATE_DOCUMENT.equals(i.getAction())){picker.set(i);return new ActivityResult(Activity.RESULT_OK,new Intent().setData(Uri.fromFile(exported)));}return null;}};addMonitor(exportMonitor);
@@ -65,7 +65,7 @@ public final class ConfigurationUiTests extends Instrumentation {
             check(Arrays.equals(Files.readAllBytes(image.toPath()),Base64.getDecoder().decode(document.getString("background"))),"Background restored before fresh Activity decodes it");
             Object gps=field(activity,"gps"),places=field(gps,"places"),store=field(gps,"routeStore");
             ui(()->{check(((List<?>)call(places,"all",new Class[]{})).size()==1,"Fresh places model reads imported store");check(((List<?>)call(store,"all",new Class[]{})).size()==1,"Fresh route model reads imported store");});
-            check(prefs("timetable").getString("data","").equals(document.getJSONObject("timetable").getJSONObject("data").getString("value")),"Timetable restored exactly for the existing valid model");
+            String exportedSchedule=document.getJSONObject("timetable").getJSONObject("data").getString("value");Class<?> modelType=activity.getClassLoader().loadClass("org.simpleweather.app.ScheduleModel");Object migrated=modelType.getMethod("parse",String.class).invoke(null,exportedSchedule);check(prefs("timetable").getString("data","").equals(modelType.getMethod("json").invoke(migrated).toString()),"Timetable contents survive color-format migration");
             result.putString("stream","\nPASS: "+checks+" configuration/search Android checks.\n");
         }catch(Throwable e){code=Activity.RESULT_CANCELED;result.putString("stream","\nFAIL: "+android.util.Log.getStackTraceString(e));}
         finally{

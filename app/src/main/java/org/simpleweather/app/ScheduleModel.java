@@ -13,11 +13,12 @@ public final class ScheduleModel {
         public Slot(String start,String end){this.start=start;this.end=end;}
     }
     public static final class Course {
-        public String id=UUID.randomUUID().toString(),name="",room="",teacher="";
+        public String id=UUID.randomUUID().toString(),name="",room="",teacher="",colorHex="";
         public int day=1,first=1,last=1,weekStart=1,weekEnd=DEFAULT_WEEKS,parity=0,color=0;
         public final SortedSet<Integer> customWeeks=new TreeSet<>();
+        public int seedColor(){return colorHex.isEmpty()?ThemeColors.legacyCourse(color):ThemeColors.parse(colorHex);}
         public boolean runs(int week){if(parity==3)return customWeeks.contains(week);return week>=weekStart&&week<=weekEnd&&(parity==0||week%2==parity%2);}
-        public Course copy(){Course c=new Course();c.id=id;c.name=name;c.room=room;c.teacher=teacher;c.day=day;c.first=first;c.last=last;c.weekStart=weekStart;c.weekEnd=weekEnd;c.parity=parity;c.color=color;c.customWeeks.addAll(customWeeks);return c;}
+        public Course copy(){Course c=new Course();c.id=id;c.name=name;c.room=room;c.teacher=teacher;c.day=day;c.first=first;c.last=last;c.weekStart=weekStart;c.weekEnd=weekEnd;c.parity=parity;c.color=color;c.colorHex=colorHex;c.customWeeks.addAll(customWeeks);return c;}
     }
     public LocalDate semester=LocalDate.now().with(java.time.DayOfWeek.MONDAY);
     public int weeks=DEFAULT_WEEKS;
@@ -64,7 +65,7 @@ public final class ScheduleModel {
     public JSONObject json() throws JSONException {
         JSONObject out=new JSONObject();out.put("semester",semester.toString());out.put("weeks",weeks);
         JSONArray times=new JSONArray();for(Slot s:slots){JSONObject t=new JSONObject();t.put("start",s.start);t.put("end",s.end);times.put(t);}out.put("slots",times);
-        JSONArray list=new JSONArray();for(Course c:courses){JSONObject j=new JSONObject();j.put("id",c.id);j.put("name",c.name);j.put("room",c.room);j.put("teacher",c.teacher);j.put("day",c.day);j.put("first",c.first);j.put("last",c.last);j.put("weekStart",c.weekStart);j.put("weekEnd",c.weekEnd);j.put("parity",c.parity);j.put("color",c.color);j.put("customWeeks",new JSONArray(c.customWeeks));list.put(j);}out.put("courses",list);return out;
+        JSONArray list=new JSONArray();for(Course c:courses){JSONObject j=new JSONObject();j.put("id",c.id);j.put("name",c.name);j.put("room",c.room);j.put("teacher",c.teacher);j.put("day",c.day);j.put("first",c.first);j.put("last",c.last);j.put("weekStart",c.weekStart);j.put("weekEnd",c.weekEnd);j.put("parity",c.parity);j.put("color",c.color);j.put("colorHex",ThemeColors.hex(c.seedColor()));j.put("customWeeks",new JSONArray(c.customWeeks));list.put(j);}out.put("courses",list);return out;
     }
     public static ScheduleModel parse(String value) throws Exception {
         ScheduleModel m=new ScheduleModel();JSONObject j=new JSONObject(value);m.semester=LocalDate.parse(j.getString("semester"));m.weeks=j.getInt("weeks");
@@ -72,7 +73,7 @@ public final class ScheduleModel {
         JSONArray slots=j.getJSONArray("slots");if(slots.length()<1||slots.length()>20)throw new JSONException("Invalid periods");
         m.slots.clear();for(int i=0;i<slots.length();i++){JSONObject s=slots.getJSONObject(i);String a=s.getString("start"),b=s.getString("end");if(m.validateSlot(i,a,b)!=null)throw new JSONException("Overlapping times");m.slots.add(new Slot(a,b));}
         JSONArray list=j.getJSONArray("courses");if(list.length()>300)throw new JSONException("Too many courses");
-        for(int i=0;i<list.length();i++){JSONObject c=list.getJSONObject(i);Course x=new Course();x.id=c.getString("id");x.name=c.getString("name");x.room=c.optString("room");x.teacher=c.optString("teacher");x.day=c.getInt("day");x.first=c.getInt("first");x.last=c.getInt("last");x.weekStart=c.getInt("weekStart");x.weekEnd=c.getInt("weekEnd");x.parity=c.optInt("parity");JSONArray custom=c.optJSONArray("customWeeks");if(custom!=null)for(int w=0;w<custom.length();w++)x.customWeeks.add(custom.getInt(w));x.color=c.optInt("color");if(m.validateCourse(x)!=null)throw new JSONException("Invalid course");m.put(x);}
+        for(int i=0;i<list.length();i++){JSONObject c=list.getJSONObject(i);Course x=new Course();x.id=c.getString("id");x.name=c.getString("name");x.room=c.optString("room");x.teacher=c.optString("teacher");x.day=c.getInt("day");x.first=c.getInt("first");x.last=c.getInt("last");x.weekStart=c.getInt("weekStart");x.weekEnd=c.getInt("weekEnd");x.parity=c.optInt("parity");JSONArray custom=c.optJSONArray("customWeeks");if(custom!=null)for(int w=0;w<custom.length();w++)x.customWeeks.add(custom.getInt(w));x.color=c.optInt("color");x.colorHex=c.has("colorHex")?ThemeColors.hex(ThemeColors.parse(c.optString("colorHex"))):ThemeColors.hex(ThemeColors.legacyCourse(x.color));if(m.validateCourse(x)!=null)throw new JSONException("Invalid course");m.put(x);}
         return m;
     }
 }

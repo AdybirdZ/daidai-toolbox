@@ -37,7 +37,7 @@ final class MapScreen {
     }
     private LinearLayout.LayoutParams cell(){LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(0,a.dp(48),1);params.setMargins(a.dp(2),a.dp(2),a.dp(2),a.dp(2));return params;}
     private TextView mapButton(String label,Runnable click){TextView button=a.button(label,false,click);button.setTextSize(12);button.setPadding(a.dp(3),a.dp(6),a.dp(3),a.dp(6));button.setMaxLines(2);button.setLineSpacing(0,1);return button;}
-    private void select(int product){url=urls[product];a.preferences.edit().putInt("map_product",product).apply();for(int n=0;n<choices.length;n++){final int id=n;choices[n].setTextColor(n==product?a.WHITE:a.BLUE);a.tap(choices[n],n==product?a.BLUE:a.PALE,12,()->select(id));}failed=false;status.setText("正在加载官方原页…");web.loadUrl(url);}
+    private void select(int product){url=urls[product];a.preferences.edit().putInt("map_product",product).apply();for(int n=0;n<choices.length;n++){final int id=n;choices[n].setTextColor(n==product?a.buttonPrimaryText():a.buttonSecondaryText());choices[n].setTag(n==product?"theme-primary":"theme-secondary");a.tap(choices[n],n==product?a.buttonPrimaryColor():a.buttonSecondaryColor(),12,()->select(id));}failed=false;status.setText("正在加载官方原页…");web.loadUrl(url);}
 
     void pause(){if(web!=null&&!destroyed)web.onPause();}
     void resume(){if(web!=null&&!destroyed)web.onResume();}

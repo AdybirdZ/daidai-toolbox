@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
     }
     TextView button(String title, boolean primary, Runnable click) {
         TextView t=text(title,14,primary?buttonPrimaryText():buttonSecondaryText(),true);t.setGravity(Gravity.CENTER);
-        t.setMinHeight(dp(48));t.setPadding(dp(16),dp(10),dp(16),dp(10));tap(t,primary?buttonPrimaryColor():buttonSecondaryColor(),16,click);return t;
+        t.setMinHeight(dp(48));t.setPadding(dp(16),dp(10),dp(16),dp(10));tap(t,primary?buttonPrimaryColor():buttonSecondaryColor(),16,click);t.setTag(primary?"theme-primary":"theme-secondary");return t;
     }
     void gap(LinearLayout parent,int h) {View v=new View(this);parent.addView(v,lp(1,h));}
     void spacer(LinearLayout parent) {parent.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));}
@@ -122,14 +122,15 @@ public class MainActivity extends Activity {
     String[] weatherNames(){String[] out=new String[WEATHER_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=weatherName(i);return out;}
     boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",false);}
     int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
-    private int prefColor(String key,int fallback){int c=preferences==null?fallback:preferences.getInt(key,fallback);return (c&0xFF000000)==0?fallback:c;}
-    int primaryTextColor(){return prefColor("text_primary_color",INK);}
-    int secondaryTextColor(){return prefColor("text_secondary_color",MUTED);}
-    int accentColor(){return prefColor("text_accent_color",BLUE);}
-    int buttonPrimaryColor(){return prefColor("button_primary_color",BLUE);}
-    int buttonPrimaryText(){return prefColor("button_primary_text_color",WHITE);}
-    int buttonSecondaryColor(){return prefColor("button_secondary_color",PALE);}
-    int buttonSecondaryText(){return prefColor("button_secondary_text_color",BLUE);}
+    int themeColor(){int fallback=preferences==null?ThemeColors.BLUE:preferences.getInt("text_accent_color",ThemeColors.BLUE);return ThemeColors.opaque(preferences==null?fallback:preferences.getInt("theme_color",fallback));}
+    int primaryTextColor(){return ThemeColors.dark(themeColor());}
+    int secondaryTextColor(){return primaryTextColor();}
+    int accentColor(){return primaryTextColor();}
+    int buttonPrimaryColor(){return primaryTextColor();}
+    int buttonPrimaryText(){return Color.WHITE;}
+    int buttonSecondaryColor(){return ThemeColors.pale(themeColor());}
+    int buttonSecondaryText(){return primaryTextColor();}
+    void applyTheme(){ToolDialog.refresh(this);refreshScreen();}
     int resolveTextColor(int color){if(color==INK)return primaryTextColor();if(color==MUTED)return secondaryTextColor();if(color==BLUE)return accentColor();if(color==WHITE)return buttonPrimaryText();return color;}
     ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
     List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),TAB_NAME_IDS.length);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3||id==5))result.add(id);if(result.isEmpty())result.add(0);return result;}
@@ -181,20 +182,20 @@ public class MainActivity extends Activity {
     private void currentWeather(Instant now){
         boolean old=data.currentIsOld(now);
         LinearLayout hero=column();hero.setPadding(dp(22),dp(22),dp(18),dp(20));
-        GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{0xFFE1EDFF,0xFFF1F6FF});gradient.setCornerRadius(dp(28));if(outlined())gradient.setStroke(dp(1),outlineColor());hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
+        GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{buttonSecondaryColor(),WHITE});gradient.setCornerRadius(dp(28));if(outlined())gradient.setStroke(dp(1),outlineColor());hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
         LinearLayout heroTop=row();
-        TextView label=text(old?"上次天气 · 历史缓存":"当前天气 · 模型估算",12,0xFF53749B,false);heroTop.addView(label);spacer(heroTop);
+        TextView label=text(old?"上次天气 · 历史缓存":"当前天气 · 模型估算",12,MUTED,false);heroTop.addView(label);spacer(heroTop);
         TextView refresh=text(loading?"更新中…":"刷新 ↻",13,BLUE,true);refresh.setMinHeight(dp(40));refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(8),0,dp(5),0);tap(refresh,Color.TRANSPARENT,10,()->load(true));heroTop.addView(refresh);hero.addView(heroTop);
         LinearLayout currentRow=row();LinearLayout temperature=column();
         TextView number=text(WeatherData.degrees(WeatherData.value(data.current,"temperature_2m")),54,INK,false);number.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));temperature.addView(number);
         int code=WeatherData.code(data.current,"weather_code",-1);
-        temperature.addView(text(WeatherData.condition(code)+"   体感 "+WeatherData.degrees(WeatherData.value(data.current,"apparent_temperature")),14,0xFF4F698C,false));
+        temperature.addView(text(WeatherData.condition(code)+"   体感 "+WeatherData.degrees(WeatherData.value(data.current,"apparent_temperature")),14,MUTED,false));
         currentRow.addView(temperature,new LinearLayout.LayoutParams(0,-2,1));currentRow.addView(new WeatherIcon(this,code,data.current.optInt("is_day",1)==1),lp(110,110));hero.addView(currentRow);
         gap(hero,12);
         int today=data.todayIndex(now);
         hero.addView(text("最高 "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",today))+"    最低 "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",today)),14,INK,false));gap(hero,13);
         ZoneId shownZone=displayZone(data.zone);String updated=DateTimeFormatter.ofPattern("M月d日 HH:mm").withZone(shownZone).format(data.currentTime);
-        hero.addView(text("数据时刻 "+updated+" · "+(preferences.getInt("global_time_mode",0)==0?"地区当地时间":preferences.getInt("global_time_mode",0)==1?"北京时间":"协调世界时"),11,0xFF617D9E,false));
+        hero.addView(text("数据时刻 "+updated+" · "+(preferences.getInt("global_time_mode",0)==0?"地区当地时间":preferences.getInt("global_time_mode",0)==1?"北京时间":"协调世界时"),11,MUTED,false));
         gap(hero,8);
         LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text(getString(R.string.source_open_meteo),11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
 
@@ -216,7 +217,7 @@ public class MainActivity extends Activity {
             String time=WeatherData.textAt(data.hourly,"time",index);LinearLayout cell=column();cell.setGravity(Gravity.CENTER);cell.setPadding(dp(4),dp(10),dp(4),dp(10));
             LocalDateTime date;try{date=LocalDateTime.parse(time).atZone(data.zone).withZoneSameInstant(shownZone).toLocalDateTime();}catch(Exception e){continue;}
             boolean current=date.toLocalDate().equals(today)&&date.getHour()==currentHour;
-            if(current)cell.setBackground(shape(PALE,16));
+            if(current)cell.setBackground(shape(buttonSecondaryColor(),16));
             cell.addView(text(current?"现在":String.format(Locale.ROOT,"%02d时",date.getHour()),12,current?BLUE:MUTED,current));gap(cell,7);
             cell.addView(new WeatherIcon(this,WeatherData.code(data.hourly,"weather_code",index),WeatherData.at(data.hourly,"is_day",index)!=0),lp(48,48));gap(cell,9);
             cell.addView(text(WeatherData.degrees(WeatherData.at(data.hourly,"temperature_2m",index)),18,INK,true));gap(cell,10);
@@ -307,7 +308,7 @@ public class MainActivity extends Activity {
     }
     private void cityList(List<City> cities) {
         for(City c:cities) {
-            LinearLayout item=row();item.setPadding(dp(14),dp(14),dp(12),dp(14));LinearLayout labels=column();labels.addView(text(c.label(),16,INK,true));gap(labels,6);labels.addView(text(c.detail(),12,MUTED,false));item.addView(labels,new LinearLayout.LayoutParams(0,-2,1));item.addView(text(city.key().equals(c.key())?"当前":"›",14,BLUE,false));tap(item,WHITE,16,()->choose(c));results.addView(item,lp(-1,-2));gap(results,8);
+            LinearLayout item=row();item.setPadding(dp(14),dp(14),dp(12),dp(14));LinearLayout labels=column();labels.addView(text(c.label(),16,INK,true));gap(labels,6);labels.addView(text(c.detail(),12,MUTED,false));gap(labels,5);labels.addView(text(CoordinateFormat.pair(c.longitude,c.latitude,6),12,MUTED,false));item.addView(labels,new LinearLayout.LayoutParams(0,-2,1));item.addView(text(city.key().equals(c.key())?"当前":"›",14,BLUE,false));tap(item,WHITE,16,()->choose(c));results.addView(item,lp(-1,-2));gap(results,8);
         }
     }
     private void searchOnline() {
@@ -354,6 +355,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_1211_title),getString(R.string.update_1211_detail));
         updateEntry(c,getString(R.string.update_1210_title),getString(R.string.update_1210_detail));
         updateEntry(c,"1.2.9 · 颜色、对准天空与环境光改进","• 全局设置新增主要文字、说明文字、强调文字及按钮背景/文字颜色，可选择红、橙、黄、绿、青、蓝、紫、黑、白或输入 #RRGGBB；无效的历史颜色统一回退为蓝色。\r\n• 天文对准天空使用设备旋转矢量传感器，在星图中心显示红色实体十字，可选择外置相机方向或手机上沿方向。\r\n• 环境光改为后台读取相机亮度样本，不打开预览窗口、不需要手动启动；可设置切换栏目、锁屏和后台时是否继续使用相机，默认关闭。\r\n• 重新整理状态页传感器说明、设置顺序和段落，明确电池温度与环境温度的含义；删除天气详情中重复的紫外线数值说明及星空说明中的冗余文字。\r\n• 修正中国地区目录规范名称与别名去重，甘孜统一为“甘孜藏族自治州”，避免离线目录与在线搜索出现同一地区的重复结果。\r\n• 版本号 1.2.9 / versionCode 33。" );
         updateEntry(c,"1.2.8 · 地区去重、配置导出与设备功能","• 地区选择页不再显示整段预置城市按钮，仅保留已保存地区和搜索；搜索结果按规范化名称与坐标去重，避免同一城市同时出现两条记录。中国市级目录继续作为离线匹配库，覆盖大陆、香港、澳门和台湾，并保留 GeoNames 来源与坐标校验。\r\n• 保存路线支持编辑名称、上移和下移排序；新增全局设置中的“一键导出所有配置”，导出设置、收藏地区、保存地点、路线和课程表 JSON。\r\n• 天文当地星空新增“对准天空”，使用设备旋转矢量传感器使地平星图随设备朝向转动；没有该传感器时仍可使用固定地平坐标。\r\n• 环境光可选择系统传感器或启动相机测量，并可选择前置或后置摄像头。相机读数为图像亮度样本，仅作相对参考，不等同于照度计。\r\n• 版本号 1.2.8 / versionCode 32。" );

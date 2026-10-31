@@ -18,7 +18,7 @@ final class ConfigurationData {
         "astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
         "location_continuous","status_true_north","status_battery_reverse_current","course_name_prefix","course_teacher_prefix","status_satellite_rotate","status_receive_pause","status_camera_background","quake_source_Wolfx"));
     private static final Set<String> INTEGER=new HashSet<>(Arrays.asList(
-        "global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
+        "theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
         "text_primary_color","text_secondary_color","text_accent_color","button_primary_color","button_primary_text_color","button_secondary_color","button_secondary_text_color"));
     private static final Set<String> STRING=new HashSet<>(Arrays.asList(
         "astro_order","astro_selected","astro_orientation_reference","status_light_camera","location_provider","quake_order","status_order","status_sensor_order","status_light_source","status_battery_order","status_device_order","tab_order","weather_order","status_sat_company_order","status_sat_sort"));
