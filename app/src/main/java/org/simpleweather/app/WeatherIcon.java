@@ -10,7 +10,7 @@ public final class WeatherIcon extends View {
     private final int code;
     private final boolean isDay;
     private final Paint p=new Paint(3);
-    public WeatherIcon(Context context,int code,boolean day){super(context);this.code=code;isDay=day;setContentDescription(WeatherData.condition(code)+(day?"":"，夜间"));setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);}
+    public WeatherIcon(Context context,int code,boolean day){super(context);this.code=code;isDay=day;setContentDescription(WeatherData.condition(code)+(day?"":UiText.get("weather_icon_001")));setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);}
     private void color(int value){p.setColor(value);p.setStyle(Paint.Style.FILL);}
     private void stroke(int value,float width){color(value);p.setStrokeWidth(width);p.setStrokeCap(Paint.Cap.ROUND);}
     private void cloud(Canvas c,int value){color(value);c.drawRoundRect(16,46,86,75,15,15,p);c.drawCircle(38,45,18,p);c.drawCircle(60,48,14,p);}

@@ -7,5 +7,5 @@ final class SkyVisibility {
         if(sunOrMoon)return true;
         return byMagnitude?Double.isFinite(magnitude)&&magnitude<=Math.round(limit(threshold)*10)/10.0+1e-9:manual;
     }
-    static String magnitude(double value){return Double.isFinite(value)?String.format(java.util.Locale.ROOT,"约 %.1f 等",value):"未提供";}
+    static String magnitude(double value){return Double.isFinite(value)?String.format(java.util.Locale.ROOT,UiText.get("sky_visibility_001"),value):UiText.get("earthquake_options_001");}
 }

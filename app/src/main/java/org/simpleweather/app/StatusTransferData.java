@@ -71,5 +71,5 @@ final class StatusTransferData {
     private static String string(JSONObject row,String key,int max)throws JSONException {Object v=row.get(key);if(!(v instanceof String)||((String)v).trim().isEmpty()||((String)v).length()>max)throw invalid();return ((String)v).trim();}
     private static double number(JSONObject row,String key)throws JSONException {Object v=row.get(key);if(!(v instanceof Number))throw invalid();double n=((Number)v).doubleValue();if(!Double.isFinite(n))throw invalid();return n;}
     private static long integer(JSONObject row,String key)throws JSONException {double n=number(row,key);if(n!=Math.rint(n)||n<Long.MIN_VALUE||n>=0x1.0p63)throw invalid();return ((Number)row.get(key)).longValue();}
-    private static JSONException invalid(){return new JSONException("文件格式、版本或记录内容无效");}
+    private static JSONException invalid(){return new JSONException(UiText.get("status_transfer_data_001"));}
 }

@@ -1,0 +1,1293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="astronomy_001" formatted="false">"曙光"</string>
+    <string name="astronomy_002" formatted="false">"暮光"</string>
+    <string name="astronomy_003" formatted="false">"太阳在地平线上方，天空较亮"</string>
+    <string name="astronomy_004" formatted="false">"民用"</string>
+    <string name="astronomy_005" formatted="false">"中，天空较亮"</string>
+    <string name="astronomy_006" formatted="false">"航海"</string>
+    <string name="astronomy_007" formatted="false">"中，可寻找亮星"</string>
+    <string name="astronomy_008" formatted="false">"中，天色较暗"</string>
+    <string name="astronomy_009" formatted="false">"当前为天文夜"</string>
+    <string name="astronomy_010" formatted="false">"地球"</string>
+    <string name="astronomy_011" formatted="false">"水星"</string>
+    <string name="astronomy_012" formatted="false">"金星"</string>
+    <string name="astronomy_013" formatted="false">"火星"</string>
+    <string name="astronomy_014" formatted="false">"木星"</string>
+    <string name="astronomy_015" formatted="false">"土星"</string>
+    <string name="astronomy_016" formatted="false">"天王星"</string>
+    <string name="astronomy_017" formatted="false">"海王星"</string>
+    <string name="astronomy_018" formatted="false">"新月"</string>
+    <string name="astronomy_019" formatted="false">"蛾眉月"</string>
+    <string name="astronomy_020" formatted="false">"上弦月"</string>
+    <string name="astronomy_021" formatted="false">"盈凸月"</string>
+    <string name="astronomy_022" formatted="false">"满月"</string>
+    <string name="astronomy_023" formatted="false">"亏凸月"</string>
+    <string name="astronomy_024" formatted="false">"下弦月"</string>
+    <string name="astronomy_025" formatted="false">"残月"</string>
+    <string name="astronomy_026" formatted="false">"北"</string>
+    <string name="astronomy_027" formatted="false">"东北"</string>
+    <string name="astronomy_028" formatted="false">"东"</string>
+    <string name="astronomy_029" formatted="false">"东南"</string>
+    <string name="astronomy_030" formatted="false">"南"</string>
+    <string name="astronomy_031" formatted="false">"西南"</string>
+    <string name="astronomy_032" formatted="false">"西"</string>
+    <string name="astronomy_033" formatted="false">"西北"</string>
+    <string name="astronomy_034" formatted="false">"天枢"</string>
+    <string name="astronomy_035" formatted="false">"天璇"</string>
+    <string name="astronomy_036" formatted="false">"天玑"</string>
+    <string name="astronomy_037" formatted="false">"天权"</string>
+    <string name="astronomy_038" formatted="false">"玉衡"</string>
+    <string name="astronomy_039" formatted="false">"开阳"</string>
+    <string name="astronomy_040" formatted="false">"摇光"</string>
+    <string name="astronomy_041" formatted="false">"象限仪座"</string>
+    <string name="astronomy_042" formatted="false">"天琴座"</string>
+    <string name="astronomy_043" formatted="false">"宝瓶座η"</string>
+    <string name="astronomy_044" formatted="false">"英仙座"</string>
+    <string name="astronomy_045" formatted="false">"猎户座"</string>
+    <string name="astronomy_046" formatted="false">"狮子座"</string>
+    <string name="astronomy_047" formatted="false">"双子座"</string>
+    <string name="astronomy_048" formatted="false">"小熊座"</string>
+    <string name="astronomy_049" formatted="false">"M45 昴星团"</string>
+    <string name="astronomy_050" formatted="false">"M31 仙女座星系"</string>
+    <string name="astronomy_051" formatted="false">"M44 鬼宿星团"</string>
+    <string name="astronomy_052" formatted="false">"M13 武仙座球状星团"</string>
+    <string name="astronomy_053" formatted="false">"M11 野鸭星团"</string>
+    <string name="astronomy_054" formatted="false">"M5 球状星团"</string>
+    <string name="astronomy_055" formatted="false">"M34 疏散星团"</string>
+    <string name="astronomy_056" formatted="false">"M35 疏散星团"</string>
+    <string name="astronomy_057" formatted="false">"M36 疏散星团"</string>
+    <string name="astronomy_058" formatted="false">"M37 疏散星团"</string>
+    <string name="astronomy_059" formatted="false">"M39 疏散星团"</string>
+    <string name="astronomy_060" formatted="false">"M67 疏散星团"</string>
+    <string name="astronomy_061" formatted="false">"M92 球状星团"</string>
+    <string name="astronomy_062" formatted="false">"M42 猎户座大星云"</string>
+    <string name="astronomy_063" formatted="false">"M81 波德星系"</string>
+    <string name="astronomy_064" formatted="false">"天狼星"</string>
+    <string name="astronomy_065" formatted="false">"老人星"</string>
+    <string name="astronomy_066" formatted="false">"南门二"</string>
+    <string name="astronomy_067" formatted="false">"大角星"</string>
+    <string name="astronomy_068" formatted="false">"织女一"</string>
+    <string name="astronomy_069" formatted="false">"五车二"</string>
+    <string name="astronomy_070" formatted="false">"参宿七"</string>
+    <string name="astronomy_071" formatted="false">"南河三"</string>
+    <string name="astronomy_072" formatted="false">"参宿四"</string>
+    <string name="astronomy_073" formatted="false">"水委一"</string>
+    <string name="astronomy_074" formatted="false">"河鼓二"</string>
+    <string name="astronomy_075" formatted="false">"十字架二"</string>
+    <string name="astronomy_076" formatted="false">"毕宿五"</string>
+    <string name="astronomy_077" formatted="false">"角宿一"</string>
+    <string name="astronomy_078" formatted="false">"心宿二"</string>
+    <string name="astronomy_079" formatted="false">"北落师门"</string>
+    <string name="astronomy_080" formatted="false">"天津四"</string>
+    <string name="astronomy_081" formatted="false">"轩辕十四"</string>
+    <string name="astronomy_082" formatted="false">"勾陈一"</string>
+    <string name="astronomy_083" formatted="false">"壁宿二"</string>
+    <string name="astronomy_084" formatted="false">"娄宿三"</string>
+    <string name="astronomy_085" formatted="false">"轩辕十二"</string>
+    <string name="astronomy_086" formatted="false">"蛇夫座α"</string>
+    <string name="astronomy_087" formatted="false">"天棓四"</string>
+    <string name="astronomy_088" formatted="false">"王良四"</string>
+    <string name="astronomy_089" formatted="false">"王良一"</string>
+    <string name="astronomy_090" formatted="false">"五帝座一"</string>
+    <string name="astronomy_091" formatted="false">"天大将军一"</string>
+    <string name="astronomy_092" formatted="false">"天津一"</string>
+    <string name="astronomy_093" formatted="false">"天津九"</string>
+    <string name="astronomy_094" formatted="false">"室宿二"</string>
+    <string name="astronomy_095" formatted="false">"室宿一"</string>
+    <string name="astronomy_096" formatted="false">"策"</string>
+    <string name="astronomy_097" formatted="false">"五车五"</string>
+    <string name="astronomy_098" formatted="false">"井宿三"</string>
+    <string name="astronomy_099" formatted="false">"北河二"</string>
+    <string name="astronomy_100" formatted="false">"北河三"</string>
+    <string name="astronomy_101" formatted="false">"参宿一"</string>
+    <string name="astronomy_102" formatted="false">"参宿二"</string>
+    <string name="astronomy_103" formatted="false">"参宿三"</string>
+    <string name="astronomy_104" formatted="false">"参宿五"</string>
+    <string name="astronomy_105" formatted="false">"参宿六"</string>
+    <string name="astronomy_106" formatted="false">"时间控制"</string>
+    <string name="astronomy_107" formatted="false">"观星条件"</string>
+    <string name="astronomy_108" formatted="false">"当地星空"</string>
+    <string name="astronomy_109" formatted="false">"选中的天体信息"</string>
+    <string name="astronomy_110" formatted="false">"月球信息"</string>
+    <string name="astronomy_111" formatted="false">"日月与行星位置"</string>
+    <string name="astronomy_112" formatted="false">"当日日月事件与曙暮光"</string>
+    <string name="astronomy_113" formatted="false">"流星雨"</string>
+    <string name="astronomy_114" formatted="false">"计算说明与来源"</string>
+    <string name="astronomy_115" formatted="false">"yyyy年M月d日 HH:mm"</string>
+    <string name="astronomy_116" formatted="false">"当地星空 · 仰视示意"</string>
+    <string name="astronomy_117" formatted="false">"关闭对准天空"</string>
+    <string name="astronomy_118" formatted="false">"对准天空"</string>
+    <string name="astronomy_119" formatted="false">"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n流星雨按常年参考极大日前后 3 天显示，该区间不代表实际完整活跃期。恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。"</string>
+    <string name="astronomy_120" formatted="false">"计算公式与方法参考"</string>
+    <string name="astronomy_121" formatted="false">"内置天体坐标与星等 · CC0"</string>
+    <string name="astronomy_122" formatted="false">"−15 分钟"</string>
+    <string name="astronomy_123" formatted="false">"当前时刻"</string>
+    <string name="astronomy_124" formatted="false">"+15 分钟"</string>
+    <string name="astronomy_125" formatted="false">"−1 天"</string>
+    <string name="astronomy_126" formatted="false">"设置时间"</string>
+    <string name="astronomy_127" formatted="false">"+1 天"</string>
+    <string name="astronomy_128" formatted="false">"观星条件 · 经验参考"</string>
+    <string name="astronomy_129" formatted="false">"月球在地平线上方 · 照亮比例约 "</string>
+    <string name="astronomy_130" formatted="false">"月球在地平线下方，月光影响较小"</string>
+    <string name="astronomy_131" formatted="false">"天气数据缺失或已过期，请在天气页刷新。天体位置仍可离线计算。"</string>
+    <string name="astronomy_132" formatted="false">"所选时刻暂无完整天气数据，请在天气页刷新，或调整天文时间。"</string>
+    <string name="astronomy_133" formatted="false">"云量 "</string>
+    <string name="astronomy_134" formatted="false">"% · 降水概率 "</string>
+    <string name="astronomy_135" formatted="false">"%\n湿度 "</string>
+    <string name="astronomy_136" formatted="false">"% · 风速 "</string>
+    <string name="astronomy_137" formatted="false">" km/h\n能见度 "</string>
+    <string name="astronomy_138" formatted="false">"天气条件相对适合观星；需考虑月光及光污染。"</string>
+    <string name="astronomy_139" formatted="false">"至少一项条件未达到参考标准，请结合实际观测环境判断。"</string>
+    <string name="astronomy_140" formatted="false">"经验筛选：太阳低于 −12°、云量 ≤ 40%、降水概率 ≤ 20%、湿度 ≤ 85%、风速 ≤ 25 km/h、能见度 ≥ 8 km。天气来源 Open-Meteo。未计算本地光污染。"</string>
+    <string name="astronomy_141" formatted="false">" · 照亮约 "</string>
+    <string name="astronomy_142" formatted="false">"近似月龄 %.1f 天 · 距下次满月约 %.1f 天"</string>
+    <string name="astronomy_143" formatted="false">"月相随上方所选时间更新；示意图盈月右侧亮、亏月左侧亮，未按当地观测视角旋转，不包含月食与月面纹理。月龄及距满月时间为平均朔望月近似。"</string>
+    <string name="astronomy_144" formatted="false">"月相示意 · "</string>
+    <string name="astronomy_145" formatted="false">"太阳  "</string>
+    <string name="astronomy_146" formatted="false">"高度角 %.1f° · 方位角 %.1f°"</string>
+    <string name="astronomy_147" formatted="false">"月球  "</string>
+    <string name="astronomy_148" formatted="false">"高度角 %.1f° · 方位角 %.1f° · 视星等 %.2f"</string>
+    <string name="astronomy_149" formatted="false">"当日无此事件"</string>
+    <string name="astronomy_150" formatted="false">"日出 / 日落"</string>
+    <string name="astronomy_151" formatted="false">"民用曙光 / 暮光"</string>
+    <string name="astronomy_152" formatted="false">"航海曙光 / 暮光"</string>
+    <string name="astronomy_153" formatted="false">"天文曙光 / 暮光"</string>
+    <string name="astronomy_154" formatted="false">"月升 / 月落"</string>
+    <string name="astronomy_155" formatted="false">"时间按当前天文显示时区标注。高纬度地区可能出现当日无升落事件或无天文夜的情况。曙暮光时刻不用于预测霞光。"</string>
+    <string name="astronomy_156" formatted="false">"流星雨 · 参考极大日前后 3 天"</string>
+    <string name="astronomy_157" formatted="false">" · 参考显示期（极大日 "</string>
+    <string name="astronomy_158" formatted="false">"）\n辐射点高度角 "</string>
+    <string name="astronomy_159" formatted="false">" · 方位角 "</string>
+    <string name="astronomy_160" formatted="false">"所选日期的参考流星雨"</string>
+    <string name="astronomy_161" formatted="false">"所选日期不在内置流星雨的参考显示期内。"</string>
+    <string name="astronomy_162" formatted="false">"后续参考极大日"</string>
+    <string name="astronomy_163" formatted="false">"辐射点位置由近似赤经、赤纬换算。此处按常年参考极大日前后 3 天显示，不代表实际完整活跃期；每年的极大时刻及观测条件请查阅当年 IMO 日历。"</string>
+    <string name="astronomy_164" formatted="false">"IMO · 年度流星雨日历"</string>
+    <string name="astronomy_165" formatted="false">"太阳"</string>
+    <string name="astronomy_166" formatted="false">"月球"</string>
+    <string name="astronomy_167" formatted="false">"当地星图 · "</string>
+    <string name="astronomy_168" formatted="false">"赤道坐标系，北天极居中"</string>
+    <string name="astronomy_169" formatted="false">"不显示坐标网格"</string>
+    <string name="astronomy_170" formatted="false">"地平坐标系，北上东左"</string>
+    <string name="astronomy_171" formatted="false">" · 选中 "</string>
+    <string name="astronomy_172" formatted="false">"赤道坐标系：北天极居中，赤经 0h 在上、6h 在左；青色曲线为当地地平线。勾陈一靠近北天极，并非中心本身。"</string>
+    <string name="astronomy_173" formatted="false">"不显示坐标网格；保留地平投影，北在上、东在左。"</string>
+    <string name="astronomy_174" formatted="false">"地平坐标系：天顶居中，北在上、东在左；圆周为地平线，内圈为高度 30°、60°。"</string>
+    <string name="astronomy_175" formatted="false">"点击星空中的太阳、月球、亮星、行星或深空天体中心，查看方位角和高度角。"</string>
+    <string name="astronomy_176" formatted="false">" · 大致中心"</string>
+    <string name="astronomy_177" formatted="false">"\n高度角 "</string>
+    <string name="astronomy_178" formatted="false">"\n赤经 "</string>
+    <string name="astronomy_179" formatted="false">" · 赤纬 "</string>
+    <string name="astronomy_180" formatted="false">"\n视星等约 "</string>
+    <string name="astronomy_181" formatted="false">"（V 波段估算）\n不含大气消光、地球照及月食影响。"</string>
+    <string name="astronomy_182" formatted="false">"\n视星等：近新月，暂不估算"</string>
+    <string name="astronomy_183" formatted="false">"\n近似总视星等："</string>
+    <string name="astronomy_184" formatted="false">"（参考值）\n扩展天体的光分散在较大区域，总星等不等同于肉眼可见程度。"</string>
+    <string name="astronomy_185" formatted="false">"\n视星等 "</string>
+    <string name="astronomy_186" formatted="false">"\n当前在地平线下，保留选中但不绘制十字。"</string>
+    <string name="astronomy_187" formatted="false">"\n当前显示模式已隐藏此天体，保留选中但不绘制十字。"</string>
+    <string name="astronomy_188" formatted="false">"北天极"</string>
+    <string name="background_crop_001" formatted="false">"正在读取图片…"</string>
+    <string name="background_crop_002" formatted="false">"无法读取图片，请返回并选择尺寸较小的图片。"</string>
+    <string name="background_crop_003" formatted="false">"调整背景使用区域"</string>
+    <string name="background_crop_004" formatted="false">"拖动图片可调整使用区域，双指缩放或拖动滑块可调整大小。亮框内为最终保存区域。"</string>
+    <string name="background_crop_005" formatted="false">"背景缩放"</string>
+    <string name="background_crop_006" formatted="false">"重置"</string>
+    <string name="background_crop_007" formatted="false">"使用所选区域"</string>
+    <string name="background_crop_008" formatted="false">"正在保存选区…"</string>
+    <string name="background_crop_009" formatted="false">"选区保存失败，请缩小图片后重试"</string>
+    <string name="background_crop_010" formatted="false">"保存失败，请重试"</string>
+    <string name="background_crop_011" formatted="false">"背景选区，拖动图片及双指缩放"</string>
+    <string name="coordinate_format_001" formatted="false">"经度 "</string>
+    <string name="coordinate_format_002" formatted="false">" · 纬度 "</string>
+    <string name="earthquake_agencies_001" formatted="false">"土耳其灾害与应急管理局地震部门"</string>
+    <string name="earthquake_agencies_002" formatted="false">"阿拉斯加地震中心"</string>
+    <string name="earthquake_agencies_003" formatted="false">"斯洛文尼亚环境署地震办公室"</string>
+    <string name="earthquake_agencies_004" formatted="false">"澳大利亚地球科学局"</string>
+    <string name="earthquake_agencies_005" formatted="false">"印度尼西亚气象、气候与地球物理局"</string>
+    <string name="earthquake_agencies_006" formatted="false">"智利大学地球物理系国家地震中心"</string>
+    <string name="earthquake_agencies_007" formatted="false">"台湾中央气象署"</string>
+    <string name="earthquake_agencies_008" formatted="false">"台湾中央气象部门"</string>
+    <string name="earthquake_agencies_009" formatted="false">"欧洲—地中海地震中心"</string>
+    <string name="earthquake_agencies_010" formatted="false">"瑞士地震服务中心"</string>
+    <string name="earthquake_agencies_011" formatted="false">"德国地学研究中心"</string>
+    <string name="earthquake_agencies_012" formatted="false">"新西兰地质与核科学研究所地震监测网"</string>
+    <string name="earthquake_agencies_013" formatted="false">"塞浦路斯地质调查局"</string>
+    <string name="earthquake_agencies_014" formatted="false">"俄罗斯科学院地球物理调查局"</string>
+    <string name="earthquake_agencies_015" formatted="false">"夏威夷火山观测站地震台网"</string>
+    <string name="earthquake_agencies_016" formatted="false">"巴拿马大学地球科学研究所"</string>
+    <string name="earthquake_agencies_017" formatted="false">"阿尔巴尼亚地拉那理工大学地球科学研究所"</string>
+    <string name="earthquake_agencies_018" formatted="false">"西班牙国家地理研究所"</string>
+    <string name="earthquake_agencies_019" formatted="false">"尼加拉瓜国土研究所"</string>
+    <string name="earthquake_agencies_020" formatted="false">"意大利国家地球物理与火山研究所"</string>
+    <string name="earthquake_agencies_021" formatted="false">"马达加斯加塔那那利佛地球物理研究与观测所"</string>
+    <string name="earthquake_agencies_022" formatted="false">"日本气象厅"</string>
+    <string name="earthquake_agencies_023" formatted="false">"德国巴登—符腾堡州地震服务机构"</string>
+    <string name="earthquake_agencies_024" formatted="false">"秘鲁地球物理研究所"</string>
+    <string name="earthquake_agencies_025" formatted="false">"美国蒙大拿矿业与地质局区域地震台网"</string>
+    <string name="earthquake_agencies_026" formatted="false">"乌克兰特殊监测主中心"</string>
+    <string name="earthquake_agencies_027" formatted="false">"马耳他大学地震监测与研究组"</string>
+    <string name="earthquake_agencies_028" formatted="false">"美国地质调查局北加利福尼亚区域地震台网"</string>
+    <string name="earthquake_agencies_029" formatted="false">"印度国家地震中心"</string>
+    <string name="earthquake_agencies_030" formatted="false">"美国地质调查局国家地震信息中心"</string>
+    <string name="earthquake_agencies_031" formatted="false">"美国地质调查局"</string>
+    <string name="earthquake_agencies_032" formatted="false">"美国新马德里联合地震台网"</string>
+    <string name="earthquake_agencies_033" formatted="false">"希腊雅典国家天文台地球动力学研究所"</string>
+    <string name="earthquake_agencies_034" formatted="false">"尼泊尔矿业与地质局国家地震中心"</string>
+    <string name="earthquake_agencies_035" formatted="false">"阿根廷国家地震预防研究所"</string>
+    <string name="earthquake_agencies_036" formatted="false">"意大利国家海洋学与实验地球物理研究所"</string>
+    <string name="earthquake_agencies_037" formatted="false">"玻利维亚圣卡利克斯托观测站"</string>
+    <string name="earthquake_agencies_038" formatted="false">"葡萄牙海洋与大气研究所"</string>
+    <string name="earthquake_agencies_039" formatted="false">"波兰地质研究所国家研究院"</string>
+    <string name="earthquake_agencies_040" formatted="false">"菲律宾火山与地震研究所"</string>
+    <string name="earthquake_agencies_041" formatted="false">"波多黎各大学马亚圭斯分校地震台网与强震动项目"</string>
+    <string name="earthquake_agencies_042" formatted="false">"厄瓜多尔国立理工大学"</string>
+    <string name="earthquake_agencies_043" formatted="false">"法国国家地震监测网"</string>
+    <string name="earthquake_agencies_044" formatted="false">"南非地震台网"</string>
+    <string name="earthquake_agencies_045" formatted="false">"南加利福尼亚地震台网"</string>
+    <string name="earthquake_agencies_046" formatted="false">"希腊塞萨洛尼基亚里士多德大学地球物理系"</string>
+    <string name="earthquake_agencies_047" formatted="false">"泰国地震监测局"</string>
+    <string name="earthquake_agencies_048" formatted="false">"美国得克萨斯大学奥斯汀分校经济地质局"</string>
+    <string name="earthquake_agencies_049" formatted="false">"哥斯达黎加国立大学火山与地震观测研究所"</string>
+    <string name="earthquake_agencies_050" formatted="false">"墨西哥国立自治大学地球物理研究所国家地震服务机构"</string>
+    <string name="earthquake_agencies_051" formatted="false">"美国犹他大学地震台站区域台网"</string>
+    <string name="earthquake_agencies_052" formatted="false">"美国华盛顿大学太平洋西北区域地震台网"</string>
+    <string name="earthquake_agencies_053" formatted="false">"也门地震与火山观测中心"</string>
+    <string name="earthquake_agencies_054" formatted="false">"中国地震台网中心"</string>
+    <string name="earthquake_agencies_055" formatted="false">"土耳其坎迪利天文台与地震研究所"</string>
+    <string name="earthquake_agencies_056" formatted="false">"捷克科学院地球物理研究所"</string>
+    <string name="earthquake_agencies_057" formatted="false">"荷兰皇家气象研究所"</string>
+    <string name="earthquake_agencies_058" formatted="false">"法国探测与地球物理实验室"</string>
+    <string name="earthquake_agencies_059" formatted="false">"挪威地震研究机构"</string>
+    <string name="earthquake_agencies_060" formatted="false">"哈萨克斯坦国家数据中心"</string>
+    <string name="earthquake_agencies_061" formatted="false">"叙利亚国家地震中心"</string>
+    <string name="earthquake_agencies_062" formatted="false">"亚美尼亚国家地震防护机构"</string>
+    <string name="earthquake_agencies_063" formatted="false">"瑞典国家地震台网"</string>
+    <string name="earthquake_agencies_064" formatted="false">"奥地利地球科学局"</string>
+    <string name="earthquake_agencies_065" formatted="false">"英国地质调查局"</string>
+    <string name="earthquake_agencies_066" formatted="false">"德国联邦地球科学与自然资源研究所"</string>
+    <string name="earthquake_agencies_067" formatted="false">"未提供贡献机构"</string>
+    <string name="earthquake_agencies_068" formatted="false">"美国地质调查局国家地震信息中心（USGS / NEIC）"</string>
+    <string name="earthquake_agencies_069" formatted="false">"机构中文名称待核对"</string>
+    <string name="earthquake_api_001" formatted="false">"请求冷却中，请稍后重试"</string>
+    <string name="earthquake_api_002" formatted="false">"来源限流或维护中，已暂停请求"</string>
+    <string name="earthquake_api_003" formatted="false">"来源暂不可用（HTTP "</string>
+    <string name="earthquake_api_004" formatted="false">"）"</string>
+    <string name="earthquake_api_005" formatted="false">"返回数据过大，请缩小时间范围或提高最低震级"</string>
+    <string name="earthquake_api_006" formatted="false">"未知地震数据源"</string>
+    <string name="earthquake_data_001" formatted="false">"中国地震台网（Wolfx 转发）"</string>
+    <string name="earthquake_data_002" formatted="false">"未提供复核状态"</string>
+    <string name="earthquake_data_003" formatted="false">"、"</string>
+    <string name="earthquake_data_004" formatted="false">"已复核"</string>
+    <string name="earthquake_data_005" formatted="false">"欧洲—地中海地震中心返回格式异常"</string>
+    <string name="earthquake_data_006" formatted="false">"未提供地区名称"</string>
+    <string name="earthquake_data_007" formatted="false">"欧洲—地中海地震中心事件参数无效"</string>
+    <string name="earthquake_data_008" formatted="false">"美国地质调查局返回格式异常"</string>
+    <string name="earthquake_data_009" formatted="false">"来源标记已复核"</string>
+    <string name="earthquake_data_010" formatted="false">"自动解算，参数可能修订"</string>
+    <string name="earthquake_data_011" formatted="false">"美国地质调查局事件参数无效"</string>
+    <string name="earthquake_data_012" formatted="false">"中国地震台网中心（经 Wolfx 转发，非官方接口）"</string>
+    <string name="earthquake_data_013" formatted="false">"Wolfx 目录格式或事件参数无效"</string>
+    <string name="earthquake_data_014" formatted="false">"不接受包含外部实体的数据"</string>
+    <string name="earthquake_data_015" formatted="false">"外部实体已禁用"</string>
+    <string name="earthquake_data_016" formatted="false">"德国地学研究中心返回格式异常"</string>
+    <string name="earthquake_data_017" formatted="false">"人工处理"</string>
+    <string name="earthquake_data_018" formatted="false">"来源标记为固定／指定深度，不能视为可靠实测"</string>
+    <string name="earthquake_data_019" formatted="false">"10 km 可能为默认浅源深度，不能据此确定实际深度"</string>
+    <string name="earthquake_data_020" formatted="false">"德国地学研究中心事件参数无效"</string>
+    <string name="earthquake_display_001" formatted="false">"自动结果"</string>
+    <string name="earthquake_display_002" formatted="false">"状态未知"</string>
+    <string name="earthquake_display_003" formatted="false">"中国地震台网"</string>
+    <string name="earthquake_display_004" formatted="false">"欧洲—地中海地震中心（"</string>
+    <string name="earthquake_info_001" formatted="false">"Wolfx 为非官方数据转发服务。本应用仅接入其中国地震台网近期目录，接口最多提供约 50 条记录，不提供全球目录或地震预警。\n\n中国地震台网数据通过该服务向不特定用户公开展示的授权依据尚未完全确认，本应用未取得中国地震台网的再发布授权。跨域访问支持（CORS）、接口可访问、非商业用途、署名及免责声明均不能替代授权。\n\n启用后，应用会向 Wolfx 请求目录，服务方可接收 IP 地址；请求不包含参考位置坐标。接口不保证完整覆盖所选时段、收录全部地震或在固定时间内更新。\n\n如官方机构或相关权利人要求停用，维护者将立即停止接入，下架其维护的相关安装包，并配合处理。可随时在地震数据源设置中关闭此服务。"</string>
+    <string name="earthquake_info_002" formatted="false">"地震数据与说明"</string>
+    <string name="earthquake_info_003" formatted="false">"本功能提供近期地震目录查询，不提供地震预警、地震波到达倒计时或后台地震通知。目录可能遗漏地震，发布时间不固定，事件参数也可能修订；空列表不表示没有发生地震。最低震级默认为 M≥1.0，可设为 M≥0.0 至 M≥7.0，该设置仅用于筛选，不代表数据源的完整收录范围。“中国及周边”为经度 70° E～140° E、纬度 15° N～55° N 的矩形范围，不对应行政边界。"</string>
+    <string name="earthquake_info_004" formatted="false">"时间显示："</string>
+    <string name="earthquake_info_005" formatted="false">"（"</string>
+    <string name="earthquake_info_006" formatted="false">"设备时区"</string>
+    <string name="earthquake_info_007" formatted="false">"北京时间"</string>
+    <string name="earthquake_info_008" formatted="false">"协调世界时"</string>
+    <string name="earthquake_info_009" formatted="false">"）。日期均带年份；选择采用夏令时的时区时，各事件按发生日期的实际偏移显示。中国地震台网转发目录按 UTC+08:00 解析后转换。距离为参考位置到震中的地表大圆距离，不代表到震源的距离，计算在本机完成。参考位置改变后自动更新列表；地震页的“刷新定位”按状态设置中的定位方式获取一次位置，无需先进入状态页，也不会自动开启持续定位。"</string>
+    <string name="earthquake_info_010" formatted="false">"来源：德国地学研究中心 GEOFON（GFZ / GEVN）和欧洲—地中海地震中心（EMSC / SeismicPortal），按 CC BY 4.0 署名。\n\nEvent locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks.\n\n美国地质调查局（USGS）的全球补充目录仅采用其国家地震信息中心提供的参数（net=us），不复制第三方图像，也不将整套聚合目录视为公有领域数据。\n\n本应用进行事件匹配、筛选、时间格式转换和部分地名翻译。合并记录保留各来源参数，不对震级取平均；各来源也不一定完全独立。列表优先显示具体贡献机构，聚合平台及转发信息在详情中注明。同次地震优先采用中国地震台网的已复核结果，其次为其他机构的已复核结果，最后为自动结果或状态未知的记录；同级采用较新结果，不因来源为中国地震台网而直接认定已复核。"</string>
+    <string name="earthquake_info_011" formatted="false">"烈度优先采用美国地质调查局的公众震感汇总（cdi），标为“来源报告烈度”；该值不等同于官方现场调查结果。ShakeMap 的 mmi 字段为模型结果，标为“估算烈度”。\n\n本地估算为震中参考烈度，不代表最大烈度或参考位置处的烈度。来源更新后，应用自动采用当前有效值；模型结果即使经过复核，也不会改标为实测结果。本应用仅采用修订麦加利烈度（MMI），列表省略标度和模型括注，详情保留完整说明。"</string>
+    <string name="earthquake_info_012" formatted="false">"数据源未提供可用烈度时，满足 Mw 5.0～7.9、深度大于 0 且不超过 30 km 等条件的记录，采用 Allen、Wald 和 Worden（2012）经验模型；其他具有有效震级和深度的记录，采用 GlobalQuake 旧开源版本的峰值地面加速度（PGA）及 MMI 阈值参考算法。\n\n后者接受震级 −2～10.5、深度 0～800 km 的输入，但这是算法接受的数值范围，并非全球适用性或精度保证。小震、深震及不同地质构造下的结果可能存在较大误差；两种模型结果不宜视为相同标定尺度下的精确比较。"</string>
+    <string name="earthquake_info_013" formatted="false">"GlobalQuake 参考算法按旧版 MIT 许可适配，未使用其现行闭源版本。本应用保留来源震级类型，非 Mw 时注明“按来源震级近似”；采用 10 km 或来源标记为默认、固定深度时，在详情中提示。不估填缺失深度；未达到模型首档显示阈值时，不显示为 MMI 0 度。场地效应、断层破裂形态及构造适用性未逐事件核验，估算仅供参考，不用于防灾决策。"</string>
+    <string name="earthquake_info_014" formatted="false">"部分目录的 10 km 可能为默认浅源深度，固定深度不代表可靠实测。Wolfx 的 intensity 字段标度和模型仍未核实，不采用该字段，也不将它认作正式最大烈度。"</string>
+    <string name="earthquake_info_015" formatted="false">"中国地震台网目录由 Wolfx 非官方转发，默认关闭，启用前须确认使用提示，无强制阅读倒计时。德国、欧洲和美国来源补充全球记录。Wolfx 文档中的日本气象厅区域目录未接入本应用。"</string>
+    <string name="earthquake_info_016" formatted="false">"\n\n德国和欧洲来源的 CC BY 4.0 许可不适用于中国地震台网或 Wolfx 数据。具体速报产品的现行数据分级、公开展示及转发条件仍待确认；本应用尚未提交申请或取得相关新授权。"</string>
+    <string name="earthquake_info_017" formatted="false">"地震查询会向所选数据源发送 IP 地址、客户端标识、时间范围和最低震级，不发送参考位置坐标、课程表、背景或收藏信息。地震页处于前台时按设置自动刷新，默认间隔为 15 分钟；关闭自动刷新后，即使无缓存也不自动请求。手动刷新至少间隔 1 分钟，并遵守来源的限流要求。\n\n目录及烈度字段缓存在本机，请求失败时保留上次结果。清除缓存不删除设置或限流记录；关闭某数据源后，不再请求该来源，也不显示其缓存记录。"</string>
+    <string name="earthquake_info_018" formatted="false">"德国地学研究中心 · 来源与许可"</string>
+    <string name="earthquake_info_019" formatted="false">"欧洲—地中海地震中心 · 许可与条款"</string>
+    <string name="earthquake_info_020" formatted="false">"美国地质调查局 · 全球目录接口文档"</string>
+    <string name="earthquake_info_021" formatted="false">"美国地质调查局 · 数据字段说明"</string>
+    <string name="earthquake_info_022" formatted="false">"美国地质调查局 · 版权与署名政策"</string>
+    <string name="earthquake_info_023" formatted="false">"MMI 经验模型 · 原始论文"</string>
+    <string name="earthquake_info_024" formatted="false">"GlobalQuake · 参考算法与 MIT 许可旧版本"</string>
+    <string name="earthquake_info_025" formatted="false">"Wolfx · 开放 API 文档"</string>
+    <string name="earthquake_info_026" formatted="false">"Wolfx · 使用条款"</string>
+    <string name="earthquake_info_027" formatted="false">"中国地震台网中心 · 官方网站"</string>
+    <string name="earthquake_info_028" formatted="false">"震级：衡量地震大小的量，可依据地震波振幅或地震矩等计算。Mw 为矩震级，ML 为地方震级，mb 为体波震级，Ms 为面波震级；不同类型不宜直接比较。仅标为 M 时，表示来源未注明震级类型。震级可以为负值，本应用的最低筛选条件为 M≥0.0。"</string>
+    <string name="earthquake_info_029" formatted="false">"烈度：某地点受到的震动影响程度，同一次地震在不同地点可有不同烈度。本应用采用修订麦加利烈度（MMI），用 I～XII 表示震感与影响程度，它不是震级。列表中的烈度数值均为 MMI，来源、模型和计算假设可在详情查看。"</string>
+    <string name="earthquake_info_030" formatted="false">"最大烈度与震中烈度：最大烈度为调查或模型范围内的最高烈度，震中烈度指震中附近的烈度，二者不一定相同。本应用的本地经验估算为震中 MMI，不代表参考位置处的烈度或官方最大烈度。公众震感汇总来自问卷，模型烈度来自计算，两者均可能修订。"</string>
+    <string name="earthquake_info_031" formatted="false">"震中、震源与深度：震源是地下破裂开始的位置，震中是其在地表的对应位置；深度是震源距地表的距离。本应用的距离为参考位置到震中的地表距离，不是到地下震源的直线距离。"</string>
+    <string name="earthquake_info_032" formatted="false">"地震类型：天然地震可与断层构造运动、火山活动或塌陷等有关；还可有诱发地震及爆破、核试验等非天然事件。本应用仅展示来源标为地震或对应地震类型的记录，不根据位置自行推断成因，不将采石爆破纳入地震记录。"</string>
+    <string name="earthquake_info_033" formatted="false">"自动结果：来源标记为自动解算，由来源机构的计算机系统分析观测数据得到。该标记不包含明确的人工处理或复核信息，但不据此判断是否曾有人查看。"</string>
+    <string name="earthquake_info_034" formatted="false">"已复核：本应用为简化显示，将来源标记为“人工处理”“已复核”或“已确认”的记录合并归入此类。“人工处理”仅表示有人参与，不保证完成来源机构的正式复核流程；具体标记可在详情中查看。"</string>
+    <string name="earthquake_info_035" formatted="false">"状态未知：来源未提供可识别的处理或复核状态，不能据此归为自动结果。"</string>
+    <string name="earthquake_info_036" formatted="false">"复核状态仅转述数据源标记，不表示本应用独立核验，也不构成可靠性评级。所有状态的参数均可能随后修订；复核状态不改变模型估算烈度的性质。"</string>
+    <string name="earthquake_info_037" formatted="false">"美国地质调查局 · 地震术语"</string>
+    <string name="earthquake_info_038" formatted="false">"地震术语介绍"</string>
+    <string name="earthquake_intensity_001" formatted="false">"未达模型的 MMI I 显示阈值"</string>
+    <string name="earthquake_intensity_002" formatted="false">"未达阈值，不估算震中烈度"</string>
+    <string name="earthquake_intensity_003" formatted="false">"："</string>
+    <string name="earthquake_intensity_004" formatted="false">"来源报告烈度 MMI "</string>
+    <string name="earthquake_intensity_005" formatted="false">"（%.1f，公众震感汇总）"</string>
+    <string name="earthquake_intensity_006" formatted="false">"估算烈度 MMI "</string>
+    <string name="earthquake_intensity_007" formatted="false">"（%.1f，来源 ShakeMap 模型）"</string>
+    <string name="earthquake_intensity_008" formatted="false">"估算震中烈度 MMI "</string>
+    <string name="earthquake_intensity_009" formatted="false">"（%.1f，本地经验模型）"</string>
+    <string name="earthquake_intensity_010" formatted="false">"；按来源震级近似"</string>
+    <string name="earthquake_intensity_011" formatted="false">"；采用来源默认／固定深度"</string>
+    <string name="earthquake_intensity_012" formatted="false">"估算震中烈度：未达模型的 MMI I 显示阈值（GlobalQuake 参考模型"</string>
+    <string name="earthquake_intensity_013" formatted="false">"（GlobalQuake 参考模型"</string>
+    <string name="earthquake_intensity_014" formatted="false">"估算烈度 MMI：缺少有效震级或深度"</string>
+    <string name="earthquake_location_001" formatted="false">"本次定位超时，保留上次位置；请检查定位方式及系统设置"</string>
+    <string name="earthquake_location_002" formatted="false">"此设备不支持所选定位方式，请在定位设置中更改"</string>
+    <string name="earthquake_location_003" formatted="false">"所选定位方式未开启，请打开手机系统定位"</string>
+    <string name="earthquake_location_004" formatted="false">"正在刷新定位 · "</string>
+    <string name="earthquake_location_005" formatted="false">"网络定位"</string>
+    <string name="earthquake_location_006" formatted="false">"卫星硬件定位"</string>
+    <string name="earthquake_location_007" formatted="false">"未获得所选方式所需定位权限"</string>
+    <string name="earthquake_location_008" formatted="false">"定位暂不可用，保留上次位置"</string>
+    <string name="earthquake_location_009" formatted="false">"未授予所需定位权限，可在系统应用权限中开启"</string>
+    <string name="earthquake_location_010" formatted="false">"本次定位已停止，保留上次位置"</string>
+    <string name="earthquake_location_011" formatted="false">"定位已刷新"</string>
+    <string name="earthquake_location_012" formatted="false">"所选定位方式已关闭，保留上次位置"</string>
+    <string name="earthquake_options_001" formatted="false">"未提供"</string>
+    <string name="earthquake_001" formatted="false">"筛选与刷新"</string>
+    <string name="earthquake_002" formatted="false">"更新状态"</string>
+    <string name="earthquake_003" formatted="false">"地震列表"</string>
+    <string name="earthquake_004" formatted="false">"最近 1 天"</string>
+    <string name="earthquake_005" formatted="false">"最近 3 天"</string>
+    <string name="earthquake_006" formatted="false">"最近 7 天（默认）"</string>
+    <string name="earthquake_007" formatted="false">"最近 30 天"</string>
+    <string name="earthquake_008" formatted="false">"全球（默认）"</string>
+    <string name="earthquake_009" formatted="false">"中国及周边"</string>
+    <string name="earthquake_010" formatted="false">"参考位置附近"</string>
+    <string name="earthquake_011" formatted="false">"按发生时刻从新到旧排序（默认）"</string>
+    <string name="earthquake_012" formatted="false">"按震级从大到小排序"</string>
+    <string name="earthquake_013" formatted="false">"按距离从近到远排序"</string>
+    <string name="earthquake_014" formatted="false">"刷新目录"</string>
+    <string name="earthquake_015" formatted="false">"正在更新…"</string>
+    <string name="earthquake_016" formatted="false">"最近 "</string>
+    <string name="earthquake_017" formatted="false">" 天 · "</string>
+    <string name="earthquake_018" formatted="false">" · 全球 M≥"</string>
+    <string name="earthquake_019" formatted="false">" / 中国及周边 M≥"</string>
+    <string name="earthquake_020" formatted="false">"刷新定位"</string>
+    <string name="earthquake_021" formatted="false">"手动参考位置 · 尚未保存经纬度"</string>
+    <string name="earthquake_022" formatted="false">"手动参考位置 · "</string>
+    <string name="earthquake_023" formatted="false">"未获取定位，距离暂不可用"</string>
+    <string name="earthquake_024" formatted="false">"最近定位 · "</string>
+    <string name="earthquake_025" formatted="false">" 秒前"</string>
+    <string name="earthquake_026" formatted="false">"（较旧）"</string>
+    <string name="earthquake_027" formatted="false">"未获取参考位置"</string>
+    <string name="earthquake_028" formatted="false">"距%s %.0f km"</string>
+    <string name="earthquake_029" formatted="false">"参考位置"</string>
+    <string name="earthquake_030" formatted="false">"最近定位"</string>
+    <string name="earthquake_031" formatted="false">"深度 %.1f km"</string>
+    <string name="earthquake_032" formatted="false">"未提供深度"</string>
+    <string name="earthquake_033" formatted="false">"已关闭"</string>
+    <string name="earthquake_034" formatted="false">"更新中"</string>
+    <string name="earthquake_035" formatted="false">"，保留上次结果"</string>
+    <string name="earthquake_036" formatted="false">"尚未获取"</string>
+    <string name="earthquake_037" formatted="false">"缓存较旧"</string>
+    <string name="earthquake_038" formatted="false">"本机缓存"</string>
+    <string name="earthquake_039" formatted="false">"已获取"</string>
+    <string name="earthquake_040" formatted="false">"现有缓存未覆盖当前筛选范围，等待联网刷新。"</string>
+    <string name="earthquake_041" formatted="false">"本机获取时刻："</string>
+    <string name="earthquake_042" formatted="false">"仅含接口最近最多 50 条，不保证覆盖所选天数；本次 "</string>
+    <string name="earthquake_043" formatted="false">" 条"</string>
+    <string name="earthquake_044" formatted="false">" · 最早记录发生时刻："</string>
+    <string name="earthquake_045" formatted="false">"达到单次条数上限，结果可能不完整，请缩小范围。"</string>
+    <string name="earthquake_046" formatted="false">"尚无参考位置，暂按最新发生排列。"</string>
+    <string name="earthquake_047" formatted="false">"符合筛选："</string>
+    <string name="earthquake_048" formatted="false">" 条 · 点击记录展开详情"</string>
+    <string name="earthquake_049" formatted="false">"尚未获取参考位置，请先定位或手动设置。"</string>
+    <string name="earthquake_050" formatted="false">"暂无可显示的地震记录，请联网刷新。请求失败时将保留已有缓存。"</string>
+    <string name="earthquake_051" formatted="false">"当前已获取目录中没有符合筛选的记录，可调整时间范围和最低震级。这不表示该区域没有发生地震。"</string>
+    <string name="earthquake_052" formatted="false">"发生时刻："</string>
+    <string name="earthquake_053" formatted="false">"来源："</string>
+    <string name="earthquake_054" formatted="false">"加载更多（还有 "</string>
+    <string name="earthquake_055" formatted="false">" 条）"</string>
+    <string name="earthquake_056" formatted="false">"不同来源的震级类型、深度和位置可能不同。本应用不取平均；优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知，同级采用较新结果。中国地震台网的自动速报不视为已复核。列表显示具体贡献机构，聚合平台与转发信息保留在下方。近时近地且匹配明确才合并，密集余震可能仍分开显示。"</string>
+    <string name="earthquake_057" formatted="false">"事件 ID："</string>
+    <string name="earthquake_058" formatted="false">"\n发生时刻："</string>
+    <string name="earthquake_059" formatted="false">"来源报告时间："</string>
+    <string name="earthquake_060" formatted="false">"来源参数生成时刻："</string>
+    <string name="earthquake_061" formatted="false">"来源更新时间："</string>
+    <string name="earthquake_062" formatted="false">"\n震中："</string>
+    <string name="earthquake_063" formatted="false">"\n状态："</string>
+    <string name="earthquake_064" formatted="false">"\n来源处理标记："</string>
+    <string name="earthquake_065" formatted="false">"\n贡献机构："</string>
+    <string name="earthquake_066" formatted="false">" · 中国地震台网中心官网"</string>
+    <string name="earthquake_067" formatted="false">" · 查看原始详情"</string>
+    <string name="earthquake_068" formatted="false">"Wolfx · 目录接口说明"</string>
+    <string name="earthquake_069" formatted="false">"这是机构官网入口，并非此事件的官方详情链接。转发参数仅供参考；未采用接口中含义及标度尚未核实的 intensity 字段。"</string>
+    <string name="earthquake_070" formatted="false">"来源公众震感汇总不等同于官方实测最大烈度；来源模型与本地经验模型始终标为估算。本应用烈度统一采用修订麦加利烈度（MMI）。相关计算范围、限制及许可见关于 → 数据来源与隐私。"</string>
+    <string name="earthquake_071" formatted="false">"地震详情"</string>
+    <string name="earthquake_072" formatted="false">"西藏"</string>
+    <string name="earthquake_073" formatted="false">"西藏—青海交界地区"</string>
+    <string name="earthquake_074" formatted="false">"中国新疆南部"</string>
+    <string name="earthquake_075" formatted="false">"中国新疆北部"</string>
+    <string name="earthquake_076" formatted="false">"中国四川"</string>
+    <string name="earthquake_077" formatted="false">"中国青海"</string>
+    <string name="earthquake_078" formatted="false">"中国云南"</string>
+    <string name="earthquake_079" formatted="false">"台湾地区"</string>
+    <string name="earthquake_080" formatted="false">"台湾"</string>
+    <string name="earthquake_081" formatted="false">"日本本州东岸附近"</string>
+    <string name="earthquake_082" formatted="false">"正在更新，请稍候"</string>
+    <string name="earthquake_083" formatted="false">"尚未达到请求间隔或数据源限流，请稍后重试"</string>
+    <string name="earthquake_084" formatted="false">"连接失败，请检查网络后重试"</string>
+    <string name="earthquake_085" formatted="false">"已获取，但缓存保存失败"</string>
+    <string name="earthquake_086" formatted="false">"刷新成功"</string>
+    <string name="earthquake_087" formatted="false">"部分数据源刷新成功"</string>
+    <string name="earthquake_088" formatted="false">"刷新失败，保留已有缓存"</string>
+    <string name="earthquake_089" formatted="false">"查询时间范围"</string>
+    <string name="earthquake_090" formatted="false">"查询区域"</string>
+    <string name="earthquake_091" formatted="false">"最低震级"</string>
+    <string name="earthquake_092" formatted="false">"排序方式"</string>
+    <string name="earthquake_093" formatted="false">"自动刷新间隔"</string>
+    <string name="earthquake_094" formatted="false">"自动刷新间隔 · 仅页面前台"</string>
+    <string name="earthquake_095" formatted="false">"5 分钟"</string>
+    <string name="earthquake_096" formatted="false">"15 分钟（默认）"</string>
+    <string name="earthquake_097" formatted="false">"30 分钟"</string>
+    <string name="earthquake_098" formatted="false">"1 小时"</string>
+    <string name="earthquake_099" formatted="false">"距离计算参考位置"</string>
+    <string name="earthquake_100" formatted="false">"列表信息显示"</string>
+    <string name="earthquake_101" formatted="false">"栏目显示与排序"</string>
+    <string name="earthquake_102" formatted="false">"数据源"</string>
+    <string name="earthquake_103" formatted="false">"清除地震缓存"</string>
+    <string name="earthquake_104" formatted="false">"清除地震缓存？"</string>
+    <string name="earthquake_105" formatted="false">"仅删除已下载的地震目录，保留设置、最近定位和来源限流记录。"</string>
+    <string name="earthquake_106" formatted="false">"清除"</string>
+    <string name="earthquake_107" formatted="false">"地震缓存已清除"</string>
+    <string name="earthquake_108" formatted="false">"部分地震缓存未能删除"</string>
+    <string name="earthquake_109" formatted="false">"地震设置"</string>
+    <string name="earthquake_110" formatted="false">"全球最低震级"</string>
+    <string name="earthquake_111" formatted="false">"中国及周边最低震级"</string>
+    <string name="earthquake_112" formatted="false">"默认最低震级为 M≥1.0；可设置为 M≥0.0 至 M≥7.0，步长为 0.1 级。筛选条件不代表数据源的完整收录范围。合并记录中任一来源的震级达到所设值即予显示，各来源震级类型仍予保留。"</string>
+    <string name="earthquake_113" formatted="false">"“中国及周边”采用经度 70° E～140° E、纬度 15° N～55° N 的宽范围筛选，不是行政边界。参考位置附近按本机参考位置计算距离。"</string>
+    <string name="earthquake_114" formatted="false">"查询半径 · 50～5000 km（整数）"</string>
+    <string name="earthquake_115" formatted="false">"查询半径（km）"</string>
+    <string name="earthquake_116" formatted="false">"保存查询半径"</string>
+    <string name="earthquake_117" formatted="false">"请输入 50～5000 之间的整数"</string>
+    <string name="earthquake_118" formatted="false">"查询半径已保存"</string>
+    <string name="earthquake_119" formatted="false">"定位位置（默认）"</string>
+    <string name="earthquake_120" formatted="false">"手动参考位置"</string>
+    <string name="earthquake_121" formatted="false">"参考经度（-180° 西经 W ～ +180° 东经 E）"</string>
+    <string name="earthquake_122" formatted="false">"参考纬度（-90° 南纬 S ～ +90° 北纬 N）"</string>
+    <string name="earthquake_123" formatted="false">"参考经度"</string>
+    <string name="earthquake_124" formatted="false">"参考纬度"</string>
+    <string name="earthquake_125" formatted="false">"请输入完整经纬度"</string>
+    <string name="earthquake_126" formatted="false">"保存参考位置"</string>
+    <string name="earthquake_127" formatted="false">"参考位置已保存，距离已更新"</string>
+    <string name="earthquake_128" formatted="false">"请输入有效的经度与纬度"</string>
+    <string name="earthquake_129" formatted="false">"定位位置使用最近有效定位。点击地震页的“刷新定位”可按状态设置中的定位方式获取新位置。选择手动参考位置后，先输入经度，再输入纬度并保存；经度正数为东经 E、负数为西经 W，纬度正数为北纬 N、负数为南纬 S。坐标仅用于本机距离和附近筛选，不发送给目录来源。"</string>
+    <string name="earthquake_130" formatted="false">"深度"</string>
+    <string name="earthquake_131" formatted="false">"距参考位置的距离"</string>
+    <string name="earthquake_132" formatted="false">"烈度信息"</string>
+    <string name="earthquake_133" formatted="false">"来源"</string>
+    <string name="earthquake_134" formatted="false">"复核状态"</string>
+    <string name="earthquake_135" formatted="false">"默认全部显示。来源署名和计算说明统一在关于 → 数据来源与隐私；烈度区分来源报告与模型估算。"</string>
+    <string name="earthquake_136" formatted="false">" · 默认关闭"</string>
+    <string name="earthquake_137" formatted="false">" · 全球补充"</string>
+    <string name="earthquake_138" formatted="false">"启用 Wolfx 转发目录前请确认"</string>
+    <string name="earthquake_139" formatted="false">"我已阅读并确认"</string>
+    <string name="earthquake_140" formatted="false">"至少保留一个地震数据源"</string>
+    <string name="earthquake_141" formatted="false">"默认启用德国地学研究中心、欧洲—地中海地震中心和美国地质调查局。Wolfx 默认关闭，确认使用提示后才启用。Wolfx 接口仅提供中国地震台网近期目录，其他来源补充全球记录。同次地震仅在匹配明确时合并，各来源的原始参数可在详情中分别查看。"</string>
+    <string name="earthquake_142" formatted="false">"地震数据源"</string>
+    <string name="gps_001" formatted="false">"当前位置"</string>
+    <string name="gps_002" formatted="false">"定位卫星"</string>
+    <string name="gps_003" formatted="false">"地点"</string>
+    <string name="gps_004" formatted="false">"使用说明"</string>
+    <string name="gps_005" formatted="false">"尚未开始记录路线"</string>
+    <string name="gps_006" formatted="false">"剩余电量"</string>
+    <string name="gps_007" formatted="false">"电池温度"</string>
+    <string name="gps_008" formatted="false">"电压"</string>
+    <string name="gps_009" formatted="false">"健康状态"</string>
+    <string name="gps_010" formatted="false">"供电方式"</string>
+    <string name="gps_011" formatted="false">"电池类型"</string>
+    <string name="gps_012" formatted="false">"瞬时电流"</string>
+    <string name="gps_013" formatted="false">"剩余电荷"</string>
+    <string name="gps_014" formatted="false">"设备"</string>
+    <string name="gps_015" formatted="false">"安全更新"</string>
+    <string name="gps_016" formatted="false">"内存可用 / 总量"</string>
+    <string name="gps_017" formatted="false">"应用所在存储可用 / 总量"</string>
+    <string name="gps_018" formatted="false">"开机时长（含休眠）"</string>
+    <string name="gps_019" formatted="false">"当前窗口"</string>
+    <string name="gps_020" formatted="false">"卫星区域已隐藏，接收已停止"</string>
+    <string name="gps_021" formatted="false">"等待方向传感器"</string>
+    <string name="gps_022" formatted="false">"俯仰 —"</string>
+    <string name="gps_023" formatted="false">"横滚 —"</string>
+    <string name="gps_024" formatted="false">"以屏幕上沿指向为设备朝向。使用时请平放设备，远离磁铁、金属及电器；必要时缓慢沿“8”字轨迹移动设备以校准。真北方向需根据最近定位估算磁偏角。屏幕上沿抬起时俯仰角为正；向左横滚为负，向右为正。"</string>
+    <string name="gps_025" formatted="false">"经度 · WGS84"</string>
+    <string name="gps_026" formatted="false">"纬度 · WGS84"</string>
+    <string name="gps_027" formatted="false">"水平定位误差半径"</string>
+    <string name="gps_028" formatted="false">"海拔 · WGS84 椭球高"</string>
+    <string name="gps_029" formatted="false">"垂直定位误差半径"</string>
+    <string name="gps_030" formatted="false">"地面速度"</string>
+    <string name="gps_031" formatted="false">"移动方位"</string>
+    <string name="gps_032" formatted="false">"等待定位结果"</string>
+    <string name="gps_033" formatted="false">"移动方位由定位结果提供，不是设备朝向。"</string>
+    <string name="gps_034" formatted="false">"停止定位"</string>
+    <string name="gps_035" formatted="false">"开始定位"</string>
+    <string name="gps_036" formatted="false">"当前方式："</string>
+    <string name="gps_037" formatted="false">" · 设置中可切换"</string>
+    <string name="gps_038" formatted="false">"定位卫星 · 设备接收状态"</string>
+    <string name="gps_039" formatted="false">"停止卫星接收"</string>
+    <string name="gps_040" formatted="false">"开始卫星接收"</string>
+    <string name="gps_041" formatted="false">"卫星接收已停止"</string>
+    <string name="gps_042" formatted="false">"关闭方向跟随后，天空图固定为上北下南左西右东；开启后随设备朝向旋转。圆周为高度角 0°，中心为 90°；方位角以真北为 0°，顺时针递增。颜色区分卫星系统，实心表示参与当前定位解算，空心表示未参与。点击卫星可查看参数。"</string>
+    <string name="gps_043" formatted="false">"尚未选中卫星"</string>
+    <string name="gps_044" formatted="false">"展开或收起卫星明细"</string>
+    <string name="gps_045" formatted="false">"等待设备数据"</string>
+    <string name="gps_046" formatted="false">"仅显示设备芯片和 Android 系统报告的卫星，不推算完整卫星分布。读取卫星状态须授予精确定位权限；开始卫星接收时会同时启动当前位置更新，采用状态设置中的定位方式。停止卫星接收不会停止已启动的定位；停止定位则同时停止卫星接收。离开状态页后，卫星接收和持续定位分别按各自设置处理。系统辅助定位可能联网，本应用不下载星历。"</string>
+    <string name="gps_047" formatted="false">"未授予精确定位，不能读取卫星状态"</string>
+    <string name="gps_048" formatted="false">"所选卫星当前未报告或已被隐藏"</string>
+    <string name="gps_049" formatted="false">"%.1f° · 方位角 %.1f° %s"</string>
+    <string name="gps_050" formatted="false">" · 地平线以下"</string>
+    <string name="gps_051" formatted="false">"未提供有效角度"</string>
+    <string name="gps_052" formatted="false">"\n载噪密度比 "</string>
+    <string name="gps_053" formatted="false">"参与本次定位"</string>
+    <string name="gps_054" formatted="false">"未参与本次定位"</string>
+    <string name="gps_055" formatted="false">"请选择保存的地点"</string>
+    <string name="gps_056" formatted="false">"保存当前位置"</string>
+    <string name="gps_057" formatted="false">"手动添加地点"</string>
+    <string name="gps_058" formatted="false">"选择 / 管理地点"</string>
+    <string name="gps_059" formatted="false">"各地点按所设颜色显示，圆环标记所选目标，中心表示当前位置，外圈比例以所选目标的距离为准；未选择目标时按最远可见地点调整。超出外圈的其他地点以较小圆点显示在外圈上。可在地点管理中设置颜色及显示状态，点击图中地点可选为目标。方向传感器与最近定位有效时，图形随设备朝向旋转；否则真北向上。距离为地表大圆距离，方位为起点处的初始方位角，不包含道路或障碍物信息。定位与磁场误差会影响结果，不用于安全导航。地点默认保存在本机，可导入或导出本应用 JSON 文件。清除缓存或恢复默认设置不会删除；卸载应用将删除这些数据。"</string>
+    <string name="gps_060" formatted="false">"路线"</string>
+    <string name="gps_061" formatted="false">"导入"</string>
+    <string name="gps_062" formatted="false">"导出"</string>
+    <string name="gps_063" formatted="false">"解除跟随当前位置"</string>
+    <string name="gps_064" formatted="false">"跟随当前位置"</string>
+    <string name="gps_065" formatted="false">"结束绘制"</string>
+    <string name="gps_066" formatted="false">"开始绘制"</string>
+    <string name="gps_067" formatted="false">"缩放"</string>
+    <string name="gps_068" formatted="false">"路线缩放"</string>
+    <string name="gps_069" formatted="false">"查看 / 回放已保存路线"</string>
+    <string name="gps_070" formatted="false">"跳到开头"</string>
+    <string name="gps_071" formatted="false">"上一个记录点"</string>
+    <string name="gps_072" formatted="false">"播放"</string>
+    <string name="gps_073" formatted="false">"播放路线"</string>
+    <string name="gps_074" formatted="false">"下一个记录点"</string>
+    <string name="gps_075" formatted="false">"跳到最后"</string>
+    <string name="gps_076" formatted="false">"回放速度 · "</string>
+    <string name="gps_077" formatted="false">" 个记录点/秒"</string>
+    <string name="gps_078" formatted="false">"回放速度，1 至 20 个记录点每秒"</string>
+    <string name="gps_079" formatted="false">"单指拖动可平移路线，拖动缩放滑块可调整范围；最左端画框边长为 30 米，最右端为 10 千米。边缘刻度随缩放变化，缩放以路线框中心为基准，不支持双指缩放。点击记录点可查看序号、坐标和记录时刻。\n\n选择已保存路线后，首先预览路线；点击播放后从起点逐点显示。点击“跟随当前位置”后，回放时持续跟随橙色记录点，实时记录时跟随设备位置；再次点击或拖动画布可解除跟随。暂停时可逐点切换或跳转至首尾记录点，跳转后以该点为中心。\n\n默认每 5 秒记录一次定位结果，可在状态设置中调整为 2～60 秒；使用网络定位时，有效记录间隔不短于网络定位间隔。开始绘制前须开启持续定位并开始定位。未收到有效定位结果时暂停记录，恢复后继续。路线默认保存在本机，可导入或导出本应用 JSON 文件。"</string>
+    <string name="gps_080" formatted="false">"请先在状态设置中开启持续定位，并开始定位"</string>
+    <string name="gps_081" formatted="false">"正在记录路线 · 等待定位点"</string>
+    <string name="gps_082" formatted="false">"正在记录路线 · "</string>
+    <string name="gps_083" formatted="false">" 个记录点"</string>
+    <string name="gps_084" formatted="false">"路线绘制已结束 · "</string>
+    <string name="gps_085" formatted="false">"未收到有效定位点"</string>
+    <string name="gps_086" formatted="false">"例如：晚间跑步"</string>
+    <string name="gps_087" formatted="false">"保存路线"</string>
+    <string name="gps_088" formatted="false">"本次路线共有 "</string>
+    <string name="gps_089" formatted="false">" 个记录点。输入名称后保存，也可以删除本次路线。路线默认保存在本机，可自行导入或导出。"</string>
+    <string name="gps_090" formatted="false">"未命名路线"</string>
+    <string name="gps_091" formatted="false">"路线已保存 · "</string>
+    <string name="gps_092" formatted="false">"删除"</string>
+    <string name="gps_093" formatted="false">"本次路线已删除"</string>
+    <string name="gps_094" formatted="false">"删除路线"</string>
+    <string name="gps_095" formatted="false">"确定删除此路线吗？"</string>
+    <string name="gps_096" formatted="false">"请先结束当前绘制，再查看已保存路线"</string>
+    <string name="gps_097" formatted="false">"暂无已保存路线。"</string>
+    <string name="gps_098" formatted="false">" 点"</string>
+    <string name="gps_099" formatted="false">"编辑"</string>
+    <string name="gps_100" formatted="false">"路线已删除"</string>
+    <string name="gps_101" formatted="false">"上移"</string>
+    <string name="gps_102" formatted="false">"下移"</string>
+    <string name="gps_103" formatted="false">"已保存路线"</string>
+    <string name="gps_104" formatted="false">"路线名称"</string>
+    <string name="gps_105" formatted="false">"编辑路线名称"</string>
+    <string name="gps_106" formatted="false">"路线名称不能为空"</string>
+    <string name="gps_107" formatted="false">"暂停"</string>
+    <string name="gps_108" formatted="false">"暂停路线"</string>
+    <string name="gps_109" formatted="false">"回放："</string>
+    <string name="gps_110" formatted="false">" 个记录点 · "</string>
+    <string name="gps_111" formatted="false">"播放中"</string>
+    <string name="gps_112" formatted="false">"已暂停"</string>
+    <string name="gps_113" formatted="false">"陀螺仪 · 角速度"</string>
+    <string name="gps_114" formatted="false">"加速度计 · 含重力"</string>
+    <string name="gps_115" formatted="false">"线性加速度 · 不含重力"</string>
+    <string name="gps_116" formatted="false">"重力传感器"</string>
+    <string name="gps_117" formatted="false">"磁场"</string>
+    <string name="gps_118" formatted="false">"气压"</string>
+    <string name="gps_119" formatted="false">"环境光"</string>
+    <string name="gps_120" formatted="false">"距离传感器"</string>
+    <string name="gps_121" formatted="false">"环境温度"</string>
+    <string name="gps_122" formatted="false">"相对湿度"</string>
+    <string name="gps_123" formatted="false">"等待结果"</string>
+    <string name="gps_124" formatted="false">"已在设置中隐藏所有传感器。"</string>
+    <string name="gps_125" formatted="false">"本应用以尽可能高的频率请求传感器数据，界面目标刷新间隔为 50 毫秒；实际频率取决于硬件和系统调度，无新数据时保留最近结果。设备未配备或系统未开放的传感器显示“设备未提供”。\n\n传感器坐标轴固定于设备自然方向，不随界面旋转：X 轴向右，Y 轴向上，Z 轴垂直屏幕向外。陀螺仪提供绕各轴的角速度，不直接提供转角；加速度计读数包含重力影响，可用于运动和倾斜检测；线性加速度传感器尽量去除重力影响，用于观察设备运动；重力传感器提供重力加速度估计值，用于姿态参考。\n\n下方电池栏目中的电池温度反映电池自身温度，与传感器中的环境温度不同。环境光可选择系统传感器或相机；相机读数为图像亮度样本，仅用于相对比较，不等同于经校准的照度值。"</string>
+    <string name="gps_126" formatted="false">"等待系统电池状态"</string>
+    <string name="gps_127" formatted="false">"已在设置中隐藏所有电池信息。"</string>
+    <string name="gps_128" formatted="false">"健康状态由 Android 系统提供，不代表实际剩余容量，也不构成电池安全保证。瞬时电流的正负号可在状态设置中调整，不同厂商定义不同。系统未提供的数据不显示为零。"</string>
+    <string name="gps_129" formatted="false">"读取系统信息"</string>
+    <string name="gps_130" formatted="false">"已在设置中隐藏所有设备信息。"</string>
+    <string name="gps_131" formatted="false">"状态使用说明"</string>
+    <string name="gps_132" formatted="false">"指南针、传感器及电池信息仅在状态页处于前台时读取。已开始的卫星接收默认在切换栏目、锁屏或进入后台时暂停，返回后自动恢复；关闭自动继续选项后，须手动开始接收。\n\n如需离开状态页后持续定位，可在“设置 → 状态”中开启“切换栏目、锁屏和后台持续定位”，然后手动开始定位。运行期间可通过通知或状态页停止定位。未允许通知时，可通过系统活动应用管理查看服务。系统省电策略、权限变更或强制停止可能中断定位。\n\n水平和垂直定位误差由 Android 系统提供，通常对应约 68% 的置信水平，并非实际误差的上限保证。垂直误差表示高度方向的不确定范围；未提供时显示“未提供垂直精度”。海拔字段采用 WGS84 椭球高，不等同于以海平面为基准的正高。系统未返回高度时显示“未提供海拔”，不表示海拔为零。\n\n卫星硬件定位使用设备支持的卫星信号，应用无需联网；室内或遮挡环境可能无法获得有效结果。天空图仅显示设备实际报告的卫星，系统辅助定位可能使用网络。\n\n网络定位依赖系统网络位置服务及网络连接。系统可能向定位服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商的规则。设备未提供网络位置服务时，无法使用此方式。网络定位间隔为请求系统更新的最短间隔，实际更新可能延迟或复用已有结果。\n\n坐标采用 WGS84，按经度、纬度的顺序显示：E 为东经，W 为西经，N 为北纬，S 为南纬。应用不上传定位坐标；地震距离和地点方位均在本机计算。距上次定位的时间按定位结果的实际时刻计算。"</string>
+    <string name="gps_133" formatted="false">"本应用不读取设备序列号、IMEI、MAC 地址、已安装应用列表或通信内容。卫星图仅显示设备接收状态，不提供测绘底图、基站改正数据或无线电发射功能。权限及数据使用范围见“设置 → 关于 → 数据来源与隐私”。"</string>
+    <string name="gps_134" formatted="false">"打开手机定位设置"</string>
+    <string name="gps_135" formatted="false">"打开应用权限设置"</string>
+    <string name="gps_136" formatted="false">"定位方式已修改，卫星接收已停止"</string>
+    <string name="gps_137" formatted="false">"未授予所需定位权限；可到应用权限设置开启。"</string>
+    <string name="gps_138" formatted="false">"通知未开启，可在状态页或系统活动应用管理中停止定位"</string>
+    <string name="gps_139" formatted="false">"正在启动定位…"</string>
+    <string name="gps_140" formatted="false">"定位启动失败，请返回应用前台重新开始"</string>
+    <string name="gps_141" formatted="false">"%.1f 米"</string>
+    <string name="gps_142" formatted="false">"未提供精度"</string>
+    <string name="gps_143" formatted="false">"未提供海拔"</string>
+    <string name="gps_144" formatted="false">"未提供垂直精度"</string>
+    <string name="gps_145" formatted="false">" · 距上次定位 "</string>
+    <string name="gps_146" formatted="false">" 秒"</string>
+    <string name="gps_147" formatted="false">" · 结果较旧"</string>
+    <string name="gps_148" formatted="false">"等待新信号 · 下方为上次定位"</string>
+    <string name="gps_149" formatted="false">"精度较高"</string>
+    <string name="gps_150" formatted="false">"精度中等"</string>
+    <string name="gps_151" formatted="false">"精度较低，请校准"</string>
+    <string name="gps_152" formatted="false">"方向精度不可靠，请校准"</string>
+    <string name="gps_153" formatted="false">"\n朝向 "</string>
+    <string name="gps_154" formatted="false">"显示真北方向需要最近定位，请开始定位"</string>
+    <string name="gps_155" formatted="false">"请平放设备，等待有效方向数据"</string>
+    <string name="gps_156" formatted="false">"俯仰 %.1f°"</string>
+    <string name="gps_157" formatted="false">"横滚 %.1f°"</string>
+    <string name="gps_158" formatted="false">"\n当前位置估算磁偏角 %.1f° · 参考定位 %d 秒前"</string>
+    <string name="gps_159" formatted="false">"\n最近卫星状态 "</string>
+    <string name="gps_160" formatted="false">" · 结果较旧，图中暂不绘制"</string>
+    <string name="gps_161" formatted="false">"\n设备报告 "</string>
+    <string name="gps_162" formatted="false">" 颗 · 参与定位 "</string>
+    <string name="gps_163" formatted="false">" 颗 · 当前显示 "</string>
+    <string name="gps_164" formatted="false">" 颗"</string>
+    <string name="gps_165" formatted="false">"尚无设备报告的卫星"</string>
+    <string name="gps_166" formatted="false">"已保存 "</string>
+    <string name="gps_167" formatted="false">" 个地点 · 请选择目标"</string>
+    <string name="gps_168" formatted="false">"目标："</string>
+    <string name="gps_169" formatted="false">"\n请先获取当前位置"</string>
+    <string name="gps_170" formatted="false">"\n地表距离 "</string>
+    <string name="gps_171" formatted="false">"\n真北方位 %.1f° · %s"</string>
+    <string name="gps_172" formatted="false">"\n与参考位置重合，方位未定义"</string>
+    <string name="gps_173" formatted="false">"\n目标大致在正前方"</string>
+    <string name="gps_174" formatted="false">"\n目标相对朝向：向%s偏转 %.0f°"</string>
+    <string name="gps_175" formatted="false">"右"</string>
+    <string name="gps_176" formatted="false">"左"</string>
+    <string name="gps_177" formatted="false">"\n参考定位 "</string>
+    <string name="gps_178" formatted="false">" · 位置较旧，请刷新"</string>
+    <string name="gps_179" formatted="false">" · 误差半径 %.1f 米"</string>
+    <string name="gps_180" formatted="false">"充电中"</string>
+    <string name="gps_181" formatted="false">"放电中"</string>
+    <string name="gps_182" formatted="false">"已充满"</string>
+    <string name="gps_183" formatted="false">"未充电"</string>
+    <string name="gps_184" formatted="false">"系统未提供电池状态"</string>
+    <string name="gps_185" formatted="false">"系统报告没有电池"</string>
+    <string name="gps_186" formatted="false">"良好"</string>
+    <string name="gps_187" formatted="false">"过热"</string>
+    <string name="gps_188" formatted="false">"过冷"</string>
+    <string name="gps_189" formatted="false">"失效"</string>
+    <string name="gps_190" formatted="false">"电压过高"</string>
+    <string name="gps_191" formatted="false">"系统报告故障"</string>
+    <string name="gps_192" formatted="false">"未接电源"</string>
+    <string name="gps_193" formatted="false">"交流电源"</string>
+    <string name="gps_194" formatted="false">"无线充电"</string>
+    <string name="gps_195" formatted="false">"其他电源"</string>
+    <string name="gps_196" formatted="false">"%.0f mAh（非设计容量）"</string>
+    <string name="gps_197" formatted="false">" 天 "</string>
+    <string name="gps_198" formatted="false">" 时 "</string>
+    <string name="gps_199" formatted="false">" 分"</string>
+    <string name="location_service_001" formatted="false">"尚未开始定位"</string>
+    <string name="location_service_002" formatted="false">"定位已停止"</string>
+    <string name="location_service_003" formatted="false">"此设备没有所选定位提供程序，请切换定位方式"</string>
+    <string name="location_service_004" formatted="false">"所选定位方式未开启，请打开手机定位设置"</string>
+    <string name="location_service_005" formatted="false">"正在等待 "</string>
+    <string name="location_service_006" formatted="false">"结果…"</string>
+    <string name="location_service_007" formatted="false">"等待新信号 · 下方为系统上次定位"</string>
+    <string name="location_service_008" formatted="false">"定位权限不足，请重新授权"</string>
+    <string name="location_service_009" formatted="false">"定位暂不可用，请检查系统设置后重新开始"</string>
+    <string name="location_service_010" formatted="false">"持续定位"</string>
+    <string name="location_service_011" formatted="false">"主动开始持续定位后显示，点击停止可结束定位"</string>
+    <string name="location_service_012" formatted="false">"呆呆工具箱 · 持续定位中"</string>
+    <string name="location_service_013" formatted="false">" · 切换栏目和后台继续工作"</string>
+    <string name="location_service_014" formatted="false">"已获取 "</string>
+    <string name="location_service_015" formatted="false">"已关闭，正在等待开启"</string>
+    <string name="main_001" formatted="false">"底栏向左翻页"</string>
+    <string name="main_002" formatted="false">"切换到"</string>
+    <string name="main_003" formatted="false">"底栏向右翻页"</string>
+    <string name="main_004" formatted="false">"已收藏地区"</string>
+    <string name="main_005" formatted="false">"已取消收藏"</string>
+    <string name="main_006" formatted="false">"取消收藏当前地区"</string>
+    <string name="main_007" formatted="false">"收藏当前地区"</string>
+    <string name="main_008" formatted="false">"上次天气 · 历史缓存"</string>
+    <string name="main_009" formatted="false">"当前天气 · 模型估算"</string>
+    <string name="main_010" formatted="false">"更新中…"</string>
+    <string name="main_011" formatted="false">"刷新 ↻"</string>
+    <string name="main_012" formatted="false">"   体感 "</string>
+    <string name="main_013" formatted="false">"最高 "</string>
+    <string name="main_014" formatted="false">"    最低 "</string>
+    <string name="main_015" formatted="false">"M月d日 HH:mm"</string>
+    <string name="main_016" formatted="false">"数据时刻 "</string>
+    <string name="main_017" formatted="false">"地区当地时间"</string>
+    <string name="main_018" formatted="false">"正在获取天气"</string>
+    <string name="main_019" formatted="false">"暂无天气数据"</string>
+    <string name="main_020" formatted="false">"正在请求天气数据，请稍候。"</string>
+    <string name="main_021" formatted="false">"请连接网络后重试，或选择其他地区。"</string>
+    <string name="main_022" formatted="false">"重新获取"</string>
+    <string name="main_023" formatted="false">"缓存预报已过期，请联网刷新"</string>
+    <string name="main_024" formatted="false">"现在"</string>
+    <string name="main_025" formatted="false">"%02d时"</string>
+    <string name="main_026" formatted="false">"底部百分比为降水概率 · 左右滑动查看"</string>
+    <string name="main_027" formatted="false">"% 降水概率"</string>
+    <string name="main_028" formatted="false">"风速"</string>
+    <string name="main_029" formatted="false">"风向"</string>
+    <string name="main_030" formatted="false">"今日最高紫外线指数"</string>
+    <string name="main_031" formatted="false">"日出"</string>
+    <string name="main_032" formatted="false">"日落"</string>
+    <string name="main_033" formatted="false">"紫外线指数为天气模型估算值，用于提示日照暴露风险；它不是实时地面观测。"</string>
+    <string name="main_034" formatted="false">"当前显示的是较早的数据，可点击刷新更新。"</string>
+    <string name="main_035" formatted="false">"距上次请求不足 1 分钟，请稍后重试"</string>
+    <string name="main_036" formatted="false">"天气数据暂不可用，请稍后重试"</string>
+    <string name="main_037" formatted="false">"网络连接失败，请检查网络后重试"</string>
+    <string name="main_038" formatted="false">"；当前显示上次保存的数据。"</string>
+    <string name="main_039" formatted="false">"选择地区"</string>
+    <string name="main_040" formatted="false">"完成"</string>
+    <string name="main_041" formatted="false">"搜索城市、区县或海外地区"</string>
+    <string name="main_042" formatted="false">"例如：杭州、海淀、Tokyo"</string>
+    <string name="main_043" formatted="false">"搜索"</string>
+    <string name="main_044" formatted="false">"我的地区"</string>
+    <string name="main_045" formatted="false">"请输入城市、区县或海外地区名称进行搜索。"</string>
+    <string name="main_046" formatted="false">"搜索其他地区"</string>
+    <string name="main_047" formatted="false">"本地匹配"</string>
+    <string name="main_048" formatted="false">"输入地区名称后，点击“搜索”查询城市或区县。"</string>
+    <string name="main_049" formatted="false">"当前"</string>
+    <string name="main_050" formatted="false">"请输入至少两个字符"</string>
+    <string name="main_051" formatted="false">"正在查找“"</string>
+    <string name="main_052" formatted="false">"地区搜索暂不可用，请检查网络或稍后重试。"</string>
+    <string name="main_053" formatted="false">"未找到匹配地区，请尝试城市名称或拼音。"</string>
+    <string name="main_054" formatted="false">"搜索结果 · 请核对同名地区所属区域"</string>
+    <string name="main_055" formatted="false">"未找到系统图片选择器"</string>
+    <string name="main_056" formatted="false">"，已展开"</string>
+    <string name="main_057" formatted="false">"，已收起"</string>
+    <string name="update_129_title_001" formatted="false">"1.2.9 · 颜色、对准天空与环境光改进"</string>
+    <string name="update_history_001" formatted="false">"• 全局设置新增主要文字、说明文字、强调文字及按钮背景/文字颜色，可选择红、橙、黄、绿、青、蓝、紫、黑、白或输入 #RRGGBB；无效的历史颜色统一回退为蓝色。\n• 天文对准天空使用设备旋转矢量传感器，在星图中心显示红色实体十字，可选择外置相机方向或手机上沿方向。\n• 环境光改为后台读取相机亮度样本，不打开预览窗口、不需要手动启动；可设置切换栏目、锁屏和后台时是否继续使用相机，默认关闭。\n• 重新整理状态页传感器说明、设置顺序和段落，明确电池温度与环境温度的含义；删除天气详情中重复的紫外线数值说明及星空说明中的冗余文字。\n• 修正中国地区目录规范名称与别名去重，甘孜统一为“甘孜藏族自治州”，避免离线目录与在线搜索出现同一地区的重复结果。\n• 版本号 1.2.9 / versionCode 33。"</string>
+    <string name="update_128_title_001" formatted="false">"1.2.8 · 地区去重、配置导出与设备功能"</string>
+    <string name="update_history_002" formatted="false">"• 地区选择页不再显示整段预置城市按钮，仅保留已保存地区和搜索；搜索结果按规范化名称与坐标去重，避免同一城市同时出现两条记录。中国市级目录继续作为离线匹配库，覆盖大陆、香港、澳门和台湾，并保留 GeoNames 来源与坐标校验。\n• 保存路线支持编辑名称、上移和下移排序；新增全局设置中的“一键导出所有配置”，导出设置、收藏地区、保存地点、路线和课程表 JSON。\n• 天文当地星空新增“对准天空”，使用设备旋转矢量传感器使地平星图随设备朝向转动；没有该传感器时仍可使用固定地平坐标。\n• 环境光可选择系统传感器或启动相机测量，并可选择前置或后置摄像头。相机读数为图像亮度样本，仅作相对参考，不等同于照度计。\n• 版本号 1.2.8 / versionCode 32。"</string>
+    <string name="update_127_title_001" formatted="false">"1.2.7 · 语言资源、地区目录与地点管理"</string>
+    <string name="update_history_003" formatted="false">"• 将新增界面文字纳入 XML 语言资源；全局设置新增语言入口，当前完整语言仍为中文，2.0.0 再提供正式语言切换。\n• 地区选择页移除“常用地区”，扩充中国大陆、香港、澳门和台湾的中文城市目录；城市名称统一使用规范后缀，补充宿迁市及苏州下辖地区，并去除重复地点。\n• 保存地点支持上移、下移排序；编辑地点保留原来的列表位置。\n• 天气详情底部增加今日最高紫外线指数说明。\n• 版本号 1.2.7 / versionCode 31。"</string>
+    <string name="update_126_title_001" formatted="false">"1.2.6 · 路线与地点导入导出"</string>
+    <string name="update_history_004" formatted="false">"• 已保存路线和地点可通过系统文件选择器导入或导出 JSON 文件，导入前确认，保留原记录并跳过重复内容。\n• 指南针默认采用真北，设置中默认选项置于首位；当前位置的移动方位去除括号标记。\n• 修复路线播放到末尾后重新播放导致缩放改变的问题。\n• 路线框增加边缘刻度，缩放滑块范围为边长 30 米至 10 千米。\n• 路线跟随按钮切换“跟随当前位置”和“解除跟随当前位置”，回放时跟随橙色记录点。\n• 地点图按所选目标确定外圈范围，超出范围的其他地点以较小圆点显示在外圈。\n• 版本号 1.2.6，沿用原签名。"</string>
+    <string name="update_125_title_001" formatted="false">"1.2.5 · 文字优化与状态交互"</string>
+    <string name="update_history_005" formatted="false">"• 优化各页面文字、专业术语、操作提示与说明排版，统一长说明段间距。\n• 路线回放居中后持续跟随橙色记录点，拖动画布可取消跟随。\n• 定位与卫星接收分别合并开始和停止按钮；开始卫星接收时自动启动当前位置更新，可正常开始路线绘制。\n• 垂直定位误差半径在海拔下方以大字显示。\n• 保存地点可选择颜色和是否在图中显示，支持同时绘制多个地点并点选目标。\n• 重叠或邻近路线记录点的详情使用“返回”按钮，返回后保留记录点选择界面。\n• 版本号 1.2.5，沿用原签名。"</string>
+    <string name="update_124_title_001" formatted="false">"1.2.4 · 状态刷新与路线修复"</string>
+    <string name="update_history_006" formatted="false">"• 卫星明细和状态数值更新时保持页面阅读位置，避免重新布局跳回列表上方。\n• 路线缩放以路线框中心为基准，拖动后缩放也保持正确中心。\n• 状态页除 GPS 定位信息外，指南针、俯仰横滚、传感器、卫星显示、电池和设备信息每 50 毫秒刷新一次；数据以系统实际报告为准，GPS 与网络定位间隔保持原设置。\n• 删除已保存路线或本次未保存路线前，弹出“确定删除此路线吗？”确认框，取消保留路线。\n• 状态默认顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明，保留已自定义的排序。\n• 版本号 1.2.4 / versionCode 26，沿用原签名，可覆盖升级。"</string>
+    <string name="update_123_title_001" formatted="false">"1.2.3 · 路线绘制与全局设置"</string>
+    <string name="update_history_007" formatted="false">"• 新增路线绘制：持续定位开启时按 2～60 秒记录真实位置点，支持缩放滑块、单指拖动、以自己为中心、点选记录点查看序号、坐标和时间，结束后可命名保存或删除并回放。\n• 俯仰和横滚改为大字显示，网络定位间隔设置名称更明确，普通说明文字禁止长按选择。\n• 保存地点重新定位说明和状态方向文案调整，设置新增全局设置，背景、描边和时间显示集中管理；时间显示同步到地震、天文等页面。\n• 版本号 1.2.3 / versionCode 25，可覆盖 1.2.2。\n• 本次维护合并开始/结束绘制按钮，移除移动模式与双指缩放；保存路线完整预览，支持逐点播放/暂停、暂停时前后与首尾跳转、1～20 个记录点/秒速度滑块，并修正名称输入框留白。"</string>
+    <string name="update_122_title_001" formatted="false">"1.2.2 · 状态、缓存与地点改进"</string>
+    <string name="update_history_008" formatted="false">"• 调整大雷暴伴冰雹图标，避免冰雹看起来从云中间斜向发射。\n• 状态使用说明中的定位设置按钮移到说明末尾；状态设置按默认栏目顺序整理，电池与设备信息支持显隐和排序。\n• 电池瞬时电流可选择系统原始符号或反转符号，默认采用 1.2.0 的系统原始符号；说明保留不同厂商定义不同。\n• 卫星名称改为国家或地区加英文缩写，切换栏目、锁屏和后台默认暂停，回到状态页面自动继续；移除传感器帧率设置。\n• 保存地点时年龄实时更新，新增重新定位按钮，只更新表单坐标；地点不设应用层数量上限。\n• 缓存管理显示当前缓存占用，设置入口顺序调整。"</string>
+    <string name="update_121_title_001" formatted="false">"1.2.1 · 状态页细化"</string>
+    <string name="update_history_009" formatted="false">"• 新增传感器显隐与排序、卫星天空图方向跟随、卫星明细按载噪密度比或卫星系统排序，以及电池健康、瞬时电流和重力传感器说明。\n• 修正俯仰、横滚定义，显示当前位置估算磁偏角；地面速度和移动方位改为大字。\n• 切换栏目、锁屏和后台默认暂停卫星接收，可改为停止；地点不设应用层数量上限。\n• versionName 1.2.1 / versionCode 23，可覆盖 1.2.0。"</string>
+    <string name="update_120_title_001" formatted="false">"1.2.0 · 状态与设备工具"</string>
+    <string name="update_history_010" formatted="false">"• 定位升级为状态，保留原定位方式、间隔、前台服务与共享最近位置。\n• 新增 16 方位指南针、磁北与真北、俯仰横滚和校准提示；方向按屏幕旋转换算。\n• 新增设备接收的 GPS、北斗、伽利略、GLONASS 等卫星天空图、方位角、高度角、载噪密度比与参与定位状态，需设备支持及精确定位权限，切换栏目或后台停止卫星接收。\n• 本机保存地点、手动输入或保存当前位置，显示寻宝目标点、直线距离和方向；无道路地图或路线。\n• 新增陀螺仪三轴、加速度、重力、磁场、气压、环境光等设备可用传感器，电量、电池温度、电压及系统提供的电流、内存、存储和开机时长。\n• 状态栏目可显示与排序，卫星系统可筛选；数据仅本机处理，无第三方状态接口或代码。"</string>
+    <string name="update_116_title_001" formatted="false">"1.1.6 · 平板状态恢复与星空扩充"</string>
+    <string name="update_history_011" formatted="false">"• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等，名称统一为 M 编号在前。补齐参宿一至参宿七，保留旧名称的显示开关和选中。北斗七星支持点选与显示开关。\n• 亮星显示设置支持手动选择或按星等上限筛选，步长 0.1 等；原手动选择保留。\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。"</string>
+    <string name="update_115_title_001" formatted="false">"1.1.5 · 固定竖屏与地震来源优化"</string>
+    <string name="update_history_012" formatted="false">"• 应用各页面固定竖屏，避免转动手机触发页面重建、栏目变化或已获取状态变化。\n• 同次地震优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知；同级采用较新结果，不再额外优先德国来源。\n• 地震列表显示智利、泰国等具体贡献机构的中文名，合并后去重；详情继续保留聚合平台与转发信息。"</string>
+    <string name="update_114_title_001" formatted="false">"1.1.4 · 地震信息简化与坐标统一"</string>
+    <string name="update_history_013" formatted="false">"• 地震状态统一为已复核、自动结果、状态未知，详情保留来源处理标记。\n• 发生改为发生时刻，列表简化烈度及中国地震台网来源，模型和转发说明保留在详情；未达阈值时明确提示。\n• 仅保留 MMI，删除烈度标度设置及当前说明中的其他标度；不再显示来源未说明深度是否固定的空泛提示。\n• 贡献机构改用中文名，经纬度统一经度在前、纬度在后，使用 E/W/N/S 标明方向。更新状态改称最早一条。"</string>
+    <string name="update_113_title_001" formatted="false">"1.1.3 · 地震界面与扩展烈度参考"</string>
+    <string name="update_history_014" formatted="false">"• 筛选与刷新仅保留刷新目录、刷新定位按钮，查询范围等统一从设置进入；时间选项统一称“最近 1 天”。移除地震设置内重复的数据来源与隐私入口。\n• 关于说明按统一的一行间隔分段。MMI 默认项置顶，本次升级统一切至 MMI 一次，之后保留手动选择。\n• 超出原论文模型保守条件时，对有有效震级和深度的记录使用 GlobalQuake 旧开源版参考算法，明确注明来源震级近似、默认／固定深度及弱震动显示阈值；不作为正式最大烈度。保留 MIT 许可。\n• 自动解改为“自动解算”；术语中分别解释来源标记已复核、已复核和人工处理，删除主震、前震与余震段落。"</string>
+    <string name="update_112_title_001" formatted="false">"1.1.2 · 地震筛选、定位与烈度"</string>
+    <string name="update_history_015" formatted="false">"• 最低震级改为 0～7、步长 0.1 的滑块，默认 M≥1.0；附近范围在查询区域内输入 50～5000 km。参考位置改为单选，手动经纬度条件显示，保存后自动更新距离。\n• 地震页可按定位设置刷新一次位置，显示经纬度；日期补全年份，排序说明更清楚，时区和数据说明合并进关于 → 数据来源与隐私，按段展示；新增地震术语介绍。\n• 新增美国地质调查局全球补充目录，明确匹配的同次地震合并；各机构使用中文名。Wolfx 默认关闭，须确认说明才启用；补充配合官方停用及下架的承诺。\n• 烈度区分公众震感报告、来源模型与本地 MMI 经验估算，不将模型当实测；中国标度暂不由 MMI 换算，超出估算范围时不进行外推。"</string>
+    <string name="update_111_title_001" formatted="false">"1.1.1 · Wolfx 国内目录"</string>
+    <string name="update_history_016" formatted="false">"• 接入 CENC（Wolfx 转发）近期最多 50 条目录，独立缓存、刷新与数据源开关；与 GEOFON、EMSC 明确匹配才合并，保留各来源参数。\n• 如实说明：上游公开展示适用依据尚未完全确认，不宣称已获 CENC 再发布授权；CORS 和非商业用途不等于授权。可关闭此来源，仅供参考。\n• 按北京时间解析发生及报告时刻；不承诺覆盖所选天数或完整收录；未采用未核实的 intensity 字段，未接入任何预警流。"</string>
+    <string name="update_110_title_001" formatted="false">"1.1.0 · 近期地震与持续定位"</string>
+    <string name="update_history_017" formatted="false">"• 新增地震栏目：GEOFON 与 EMSC 双源近期目录、相近事件合并、震级类型、发生时间、深度、震中、地表距离及各来源详情。\n• 可设置时间范围、区域、最低震级、附近范围、排序、时区、烈度标度、列表字段、栏目顺序和前台刷新间隔；保留离线缓存，区分各来源更新与失败。\n• 来源使用 CC BY 4.0 并保留署名；Wolfx 国内目录的上游依据尚待确认，未启用，也未接入预警流。缺乏可靠烈度资料时不生成数值。\n• 定位新增“切换栏目和后台继续定位”，默认关闭；主动开启并开始后使用 Android 前台服务，提供持续通知和停止按钮。最近定位供地震距离本地计算，不上传。\n• 缓存管理新增地震目录，清理期间的旧请求不会回写。新增栏目保留原有底栏排序及其他设置。"</string>
+    <string name="update_1012_title_001" formatted="false">"1.0.12 · 设置弹窗与地图按钮"</string>
+    <string name="update_history_018" formatted="false">"• 设置弹窗直接在中央显示，取消系统滑入/退出动画。按钮间距与描边改为首次布局前完成，避免显示时再次调整尺寸。日期选择也使用相同处理，保留逐级返回和输入校验。\n• 天气地图的“浏览器”改为“在浏览器中打开”，与图种按钮保持相同宽高、圆角和间距，小屏可完整换行显示。\n• 扩展地震来源及调用许可调研，不在本版本接入地震功能。"</string>
+    <string name="update_1011_title_001" formatted="false">"1.0.11 · 间距与栏目管理"</string>
+    <string name="update_history_019" formatted="false">"• 统一底栏、排序、时间控制、课表、裁剪和弹窗按钮间距，地区名称不再重复打开选择器，搜索按钮移到输入框外。\n• 常用地区新增莫斯科、巴黎，保持每行三列等宽。调整背景裁剪标题与说明，课表入口改为“学期设置”。\n• 版本记录按版本折叠，每次进入默认收起；新增缓存管理，保留课程、收藏、背景、设置与限流记录。\n• 天文新增“时间控制”卡片及栏目显示与排序设置，切换时间保留星图选中与滚动位置。\n• 课表跳周改为输入周次；缩小工具箱图标，四周留白。地震功能仅调研，未加入本版本。"</string>
+    <string name="update_1010_title_001" formatted="false">"1.0.10 · 星空与月球信息"</string>
+    <string name="update_history_020" formatted="false">"• 当地星空改为随屏幕宽度扩展的正方形，放大坐标。标签只在星点正上方或正下方，冲突时隐藏标签但星点仍可选中。\n• “星点信息”改为“选中的星星信息”；太阳和月球可选中，太阳不显示星等，月球显示本地估算视星等。\n• 新增独立“月球信息”，移入月相、照亮比例、近似月龄及距下次满月时间，并绘制随所选时间更新的月相示意。\n• 天气地图在卫星云图后新增中央气象台“天气图”原页入口。\n• 课程信息前缀各项的默认选项移到最前，保留原选择。"</string>
+    <string name="update_109_title_001" formatted="false">"1.0.9 · 天球坐标与星图选中"</string>
+    <string name="update_history_021" formatted="false">"• 精简天气图例说明，WMO 专业表统一称“电码”，修正未知天气提示。\n• 调整默认文案；课表三个信息前缀默认显示完整名称，定位默认间隔改为 5 秒。\n• 天文设置新增行星与深空天体显示开关，以及地平坐标、北天极居中的赤道坐标、不显示坐标网格三种模式。\n• 选中天体显示缓慢顺时针旋转的断开十字，调整时间保留选中；天体落到地平线下时隐藏十字。\n• 恒星名改为织女一、河鼓二、勾陈一，保留原来的显隐偏好；新增昴星团、仙女座星系大致中心，采用 CC0 坐标离线换算。\n• 定位改为“水平定位误差半径”，移除正负号，说明未提供海拔的情况。"</string>
+    <string name="update_108_title_001" formatted="false">"1.0.8 · 默认设置与来源补充"</string>
+    <string name="update_history_022" formatted="false">"• 57、67 改为“中或大冻毛毛雨”“中或大冻雨”。\n• 补齐中英文间距；设置中标注默认值。描边默认关闭，颜色入口简化为“设置描边颜色”，网络定位去掉括号说明。\n• 数据来源与隐私新增天气战士 · 全球版、拾光课程表参考项目，最底部新增本项目 GitHub 链接。\n• 新课表与恢复默认采用 17 周、12 节上下课时间；升级保留已有课表与自定义时间。"</string>
+    <string name="update_107_title_001" formatted="false">"1.0.7 · 雷暴命名与 WMO 原文"</string>
+    <string name="update_history_023" formatted="false">"• 95、96、97、99分别改为“小或中雷暴”“小或中雷暴伴冰雹”“大雷暴”“大雷暴伴冰雹”，按 WMO 原文区分雷暴强度。\n• 99的日夜图标各增加两个冰雹圆点，共四个。\n• 图例说明中的“数字”改为“数”，补充数值代码与本地翻译、模型计算及 WMO 命名依据。\n• 图例底部新增 WMO 官方英文电码原文链接。其他代码的差异已整理供后续版本参考。"</string>
+    <string name="update_106_title_001" formatted="false">"1.0.6 · 天气图例与代码说明"</string>
+    <string name="update_history_024" formatted="false">"• 天气图例说明最右侧数字的含义，补充代码不连续的原因及官方天气代码文档链接。\n• 按当前官方文档说明96、99代码取决于模型的冰雹预报能力，补齐97强雷暴的名称与图标。\n• 大冻雨云朵下方改为三个深蓝色斜线雨点。\n• 说明“天气未知”的触发条件；缺失、无效或未识别代码统一显示问号，避免误画为晴天或普通云朵。"</string>
+    <string name="update_105_title_001" formatted="false">"1.0.5 · 星空与天气图例完善"</string>
+    <string name="update_history_025" formatted="false">"• 北斗七星移出亮星显示设置，在地平线上方时固定显示，旧的隐藏开关不再影响它们。\n• 当地星空加入参考极大日及前后3天的流星雨辐射点，用橙色十字圆环标注；与下方流星雨列表使用同一日期判断。\n• 删除数据来源与隐私中的中国天气网入口，统一链接间距；地区数据署名框增加四边留白。\n• 少云图标缩小云朵；沉积雾凇的雾加入深蓝雪花；云内雪花提高对比度；中、大阵雨与大阵雪按对应雨雪等级修正数量；95改称“小或中雷雨”。"</string>
+    <string name="update_104_title_001" formatted="false">"1.0.4 · 行星算法校准"</string>
+    <string name="update_history_026" formatted="false">"• 按参考项目 weather-fighter-global 的 JPL 简化开普勒元素重算地心行星位置，修正行星出现在错误方位的问题。\n• 行星坐标使用行星日心坐标减地球日心坐标，并统一黄道到赤道坐标转换；水星到海王星的星等公式同步校准。\n• 版本号升至 1.0.4，保留下面各版本的独立更新说明。"</string>
+    <string name="update_103_title_001" formatted="false">"1.0.3 · 天文与布局修复"</string>
+    <string name="update_history_027" formatted="false">"• 修复天文时间按钮重建页面时先回到顶部造成的闪屏，切换后保持原滚动位置。\n• 星图加入本地计算的水星、金星、火星、木星、土星、天王星和海王星，并显示行星星等。\n• 点击亮星或行星显示方位角、高度角和星等；新增亮星显示设置，北斗七星仍只作图示。\n• 流星雨按极大日前后3天标记活跃期并显示辐射点；来源与隐私链接、IMO 链接框和常用地区卡片统一留白。\n• 厦门、台北调整到香港之前。"</string>
+    <string name="update_102_title_001" formatted="false">"1.0.2 · 细节与定位改进"</string>
+    <string name="update_history_028" formatted="false">"• 天文第一行按钮顺序固定为“-15分钟、当前、+15分钟”；太阳与月球标签按字号计算下移间距，避免遮挡圆点；统一使用“月球”。\n• 天气地图、天气代码、背景裁剪、描边颜色、设置逐级返回和定位间隔按本版本记录调整。\n• versionCode 升至 4，沿用包名与签名。"</string>
+    <string name="update_101_title_001" formatted="false">"1.0.1 · 自由布局与个性设置"</string>
+    <string name="update_history_029" formatted="false">"• 分级设置、背景选区与缩放、可选颜色描边。\n• 天气栏目和底部栏目可显隐排序，新增独立天气地图与天文栏目（默认隐藏）。\n• 定位可选 GPS 硬件或网络定位。\n• 课程支持自定义授课周与信息前缀，时间改为数字输入。\n• 改进天气图标、摄氏度、居中排版、图例与刷新提示。\n• 天文支持指定年月日时分、前后15分钟和前后一天，保留滚动位置并区分曙光暮光。\n• 更新隐私说明，移除极光功能。"</string>
+    <string name="update_100_title_001" formatted="false">"1.0.0 · 呆呆工具箱"</string>
+    <string name="update_history_030" formatted="false">"• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\n• 新增手动周课表、自定义节次、地点、教师与单双周。\n• 新增手机图片背景及遮罩调整。\n• 新增前台 GPS 经纬度、水平精度与状态。\n• 新增官方全国降水、温度和分区雷达网页。\n• 新增观星条件、星图、日月位置、月相和曙暮光。\n• 整理来源与隐私，Open-Meteo 入口放在一起。\n• 页脚改为“呆呆鸟使用 Codex 制作”。"</string>
+    <string name="update_010_test_title_001" formatted="false">"0.1.0-test · 简天气测试版"</string>
+    <string name="main_058" formatted="false">"早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。"</string>
+    <string name="main_059" formatted="false">"缓存已清除"</string>
+    <string name="main_060" formatted="false">"部分缓存未能删除，请重试"</string>
+    <string name="main_061" formatted="false">"\n\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。"</string>
+    <string name="main_062" formatted="false">"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\n\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择默认存于本机，清除缓存或恢复默认设置会保留，卸载应用将删除。主动导出的 JSON 文件包含坐标、时间和名称，地点还包含颜色及显示状态；文件保存位置由用户通过系统选择器指定，云盘等提供方适用其自身隐私规则。导入在本机处理，不上传文件。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。"</string>
+    <string name="main_063" formatted="false">"Open-Meteo · 天气数据来源"</string>
+    <string name="main_064" formatted="false">"Open-Meteo · 使用条款与隐私"</string>
+    <string name="main_065" formatted="false">"GeoNames · 地区数据来源"</string>
+    <string name="main_066" formatted="false">"CC BY 4.0 · 数据许可"</string>
+    <string name="main_067" formatted="false">"中央气象台 · 官方页面"</string>
+    <string name="main_068" formatted="false">"天文计算方法参考"</string>
+    <string name="main_069" formatted="false">"Android · 卫星状态官方文档"</string>
+    <string name="main_070" formatted="false">"Android · 传感器官方说明"</string>
+    <string name="main_071" formatted="false">"天体坐标与星等 · Wikidata CC0"</string>
+    <string name="main_072" formatted="false">"参考开源项目"</string>
+    <string name="main_073" formatted="false">"天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。"</string>
+    <string name="main_074" formatted="false">"天气战士 · 全球版 · GitHub"</string>
+    <string name="main_075" formatted="false">"拾光课程表 · GitHub"</string>
+    <string name="main_076" formatted="false">"呆呆工具箱 · GitHub"</string>
+    <string name="main_077" formatted="false">"未找到可打开链接的浏览器"</string>
+    <string name="map_001" formatted="false">"全国"</string>
+    <string name="map_002" formatted="false">"华北"</string>
+    <string name="map_003" formatted="false">"华东"</string>
+    <string name="map_004" formatted="false">"华中"</string>
+    <string name="map_005" formatted="false">"华南"</string>
+    <string name="map_006" formatted="false">"雷达 · "</string>
+    <string name="map_007" formatted="false">"全国日降水量"</string>
+    <string name="map_008" formatted="false">"全国 24 小时降水预报"</string>
+    <string name="map_009" formatted="false">"全国逐时气温"</string>
+    <string name="map_010" formatted="false">"卫星云图"</string>
+    <string name="map_011" formatted="false">"天气图"</string>
+    <string name="map_012" formatted="false">"切换天气地图"</string>
+    <string name="map_013" formatted="false">"日降水量"</string>
+    <string name="map_014" formatted="false">"降水预报"</string>
+    <string name="map_015" formatted="false">"逐时气温"</string>
+    <string name="map_016" formatted="false">"官方原页 · 页面可双指缩放"</string>
+    <string name="map_017" formatted="false">"在浏览器中打开"</string>
+    <string name="map_018" formatted="false">"请先选择天气图类型"</string>
+    <string name="map_019" formatted="false">"正在加载官方网站…"</string>
+    <string name="map_020" formatted="false">"官方原页加载中 "</string>
+    <string name="map_021" formatted="false">" · 原站版权及隐私规则适用"</string>
+    <string name="map_022" formatted="false">"官方网页暂时无法加载，请切换图种重试，或在浏览器中打开。"</string>
+    <string name="map_023" formatted="false">"官网证书校验失败，请稍后重试。"</string>
+    <string name="map_024" formatted="false">"缓存已清除，点击上方图种重新加载官方原页。"</string>
+    <string name="map_025" formatted="false">"正在加载官方原页…"</string>
+    <string name="numeric_inputs_001" formatted="false">"时（0～23）"</string>
+    <string name="numeric_inputs_002" formatted="false">"分（0～59）"</string>
+    <string name="numeric_inputs_003" formatted="false">"输入时间"</string>
+    <string name="numeric_inputs_004" formatted="false">"确定"</string>
+    <string name="numeric_inputs_005" formatted="false">"请输入 0～23 的小时和 0～59 的分钟"</string>
+    <string name="numeric_inputs_006" formatted="false">"年份范围为 1900～2100；当前时区："</string>
+    <string name="numeric_inputs_007" formatted="false">"。"</string>
+    <string name="numeric_inputs_008" formatted="false">"年"</string>
+    <string name="numeric_inputs_009" formatted="false">"月"</string>
+    <string name="numeric_inputs_010" formatted="false">"日"</string>
+    <string name="numeric_inputs_011" formatted="false">"时"</string>
+    <string name="numeric_inputs_012" formatted="false">"分"</string>
+    <string name="numeric_inputs_013" formatted="false">"设置天文时间"</string>
+    <string name="numeric_inputs_014" formatted="false">"该时刻因夏令时切换而不存在，请选择其他时间"</string>
+    <string name="numeric_inputs_015" formatted="false">"请输入有效的年月日、时和分"</string>
+    <string name="official_page_001" formatted="false">"官方原页 · "</string>
+    <string name="official_page_002" formatted="false">" · 页面可双指缩放"</string>
+    <string name="official_page_003" formatted="false">"官方页面加载中 "</string>
+    <string name="official_page_004" formatted="false">"官方网页暂时无法加载。请检查网络，或点击右上角用浏览器打开。"</string>
+    <string name="official_page_005" formatted="false">"官方网站证书校验未通过，可稍后重试。"</string>
+    <string name="route_drawing_001" formatted="false">"路线画布，单指拖动，使用下方滑块缩放，点按记录点查看详情"</string>
+    <string name="route_drawing_002" formatted="false">"暂无回放记录点"</string>
+    <string name="route_drawing_003" formatted="false">"请先获取当前位置"</string>
+    <string name="route_drawing_004" formatted="false">"暂无路线定位点"</string>
+    <string name="route_drawing_005" formatted="false">"边长 "</string>
+    <string name="route_drawing_006" formatted="false">"记录点 "</string>
+    <string name="route_drawing_007" formatted="false">"选择重叠或邻近的记录点"</string>
+    <string name="route_drawing_008" formatted="false">"坐标（经度、纬度）："</string>
+    <string name="route_drawing_009" formatted="false">"\n记录时间："</string>
+    <string name="route_drawing_010" formatted="false">"\n水平误差半径："</string>
+    <string name="schedule_model_001" formatted="false">"下课时间必须晚于上课时间"</string>
+    <string name="schedule_model_002" formatted="false">"不能与上一节课的时间重叠"</string>
+    <string name="schedule_model_003" formatted="false">"不能与下一节课的时间重叠"</string>
+    <string name="schedule_model_004" formatted="false">"请输入有效的时间"</string>
+    <string name="schedule_model_005" formatted="false">"课程名称必填，最多 60 个字"</string>
+    <string name="schedule_model_006" formatted="false">"上课地点和任课教师各最多 80 个字"</string>
+    <string name="schedule_model_007" formatted="false">"请选择星期"</string>
+    <string name="schedule_model_008" formatted="false">"结束节次不能早于开始节次"</string>
+    <string name="schedule_model_009" formatted="false">"授课周次必须在学期范围内，结束周不能早于开始周"</string>
+    <string name="schedule_model_010" formatted="false">"请选择有效的授课周设置"</string>
+    <string name="schedule_model_011" formatted="false">"请选择学期范围内的自定义授课周"</string>
+    <string name="schedule_model_012" formatted="false">"所选授课范围内没有符合单双周规则的周次"</string>
+    <string name="schedule_model_013" formatted="false">"与“"</string>
+    <string name="schedule_model_014" formatted="false">"”在第 "</string>
+    <string name="schedule_model_015" formatted="false">" 周的节次冲突"</string>
+    <string name="schedule_model_016" formatted="false">"自定义 · 第 "</string>
+    <string name="schedule_model_017" formatted="false">" 周"</string>
+    <string name="schedule_model_018" formatted="false">"第 "</string>
+    <string name="schedule_model_019" formatted="false">" · 单周"</string>
+    <string name="schedule_model_020" formatted="false">" · 双周"</string>
+    <string name="schedule_001" formatted="false">"周一"</string>
+    <string name="schedule_002" formatted="false">"周二"</string>
+    <string name="schedule_003" formatted="false">"周三"</string>
+    <string name="schedule_004" formatted="false">"周四"</string>
+    <string name="schedule_005" formatted="false">"周五"</string>
+    <string name="schedule_006" formatted="false">"周六"</string>
+    <string name="schedule_007" formatted="false">"周日"</string>
+    <string name="schedule_008" formatted="false">"原课表读取失败，原始数据已保留在本机备份"</string>
+    <string name="schedule_009" formatted="false">"学期尚未开始"</string>
+    <string name="schedule_010" formatted="false">"学期已结束"</string>
+    <string name="schedule_011" formatted="false">"当前第 "</string>
+    <string name="schedule_012" formatted="false">" · 本机时间 · 周一为每周起点"</string>
+    <string name="schedule_013" formatted="false">"  至  "</string>
+    <string name="schedule_014" formatted="false">"全部课程 · 点击编辑或删除"</string>
+    <string name="schedule_015" formatted="false">"暂无课程"</string>
+    <string name="schedule_016" formatted="false">"请先在课程表设置中设置学期及上课时间，再添加课程。"</string>
+    <string name="schedule_017" formatted="false">" · 第 "</string>
+    <string name="schedule_018" formatted="false">" 节 · "</string>
+    <string name="schedule_019" formatted="false">"今日课程 · "</string>
+    <string name="schedule_020" formatted="false">"今日无课程安排"</string>
+    <string name="schedule_021" formatted="false">"周次（1–"</string>
+    <string name="schedule_022" formatted="false">"输入周次"</string>
+    <string name="schedule_023" formatted="false">"请输入 1–"</string>
+    <string name="schedule_024" formatted="false">" 之间的周次"</string>
+    <string name="schedule_025" formatted="false">"一周课表 · 左右滑动"</string>
+    <string name="schedule_026" formatted="false">"节次"</string>
+    <string name="schedule_027" formatted="false">"学期设置"</string>
+    <string name="schedule_028" formatted="false">"自定义上课时间"</string>
+    <string name="schedule_029" formatted="false">"课程信息前缀"</string>
+    <string name="schedule_030" formatted="false">"课程表设置"</string>
+    <string name="schedule_031" formatted="false">"课程名称："</string>
+    <string name="schedule_032" formatted="false">"地点："</string>
+    <string name="schedule_033" formatted="false">"未填写"</string>
+    <string name="schedule_034" formatted="false">"教师："</string>
+    <string name="schedule_035" formatted="false">"上课地点前缀"</string>
+    <string name="schedule_036" formatted="false">"课程名称前缀"</string>
+    <string name="schedule_037" formatted="false">"教师前缀"</string>
+    <string name="schedule_038" formatted="false">"显示“地点：”（默认）"</string>
+    <string name="schedule_039" formatted="false">"显示“@”"</string>
+    <string name="schedule_040" formatted="false">"不显示前缀"</string>
+    <string name="schedule_041" formatted="false">"显示“课程名称：”（默认）"</string>
+    <string name="schedule_042" formatted="false">"显示“教师：”（默认）"</string>
+    <string name="schedule_043" formatted="false">"默认学期总周数为 17 周。"</string>
+    <string name="schedule_044" formatted="false">"第一周周一："</string>
+    <string name="schedule_045" formatted="false">"请选择第一周的周一"</string>
+    <string name="schedule_046" formatted="false">"学期总周数（1～60）"</string>
+    <string name="schedule_047" formatted="false">"已有课程安排到第 "</string>
+    <string name="schedule_048" formatted="false">" 周，请先修改课程"</string>
+    <string name="schedule_049" formatted="false">"请输入 1～60 之间的总周数"</string>
+    <string name="schedule_050" formatted="false">"默认采用苏州大学课程时间。可逐节修改上课及下课时间，各节次须按时间先后排列且不得重叠。"</string>
+    <string name="schedule_051" formatted="false">" 节    "</string>
+    <string name="schedule_052" formatted="false">"新增节次"</string>
+    <string name="schedule_053" formatted="false">"最多可设置 20 个节次"</string>
+    <string name="schedule_054" formatted="false">"删除最后一个节次"</string>
+    <string name="schedule_055" formatted="false">"至少保留一个节次"</string>
+    <string name="schedule_056" formatted="false">"该节次已被课程使用，请先修改相关课程"</string>
+    <string name="schedule_057" formatted="false">"删除第 "</string>
+    <string name="schedule_058" formatted="false">" 节？"</string>
+    <string name="schedule_059" formatted="false">"上课："</string>
+    <string name="schedule_060" formatted="false">"下课："</string>
+    <string name="schedule_061" formatted="false">"上课"</string>
+    <string name="schedule_062" formatted="false">"下课"</string>
+    <string name="schedule_063" formatted="false">" 节"</string>
+    <string name="schedule_064" formatted="false">"课程数量已达上限"</string>
+    <string name="schedule_065" formatted="false">"课程名称（必填）"</string>
+    <string name="schedule_066" formatted="false">"上课地点"</string>
+    <string name="schedule_067" formatted="false">"任课教师"</string>
+    <string name="schedule_068" formatted="false">"星期"</string>
+    <string name="schedule_069" formatted="false">"开始节次"</string>
+    <string name="schedule_070" formatted="false">"结束节次"</string>
+    <string name="schedule_071" formatted="false">"授课周设置"</string>
+    <string name="schedule_072" formatted="false">"每周（默认）"</string>
+    <string name="schedule_073" formatted="false">"单周"</string>
+    <string name="schedule_074" formatted="false">"双周"</string>
+    <string name="schedule_075" formatted="false">"自定义"</string>
+    <string name="schedule_076" formatted="false">"开始周次"</string>
+    <string name="schedule_077" formatted="false">"结束周次"</string>
+    <string name="schedule_078" formatted="false">"选择自定义周次"</string>
+    <string name="schedule_079" formatted="false">"自定义周："</string>
+    <string name="schedule_080" formatted="false">"点击选择"</string>
+    <string name="schedule_081" formatted="false">"自定义授课周"</string>
+    <string name="schedule_082" formatted="false">"编辑课程"</string>
+    <string name="schedule_083" formatted="false">"请选择自定义授课周"</string>
+    <string name="schedule_084" formatted="false">"请填写有效的授课周次"</string>
+    <string name="schedule_085" formatted="false">"删除课程"</string>
+    <string name="schedule_086" formatted="false">"删除“"</string>
+    <string name="schedule_087" formatted="false">"”的这条安排？"</string>
+    <string name="settings_001" formatted="false">"黑色（默认）"</string>
+    <string name="settings_002" formatted="false">"蓝色"</string>
+    <string name="settings_003" formatted="false">"绿色"</string>
+    <string name="settings_004" formatted="false">"红色"</string>
+    <string name="settings_005" formatted="false">"紫色"</string>
+    <string name="settings_006" formatted="false">"白色"</string>
+    <string name="settings_007" formatted="false">"1 秒"</string>
+    <string name="settings_008" formatted="false">"5 秒（默认）"</string>
+    <string name="settings_009" formatted="false">"10 秒"</string>
+    <string name="settings_010" formatted="false">"30 秒"</string>
+    <string name="settings_011" formatted="false">"1 分钟"</string>
+    <string name="settings_012" formatted="false">"3 分钟"</string>
+    <string name="settings_013" formatted="false">"10 分钟"</string>
+    <string name="settings_014" formatted="false">"全局设置"</string>
+    <string name="settings_015" formatted="false">"关于"</string>
+    <string name="settings_016" formatted="false">"背景"</string>
+    <string name="settings_017" formatted="false">"描边"</string>
+    <string name="settings_018" formatted="false">"时间显示"</string>
+    <string name="settings_019" formatted="false">"知道了"</string>
+    <string name="settings_020" formatted="false">"自动（默认）"</string>
+    <string name="settings_021" formatted="false">"从手机导入并调整背景"</string>
+    <string name="settings_022" formatted="false">"恢复默认背景"</string>
+    <string name="settings_023" formatted="false">"背景亮度 · "</string>
+    <string name="settings_024" formatted="false">"默认亮度为 20。向右拖动滑块可减弱背景遮罩，使图片更清晰。"</string>
+    <string name="settings_025" formatted="false">"背景亮度"</string>
+    <string name="settings_026" formatted="false">"显示区域与按钮描边"</string>
+    <string name="settings_027" formatted="false">"设置描边颜色"</string>
+    <string name="settings_028" formatted="false">"描边：默认关闭。支持预设颜色及 #RRGGBB 自定义颜色。"</string>
+    <string name="settings_029" formatted="false">"描边颜色"</string>
+    <string name="settings_030" formatted="false">"请输入以 # 开头的六位十六进制颜色值，例如 #000000"</string>
+    <string name="settings_031" formatted="false">"描边颜色已保存"</string>
+    <string name="settings_032" formatted="false">"查看图例"</string>
+    <string name="settings_033" formatted="false">"天气设置"</string>
+    <string name="settings_034" formatted="false">"亮星显示设置"</string>
+    <string name="settings_035" formatted="false">"天球坐标设置"</string>
+    <string name="settings_036" formatted="false">"对准天空方向"</string>
+    <string name="settings_037" formatted="false">"天文设置"</string>
+    <string name="settings_038" formatted="false">"外置相机方向（默认）"</string>
+    <string name="settings_039" formatted="false">"手机上沿方向"</string>
+    <string name="settings_040" formatted="false">"地平坐标系（默认）"</string>
+    <string name="settings_041" formatted="false">"赤道坐标系（北天极居中）"</string>
+    <string name="settings_042" formatted="false">"默认手动选择显示的天体。按星等筛选时，仅显示不超过所设星等上限的内置天体，手动选择状态予以保留。太阳和月球始终显示，不参与筛选。"</string>
+    <string name="settings_043" formatted="false">"手动选择（默认）"</string>
+    <string name="settings_044" formatted="false">"按星等上限显示"</string>
+    <string name="settings_045" formatted="false">"恒星 · 默认全部显示"</string>
+    <string name="settings_046" formatted="false">"行星 · 星等随时间变化"</string>
+    <string name="settings_047" formatted="false">"深空天体 · 近似总视星等"</string>
+    <string name="settings_048" formatted="false">"显示星等 ≤ %.1f"</string>
+    <string name="settings_049" formatted="false">"默认星等上限为 6.0 等，范围为 −2.0～8.0 等，步长为 0.1 等。星等越小，天体越亮。筛选仅适用于内置天体，不代表完整星表，也不保证肉眼可见。行星使用所选时刻的估算星等；深空天体使用近似总视星等，其光分布在较大区域，总星等较小也可能难以观测。"</string>
+    <string name="settings_050" formatted="false">"左侧图标表示白天，右侧表示夜间；最右侧的数为 WMO 天气电码。“电码”指气象业务编码表中的编号，“天气代码”指接口返回的字段。\n\nOpen-Meteo 文档仅列出部分 WMO 天气电码。本应用为这些代码提供图标，因此编号不连续，并非图标缺失。\n\n中文名称参照 WMO 英文电码表：57、67 分别为“中或大冻毛毛雨”“中或大冻雨”；雷暴类包括 95、96、97、99。预报代码可由模型计算，不等同于原始观测电码。\n\n“小或中雷暴伴冰雹”和“大雷暴伴冰雹”仅由提供相应冰雹预报的模型返回，例如 DWD ICON、UKMO；是否返回取决于模型及其覆盖范围。"</string>
+    <string name="settings_051" formatted="false">"“天气未知”是数据异常提示，没有对应的 WMO 电码。当天气代码缺失、为空、不是有效的非负整数，或本版本尚不支持该代码时，显示此提示及问号图标。正常返回本版本支持的代码时，不会出现此提示。"</string>
+    <string name="settings_052" formatted="false">"Open-Meteo · 官方代码文档"</string>
+    <string name="settings_053" formatted="false">"WMO · 英文电码原文"</string>
+    <string name="settings_054" formatted="false">"天气图例"</string>
+    <string name="settings_055" formatted="false">"设备与环境显示与排序"</string>
+    <string name="settings_056" formatted="false">"状态设置"</string>
+    <string name="settings_057" formatted="false">"定位方式"</string>
+    <string name="settings_058" formatted="false">"定位持续设置"</string>
+    <string name="settings_059" formatted="false">"环境光来源"</string>
+    <string name="settings_060" formatted="false">"电池信息显示与排序"</string>
+    <string name="settings_061" formatted="false">"卫星系统显示"</string>
+    <string name="settings_062" formatted="false">"卫星明细排序"</string>
+    <string name="settings_063" formatted="false">"卫星天空图跟随设备转动"</string>
+    <string name="settings_064" formatted="false">"回到状态页面自动继续卫星接收"</string>
+    <string name="settings_065" formatted="false">"切换栏目、锁屏和后台持续定位"</string>
+    <string name="settings_066" formatted="false">"默认关闭。开启后须手动开始定位；定位通过前台服务持续运行，可在通知或状态页停止。"</string>
+    <string name="settings_067" formatted="false">"系统环境光传感器（默认）"</string>
+    <string name="settings_068" formatted="false">"相机亮度样本"</string>
+    <string name="settings_069" formatted="false">"环境光摄像头"</string>
+    <string name="settings_070" formatted="false">"切换栏目、锁屏和后台持续开启相机"</string>
+    <string name="settings_071" formatted="false">"默认关闭。开启后，相机环境光读取可在离开状态页面或锁屏时继续；系统仍可能因权限、省电策略或硬件限制中断。"</string>
+    <string name="settings_072" formatted="false">"后置摄像头（默认）"</string>
+    <string name="settings_073" formatted="false">"前置摄像头"</string>
+    <string name="settings_074" formatted="false">"路线绘制间隔 · "</string>
+    <string name="settings_075" formatted="false">"路线绘制间隔"</string>
+    <string name="settings_076" formatted="false">"默认间隔为 5 秒，设置范围为 2～60 秒，步长为 1 秒。使用网络定位时，有效记录间隔不短于网络定位间隔；未收到有效定位结果时暂停记录，恢复后继续。"</string>
+    <string name="settings_077" formatted="false">"路线绘制间隔设置"</string>
+    <string name="settings_078" formatted="false">"真北（默认，按最近位置估算磁偏角）"</string>
+    <string name="settings_079" formatted="false">"磁北"</string>
+    <string name="settings_080" formatted="false">"指南针北向"</string>
+    <string name="settings_081" formatted="false">"系统原始符号（默认）"</string>
+    <string name="settings_082" formatted="false">"反转符号"</string>
+    <string name="settings_083" formatted="false">"电池瞬时电流符号"</string>
+    <string name="settings_084" formatted="false">"默认显示所有卫星系统。可接收的系统取决于设备硬件、系统支持及接收条件。取消勾选仅隐藏对应系统的卫星，不影响芯片接收。"</string>
+    <string name="settings_085" formatted="false">"默认显示所有传感器。可取消勾选以停止本页读取对应传感器，使用箭头调整顺序；不影响系统或其他应用。"</string>
+    <string name="settings_086" formatted="false">"传感器显示与排序"</string>
+    <string name="settings_087" formatted="false">"默认显示全部信息。勾选可设置显示项目，使用箭头调整顺序。"</string>
+    <string name="settings_088" formatted="false">"默认按卫星系统排序，顺序为中国 BDS、美国 GPS、欧洲 Galileo、俄罗斯 GLONASS、日本 QZSS、印度 NavIC、星基增强 SBAS、其他系统。也可按载噪密度比从高到低排序，单位为 dB-Hz。卫星以系统名称和编号标识。"</string>
+    <string name="settings_089" formatted="false">"按卫星系统排序（默认）"</string>
+    <string name="settings_090" formatted="false">"按载噪密度比从高到低"</string>
+    <string name="settings_091" formatted="false">"卫星系统顺序"</string>
+    <string name="settings_092" formatted="false">"卫星硬件定位（默认）"</string>
+    <string name="settings_093" formatted="false">"全国（默认）"</string>
+    <string name="settings_094" formatted="false">"天气地图 · 默认雷达"</string>
+    <string name="settings_095" formatted="false">"本机最多缓存 20 个地区的天气预报，并缓存最近查询的地震目录，以便离线查看。应用内网页还可能保存网页资源、Cookie 和网站存储数据；地区搜索结果与当前天气会暂存在内存中。"</string>
+    <string name="settings_096" formatted="false">"当前缓存占用："</string>
+    <string name="settings_097" formatted="false">"清除缓存将删除天气预报、地震目录及应用内网页缓存、Cookie 和网站存储数据，并忽略清理前尚未完成的天气和地震请求结果。清理后须联网重新获取数据；天气地图须选择图种重新加载。后续访问会再次产生缓存。\n\n已保存的地点、路线、最近定位、课程表、背景图片、收藏及当前地区、所有设置、接口查询配额和限流记录均予以保留。外部浏览器缓存由浏览器管理。"</string>
+    <string name="settings_098" formatted="false">"清除缓存"</string>
+    <string name="settings_099" formatted="false">"清除本机天气预报、地震目录、应用内网页缓存、Cookie 和网站存储。课程、收藏、背景与设置会保留。"</string>
+    <string name="settings_100" formatted="false">"版本更新记录"</string>
+    <string name="settings_101" formatted="false">"默认显示全部栏目，顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明。勾选可设置显示栏目，使用箭头调整顺序。"</string>
+    <string name="settings_102" formatted="false">"默认显示全部栏目，顺序为筛选与刷新、更新状态、地震列表。勾选可设置显示栏目，使用箭头调整顺序。"</string>
+    <string name="settings_103" formatted="false">"默认显示全部栏目，顺序为时间控制、观星条件、当地星空、选中的天体信息、月球信息、日月与行星位置、当日日月事件与曙暮光、流星雨、计算说明与来源。勾选可设置显示栏目，使用箭头调整顺序。"</string>
+    <string name="settings_104" formatted="false">"默认显示全部栏目，顺序为地区、当前天气、未来 24 小时、未来 7 天、天气详情、数据来源入口。勾选可设置显示栏目，使用箭头调整顺序。天气数据旁的来源署名始终保留。"</string>
+    <string name="settings_105" formatted="false">"默认显示天气、课程表、状态和地震，顺序为天气、课程表、状态、天气地图、天文、地震。至少保留一个栏目；仅显示一个栏目时隐藏底栏，显示五个及以上栏目时使用左右箭头翻页。"</string>
+    <string name="settings_106" formatted="false">"至少保留一个底部栏目"</string>
+    <string name="settings_107" formatted="false">"状态栏目显示与排序"</string>
+    <string name="settings_108" formatted="false">"地震栏目显示与排序"</string>
+    <string name="settings_109" formatted="false">"天文栏目显示与排序"</string>
+    <string name="settings_110" formatted="false">"天气栏目显示与排序"</string>
+    <string name="settings_111" formatted="false">"底部栏目显示与排序"</string>
+    <string name="sky_visibility_001" formatted="false">"约 %.1f 等"</string>
+    <string name="status_hardware_001" formatted="false">"尚未开始卫星接收"</string>
+    <string name="status_hardware_002" formatted="false">"卫星接收已暂停 · 回到状态页面后继续"</string>
+    <string name="status_hardware_003" formatted="false">"已停止卫星接收 · 切换栏目或后台停止"</string>
+    <string name="status_hardware_004" formatted="false">"旋转矢量传感器"</string>
+    <string name="status_hardware_005" formatted="false">"加速度计 + 磁力计"</string>
+    <string name="status_hardware_006" formatted="false">"设备未提供可用的方向传感器"</string>
+    <string name="status_hardware_007" formatted="false">"卫星定位已开启，等待接收"</string>
+    <string name="status_hardware_008" formatted="false">"系统卫星定位已关闭"</string>
+    <string name="status_hardware_009" formatted="false">"正在接收 · 请在开阔处等待"</string>
+    <string name="status_hardware_010" formatted="false">"卫星定位模块已停止，等待系统恢复"</string>
+    <string name="status_hardware_011" formatted="false">"已获得首次卫星定位"</string>
+    <string name="status_hardware_012" formatted="false">"设备尚未报告卫星，不表示天空中没有卫星"</string>
+    <string name="status_hardware_013" formatted="false">"已收到设备卫星状态"</string>
+    <string name="status_hardware_014" formatted="false">"正在启动卫星接收"</string>
+    <string name="status_hardware_015" formatted="false">"请在状态页处于前台时开始接收"</string>
+    <string name="status_hardware_016" formatted="false">"此设备没有卫星定位提供程序"</string>
+    <string name="status_hardware_017" formatted="false">"请先打开系统定位开关"</string>
+    <string name="status_hardware_018" formatted="false">"等待设备报告卫星 · 室内可能无信号"</string>
+    <string name="status_hardware_019" formatted="false">"需要精确定位权限，近似定位不足以读取卫星"</string>
+    <string name="status_hardware_020" formatted="false">"此设备或系统未提供卫星状态"</string>
+    <string name="status_hardware_021" formatted="false">"卫星接收未开始"</string>
+    <string name="status_hardware_022" formatted="false">"设备未提供"</string>
+    <string name="status_hardware_023" formatted="false">"等待传感器结果"</string>
+    <string name="status_hardware_024" formatted="false">"设备返回无效数据"</string>
+    <string name="status_math_001" formatted="false">"东北偏北"</string>
+    <string name="status_math_002" formatted="false">"东北偏东"</string>
+    <string name="status_math_003" formatted="false">"东南偏东"</string>
+    <string name="status_math_004" formatted="false">"东南偏南"</string>
+    <string name="status_math_005" formatted="false">"西南偏南"</string>
+    <string name="status_math_006" formatted="false">"西南偏西"</string>
+    <string name="status_math_007" formatted="false">"西北偏西"</string>
+    <string name="status_math_008" formatted="false">"西北偏北"</string>
+    <string name="status_math_009" formatted="false">"方向不可用"</string>
+    <string name="status_math_010" formatted="false">"距离不可用"</string>
+    <string name="status_math_011" formatted="false">"美国 GPS"</string>
+    <string name="status_math_012" formatted="false">"星基增强 SBAS"</string>
+    <string name="status_math_013" formatted="false">"俄罗斯 GLONASS"</string>
+    <string name="status_math_014" formatted="false">"日本 QZSS"</string>
+    <string name="status_math_015" formatted="false">"中国 BDS"</string>
+    <string name="status_math_016" formatted="false">"欧洲 Galileo"</string>
+    <string name="status_math_017" formatted="false">"印度 NavIC"</string>
+    <string name="status_math_018" formatted="false">"其他系统"</string>
+    <string name="status_math_019" formatted="false">"卫星 "</string>
+    <string name="status_place_001" formatted="false">"地点名称或经纬度无效"</string>
+    <string name="status_places_001" formatted="false">"请先获取当前位置，或手动添加地点"</string>
+    <string name="status_places_002" formatted="false">"地点名称（最多 60 字）"</string>
+    <string name="status_places_003" formatted="false">"经度（负数 W / 正数 E）"</string>
+    <string name="status_places_004" formatted="false">"纬度（负数 S / 正数 N）"</string>
+    <string name="status_places_005" formatted="false">"蓝色（默认）"</string>
+    <string name="status_places_006" formatted="false">"橙色"</string>
+    <string name="status_places_007" formatted="false">"青色"</string>
+    <string name="status_places_008" formatted="false">"粉色"</string>
+    <string name="status_places_009" formatted="false">"地点颜色"</string>
+    <string name="status_places_010" formatted="false">"在地点图中显示"</string>
+    <string name="status_places_011" formatted="false">"暂无最近定位。点击“重新定位”可自动填写坐标。"</string>
+    <string name="status_places_012" formatted="false">"最近定位距今 "</string>
+    <string name="status_places_013" formatted="false">" 秒；"</string>
+    <string name="status_places_014" formatted="false">"水平定位误差半径约 %.1f 米。"</string>
+    <string name="status_places_015" formatted="false">"未提供精度。"</string>
+    <string name="status_places_016" formatted="false">"请确认坐标。"</string>
+    <string name="status_places_017" formatted="false">"重新定位"</string>
+    <string name="status_places_018" formatted="false">"点击“重新定位”后，将使用新定位结果填写本表单经纬度；不会自动修改已保存地点。"</string>
+    <string name="status_places_019" formatted="false">"保存地点"</string>
+    <string name="status_places_020" formatted="false">"编辑地点"</string>
+    <string name="status_places_021" formatted="false">"地点已保存，仅存于本机"</string>
+    <string name="status_places_022" formatted="false">"请填写 1～60 字的名称、−180°～180° 的经度和 −90°～90° 的纬度"</string>
+    <string name="status_places_023" formatted="false">"所选定位方式未开启，请先打开系统定位设置。"</string>
+    <string name="status_places_024" formatted="false">"正在重新定位，请稍候…"</string>
+    <string name="status_places_025" formatted="false">"已重新定位，距今 0 秒；"</string>
+    <string name="status_places_026" formatted="false">"重新定位超时，请检查权限、定位开关和环境后重试。"</string>
+    <string name="status_places_027" formatted="false">"定位权限不足，请重新授权。"</string>
+    <string name="status_places_028" formatted="false">"重新定位暂不可用，请检查系统设置。"</string>
+    <string name="status_places_029" formatted="false">"未授予定位权限，无法重新定位"</string>
+    <string name="status_places_030" formatted="false">"共 "</string>
+    <string name="status_places_031" formatted="false">" 个地点 · 仅本机保存"</string>
+    <string name="status_places_032" formatted="false">"尚未保存地点"</string>
+    <string name="status_places_033" formatted="false">"选为目标"</string>
+    <string name="status_places_034" formatted="false">"此操作只删除本机保存的地点。"</string>
+    <string name="status_places_035" formatted="false">"地点已删除"</string>
+    <string name="status_places_036" formatted="false">"保存的地点"</string>
+    <string name="status_transfer_001" formatted="false">"请先完成当前导入或导出"</string>
+    <string name="status_transfer_002" formatted="false">"暂无可导出的"</string>
+    <string name="status_transfer_003" formatted="false">"呆呆工具箱-"</string>
+    <string name="status_transfer_004" formatted="false">"无法导出，请检查数据或文件大小（上限 20 MB）"</string>
+    <string name="status_transfer_005" formatted="false">"导出已中断，请重试"</string>
+    <string name="status_transfer_006" formatted="false">"已导出"</string>
+    <string name="status_transfer_007" formatted="false">"导出失败，请检查目标文件是否可写"</string>
+    <string name="status_transfer_008" formatted="false">"无法导入：文件格式、版本或记录无效，或超过 20 MB；原有数据未修改"</string>
+    <string name="status_transfer_009" formatted="false">"文件包含 "</string>
+    <string name="status_transfer_010" formatted="false">"。导入将保留现有数据，跳过内容相同的记录；标识相同但内容不同的记录将另存，不覆盖原记录。"</string>
+    <string name="status_transfer_011" formatted="false">"正在导入"</string>
+    <string name="status_transfer_012" formatted="false">"请稍候…"</string>
+    <string name="status_transfer_013" formatted="false">"已导入 "</string>
+    <string name="status_transfer_014" formatted="false">"，跳过 "</string>
+    <string name="status_transfer_015" formatted="false">" 条重复记录"</string>
+    <string name="status_transfer_016" formatted="false">"导入失败，请检查设备存储空间"</string>
+    <string name="status_transfer_017" formatted="false">"导入失败，原有数据未修改"</string>
+    <string name="status_transfer_data_001" formatted="false">"文件格式、版本或记录内容无效"</string>
+    <string name="status_views_001" formatted="false">"指南针表盘 · 顶部代表屏幕上沿朝向"</string>
+    <string name="status_views_002" formatted="false">"等待方向"</string>
+    <string name="status_views_003" formatted="false">"请平放设备，远离磁性物体"</string>
+    <string name="status_views_004" formatted="false">"真北"</string>
+    <string name="status_views_005" formatted="false">"地点方位图 · 按所设颜色显示地点，圆环表示所选目标"</string>
+    <string name="status_views_006" formatted="false">"真北向上"</string>
+    <string name="status_views_007" formatted="false">"暂无可显示地点"</string>
+    <string name="status_views_008" formatted="false">"外圈 "</string>
+    <string name="status_views_009" formatted="false">"选择地点"</string>
+    <string name="status_views_010" formatted="false">"定位卫星天空图 · 关闭方向跟随后上北下南左西右东，圆周为地平线"</string>
+    <string name="status_views_011" formatted="false">"等待设备报告卫星"</string>
+    <string name="weather_api_001" formatted="false">"请输入 2～80 个字符的地区名称"</string>
+    <string name="weather_api_002" formatted="false">"请求过于频繁，请稍后再试"</string>
+    <string name="weather_api_003" formatted="false">"数据服务暂时限流，请稍后重试"</string>
+    <string name="weather_api_004" formatted="false">"天气服务暂时不可用（"</string>
+    <string name="weather_api_005" formatted="false">"数据响应异常"</string>
+    <string name="weather_api_006" formatted="false">"数据服务返回错误，请稍后重试"</string>
+    <string name="weather_data_001" formatted="false">"晴"</string>
+    <string name="weather_data_002" formatted="false">"少云"</string>
+    <string name="weather_data_003" formatted="false">"多云"</string>
+    <string name="weather_data_004" formatted="false">"阴"</string>
+    <string name="weather_data_005" formatted="false">"雾"</string>
+    <string name="weather_data_006" formatted="false">"沉积雾凇的雾"</string>
+    <string name="weather_data_007" formatted="false">"小毛毛雨"</string>
+    <string name="weather_data_008" formatted="false">"中毛毛雨"</string>
+    <string name="weather_data_009" formatted="false">"大毛毛雨"</string>
+    <string name="weather_data_010" formatted="false">"小冻毛毛雨"</string>
+    <string name="weather_data_011" formatted="false">"中或大冻毛毛雨"</string>
+    <string name="weather_data_012" formatted="false">"小雨"</string>
+    <string name="weather_data_013" formatted="false">"中雨"</string>
+    <string name="weather_data_014" formatted="false">"大雨"</string>
+    <string name="weather_data_015" formatted="false">"小冻雨"</string>
+    <string name="weather_data_016" formatted="false">"中或大冻雨"</string>
+    <string name="weather_data_017" formatted="false">"小雪"</string>
+    <string name="weather_data_018" formatted="false">"中雪"</string>
+    <string name="weather_data_019" formatted="false">"大雪"</string>
+    <string name="weather_data_020" formatted="false">"米雪"</string>
+    <string name="weather_data_021" formatted="false">"小阵雨"</string>
+    <string name="weather_data_022" formatted="false">"中阵雨"</string>
+    <string name="weather_data_023" formatted="false">"大阵雨"</string>
+    <string name="weather_data_024" formatted="false">"小阵雪"</string>
+    <string name="weather_data_025" formatted="false">"大阵雪"</string>
+    <string name="weather_data_026" formatted="false">"小或中雷暴"</string>
+    <string name="weather_data_027" formatted="false">"小或中雷暴伴冰雹"</string>
+    <string name="weather_data_028" formatted="false">"大雷暴"</string>
+    <string name="weather_data_029" formatted="false">"大雷暴伴冰雹"</string>
+    <string name="weather_data_030" formatted="false">"北风"</string>
+    <string name="weather_data_031" formatted="false">"东北风"</string>
+    <string name="weather_data_032" formatted="false">"东风"</string>
+    <string name="weather_data_033" formatted="false">"东南风"</string>
+    <string name="weather_data_034" formatted="false">"南风"</string>
+    <string name="weather_data_035" formatted="false">"西南风"</string>
+    <string name="weather_data_036" formatted="false">"西风"</string>
+    <string name="weather_data_037" formatted="false">"西北风"</string>
+    <string name="weather_data_038" formatted="false">"今天"</string>
+    <string name="weather_data_039" formatted="false">"明天"</string>
+    <string name="weather_icon_001" formatted="false">"，夜间"</string>
+    <string name="weather_store_001" formatted="false">"已达到今日查询限额，请明日重试"</string>
+    <string name="weather_store_002" formatted="false">"请求过于频繁，请稍后重试"</string>
+</resources>

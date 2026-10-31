@@ -2,9 +2,9 @@ package org.simpleweather.app;
 
 /** Offline directions, spherical distances and display geometry; no mapping service. */
 final class StatusMath {
-    static final String[] DIRECTIONS={"北","东北偏北","东北","东北偏东","东","东南偏东","东南","东南偏南","南","西南偏南","西南","西南偏西","西","西北偏西","西北","西北偏北"};
+    static final String[] DIRECTIONS={UiText.get("astronomy_026"),UiText.get("status_math_001"),UiText.get("astronomy_027"),UiText.get("status_math_002"),UiText.get("astronomy_028"),UiText.get("status_math_003"),UiText.get("astronomy_029"),UiText.get("status_math_004"),UiText.get("astronomy_030"),UiText.get("status_math_005"),UiText.get("astronomy_031"),UiText.get("status_math_006"),UiText.get("astronomy_032"),UiText.get("status_math_007"),UiText.get("astronomy_033"),UiText.get("status_math_008")};
     static double norm(double n){return Double.isFinite(n)?(n%360+360)%360:Double.NaN;}
-    static String direction(double n){return Double.isFinite(n)?DIRECTIONS[(int)Math.floor((norm(n)+11.25)/22.5)%16]:"方向不可用";}
+    static String direction(double n){return Double.isFinite(n)?DIRECTIONS[(int)Math.floor((norm(n)+11.25)/22.5)%16]:UiText.get("status_math_009");}
     static double delta(double target,double heading){return norm(target-heading+180)-180;}
     static double smooth(double previous,double current,double factor){return !Double.isFinite(previous)?norm(current):norm(previous+delta(current,previous)*factor);}
     static boolean coordinate(double lon,double lat){return Double.isFinite(lon)&&Double.isFinite(lat)&&Math.abs(lon)<=180&&Math.abs(lat)<=90;}
@@ -20,10 +20,10 @@ final class StatusMath {
     }
     static boolean satelliteAngles(double elevation,double azimuth){return Double.isFinite(elevation)&&elevation>=-90&&elevation<=90&&Double.isFinite(azimuth)&&azimuth>=0&&azimuth<=360;}
     static double[] sky(double elevation,double azimuth){double r=(90-elevation)/90,t=Math.toRadians(azimuth);return new double[]{r*Math.sin(t),-r*Math.cos(t)};}
-    static String distanceText(double meters){return !Double.isFinite(meters)?"距离不可用":meters>=1000?String.format(java.util.Locale.ROOT,"%.2f km",meters/1000):String.format(java.util.Locale.ROOT,"%.1f 米",meters);}
+    static String distanceText(double meters){return !Double.isFinite(meters)?UiText.get("status_math_010"):meters>=1000?String.format(java.util.Locale.ROOT,"%.2f km",meters/1000):String.format(java.util.Locale.ROOT,UiText.get("gps_141"),meters);}
     static double placeRange(double targetMeters,double farthestMeters){double meters=Double.isFinite(targetMeters)?targetMeters:farthestMeters;return meters<=100?100:meters<=1000?1000:Math.pow(10,Math.ceil(Math.log10(meters)));}
     /** Chinese display names; constellation abbreviations are deliberately not shown in the UI. */
-    static String constellation(int c){switch(c){case 1:return "美国 GPS";case 2:return "星基增强 SBAS";case 3:return "俄罗斯 GLONASS";case 4:return "日本 QZSS";case 5:return "中国 BDS";case 6:return "欧洲 Galileo";case 7:return "印度 NavIC";default:return "其他系统";}}
-    static String satelliteId(int c,int id){return "卫星 "+id;}
+    static String constellation(int c){switch(c){case 1:return UiText.get("status_math_011");case 2:return UiText.get("status_math_012");case 3:return UiText.get("status_math_013");case 4:return UiText.get("status_math_014");case 5:return UiText.get("status_math_015");case 6:return UiText.get("status_math_016");case 7:return UiText.get("status_math_017");default:return UiText.get("status_math_018");}}
+    static String satelliteId(int c,int id){return UiText.get("status_math_019")+id;}
     static int constellationRank(int c,int[] order){for(int n=0;n<order.length;n++)if(order[n]==c)return n;return order.length+10;}
 }

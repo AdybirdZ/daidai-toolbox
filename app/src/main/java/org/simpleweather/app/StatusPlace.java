@@ -12,7 +12,7 @@ final class StatusPlace {
         this(id,name,lon,lat,created,DEFAULT_COLOR,true);
     }
     StatusPlace(String id,String name,double lon,double lat,long created,int color,boolean visible){
-        if(id==null||id.isEmpty()||name==null||name.trim().isEmpty()||name.trim().length()>60||!StatusMath.coordinate(lon,lat))throw new IllegalArgumentException("地点名称或经纬度无效");
+        if(id==null||id.isEmpty()||name==null||name.trim().isEmpty()||name.trim().length()>60||!StatusMath.coordinate(lon,lat))throw new IllegalArgumentException(UiText.get("status_place_001"));
         this.id=id;this.name=name.trim();longitude=lon;latitude=lat;this.created=created;
         this.color=validColor(color)?(color|0xFF000000):DEFAULT_COLOR;this.visible=visible;
     }

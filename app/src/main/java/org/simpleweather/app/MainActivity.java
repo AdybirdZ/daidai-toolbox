@@ -61,14 +61,14 @@ public class MainActivity extends Activity {
         if(Build.VERSION.SDK_INT>=29)getWindow().setNavigationBarContrastEnforced(false);
         store=new WeatherStore(this);api=new WeatherApi(store);catalog=store.catalog();
         if(catalog.isEmpty()) {
-            try {catalog.add(new City(new JSONObject("{\"name\":\"北京\",\"latitude\":39.9042,\"longitude\":116.4074,\"country\":\"中国\",\"timezone\":\"Asia/Shanghai\"}")));}catch(Exception ignored){}
+            try {catalog.add(new City(new JSONObject(UiText.raw("identity_main_001"))));}catch(Exception ignored){}
         }
         city=store.selected(catalog.get(0));data=store.cached(city);
         preferences=getSharedPreferences("toolbox",0);
         if(preferences.getInt("settings_schema",0)<4){SharedPreferences.Editor e=preferences.edit();if(!preferences.contains("background_brightness"))e.putInt("background_brightness",100-Math.max(0,Math.min(100,preferences.getInt("shade",80))));if(preferences.getInt("radar_region",0)>7)e.putInt("radar_region",0);if(preferences.getInt("map_product",0)==4)e.putInt("map_product",0);e.remove("shade").putInt("settings_schema",4).apply();}
-        if(preferences.getInt("star_names_schema",0)<1){String[][] renamed={{"织女星","织女一"},{"牛郎星","河鼓二"},{"北极星","勾陈一"}};SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_star_"+pair[0],newKey="astro_star_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);}e.putInt("star_names_schema",1).apply();}
+        if(preferences.getInt("star_names_schema",0)<1){String[][] renamed={{UiText.raw("identity_main_002"),UiText.raw("identity_astronomy_036")},{UiText.raw("identity_main_003"),UiText.raw("identity_astronomy_042")},{UiText.raw("identity_main_004"),UiText.raw("identity_astronomy_050")}};SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_star_"+pair[0],newKey="astro_star_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);}e.putInt("star_names_schema",1).apply();}
         if(preferences.getInt("deep_names_schema",0)<1){
-            String[][] renamed={{"昴星团","M45 昴星团"},{"仙女座星系","M31 仙女座星系"},{"鬼宿星团（M44）","M44 鬼宿星团"},{"武仙座球状星团（M13）","M13 武仙座球状星团"},{"野鸭星团（M11）","M11 野鸭星团"},{"猎户座大星云（M42）","M42 猎户座大星云"},{"波德星系（M81）","M81 波德星系"}};
+            String[][] renamed={{UiText.raw("identity_main_005"),UiText.raw("identity_astronomy_017")},{UiText.raw("identity_main_006"),UiText.raw("identity_astronomy_018")},{UiText.raw("identity_main_007"),UiText.raw("identity_astronomy_019")},{UiText.raw("identity_main_008"),UiText.raw("identity_astronomy_020")},{UiText.raw("identity_main_009"),UiText.raw("identity_astronomy_021")},{UiText.raw("identity_main_010"),UiText.raw("identity_astronomy_030")},{UiText.raw("identity_main_011"),UiText.raw("identity_astronomy_031")}};
             SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_deep_"+pair[0],newKey="astro_deep_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);e.remove(oldKey);}e.putInt("deep_names_schema",1).apply();
         }
         schedule=new ScheduleScreen(this);gps=new GpsScreen(this);earthquakes=new EarthquakeScreen(this);earthquakes.restoreState(state);
@@ -148,9 +148,9 @@ public class MainActivity extends Activity {
     private void renderNavigation(){
         navigation.removeAllViews();List<Integer> visible=visibleTabs();navigation.setVisibility(visible.size()<2?View.GONE:View.VISIBLE);if(visible.size()<2)return;
         navigationOffset=Math.max(0,Math.min(navigationOffset,Math.max(0,visible.size()-3)));
-        if(visible.size()>=5){TextView left=button("‹",false,()->{navigationOffset=Math.max(0,navigationOffset-1);renderNavigation();});left.setContentDescription("底栏向左翻页");left.setEnabled(navigationOffset>0);left.setAlpha(navigationOffset>0?1:.35f);left.setPadding(0,0,0,0);navigation.addView(left,lp(40,50));}
-        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(tabName(id),false,()->switchTab(id));item.setContentDescription("切换到"+tabName(id));item.setMaxLines(1);item.setHorizontallyScrolling(false);item.setAutoSizeTextTypeUniformWithConfiguration(10,visible.size()==4?12:14,1,android.util.TypedValue.COMPLEX_UNIT_SP);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(buttonSecondaryText());tap(item,Color.TRANSPARENT,16,()->switchTab(id));}if(navigation.getChildCount()>0)gapHorizontal(navigation,6);navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
-        if(visible.size()>=5){TextView right=button("›",false,()->{navigationOffset=Math.min(visible.size()-3,navigationOffset+1);renderNavigation();});right.setContentDescription("底栏向右翻页");right.setEnabled(navigationOffset<visible.size()-3);right.setAlpha(navigationOffset<visible.size()-3?1:.35f);right.setPadding(0,0,0,0);gapHorizontal(navigation,6);navigation.addView(right,lp(40,50));}
+        if(visible.size()>=5){TextView left=button("‹",false,()->{navigationOffset=Math.max(0,navigationOffset-1);renderNavigation();});left.setContentDescription(UiText.get("main_001"));left.setEnabled(navigationOffset>0);left.setAlpha(navigationOffset>0?1:.35f);left.setPadding(0,0,0,0);navigation.addView(left,lp(40,50));}
+        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(tabName(id),false,()->switchTab(id));item.setContentDescription(UiText.get("main_002")+tabName(id));item.setMaxLines(1);item.setHorizontallyScrolling(false);item.setAutoSizeTextTypeUniformWithConfiguration(10,visible.size()==4?12:14,1,android.util.TypedValue.COMPLEX_UNIT_SP);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(buttonSecondaryText());tap(item,Color.TRANSPARENT,16,()->switchTab(id));}if(navigation.getChildCount()>0)gapHorizontal(navigation,6);navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
+        if(visible.size()>=5){TextView right=button("›",false,()->{navigationOffset=Math.min(visible.size()-3,navigationOffset+1);renderNavigation();});right.setContentDescription(UiText.get("main_003"));right.setEnabled(navigationOffset<visible.size()-3);right.setAlpha(navigationOffset<visible.size()-3?1:.35f);right.setPadding(0,0,0,0);gapHorizontal(navigation,6);navigation.addView(right,lp(40,50));}
     }
 
     LinearLayout card() {LinearLayout c=column();c.setPadding(dp(18),dp(20),dp(18),dp(18));c.setBackground(shape(WHITE,24));body.addView(c,lp(-1,-2));return c;}
@@ -179,8 +179,8 @@ public class MainActivity extends Activity {
         LinearLayout cityRow=row();
         TextView cityTitle=text(city.label(),26,TITLE,true);cityTitle.setMinHeight(dp(48));cityTitle.setGravity(Gravity.CENTER_VERTICAL);cityTitle.setPadding(dp(4),0,dp(4),0);
         cityRow.addView(cityTitle,new LinearLayout.LayoutParams(0,-2,1));gapHorizontal(cityRow,10);
-        TextView save=button(store.isSaved(city)?"★":"☆",false,()->{boolean saved=store.toggle(city);toast(saved?"已收藏地区":"已取消收藏");showWeather();});
-        save.setTextSize(25);save.setPadding(0,0,0,0);save.setContentDescription(store.isSaved(city)?"取消收藏当前地区":"收藏当前地区");cityRow.addView(save,lp(48,48));body.addView(cityRow);
+        TextView save=button(store.isSaved(city)?"★":"☆",false,()->{boolean saved=store.toggle(city);toast(saved?UiText.get("main_004"):UiText.get("main_005"));showWeather();});
+        save.setTextSize(25);save.setPadding(0,0,0,0);save.setContentDescription(store.isSaved(city)?UiText.get("main_006"):UiText.get("main_007"));cityRow.addView(save,lp(48,48));body.addView(cityRow);
         TextView detail=text(city.detail(),12,MUTED,false);detail.setPadding(0,dp(5),0,dp(14));body.addView(detail);
     }
     private void currentWeather(Instant now){
@@ -188,18 +188,18 @@ public class MainActivity extends Activity {
         LinearLayout hero=column();hero.setPadding(dp(22),dp(22),dp(18),dp(20));
         GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{PALE,WHITE});gradient.setCornerRadius(dp(28));if(outlined())gradient.setStroke(dp(1),outlineColor());hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
         LinearLayout heroTop=row();
-        TextView label=text(old?"上次天气 · 历史缓存":"当前天气 · 模型估算",12,MUTED,false);heroTop.addView(label);spacer(heroTop);
-        TextView refresh=text(loading?"更新中…":"刷新 ↻",13,BLUE,true);UiColors.mark(refresh,UiColors.BUTTON);refresh.setMinHeight(dp(40));refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(8),0,dp(5),0);tap(refresh,Color.TRANSPARENT,10,()->load(true));heroTop.addView(refresh);hero.addView(heroTop);
+        TextView label=text(old?UiText.get("main_008"):UiText.get("main_009"),12,MUTED,false);heroTop.addView(label);spacer(heroTop);
+        TextView refresh=text(loading?UiText.get("main_010"):UiText.get("main_011"),13,BLUE,true);UiColors.mark(refresh,UiColors.BUTTON);refresh.setMinHeight(dp(40));refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(8),0,dp(5),0);tap(refresh,Color.TRANSPARENT,10,()->load(true));heroTop.addView(refresh);hero.addView(heroTop);
         LinearLayout currentRow=row();LinearLayout temperature=column();
         TextView number=text(WeatherData.degrees(WeatherData.value(data.current,"temperature_2m")),54,INK,false);number.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));temperature.addView(number);
         int code=WeatherData.code(data.current,"weather_code",-1);
-        temperature.addView(text(WeatherData.condition(code)+"   体感 "+WeatherData.degrees(WeatherData.value(data.current,"apparent_temperature")),14,MUTED,false));
+        temperature.addView(text(WeatherData.condition(code)+UiText.get("main_012")+WeatherData.degrees(WeatherData.value(data.current,"apparent_temperature")),14,MUTED,false));
         currentRow.addView(temperature,new LinearLayout.LayoutParams(0,-2,1));currentRow.addView(new WeatherIcon(this,code,data.current.optInt("is_day",1)==1),lp(110,110));hero.addView(currentRow);
         gap(hero,12);
         int today=data.todayIndex(now);
-        hero.addView(text("最高 "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",today))+"    最低 "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",today)),14,INK,false));gap(hero,13);
-        ZoneId shownZone=displayZone(data.zone);String updated=DateTimeFormatter.ofPattern("M月d日 HH:mm").withZone(shownZone).format(data.currentTime);
-        hero.addView(text("数据时刻 "+updated+" · "+(preferences.getInt("global_time_mode",0)==0?"地区当地时间":preferences.getInt("global_time_mode",0)==1?"北京时间":"协调世界时"),11,MUTED,false));
+        hero.addView(text(UiText.get("main_013")+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",today))+UiText.get("main_014")+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",today)),14,INK,false));gap(hero,13);
+        ZoneId shownZone=displayZone(data.zone);String updated=DateTimeFormatter.ofPattern(UiText.get("main_015")).withZone(shownZone).format(data.currentTime);
+        hero.addView(text(UiText.get("main_016")+updated+" · "+(preferences.getInt("global_time_mode",0)==0?UiText.get("main_017"):preferences.getInt("global_time_mode",0)==1?UiText.get("earthquake_info_007"):UiText.get("earthquake_info_008")),11,MUTED,false));
         gap(hero,8);
         LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text(getString(R.string.source_open_meteo),11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);markLink(source);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
 
@@ -207,14 +207,14 @@ public class MainActivity extends Activity {
     }
     private void emptyWeather() {
         LinearLayout c=card();c.setGravity(Gravity.CENTER);gap(c,20);c.addView(new WeatherIcon(this,-1,true),lp(110,110));gap(c,16);
-        c.addView(text(loading?"正在获取天气":"暂无天气数据",19,INK,true));gap(c,12);
-        TextView help=text(loading?"正在请求天气数据，请稍候。":"请连接网络后重试，或选择其他地区。",13,MUTED,false);help.setGravity(Gravity.CENTER);c.addView(help);gap(c,20);
-        if(!loading)c.addView(button("重新获取",true,()->load(true)));gap(c,18);gap(body,24);
+        c.addView(text(loading?UiText.get("main_018"):UiText.get("main_019"),19,INK,true));gap(c,12);
+        TextView help=text(loading?UiText.get("main_020"):UiText.get("main_021"),13,MUTED,false);help.setGravity(Gravity.CENTER);c.addView(help);gap(c,20);
+        if(!loading)c.addView(button(UiText.get("main_022"),true,()->load(true)));gap(c,18);gap(body,24);
     }
     private void hourly(Instant now) {
-        LinearLayout c=card();section(c,"未来 24 小时","Open-Meteo ↗");
+        LinearLayout c=card();section(c,UiText.get("weather_hourly"),"Open-Meteo ↗");
         List<Integer> indices=data.nextHours(now,24);
-        if(indices.isEmpty()){c.addView(text("缓存预报已过期，请联网刷新",13,MUTED,false));return;}
+        if(indices.isEmpty()){c.addView(text(UiText.get("main_023"),13,MUTED,false));return;}
         HorizontalScrollView scroll=new HorizontalScrollView(this);scroll.setHorizontalScrollBarEnabled(false);LinearLayout hours=row();hours.setGravity(Gravity.TOP);
         ZoneId shownZone=displayZone(data.zone);int currentHour=now.atZone(shownZone).getHour();LocalDate today=now.atZone(shownZone).toLocalDate();
         for(int index:indices) {
@@ -222,36 +222,36 @@ public class MainActivity extends Activity {
             LocalDateTime date;try{date=LocalDateTime.parse(time).atZone(data.zone).withZoneSameInstant(shownZone).toLocalDateTime();}catch(Exception e){continue;}
             boolean current=date.toLocalDate().equals(today)&&date.getHour()==currentHour;
             if(current)cell.setBackground(shape(buttonSecondaryColor(),16));
-            cell.addView(text(current?"现在":String.format(Locale.ROOT,"%02d时",date.getHour()),12,current?BLUE:MUTED,current));gap(cell,7);
+            cell.addView(text(current?UiText.get("main_024"):String.format(Locale.ROOT,UiText.get("main_025"),date.getHour()),12,current?BLUE:MUTED,current));gap(cell,7);
             cell.addView(new WeatherIcon(this,WeatherData.code(data.hourly,"weather_code",index),WeatherData.at(data.hourly,"is_day",index)!=0),lp(48,48));gap(cell,9);
             cell.addView(text(WeatherData.degrees(WeatherData.at(data.hourly,"temperature_2m",index)),18,INK,true));gap(cell,10);
             cell.addView(text(WeatherData.number(WeatherData.at(data.hourly,"precipitation_probability",index))+"%",11,BLUE,false));for(int j=0;j<cell.getChildCount();j++)if(cell.getChildAt(j) instanceof TextView)((TextView)cell.getChildAt(j)).setGravity(Gravity.CENTER);hours.addView(cell,lp(76,-2));
         }
-        scroll.addView(hours);c.addView(scroll);gap(c,10);c.addView(text("底部百分比为降水概率 · 左右滑动查看",11,MUTED,false));
+        scroll.addView(hours);c.addView(scroll);gap(c,10);c.addView(text(UiText.get("main_026"),11,MUTED,false));
     }
     private void daily(Instant now) {
-        LinearLayout c=card();section(c,"未来 7 天","Open-Meteo ↗");JSONArray times=data.daily.optJSONArray("time");LocalDate today=now.atZone(data.zone).toLocalDate();int count=0;
+        LinearLayout c=card();section(c,UiText.get("weather_daily"),"Open-Meteo ↗");JSONArray times=data.daily.optJSONArray("time");LocalDate today=now.atZone(data.zone).toLocalDate();int count=0;
         for(int i=0;i<times.length();i++) {
             String iso=times.optString(i);try{if(LocalDate.parse(iso).isBefore(today))continue;}catch(Exception e){continue;}
             if(count++>0)line(c);
             LinearLayout r=row();r.setPadding(0,dp(12),0,dp(12));
             LinearLayout day=column();day.addView(text(WeatherData.day(iso,today),14,INK,true));gap(day,5);day.addView(text(iso.length()>=10?iso.substring(5).replace('-','/') : "—",11,MUTED,false));r.addView(day,lp(48,-2));
             int code=WeatherData.code(data.daily,"weather_code",i);r.addView(new WeatherIcon(this,code,true),lp(33,36));
-            LinearLayout desc=column();desc.setPadding(dp(6),0,0,0);LinearLayout values=row();values.addView(text(WeatherData.condition(code),12,INK,false),new LinearLayout.LayoutParams(0,-2,1));TextView range=text(WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",i))+" / "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",i)),13,INK,true);values.addView(range);desc.addView(values);gap(desc,7);desc.addView(text(WeatherData.number(WeatherData.at(data.daily,"precipitation_probability_max",i))+"% 降水概率",11,MUTED,false));r.addView(desc,new LinearLayout.LayoutParams(0,-2,1));c.addView(r);
+            LinearLayout desc=column();desc.setPadding(dp(6),0,0,0);LinearLayout values=row();values.addView(text(WeatherData.condition(code),12,INK,false),new LinearLayout.LayoutParams(0,-2,1));TextView range=text(WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",i))+" / "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",i)),13,INK,true);values.addView(range);desc.addView(values);gap(desc,7);desc.addView(text(WeatherData.number(WeatherData.at(data.daily,"precipitation_probability_max",i))+UiText.get("main_027"),11,MUTED,false));r.addView(desc,new LinearLayout.LayoutParams(0,-2,1));c.addView(r);
 
         }
-        if(count==0)c.addView(text("缓存预报已过期，请联网刷新",13,MUTED,false));
+        if(count==0)c.addView(text(UiText.get("main_023"),13,MUTED,false));
     }
     private void details(int today) {
-        LinearLayout c=card();section(c,"天气详情","Open-Meteo ↗");
-        metricRow(c,"相对湿度",WeatherData.number(WeatherData.value(data.current,"relative_humidity_2m"))+"%","风速",WeatherData.number(WeatherData.value(data.current,"wind_speed_10m"))+" km/h");
+        LinearLayout c=card();section(c,UiText.get("weather_details"),"Open-Meteo ↗");
+        metricRow(c,UiText.get("gps_122"),WeatherData.number(WeatherData.value(data.current,"relative_humidity_2m"))+"%",UiText.get("main_028"),WeatherData.number(WeatherData.value(data.current,"wind_speed_10m"))+" km/h");
         gap(c,19);line(c);gap(c,19);
         double uv=WeatherData.at(data.daily,"uv_index_max",today);
-        metricRow(c,"风向",WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")).isEmpty()?"—":WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")),"今日最高紫外线指数",Double.isFinite(uv)?String.format(Locale.ROOT,"%.1f",uv):"—");
+        metricRow(c,UiText.get("main_029"),WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")).isEmpty()?"—":WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")),UiText.get("main_030"),Double.isFinite(uv)?String.format(Locale.ROOT,"%.1f",uv):"—");
         gap(c,19);line(c);gap(c,19);
-        metricRow(c,"日出",WeatherData.clock(WeatherData.textAt(data.daily,"sunrise",today)),"日落",WeatherData.clock(WeatherData.textAt(data.daily,"sunset",today)));
+        metricRow(c,UiText.get("main_031"),WeatherData.clock(WeatherData.textAt(data.daily,"sunrise",today)),UiText.get("main_032"),WeatherData.clock(WeatherData.textAt(data.daily,"sunset",today)));
         gap(c,19);line(c);gap(c,14);
-        c.addView(text("紫外线指数为天气模型估算值，用于提示日照暴露风险；它不是实时地面观测。",13,MUTED,false));
+        c.addView(text(UiText.get("main_033"),13,MUTED,false));
     }
     private void metricRow(LinearLayout parent,String a,String av,String b,String bv) {
         LinearLayout r=row();String[] labels={a,b},values={av,bv};
@@ -264,19 +264,19 @@ public class MainActivity extends Activity {
     private void load(boolean force) {
         if(dead)return;
         String key=city.key();WeatherData cache=store.cached(city);
-        if(inFlight.contains(key)){toast("正在更新，请稍候");return;}
+        if(inFlight.contains(key)){toast(UiText.get("earthquake_082"));return;}
         long now=System.currentTimeMillis();
-        if(!force&&cache!=null&&cache.fresh(now)) {data=cache;notice=cache.currentIsOld(Instant.now())?"当前显示的是较早的数据，可点击刷新更新。":"";if(weatherVisible())showWeather();return;}
+        if(!force&&cache!=null&&cache.fresh(now)) {data=cache;notice=cache.currentIsOld(Instant.now())?UiText.get("main_034"):"";if(weatherVisible())showWeather();return;}
         Long previous=attempts.get(key);
-        if(previous!=null&&now-previous<60_000){toast("距上次请求不足 1 分钟，请稍后重试");return;}
+        if(previous!=null&&now-previous<60_000){toast(UiText.get("main_035"));return;}
         attempts.put(key,now);inFlight.add(key);loading=true;notice="";if(weatherVisible())showWeather();final City requested=city;final int generation=cacheGeneration;
         workers.execute(()->{
             WeatherData received=null;String error=null;
             try {received=new WeatherData(api.forecast(requested),System.currentTimeMillis());}
-            catch(Exception e){error=e instanceof java.io.IOException?e.getMessage():"天气数据暂不可用，请稍后重试";if(error==null||!error.matches(".*[\\u4e00-\\u9fff].*"))error="网络连接失败，请检查网络后重试";}
+            catch(Exception e){error=e instanceof java.io.IOException?e.getMessage():UiText.get("main_036");if(error==null||!error.matches(".*[\\u4e00-\\u9fff].*"))error=UiText.get("main_037");}
             final WeatherData result=received;final String failure=error;
             main.post(()->{if(dead)return;inFlight.remove(key);if(generation!=cacheGeneration){loading=inFlight.contains(city.key());if(weatherVisible())showWeather();return;}if(result!=null)store.save(requested,result);if(!city.key().equals(key))return;loading=false;
-                if(result!=null){data=result;notice="";if(force)toast("刷新成功");}else{data=store.cached(requested);notice=data==null?failure:failure+"；当前显示上次保存的数据。";}
+                if(result!=null){data=result;notice="";if(force)toast(UiText.get("earthquake_086"));}else{data=store.cached(requested);notice=data==null?failure:failure+UiText.get("main_038");}
                 if(weatherVisible())showWeather();
             });
         });
@@ -286,11 +286,11 @@ public class MainActivity extends Activity {
     }
     private void showPicker() {
         picking=true;searchVersion++;startScreen();
-        LinearLayout heading=row();heading.addView(text("选择地区",25,TITLE,true));spacer(heading);heading.addView(button("完成",false,()->{hideKeyboard();switchTab(tab);}));body.addView(heading);gap(body,10);
-        body.addView(text("搜索城市、区县或海外地区",13,MUTED,false));gap(body,18);
+        LinearLayout heading=row();heading.addView(text(UiText.get("main_039"),25,TITLE,true));spacer(heading);heading.addView(button(UiText.get("main_040"),false,()->{hideKeyboard();switchTab(tab);}));body.addView(heading);gap(body,10);
+        body.addView(text(UiText.get("main_041"),13,MUTED,false));gap(body,18);
         LinearLayout input=row();
-        search=new EditText(this);search.setSingleLine(true);search.setTextSize(16);search.setTextColor(primaryTextColor());search.setHintTextColor(secondaryTextColor());search.setHint("例如：杭州、海淀、Tokyo");search.setBackground(shape(WHITE,18));search.setPadding(dp(13),dp(15),dp(10),dp(15));search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);input.addView(search,new LinearLayout.LayoutParams(0,-2,1));
-        gapHorizontal(input,10);input.addView(button("搜索",true,this::searchOnline));body.addView(input);gap(body,20);
+        search=new EditText(this);search.setSingleLine(true);search.setTextSize(16);search.setTextColor(primaryTextColor());search.setHintTextColor(secondaryTextColor());search.setHint(UiText.get("main_042"));search.setBackground(shape(WHITE,18));search.setPadding(dp(13),dp(15),dp(10),dp(15));search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);input.addView(search,new LinearLayout.LayoutParams(0,-2,1));
+        gapHorizontal(input,10);input.addView(button(UiText.get("main_043"),true,this::searchOnline));body.addView(input);gap(body,20);
         results=column();body.addView(results);searchStatus=text("",13,MUTED,false);
         search.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int count,int after){}public void onTextChanged(CharSequence s,int start,int before,int count){searchVersion++;renderLocal(s.toString());}public void afterTextChanged(Editable e){}});
         search.setOnEditorActionListener((v,action,event)->{if(action==EditorInfo.IME_ACTION_SEARCH){searchOnline();return true;}return false;});
@@ -300,32 +300,32 @@ public class MainActivity extends Activity {
     private void renderLocal(String query) {
         results.removeAllViews();String q=query.trim();
         if(q.isEmpty()) {
-            List<City> saved=store.saved();if(!saved.isEmpty()){results.addView(text("我的地区",16,TITLE,true));gap(results,10);cityList(saved);gap(results,22);}
-            results.addView(text("请输入城市、区县或海外地区名称进行搜索。",13,MUTED,false));
+            List<City> saved=store.saved();if(!saved.isEmpty()){results.addView(text(UiText.get("main_044"),16,TITLE,true));gap(results,10);cityList(saved);gap(results,22);}
+            results.addView(text(UiText.get("main_045"),13,MUTED,false));
         } else {
             List<City> matched=new ArrayList<>();
             for(City c:store.saved())if(c.matches(q))addUniquePlace(matched,c);
             for(City c:catalog)if(c.matches(q))addUniquePlace(matched,c);
-            results.addView(text(matched.isEmpty()?"搜索其他地区":"本地匹配",15,INK,true));gap(results,10);cityList(matched);
-            gap(results,8);results.addView(text("输入地区名称后，点击“搜索”查询城市或区县。",12,MUTED,false));
+            results.addView(text(matched.isEmpty()?UiText.get("main_046"):UiText.get("main_047"),15,INK,true));gap(results,10);cityList(matched);
+            gap(results,8);results.addView(text(UiText.get("main_048"),12,MUTED,false));
         }
     }
     private void cityList(List<City> cities) {
         for(City c:cities) {
-            LinearLayout item=row();item.setPadding(dp(14),dp(14),dp(12),dp(14));LinearLayout labels=column();labels.addView(text(c.label(),16,TITLE,true));gap(labels,6);labels.addView(text(c.detail(),12,MUTED,false));gap(labels,5);labels.addView(text(CoordinateFormat.pair(c.longitude,c.latitude,6),12,MUTED,false));item.addView(labels,new LinearLayout.LayoutParams(0,-2,1));item.addView(text(city.key().equals(c.key())?"当前":"›",14,BLUE,false));tap(item,WHITE,16,()->choose(c));results.addView(item,lp(-1,-2));gap(results,8);
+            LinearLayout item=row();item.setPadding(dp(14),dp(14),dp(12),dp(14));LinearLayout labels=column();labels.addView(text(c.label(),16,TITLE,true));gap(labels,6);labels.addView(text(c.detail(),12,MUTED,false));gap(labels,5);labels.addView(text(CoordinateFormat.pair(c.longitude,c.latitude,6),12,MUTED,false));item.addView(labels,new LinearLayout.LayoutParams(0,-2,1));item.addView(text(city.key().equals(c.key())?UiText.get("main_049"):"›",14,BLUE,false));tap(item,WHITE,16,()->choose(c));results.addView(item,lp(-1,-2));gap(results,8);
         }
     }
     private void searchOnline() {
-        if(search==null)return;final String query=search.getText().toString().trim();if(query.length()<2){toast("请输入至少两个字符");return;}
-        final int version=++searchVersion;hideKeyboard();results.removeAllViews();results.addView(text("正在查找“"+query+"”…",14,MUTED,false));
+        if(search==null)return;final String query=search.getText().toString().trim();if(query.length()<2){toast(UiText.get("main_050"));return;}
+        final int version=++searchVersion;hideKeyboard();results.removeAllViews();results.addView(text(UiText.get("main_051")+query+"”…",14,MUTED,false));
         workers.execute(()->{
-            List<City> found=new ArrayList<>();String failure=null;try{found=api.search(query);}catch(Exception e){failure="地区搜索暂不可用，请检查网络或稍后重试。";}
+            List<City> found=new ArrayList<>();String failure=null;try{found=api.search(query);}catch(Exception e){failure=UiText.get("main_052");}
             final List<City> list=new ArrayList<>();
             for(City c:catalog)if(c.matches(query))addUniquePlace(list,c);
             for(City c:found)addUniquePlace(list,c);
             final String error=failure;
             main.post(()->{if(dead||!picking||version!=searchVersion)return;results.removeAllViews();
-                results.addView(text(error!=null?error:list.isEmpty()?"未找到匹配地区，请尝试城市名称或拼音。":"搜索结果 · 请核对同名地区所属区域",14,error!=null?0xFF8B6021:INK,false));gap(results,14);cityList(list);
+                results.addView(text(error!=null?error:list.isEmpty()?UiText.get("main_053"):UiText.get("main_054"),14,error!=null?0xFF8B6021:INK,false));gap(results,14);cityList(list);
             });
         });
     }
@@ -350,50 +350,51 @@ public class MainActivity extends Activity {
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
     void locationModeChanged(){gps.modeChanged();if(tab==2)switchTab(2);}
-    void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast("未找到系统图片选择器");}}
+    void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast(UiText.get("main_055"));}}
     void resetBackground(){new java.io.File(getFilesDir(),"background.jpg").delete();background=null;refreshScreen();}
     void reloadBackground(){background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());refreshScreen();}
     private void updateEntry(LinearLayout c,String title,String details){
         LinearLayout entry=column();TextView detail=text(details,14,INK,false);detail.setPadding(dp(12),dp(12),dp(12),dp(8));detail.setVisibility(View.GONE);
-        TextView toggle=button(title+"  ＋",false,()->{});toggle.setGravity(Gravity.CENTER_VERTICAL);toggle.setOnClickListener(v->{boolean open=detail.getVisibility()!=View.VISIBLE;detail.setVisibility(open?View.VISIBLE:View.GONE);toggle.setText(title+(open?"  −":"  ＋"));toggle.setContentDescription(title+(open?"，已展开":"，已收起"));});toggle.setContentDescription(title+"，已收起");entry.addView(toggle,lp(-1,-2));entry.addView(detail);c.addView(entry);gap(c,10);
+        TextView toggle=button(title+"  ＋",false,()->{});toggle.setGravity(Gravity.CENTER_VERTICAL);toggle.setOnClickListener(v->{boolean open=detail.getVisibility()!=View.VISIBLE;detail.setVisibility(open?View.VISIBLE:View.GONE);toggle.setText(title+(open?"  −":"  ＋"));toggle.setContentDescription(title+(open?UiText.get("main_056"):UiText.get("main_057")));});toggle.setContentDescription(title+UiText.get("main_057"));entry.addView(toggle,lp(-1,-2));entry.addView(detail);c.addView(entry);gap(c,10);
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_1213_title),getString(R.string.update_1213_detail));
         updateEntry(c,getString(R.string.update_1212_title),getString(R.string.update_1212_detail));
         updateEntry(c,getString(R.string.update_1211_title),getString(R.string.update_1211_detail));
         updateEntry(c,getString(R.string.update_1210_title),getString(R.string.update_1210_detail));
-        updateEntry(c,"1.2.9 · 颜色、对准天空与环境光改进","• 全局设置新增主要文字、说明文字、强调文字及按钮背景/文字颜色，可选择红、橙、黄、绿、青、蓝、紫、黑、白或输入 #RRGGBB；无效的历史颜色统一回退为蓝色。\r\n• 天文对准天空使用设备旋转矢量传感器，在星图中心显示红色实体十字，可选择外置相机方向或手机上沿方向。\r\n• 环境光改为后台读取相机亮度样本，不打开预览窗口、不需要手动启动；可设置切换栏目、锁屏和后台时是否继续使用相机，默认关闭。\r\n• 重新整理状态页传感器说明、设置顺序和段落，明确电池温度与环境温度的含义；删除天气详情中重复的紫外线数值说明及星空说明中的冗余文字。\r\n• 修正中国地区目录规范名称与别名去重，甘孜统一为“甘孜藏族自治州”，避免离线目录与在线搜索出现同一地区的重复结果。\r\n• 版本号 1.2.9 / versionCode 33。" );
-        updateEntry(c,"1.2.8 · 地区去重、配置导出与设备功能","• 地区选择页不再显示整段预置城市按钮，仅保留已保存地区和搜索；搜索结果按规范化名称与坐标去重，避免同一城市同时出现两条记录。中国市级目录继续作为离线匹配库，覆盖大陆、香港、澳门和台湾，并保留 GeoNames 来源与坐标校验。\r\n• 保存路线支持编辑名称、上移和下移排序；新增全局设置中的“一键导出所有配置”，导出设置、收藏地区、保存地点、路线和课程表 JSON。\r\n• 天文当地星空新增“对准天空”，使用设备旋转矢量传感器使地平星图随设备朝向转动；没有该传感器时仍可使用固定地平坐标。\r\n• 环境光可选择系统传感器或启动相机测量，并可选择前置或后置摄像头。相机读数为图像亮度样本，仅作相对参考，不等同于照度计。\r\n• 版本号 1.2.8 / versionCode 32。" );
-        updateEntry(c,"1.2.7 · 语言资源、地区目录与地点管理","• 将新增界面文字纳入 XML 语言资源；全局设置新增语言入口，当前完整语言仍为中文，2.0.0 再提供正式语言切换。\r\n• 地区选择页移除“常用地区”，扩充中国大陆、香港、澳门和台湾的中文城市目录；城市名称统一使用规范后缀，补充宿迁市及苏州下辖地区，并去除重复地点。\r\n• 保存地点支持上移、下移排序；编辑地点保留原来的列表位置。\r\n• 天气详情底部增加今日最高紫外线指数说明。\r\n• 版本号 1.2.7 / versionCode 31。");
-        updateEntry(c,"1.2.6 · 路线与地点导入导出","• 已保存路线和地点可通过系统文件选择器导入或导出 JSON 文件，导入前确认，保留原记录并跳过重复内容。\r\n• 指南针默认采用真北，设置中默认选项置于首位；当前位置的移动方位去除括号标记。\r\n• 修复路线播放到末尾后重新播放导致缩放改变的问题。\r\n• 路线框增加边缘刻度，缩放滑块范围为边长 30 米至 10 千米。\r\n• 路线跟随按钮切换“跟随当前位置”和“解除跟随当前位置”，回放时跟随橙色记录点。\r\n• 地点图按所选目标确定外圈范围，超出范围的其他地点以较小圆点显示在外圈。\r\n• 版本号 1.2.6，沿用原签名。");
-        updateEntry(c,"1.2.5 · 文字优化与状态交互","• 优化各页面文字、专业术语、操作提示与说明排版，统一长说明段间距。\r\n• 路线回放居中后持续跟随橙色记录点，拖动画布可取消跟随。\r\n• 定位与卫星接收分别合并开始和停止按钮；开始卫星接收时自动启动当前位置更新，可正常开始路线绘制。\r\n• 垂直定位误差半径在海拔下方以大字显示。\r\n• 保存地点可选择颜色和是否在图中显示，支持同时绘制多个地点并点选目标。\r\n• 重叠或邻近路线记录点的详情使用“返回”按钮，返回后保留记录点选择界面。\r\n• 版本号 1.2.5，沿用原签名。");
-        updateEntry(c,"1.2.4 · 状态刷新与路线修复","• 卫星明细和状态数值更新时保持页面阅读位置，避免重新布局跳回列表上方。\r\n• 路线缩放以路线框中心为基准，拖动后缩放也保持正确中心。\r\n• 状态页除 GPS 定位信息外，指南针、俯仰横滚、传感器、卫星显示、电池和设备信息每 50 毫秒刷新一次；数据以系统实际报告为准，GPS 与网络定位间隔保持原设置。\r\n• 删除已保存路线或本次未保存路线前，弹出“确定删除此路线吗？”确认框，取消保留路线。\r\n• 状态默认顺序为指南针、当前位置、定位卫星、地点、路线绘制、传感器、电池、设备与环境、使用说明，保留已自定义的排序。\r\n• 版本号 1.2.4 / versionCode 26，沿用原签名，可覆盖升级。");
-        updateEntry(c,"1.2.3 · 路线绘制与全局设置","• 新增路线绘制：持续定位开启时按 2～60 秒记录真实位置点，支持缩放滑块、单指拖动、以自己为中心、点选记录点查看序号、坐标和时间，结束后可命名保存或删除并回放。\r\n• 俯仰和横滚改为大字显示，网络定位间隔设置名称更明确，普通说明文字禁止长按选择。\r\n• 保存地点重新定位说明和状态方向文案调整，设置新增全局设置，背景、描边和时间显示集中管理；时间显示同步到地震、天文等页面。\r\n• 版本号 1.2.3 / versionCode 25，可覆盖 1.2.2。\r\n• 本次维护合并开始/结束绘制按钮，移除移动模式与双指缩放；保存路线完整预览，支持逐点播放/暂停、暂停时前后与首尾跳转、1～20 个记录点/秒速度滑块，并修正名称输入框留白。" );
-        updateEntry(c,"1.2.2 · 状态、缓存与地点改进","• 调整大雷暴伴冰雹图标，避免冰雹看起来从云中间斜向发射。\r\n• 状态使用说明中的定位设置按钮移到说明末尾；状态设置按默认栏目顺序整理，电池与设备信息支持显隐和排序。\r\n• 电池瞬时电流可选择系统原始符号或反转符号，默认采用 1.2.0 的系统原始符号；说明保留不同厂商定义不同。\r\n• 卫星名称改为国家或地区加英文缩写，切换栏目、锁屏和后台默认暂停，回到状态页面自动继续；移除传感器帧率设置。\r\n• 保存地点时年龄实时更新，新增重新定位按钮，只更新表单坐标；地点不设应用层数量上限。\r\n• 缓存管理显示当前缓存占用，设置入口顺序调整。" );
-        updateEntry(c,"1.2.1 · 状态页细化","• 新增传感器显隐与排序、卫星天空图方向跟随、卫星明细按载噪密度比或卫星系统排序，以及电池健康、瞬时电流和重力传感器说明。\r\n• 修正俯仰、横滚定义，显示当前位置估算磁偏角；地面速度和移动方位改为大字。\r\n• 切换栏目、锁屏和后台默认暂停卫星接收，可改为停止；地点不设应用层数量上限。\r\n• versionName 1.2.1 / versionCode 23，可覆盖 1.2.0。");
-        updateEntry(c,"1.2.0 · 状态与设备工具","• 定位升级为状态，保留原定位方式、间隔、前台服务与共享最近位置。\r\n• 新增 16 方位指南针、磁北与真北、俯仰横滚和校准提示；方向按屏幕旋转换算。\r\n• 新增设备接收的 GPS、北斗、伽利略、GLONASS 等卫星天空图、方位角、高度角、载噪密度比与参与定位状态，需设备支持及精确定位权限，切换栏目或后台停止卫星接收。\r\n• 本机保存地点、手动输入或保存当前位置，显示寻宝目标点、直线距离和方向；无道路地图或路线。\r\n• 新增陀螺仪三轴、加速度、重力、磁场、气压、环境光等设备可用传感器，电量、电池温度、电压及系统提供的电流、内存、存储和开机时长。\r\n• 状态栏目可显示与排序，卫星系统可筛选；数据仅本机处理，无第三方状态接口或代码。");
-        updateEntry(c,"1.1.6 · 平板状态恢复与星空扩充","• 修复平板横竖屏和窗口尺寸变化时地震已获取变为本机缓存、栏目或天文时间丢失的问题；平板支持横竖屏，页面重建也恢复获取状态。\r\n• 新增北半球常见亮星及较亮星团、星云和星系，深空天体显示近似总视星等，名称统一为 M 编号在前。补齐参宿一至参宿七，保留旧名称的显示开关和选中。北斗七星支持点选与显示开关。\r\n• 亮星显示设置支持手动选择或按星等上限筛选，步长 0.1 等；原手动选择保留。\r\n• 参考经度明确负数为西经 W、正数为东经 E；参考纬度明确负数为南纬 S、正数为北纬 N。");
-        updateEntry(c,"1.1.5 · 固定竖屏与地震来源优化","• 应用各页面固定竖屏，避免转动手机触发页面重建、栏目变化或已获取状态变化。\r\n• 同次地震优先采用中国地震台网的已复核结果，其次其他机构的已复核结果，最后自动结果或状态未知；同级采用较新结果，不再额外优先德国来源。\r\n• 地震列表显示智利、泰国等具体贡献机构的中文名，合并后去重；详情继续保留聚合平台与转发信息。");
-        updateEntry(c,"1.1.4 · 地震信息简化与坐标统一","• 地震状态统一为已复核、自动结果、状态未知，详情保留来源处理标记。\r\n• 发生改为发生时刻，列表简化烈度及中国地震台网来源，模型和转发说明保留在详情；未达阈值时明确提示。\r\n• 仅保留 MMI，删除烈度标度设置及当前说明中的其他标度；不再显示来源未说明深度是否固定的空泛提示。\r\n• 贡献机构改用中文名，经纬度统一经度在前、纬度在后，使用 E/W/N/S 标明方向。更新状态改称最早一条。");
-        updateEntry(c,"1.1.3 · 地震界面与扩展烈度参考","• 筛选与刷新仅保留刷新目录、刷新定位按钮，查询范围等统一从设置进入；时间选项统一称“最近 1 天”。移除地震设置内重复的数据来源与隐私入口。\r\n• 关于说明按统一的一行间隔分段。MMI 默认项置顶，本次升级统一切至 MMI 一次，之后保留手动选择。\r\n• 超出原论文模型保守条件时，对有有效震级和深度的记录使用 GlobalQuake 旧开源版参考算法，明确注明来源震级近似、默认／固定深度及弱震动显示阈值；不作为正式最大烈度。保留 MIT 许可。\r\n• 自动解改为“自动解算”；术语中分别解释来源标记已复核、已复核和人工处理，删除主震、前震与余震段落。");
-        updateEntry(c,"1.1.2 · 地震筛选、定位与烈度","• 最低震级改为 0～7、步长 0.1 的滑块，默认 M≥1.0；附近范围在查询区域内输入 50～5000 km。参考位置改为单选，手动经纬度条件显示，保存后自动更新距离。\r\n• 地震页可按定位设置刷新一次位置，显示经纬度；日期补全年份，排序说明更清楚，时区和数据说明合并进关于 → 数据来源与隐私，按段展示；新增地震术语介绍。\r\n• 新增美国地质调查局全球补充目录，明确匹配的同次地震合并；各机构使用中文名。Wolfx 默认关闭，须确认说明才启用；补充配合官方停用及下架的承诺。\r\n• 烈度区分公众震感报告、来源模型与本地 MMI 经验估算，不将模型当实测；中国标度暂不由 MMI 换算，超出估算范围时不进行外推。");
-        updateEntry(c,"1.1.1 · Wolfx 国内目录","• 接入 CENC（Wolfx 转发）近期最多 50 条目录，独立缓存、刷新与数据源开关；与 GEOFON、EMSC 明确匹配才合并，保留各来源参数。\r\n• 如实说明：上游公开展示适用依据尚未完全确认，不宣称已获 CENC 再发布授权；CORS 和非商业用途不等于授权。可关闭此来源，仅供参考。\r\n• 按北京时间解析发生及报告时刻；不承诺覆盖所选天数或完整收录；未采用未核实的 intensity 字段，未接入任何预警流。");
-        updateEntry(c,"1.1.0 · 近期地震与持续定位","• 新增地震栏目：GEOFON 与 EMSC 双源近期目录、相近事件合并、震级类型、发生时间、深度、震中、地表距离及各来源详情。\r\n• 可设置时间范围、区域、最低震级、附近范围、排序、时区、烈度标度、列表字段、栏目顺序和前台刷新间隔；保留离线缓存，区分各来源更新与失败。\r\n• 来源使用 CC BY 4.0 并保留署名；Wolfx 国内目录的上游依据尚待确认，未启用，也未接入预警流。缺乏可靠烈度资料时不生成数值。\r\n• 定位新增“切换栏目和后台继续定位”，默认关闭；主动开启并开始后使用 Android 前台服务，提供持续通知和停止按钮。最近定位供地震距离本地计算，不上传。\r\n• 缓存管理新增地震目录，清理期间的旧请求不会回写。新增栏目保留原有底栏排序及其他设置。");
-        updateEntry(c,"1.0.12 · 设置弹窗与地图按钮","• 设置弹窗直接在中央显示，取消系统滑入/退出动画。按钮间距与描边改为首次布局前完成，避免显示时再次调整尺寸。日期选择也使用相同处理，保留逐级返回和输入校验。\r\n• 天气地图的“浏览器”改为“在浏览器中打开”，与图种按钮保持相同宽高、圆角和间距，小屏可完整换行显示。\r\n• 扩展地震来源及调用许可调研，不在本版本接入地震功能。");
-        updateEntry(c,"1.0.11 · 间距与栏目管理","• 统一底栏、排序、时间控制、课表、裁剪和弹窗按钮间距，地区名称不再重复打开选择器，搜索按钮移到输入框外。\r\n• 常用地区新增莫斯科、巴黎，保持每行三列等宽。调整背景裁剪标题与说明，课表入口改为“学期设置”。\r\n• 版本记录按版本折叠，每次进入默认收起；新增缓存管理，保留课程、收藏、背景、设置与限流记录。\r\n• 天文新增“时间控制”卡片及栏目显示与排序设置，切换时间保留星图选中与滚动位置。\r\n• 课表跳周改为输入周次；缩小工具箱图标，四周留白。地震功能仅调研，未加入本版本。");
-        updateEntry(c,"1.0.10 · 星空与月球信息","• 当地星空改为随屏幕宽度扩展的正方形，放大坐标。标签只在星点正上方或正下方，冲突时隐藏标签但星点仍可选中。\r\n• “星点信息”改为“选中的星星信息”；太阳和月球可选中，太阳不显示星等，月球显示本地估算视星等。\r\n• 新增独立“月球信息”，移入月相、照亮比例、近似月龄及距下次满月时间，并绘制随所选时间更新的月相示意。\r\n• 天气地图在卫星云图后新增中央气象台“天气图”原页入口。\r\n• 课程信息前缀各项的默认选项移到最前，保留原选择。");
-        updateEntry(c,"1.0.9 · 天球坐标与星图选中","• 精简天气图例说明，WMO 专业表统一称“电码”，修正未知天气提示。\r\n• 调整默认文案；课表三个信息前缀默认显示完整名称，定位默认间隔改为 5 秒。\r\n• 天文设置新增行星与深空天体显示开关，以及地平坐标、北天极居中的赤道坐标、不显示坐标网格三种模式。\r\n• 选中天体显示缓慢顺时针旋转的断开十字，调整时间保留选中；天体落到地平线下时隐藏十字。\r\n• 恒星名改为织女一、河鼓二、勾陈一，保留原来的显隐偏好；新增昴星团、仙女座星系大致中心，采用 CC0 坐标离线换算。\r\n• 定位改为“水平定位误差半径”，移除正负号，说明未提供海拔的情况。");
-        updateEntry(c,"1.0.8 · 默认设置与来源补充","• 57、67 改为“中或大冻毛毛雨”“中或大冻雨”。\r\n• 补齐中英文间距；设置中标注默认值。描边默认关闭，颜色入口简化为“设置描边颜色”，网络定位去掉括号说明。\r\n• 数据来源与隐私新增天气战士 · 全球版、拾光课程表参考项目，最底部新增本项目 GitHub 链接。\r\n• 新课表与恢复默认采用 17 周、12 节上下课时间；升级保留已有课表与自定义时间。");
-        updateEntry(c,"1.0.7 · 雷暴命名与 WMO 原文","• 95、96、97、99分别改为“小或中雷暴”“小或中雷暴伴冰雹”“大雷暴”“大雷暴伴冰雹”，按 WMO 原文区分雷暴强度。\r\n• 99的日夜图标各增加两个冰雹圆点，共四个。\r\n• 图例说明中的“数字”改为“数”，补充数值代码与本地翻译、模型计算及 WMO 命名依据。\r\n• 图例底部新增 WMO 官方英文电码原文链接。其他代码的差异已整理供后续版本参考。");
-        updateEntry(c,"1.0.6 · 天气图例与代码说明","• 天气图例说明最右侧数字的含义，补充代码不连续的原因及官方天气代码文档链接。\r\n• 按当前官方文档说明96、99代码取决于模型的冰雹预报能力，补齐97强雷暴的名称与图标。\r\n• 大冻雨云朵下方改为三个深蓝色斜线雨点。\r\n• 说明“天气未知”的触发条件；缺失、无效或未识别代码统一显示问号，避免误画为晴天或普通云朵。");
-        updateEntry(c,"1.0.5 · 星空与天气图例完善","• 北斗七星移出亮星显示设置，在地平线上方时固定显示，旧的隐藏开关不再影响它们。\r\n• 当地星空加入参考极大日及前后3天的流星雨辐射点，用橙色十字圆环标注；与下方流星雨列表使用同一日期判断。\r\n• 删除数据来源与隐私中的中国天气网入口，统一链接间距；地区数据署名框增加四边留白。\r\n• 少云图标缩小云朵；沉积雾凇的雾加入深蓝雪花；云内雪花提高对比度；中、大阵雨与大阵雪按对应雨雪等级修正数量；95改称“小或中雷雨”。");
-        updateEntry(c,"1.0.4 · 行星算法校准","• 按参考项目 weather-fighter-global 的 JPL 简化开普勒元素重算地心行星位置，修正行星出现在错误方位的问题。\r\n• 行星坐标使用行星日心坐标减地球日心坐标，并统一黄道到赤道坐标转换；水星到海王星的星等公式同步校准。\r\n• 版本号升至 1.0.4，保留下面各版本的独立更新说明。");
-        updateEntry(c,"1.0.3 · 天文与布局修复","• 修复天文时间按钮重建页面时先回到顶部造成的闪屏，切换后保持原滚动位置。\r\n• 星图加入本地计算的水星、金星、火星、木星、土星、天王星和海王星，并显示行星星等。\r\n• 点击亮星或行星显示方位角、高度角和星等；新增亮星显示设置，北斗七星仍只作图示。\r\n• 流星雨按极大日前后3天标记活跃期并显示辐射点；来源与隐私链接、IMO 链接框和常用地区卡片统一留白。\r\n• 厦门、台北调整到香港之前。");
-        updateEntry(c,"1.0.2 · 细节与定位改进","• 天文第一行按钮顺序固定为“-15分钟、当前、+15分钟”；太阳与月球标签按字号计算下移间距，避免遮挡圆点；统一使用“月球”。\r\n• 天气地图、天气代码、背景裁剪、描边颜色、设置逐级返回和定位间隔按本版本记录调整。\r\n• versionCode 升至 4，沿用包名与签名。");
-        updateEntry(c,"1.0.1 · 自由布局与个性设置","• 分级设置、背景选区与缩放、可选颜色描边。\r\n• 天气栏目和底部栏目可显隐排序，新增独立天气地图与天文栏目（默认隐藏）。\r\n• 定位可选 GPS 硬件或网络定位。\r\n• 课程支持自定义授课周与信息前缀，时间改为数字输入。\r\n• 改进天气图标、摄氏度、居中排版、图例与刷新提示。\r\n• 天文支持指定年月日时分、前后15分钟和前后一天，保留滚动位置并区分曙光暮光。\r\n• 更新隐私说明，移除极光功能。");
-        updateEntry(c,"1.0.0 · 呆呆工具箱","• 正式名称改为呆呆工具箱，新增天气 / 课程表 / GPS 底部导航。\r\n• 新增手动周课表、自定义节次、地点、教师与单双周。\r\n• 新增手机图片背景及遮罩调整。\r\n• 新增前台 GPS 经纬度、水平精度与状态。\r\n• 新增官方全国降水、温度和分区雷达网页。\r\n• 新增观星条件、星图、日月位置、月相和曙暮光。\r\n• 整理来源与隐私，Open-Meteo 入口放在一起。\r\n• 页脚改为“呆呆鸟使用 Codex 制作”。");
-        updateEntry(c,"0.1.0-test · 简天气测试版","早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。");
-        ScrollView scroll=new ScrollView(this);scroll.addView(c);new ToolDialog(this).setTitle(getString(R.string.updates_title)).setView(scroll).setPositiveButton("关闭",null).show();
+        updateEntry(c,UiText.get("update_129_title_001"),UiText.get("update_history_001") );
+        updateEntry(c,UiText.get("update_128_title_001"),UiText.get("update_history_002") );
+        updateEntry(c,UiText.get("update_127_title_001"),UiText.get("update_history_003"));
+        updateEntry(c,UiText.get("update_126_title_001"),UiText.get("update_history_004"));
+        updateEntry(c,UiText.get("update_125_title_001"),UiText.get("update_history_005"));
+        updateEntry(c,UiText.get("update_124_title_001"),UiText.get("update_history_006"));
+        updateEntry(c,UiText.get("update_123_title_001"),UiText.get("update_history_007") );
+        updateEntry(c,UiText.get("update_122_title_001"),UiText.get("update_history_008") );
+        updateEntry(c,UiText.get("update_121_title_001"),UiText.get("update_history_009"));
+        updateEntry(c,UiText.get("update_120_title_001"),UiText.get("update_history_010"));
+        updateEntry(c,UiText.get("update_116_title_001"),UiText.get("update_history_011"));
+        updateEntry(c,UiText.get("update_115_title_001"),UiText.get("update_history_012"));
+        updateEntry(c,UiText.get("update_114_title_001"),UiText.get("update_history_013"));
+        updateEntry(c,UiText.get("update_113_title_001"),UiText.get("update_history_014"));
+        updateEntry(c,UiText.get("update_112_title_001"),UiText.get("update_history_015"));
+        updateEntry(c,UiText.get("update_111_title_001"),UiText.get("update_history_016"));
+        updateEntry(c,UiText.get("update_110_title_001"),UiText.get("update_history_017"));
+        updateEntry(c,UiText.get("update_1012_title_001"),UiText.get("update_history_018"));
+        updateEntry(c,UiText.get("update_1011_title_001"),UiText.get("update_history_019"));
+        updateEntry(c,UiText.get("update_1010_title_001"),UiText.get("update_history_020"));
+        updateEntry(c,UiText.get("update_109_title_001"),UiText.get("update_history_021"));
+        updateEntry(c,UiText.get("update_108_title_001"),UiText.get("update_history_022"));
+        updateEntry(c,UiText.get("update_107_title_001"),UiText.get("update_history_023"));
+        updateEntry(c,UiText.get("update_106_title_001"),UiText.get("update_history_024"));
+        updateEntry(c,UiText.get("update_105_title_001"),UiText.get("update_history_025"));
+        updateEntry(c,UiText.get("update_104_title_001"),UiText.get("update_history_026"));
+        updateEntry(c,UiText.get("update_103_title_001"),UiText.get("update_history_027"));
+        updateEntry(c,UiText.get("update_102_title_001"),UiText.get("update_history_028"));
+        updateEntry(c,UiText.get("update_101_title_001"),UiText.get("update_history_029"));
+        updateEntry(c,UiText.get("update_100_title_001"),UiText.get("update_history_030"));
+        updateEntry(c,UiText.get("update_010_test_title_001"),UiText.get("main_058"));
+        ScrollView scroll=new ScrollView(this);scroll.addView(c);new ToolDialog(this).setTitle(getString(R.string.updates_title)).setView(scroll).setPositiveButton(UiText.get("action_close"),null).show();
     }
     void clearCache(Runnable done){
         cacheGeneration++;searchVersion++;data=null;notice="";
@@ -402,24 +403,24 @@ public class MainActivity extends Activity {
         boolean filesCleared=store.clearCache() & earthquakes.clear();
         android.webkit.WebView web=new android.webkit.WebView(this);web.clearCache(true);web.clearHistory();web.destroy();
         android.webkit.WebStorage.getInstance().deleteAllData();
-        android.webkit.CookieManager.getInstance().removeAllCookies(removed->{android.webkit.CookieManager.getInstance().flush();if(!dead){refreshScreen();done.run();toast(filesCleared?"缓存已清除":"部分缓存未能删除，请重试");}});
+        android.webkit.CookieManager.getInstance().removeAllCookies(removed->{android.webkit.CookieManager.getInstance().flush();if(!dead){refreshScreen();done.run();toast(filesCleared?UiText.get("main_059"):UiText.get("main_060"));}});
     }
     long cacheBytes(){long total=directoryBytes(getCacheDir());java.io.File[] files=getFilesDir().listFiles();if(files!=null)for(java.io.File f:files)if(f.getName().startsWith("forecast_")&&f.getName().endsWith(".json"))total+=directoryBytes(f);total+=directoryBytes(new java.io.File(getFilesDir(),"earthquake_cache"));return total;}
     private long directoryBytes(java.io.File file){if(file==null||!file.exists())return 0;if(file.isFile())return file.length();long total=0;java.io.File[] children=file.listFiles();if(children!=null)for(java.io.File child:children)total+=directoryBytes(child);return total;}
     String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,getString(R.string.about_version,versionName())+"\r\n\r\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\r\n\r\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\r\n\r\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\r\n\r\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\r\n\r\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。");
-        EarthquakeInfo.paragraph(this,content,"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\r\n\r\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择默认存于本机，清除缓存或恢复默认设置会保留，卸载应用将删除。主动导出的 JSON 文件包含坐标、时间和名称，地点还包含颜色及显示状态；文件保存位置由用户通过系统选择器指定，云盘等提供方适用其自身隐私规则。导入在本机处理，不上传文件。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。");
+        EarthquakeInfo.paragraph(this,content,getString(R.string.about_version,versionName())+UiText.get("main_061"));
+        EarthquakeInfo.paragraph(this,content,UiText.get("main_062"));
         EarthquakeInfo.paragraph(this,content,getString(R.string.city_sources));
         EarthquakeInfo.append(this,content);
-        link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,getString(R.string.city_sources_link),"https://github.com/AdybirdZ/daidai-toolbox/blob/main/docs/CITY-CATALOG.md");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");link(content,"Android · 卫星状态官方文档","https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,"Android · 传感器官方说明","https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,"天体坐标与星等 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
+        link(content,UiText.get("main_063"),"https://open-meteo.com/");link(content,UiText.get("main_064"),"https://open-meteo.com/en/terms");link(content,UiText.get("main_065"),"https://www.geonames.org/");link(content,getString(R.string.city_sources_link),"https://github.com/AdybirdZ/daidai-toolbox/blob/main/docs/CITY-CATALOG.md");link(content,UiText.get("main_066"),"https://creativecommons.org/licenses/by/4.0/");link(content,UiText.get("main_067"),"https://www.nmc.cn/");link(content,UiText.get("main_068"),"https://stjarnhimlen.se/comp/ppcomp.html");link(content,UiText.get("main_069"),"https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,UiText.get("main_070"),"https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,UiText.get("main_071"),"https://www.wikidata.org/wiki/Wikidata:Licensing");
         EarthquakeInfo.links(this,content);
-        gap(content,10);content.addView(text("参考开源项目",17,TITLE,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");
-        ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle(getString(R.string.about_title)).setView(scroll).setPositiveButton("关闭",null).show();
+        gap(content,10);content.addView(text(UiText.get("main_072"),17,TITLE,true));gap(content,10);content.addView(text(UiText.get("main_073"),14,MUTED,false));gap(content,12);link(content,UiText.get("main_074"),"https://github.com/anyin233/weather-fighter-global");link(content,UiText.get("main_075"),"https://github.com/ShiGuangSchedule/shiguangschedule");link(content,UiText.get("main_076"),"https://github.com/AdybirdZ/daidai-toolbox");
+        ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle(getString(R.string.about_title)).setView(scroll).setPositiveButton(UiText.get("action_close"),null).show();
     }
     void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);markLink(t);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
-    void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast("未找到可打开链接的浏览器");}}
+    void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast(UiText.get("main_077"));}}
     private void hideKeyboard() {View focused=getCurrentFocus();if(focused!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focused.getWindowToken(),0);focused.clearFocus();}}
     void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(message,16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
     @Override public void onConfigurationChanged(android.content.res.Configuration config){

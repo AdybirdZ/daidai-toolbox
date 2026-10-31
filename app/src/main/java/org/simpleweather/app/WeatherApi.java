@@ -27,7 +27,7 @@ public final class WeatherApi {
             + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m"
             + "&hourly=temperature_2m,precipitation_probability,weather_code,is_day,cloud_cover,relative_humidity_2m,visibility,wind_speed_10m"
             + "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max"
-            + "&timezone=" + ("中国".equals(city.country) ? "Asia%2FShanghai" : "auto")
+            + "&timezone=" + (UiText.raw("identity_weather_api_001").equals(city.country) ? "Asia%2FShanghai" : "auto")
             + "&forecast_days=7&temperature_unit=celsius&wind_speed_unit=kmh&precipitation_unit=mm";
     }
     public JSONObject forecast(City city) throws Exception { return get(forecastUrl(city)); }
@@ -44,7 +44,7 @@ public final class WeatherApi {
     }
     public List<City> search(String query) throws Exception {
         String q = query.trim();
-        if (q.length() < 2 || q.length() > 80) throw new IOException("请输入 2～80 个字符的地区名称");
+        if (q.length() < 2 || q.length() > 80) throw new IOException(UiText.get("weather_api_001"));
         JSONObject data = get(SEARCH_HOST + "?name=" + URLEncoder.encode(q, "UTF-8") + "&count=30&language=zh&format=json");
         List<City> list = new ArrayList<>(); JSONArray a = data.optJSONArray("results");
         if (a != null) for (int i = 0; i < a.length(); i++) try { list.add(new City(a.getJSONObject(i))); } catch (JSONException ignored) { }
@@ -52,9 +52,9 @@ public final class WeatherApi {
     }
     private synchronized void reserve() throws IOException {
         long now = System.currentTimeMillis();
-        if (now < blockedUntil) throw new IOException("请求过于频繁，请稍后再试");
+        if (now < blockedUntil) throw new IOException(UiText.get("weather_api_002"));
         while (!calls.isEmpty() && calls.peekFirst() < now - 60_000) calls.removeFirst();
-        if (calls.size() >= 20) throw new IOException("距上次请求不足 1 分钟，请稍后重试");
+        if (calls.size() >= 20) throw new IOException(UiText.get("main_035"));
         if (policy != null) policy.reserve();
         calls.addLast(now);
     }
@@ -62,7 +62,7 @@ public final class WeatherApi {
         reserve();
         HttpsURLConnection conn = (HttpsURLConnection)new URL(url).openConnection();
         conn.setConnectTimeout(12000); conn.setReadTimeout(18000); conn.setInstanceFollowRedirects(false);
-        conn.setRequestProperty("User-Agent", "DaidaiToolbox/1.2.12 (personal non-commercial Android client)");
+        conn.setRequestProperty("User-Agent", "DaidaiToolbox/1.2.13 (personal non-commercial Android client)");
         conn.setRequestProperty("Accept", "application/json");
         try {
             int status = conn.getResponseCode();
@@ -71,19 +71,19 @@ public final class WeatherApi {
                     blockedUntil = retryUntil(conn.getHeaderField("Retry-After"), System.currentTimeMillis());
                     if (policy != null) policy.blockUntil(blockedUntil);
                 }
-                throw new IOException("数据服务暂时限流，请稍后重试");
+                throw new IOException(UiText.get("weather_api_003"));
             }
-            if (status != 200) throw new IOException("天气服务暂时不可用（" + status + "）");
+            if (status != 200) throw new IOException(UiText.get("weather_api_004") + status + UiText.get("earthquake_api_004"));
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             try (InputStream in = conn.getInputStream()) {
                 byte[] buffer = new byte[8192]; int length;
                 while ((length = in.read(buffer)) != -1) {
-                    if (bytes.size() + length > 2_000_000) throw new IOException("数据响应异常");
+                    if (bytes.size() + length > 2_000_000) throw new IOException(UiText.get("weather_api_005"));
                     bytes.write(buffer, 0, length);
                 }
             }
             JSONObject json = new JSONObject(new String(bytes.toByteArray(), StandardCharsets.UTF_8));
-            if (json.optBoolean("error")) throw new IOException("数据服务返回错误，请稍后重试");
+            if (json.optBoolean("error")) throw new IOException(UiText.get("weather_api_006"));
             return json;
         } finally { conn.disconnect(); }
     }

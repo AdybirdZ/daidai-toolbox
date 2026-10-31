@@ -15,13 +15,13 @@ public final class WeatherStore implements WeatherApi.RequestPolicy {
     public WeatherStore(Context context) { this.context = context; prefs = context.getSharedPreferences("weather", 0); }
     @Override public synchronized void reserve() throws IOException {
         long now=System.currentTimeMillis();
-        if(now<prefs.getLong("network_blocked_until",0))throw new IOException("数据服务暂时限流，请稍后重试");
+        if(now<prefs.getLong("network_blocked_until",0))throw new IOException(UiText.get("weather_api_003"));
         long[] windows={60_000,3_600_000,86_400_000};int[] limits={20,1000,2000};
         SharedPreferences.Editor edit=prefs.edit();
         for(int i=0;i<windows.length;i++) {
             long bucket=now/windows[i],previous=prefs.getLong("quota_window_"+i,-1);
             int count=bucket==previous?prefs.getInt("quota_count_"+i,0):0;
-            if(bucket<previous||count>=limits[i])throw new IOException(i==2?"已达到今日查询限额，请明日重试":"请求过于频繁，请稍后重试");
+            if(bucket<previous||count>=limits[i])throw new IOException(i==2?UiText.get("weather_store_001"):UiText.get("weather_store_002"));
             edit.putLong("quota_window_"+i,bucket).putInt("quota_count_"+i,count+1);
         }
         edit.apply();

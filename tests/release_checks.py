@@ -21,3 +21,6 @@ for resources in (root / 'app/src/main/res').glob('values*/strings.xml'):
             assert '%1$s' in ''.join(string.itertext()), 'About version must be a resource format placeholder'
 assert 'versionName()' in settings and 'versionName()' in main, 'Version must be read at runtime'
 print(f'Release metadata: {name} / {code}; current version labels use package metadata')
+
+import subprocess,sys
+subprocess.run([sys.executable,str(root / "tests/resource_checks.py")],check=True)

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="identity_astronomy_001" formatted="false" translatable="false">"地球"</string>
+    <string name="identity_astronomy_002" formatted="false" translatable="false">"水星"</string>
+    <string name="identity_astronomy_003" formatted="false" translatable="false">"金星"</string>
+    <string name="identity_astronomy_004" formatted="false" translatable="false">"火星"</string>
+    <string name="identity_astronomy_005" formatted="false" translatable="false">"木星"</string>
+    <string name="identity_astronomy_006" formatted="false" translatable="false">"土星"</string>
+    <string name="identity_astronomy_007" formatted="false" translatable="false">"天王星"</string>
+    <string name="identity_astronomy_008" formatted="false" translatable="false">"海王星"</string>
+    <string name="identity_astronomy_009" formatted="false" translatable="false">"象限仪座"</string>
+    <string name="identity_astronomy_010" formatted="false" translatable="false">"天琴座"</string>
+    <string name="identity_astronomy_011" formatted="false" translatable="false">"宝瓶座η"</string>
+    <string name="identity_astronomy_012" formatted="false" translatable="false">"英仙座"</string>
+    <string name="identity_astronomy_013" formatted="false" translatable="false">"猎户座"</string>
+    <string name="identity_astronomy_014" formatted="false" translatable="false">"狮子座"</string>
+    <string name="identity_astronomy_015" formatted="false" translatable="false">"双子座"</string>
+    <string name="identity_astronomy_016" formatted="false" translatable="false">"小熊座"</string>
+    <string name="identity_astronomy_017" formatted="false" translatable="false">"M45 昴星团"</string>
+    <string name="identity_astronomy_018" formatted="false" translatable="false">"M31 仙女座星系"</string>
+    <string name="identity_astronomy_019" formatted="false" translatable="false">"M44 鬼宿星团"</string>
+    <string name="identity_astronomy_020" formatted="false" translatable="false">"M13 武仙座球状星团"</string>
+    <string name="identity_astronomy_021" formatted="false" translatable="false">"M11 野鸭星团"</string>
+    <string name="identity_astronomy_022" formatted="false" translatable="false">"M5 球状星团"</string>
+    <string name="identity_astronomy_023" formatted="false" translatable="false">"M34 疏散星团"</string>
+    <string name="identity_astronomy_024" formatted="false" translatable="false">"M35 疏散星团"</string>
+    <string name="identity_astronomy_025" formatted="false" translatable="false">"M36 疏散星团"</string>
+    <string name="identity_astronomy_026" formatted="false" translatable="false">"M37 疏散星团"</string>
+    <string name="identity_astronomy_027" formatted="false" translatable="false">"M39 疏散星团"</string>
+    <string name="identity_astronomy_028" formatted="false" translatable="false">"M67 疏散星团"</string>
+    <string name="identity_astronomy_029" formatted="false" translatable="false">"M92 球状星团"</string>
+    <string name="identity_astronomy_030" formatted="false" translatable="false">"M42 猎户座大星云"</string>
+    <string name="identity_astronomy_031" formatted="false" translatable="false">"M81 波德星系"</string>
+    <string name="identity_astronomy_032" formatted="false" translatable="false">"天狼星"</string>
+    <string name="identity_astronomy_033" formatted="false" translatable="false">"老人星"</string>
+    <string name="identity_astronomy_034" formatted="false" translatable="false">"南门二"</string>
+    <string name="identity_astronomy_035" formatted="false" translatable="false">"大角星"</string>
+    <string name="identity_astronomy_036" formatted="false" translatable="false">"织女一"</string>
+    <string name="identity_astronomy_037" formatted="false" translatable="false">"五车二"</string>
+    <string name="identity_astronomy_038" formatted="false" translatable="false">"参宿七"</string>
+    <string name="identity_astronomy_039" formatted="false" translatable="false">"南河三"</string>
+    <string name="identity_astronomy_040" formatted="false" translatable="false">"参宿四"</string>
+    <string name="identity_astronomy_041" formatted="false" translatable="false">"水委一"</string>
+    <string name="identity_astronomy_042" formatted="false" translatable="false">"河鼓二"</string>
+    <string name="identity_astronomy_043" formatted="false" translatable="false">"十字架二"</string>
+    <string name="identity_astronomy_044" formatted="false" translatable="false">"毕宿五"</string>
+    <string name="identity_astronomy_045" formatted="false" translatable="false">"角宿一"</string>
+    <string name="identity_astronomy_046" formatted="false" translatable="false">"心宿二"</string>
+    <string name="identity_astronomy_047" formatted="false" translatable="false">"北落师门"</string>
+    <string name="identity_astronomy_048" formatted="false" translatable="false">"天津四"</string>
+    <string name="identity_astronomy_049" formatted="false" translatable="false">"轩辕十四"</string>
+    <string name="identity_astronomy_050" formatted="false" translatable="false">"勾陈一"</string>
+    <string name="identity_astronomy_051" formatted="false" translatable="false">"天枢"</string>
+    <string name="identity_astronomy_052" formatted="false" translatable="false">"天璇"</string>
+    <string name="identity_astronomy_053" formatted="false" translatable="false">"天玑"</string>
+    <string name="identity_astronomy_054" formatted="false" translatable="false">"天权"</string>
+    <string name="identity_astronomy_055" formatted="false" translatable="false">"玉衡"</string>
+    <string name="identity_astronomy_056" formatted="false" translatable="false">"开阳"</string>
+    <string name="identity_astronomy_057" formatted="false" translatable="false">"摇光"</string>
+    <string name="identity_astronomy_058" formatted="false" translatable="false">"壁宿二"</string>
+    <string name="identity_astronomy_059" formatted="false" translatable="false">"娄宿三"</string>
+    <string name="identity_astronomy_060" formatted="false" translatable="false">"轩辕十二"</string>
+    <string name="identity_astronomy_061" formatted="false" translatable="false">"蛇夫座α"</string>
+    <string name="identity_astronomy_062" formatted="false" translatable="false">"天棓四"</string>
+    <string name="identity_astronomy_063" formatted="false" translatable="false">"王良四"</string>
+    <string name="identity_astronomy_064" formatted="false" translatable="false">"王良一"</string>
+    <string name="identity_astronomy_065" formatted="false" translatable="false">"五帝座一"</string>
+    <string name="identity_astronomy_066" formatted="false" translatable="false">"天大将军一"</string>
+    <string name="identity_astronomy_067" formatted="false" translatable="false">"天津一"</string>
+    <string name="identity_astronomy_068" formatted="false" translatable="false">"天津九"</string>
+    <string name="identity_astronomy_069" formatted="false" translatable="false">"室宿二"</string>
+    <string name="identity_astronomy_070" formatted="false" translatable="false">"室宿一"</string>
+    <string name="identity_astronomy_071" formatted="false" translatable="false">"策"</string>
+    <string name="identity_astronomy_072" formatted="false" translatable="false">"五车五"</string>
+    <string name="identity_astronomy_073" formatted="false" translatable="false">"井宿三"</string>
+    <string name="identity_astronomy_074" formatted="false" translatable="false">"北河二"</string>
+    <string name="identity_astronomy_075" formatted="false" translatable="false">"北河三"</string>
+    <string name="identity_astronomy_076" formatted="false" translatable="false">"参宿一"</string>
+    <string name="identity_astronomy_077" formatted="false" translatable="false">"参宿二"</string>
+    <string name="identity_astronomy_078" formatted="false" translatable="false">"参宿三"</string>
+    <string name="identity_astronomy_079" formatted="false" translatable="false">"参宿五"</string>
+    <string name="identity_astronomy_080" formatted="false" translatable="false">"参宿六"</string>
+    <string name="identity_astronomy_081" formatted="false" translatable="false">"太阳"</string>
+    <string name="identity_astronomy_082" formatted="false" translatable="false">"月球"</string>
+    <string name="identity_astronomy_083" formatted="false" translatable="false">"星团"</string>
+    <string name="identity_earthquake_data_001" formatted="false" translatable="false">"未提供复核状态"</string>
+    <string name="identity_earthquake_data_002" formatted="false" translatable="false">"已复核"</string>
+    <string name="identity_earthquake_data_003" formatted="false" translatable="false">"中国地震台网中心"</string>
+    <string name="identity_earthquake_data_004" formatted="false" translatable="false">"美国地质调查局国家地震信息中心（USGS / NEIC）"</string>
+    <string name="identity_earthquake_data_005" formatted="false" translatable="false">"来源标记已复核"</string>
+    <string name="identity_earthquake_data_006" formatted="false" translatable="false">"自动解算，参数可能修订"</string>
+    <string name="identity_earthquake_data_007" formatted="false" translatable="false">"中国地震台网中心（经 Wolfx 转发，非官方接口）"</string>
+    <string name="identity_earthquake_data_008" formatted="false" translatable="false">"人工处理"</string>
+    <string name="identity_earthquake_display_001" formatted="false" translatable="false">"人工"</string>
+    <string name="identity_earthquake_display_002" formatted="false" translatable="false">"自动"</string>
+    <string name="identity_main_001" formatted="false" translatable="false">"{\"name\":\"北京\",\"latitude\":39.9042,\"longitude\":116.4074,\"country\":\"中国\",\"timezone\":\"Asia/Shanghai\"}"</string>
+    <string name="identity_main_002" formatted="false" translatable="false">"织女星"</string>
+    <string name="identity_main_003" formatted="false" translatable="false">"牛郎星"</string>
+    <string name="identity_main_004" formatted="false" translatable="false">"北极星"</string>
+    <string name="identity_main_005" formatted="false" translatable="false">"昴星团"</string>
+    <string name="identity_main_006" formatted="false" translatable="false">"仙女座星系"</string>
+    <string name="identity_main_007" formatted="false" translatable="false">"鬼宿星团（M44）"</string>
+    <string name="identity_main_008" formatted="false" translatable="false">"武仙座球状星团（M13）"</string>
+    <string name="identity_main_009" formatted="false" translatable="false">"野鸭星团（M11）"</string>
+    <string name="identity_main_010" formatted="false" translatable="false">"猎户座大星云（M42）"</string>
+    <string name="identity_main_011" formatted="false" translatable="false">"波德星系（M81）"</string>
+    <string name="identity_weather_api_001" formatted="false" translatable="false">"中国"</string>
+    <string-array name="identity_keys" translatable="false"><item>identity_astronomy_001</item><item>identity_astronomy_002</item><item>identity_astronomy_003</item><item>identity_astronomy_004</item><item>identity_astronomy_005</item><item>identity_astronomy_006</item><item>identity_astronomy_007</item><item>identity_astronomy_008</item><item>identity_astronomy_009</item><item>identity_astronomy_010</item><item>identity_astronomy_011</item><item>identity_astronomy_012</item><item>identity_astronomy_013</item><item>identity_astronomy_014</item><item>identity_astronomy_015</item><item>identity_astronomy_016</item><item>identity_astronomy_017</item><item>identity_astronomy_018</item><item>identity_astronomy_019</item><item>identity_astronomy_020</item><item>identity_astronomy_021</item><item>identity_astronomy_022</item><item>identity_astronomy_023</item><item>identity_astronomy_024</item><item>identity_astronomy_025</item><item>identity_astronomy_026</item><item>identity_astronomy_027</item><item>identity_astronomy_028</item><item>identity_astronomy_029</item><item>identity_astronomy_030</item><item>identity_astronomy_031</item><item>identity_astronomy_032</item><item>identity_astronomy_033</item><item>identity_astronomy_034</item><item>identity_astronomy_035</item><item>identity_astronomy_036</item><item>identity_astronomy_037</item><item>identity_astronomy_038</item><item>identity_astronomy_039</item><item>identity_astronomy_040</item><item>identity_astronomy_041</item><item>identity_astronomy_042</item><item>identity_astronomy_043</item><item>identity_astronomy_044</item><item>identity_astronomy_045</item><item>identity_astronomy_046</item><item>identity_astronomy_047</item><item>identity_astronomy_048</item><item>identity_astronomy_049</item><item>identity_astronomy_050</item><item>identity_astronomy_051</item><item>identity_astronomy_052</item><item>identity_astronomy_053</item><item>identity_astronomy_054</item><item>identity_astronomy_055</item><item>identity_astronomy_056</item><item>identity_astronomy_057</item><item>identity_astronomy_058</item><item>identity_astronomy_059</item><item>identity_astronomy_060</item><item>identity_astronomy_061</item><item>identity_astronomy_062</item><item>identity_astronomy_063</item><item>identity_astronomy_064</item><item>identity_astronomy_065</item><item>identity_astronomy_066</item><item>identity_astronomy_067</item><item>identity_astronomy_068</item><item>identity_astronomy_069</item><item>identity_astronomy_070</item><item>identity_astronomy_071</item><item>identity_astronomy_072</item><item>identity_astronomy_073</item><item>identity_astronomy_074</item><item>identity_astronomy_075</item><item>identity_astronomy_076</item><item>identity_astronomy_077</item><item>identity_astronomy_078</item><item>identity_astronomy_079</item><item>identity_astronomy_080</item><item>identity_astronomy_081</item><item>identity_astronomy_082</item><item>identity_earthquake_data_001</item><item>identity_earthquake_data_002</item><item>identity_earthquake_data_003</item><item>identity_earthquake_data_004</item><item>identity_earthquake_data_005</item><item>identity_earthquake_data_006</item><item>identity_earthquake_data_007</item><item>identity_earthquake_data_008</item></string-array>
+    <string-array name="identity_label_keys" translatable="false"><item>astronomy_010</item><item>astronomy_011</item><item>astronomy_012</item><item>astronomy_013</item><item>astronomy_014</item><item>astronomy_015</item><item>astronomy_016</item><item>astronomy_017</item><item>astronomy_041</item><item>astronomy_042</item><item>astronomy_043</item><item>astronomy_044</item><item>astronomy_045</item><item>astronomy_046</item><item>astronomy_047</item><item>astronomy_048</item><item>astronomy_049</item><item>astronomy_050</item><item>astronomy_051</item><item>astronomy_052</item><item>astronomy_053</item><item>astronomy_054</item><item>astronomy_055</item><item>astronomy_056</item><item>astronomy_057</item><item>astronomy_058</item><item>astronomy_059</item><item>astronomy_060</item><item>astronomy_061</item><item>astronomy_062</item><item>astronomy_063</item><item>astronomy_064</item><item>astronomy_065</item><item>astronomy_066</item><item>astronomy_067</item><item>astronomy_068</item><item>astronomy_069</item><item>astronomy_070</item><item>astronomy_071</item><item>astronomy_072</item><item>astronomy_073</item><item>astronomy_074</item><item>astronomy_075</item><item>astronomy_076</item><item>astronomy_077</item><item>astronomy_078</item><item>astronomy_079</item><item>astronomy_080</item><item>astronomy_081</item><item>astronomy_082</item><item>astronomy_034</item><item>astronomy_035</item><item>astronomy_036</item><item>astronomy_037</item><item>astronomy_038</item><item>astronomy_039</item><item>astronomy_040</item><item>astronomy_083</item><item>astronomy_084</item><item>astronomy_085</item><item>astronomy_086</item><item>astronomy_087</item><item>astronomy_088</item><item>astronomy_089</item><item>astronomy_090</item><item>astronomy_091</item><item>astronomy_092</item><item>astronomy_093</item><item>astronomy_094</item><item>astronomy_095</item><item>astronomy_096</item><item>astronomy_097</item><item>astronomy_098</item><item>astronomy_099</item><item>astronomy_100</item><item>astronomy_101</item><item>astronomy_102</item><item>astronomy_103</item><item>astronomy_104</item><item>astronomy_105</item><item>astronomy_165</item><item>astronomy_166</item><item>earthquake_data_002</item><item>earthquake_data_004</item><item>earthquake_agencies_054</item><item>earthquake_agencies_068</item><item>earthquake_data_009</item><item>earthquake_data_010</item><item>earthquake_data_012</item><item>earthquake_data_017</item></string-array>
+</resources>

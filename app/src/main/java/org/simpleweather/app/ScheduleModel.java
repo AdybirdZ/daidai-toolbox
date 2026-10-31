@@ -35,33 +35,33 @@ public final class ScheduleModel {
     public String validateSlot(int index,String start,String end){
         try{
             int a=minute(start),b=minute(end);
-            if(a>=b)return "下课时间必须晚于上课时间";
-            if(index>0&&a<minute(slots.get(index-1).end))return "不能与上一节课的时间重叠";
-            if(index+1<slots.size()&&b>minute(slots.get(index+1).start))return "不能与下一节课的时间重叠";
+            if(a>=b)return UiText.get("schedule_model_001");
+            if(index>0&&a<minute(slots.get(index-1).end))return UiText.get("schedule_model_002");
+            if(index+1<slots.size()&&b>minute(slots.get(index+1).start))return UiText.get("schedule_model_003");
             return null;
-        }catch(Exception e){return "请输入有效的时间";}
+        }catch(Exception e){return UiText.get("schedule_model_004");}
     }
     public String validateCourse(Course c){
-        if(c.name.trim().isEmpty()||c.name.length()>60)return "课程名称必填，最多 60 个字";
-        if(c.room.length()>80||c.teacher.length()>80)return "上课地点和任课教师各最多 80 个字";
-        if(c.day<1||c.day>7)return "请选择星期";
-        if(c.first<1||c.last<c.first||c.last>slots.size())return "结束节次不能早于开始节次";
-        if(c.parity!=3&&(c.weekStart<1||c.weekEnd<c.weekStart||c.weekEnd>weeks))return "授课周次必须在学期范围内，结束周不能早于开始周";
-        if(c.parity<0||c.parity>3)return "请选择有效的授课周设置";
-        if(c.parity==3&&(c.customWeeks.isEmpty()||c.customWeeks.first()<1||c.customWeeks.last()>weeks))return "请选择学期范围内的自定义授课周";
+        if(c.name.trim().isEmpty()||c.name.length()>60)return UiText.get("schedule_model_005");
+        if(c.room.length()>80||c.teacher.length()>80)return UiText.get("schedule_model_006");
+        if(c.day<1||c.day>7)return UiText.get("schedule_model_007");
+        if(c.first<1||c.last<c.first||c.last>slots.size())return UiText.get("schedule_model_008");
+        if(c.parity!=3&&(c.weekStart<1||c.weekEnd<c.weekStart||c.weekEnd>weeks))return UiText.get("schedule_model_009");
+        if(c.parity<0||c.parity>3)return UiText.get("schedule_model_010");
+        if(c.parity==3&&(c.customWeeks.isEmpty()||c.customWeeks.first()<1||c.customWeeks.last()>weeks))return UiText.get("schedule_model_011");
         boolean any=false;for(int w=1;w<=weeks;w++)if(c.runs(w))any=true;
-        if(!any)return "所选授课范围内没有符合单双周规则的周次";
+        if(!any)return UiText.get("schedule_model_012");
         for(Course other:courses){
             if(other.id.equals(c.id)||other.day!=c.day||other.last<c.first||other.first>c.last)continue;
             for(int w=1;w<=weeks;w++)
-                if(c.runs(w)&&other.runs(w))return "与“"+other.name+"”在第 "+w+" 周的节次冲突";
+                if(c.runs(w)&&other.runs(w))return UiText.get("schedule_model_013")+other.name+UiText.get("schedule_model_014")+w+UiText.get("schedule_model_015");
         }
         return null;
     }
     public void put(Course c){courses.removeIf(x->x.id.equals(c.id));courses.add(c);}
     public String courseTime(Course c){return slots.get(c.first-1).start+"–"+slots.get(c.last-1).end;}
-    public String weekLabel(Course c){if(c.parity==3)return "自定义 · 第 "+customLabel(c.customWeeks)+" 周";return "第 "+c.weekStart+"–"+c.weekEnd+" 周"+(c.parity==1?" · 单周":c.parity==2?" · 双周":"");}
-    public static String customLabel(Collection<Integer> weeks){StringJoiner out=new StringJoiner("、");for(int week:weeks)out.add(String.valueOf(week));return out.toString();}
+    public String weekLabel(Course c){if(c.parity==3)return UiText.get("schedule_model_016")+customLabel(c.customWeeks)+UiText.get("schedule_model_017");return UiText.get("schedule_model_018")+c.weekStart+"–"+c.weekEnd+UiText.get("schedule_model_017")+(c.parity==1?UiText.get("schedule_model_019"):c.parity==2?UiText.get("schedule_model_020"):"");}
+    public static String customLabel(Collection<Integer> weeks){StringJoiner out=new StringJoiner(UiText.get("earthquake_data_003"));for(int week:weeks)out.add(String.valueOf(week));return out.toString();}
     public JSONObject json() throws JSONException {
         JSONObject out=new JSONObject();out.put("semester",semester.toString());out.put("weeks",weeks);
         JSONArray times=new JSONArray();for(Slot s:slots){JSONObject t=new JSONObject();t.put("start",s.start);t.put("end",s.end);times.put(t);}out.put("slots",times);

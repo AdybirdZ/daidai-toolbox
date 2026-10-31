@@ -31,7 +31,7 @@ final class RouteStore {
     private final SharedPreferences p;
     RouteStore(Context c){p=c.getSharedPreferences(PREF,0);RouteStoreHolder.context=c.getApplicationContext();}
     static final class Saved {String id,name;ArrayList<RoutePoint> points=new ArrayList<>();}
-    ArrayList<Saved> all(){ArrayList<Saved> out=new ArrayList<>();try{JSONArray rows=new JSONArray(p.getString("routes","[]"));for(int i=0;i<rows.length();i++){JSONObject r=rows.optJSONObject(i);if(r==null)continue;Saved s=new Saved();s.id=r.optString("id",UUID.randomUUID().toString());s.name=r.optString("name","未命名路线");JSONArray ps=r.optJSONArray("points");if(ps!=null)for(int n=0;n<ps.length();n++){JSONObject q=ps.optJSONObject(n);if(q!=null) s.points.add(new RoutePoint(q.optDouble("lon"),q.optDouble("lat"),q.optLong("time"),q.has("accuracy")?(float)q.optDouble("accuracy"):Float.NaN));}if(!s.points.isEmpty())out.add(s);}}catch(Exception ignored){}return out;}
+    ArrayList<Saved> all(){ArrayList<Saved> out=new ArrayList<>();try{JSONArray rows=new JSONArray(p.getString("routes","[]"));for(int i=0;i<rows.length();i++){JSONObject r=rows.optJSONObject(i);if(r==null)continue;Saved s=new Saved();s.id=r.optString("id",UUID.randomUUID().toString());s.name=r.optString("name",UiText.get("gps_090"));JSONArray ps=r.optJSONArray("points");if(ps!=null)for(int n=0;n<ps.length();n++){JSONObject q=ps.optJSONObject(n);if(q!=null) s.points.add(new RoutePoint(q.optDouble("lon"),q.optDouble("lat"),q.optLong("time"),q.has("accuracy")?(float)q.optDouble("accuracy"):Float.NaN));}if(!s.points.isEmpty())out.add(s);}}catch(Exception ignored){}return out;}
     void save(String name,List<RoutePoint> points){try{JSONArray rows=new JSONArray();for(Saved old:all())rows.put(encode(old.id,old.name,old.points));rows.put(encode(UUID.randomUUID().toString(),name,points));p.edit().putString("routes",rows.toString()).apply();}catch(Exception ignored){}}
     void rename(String id,String name){try{JSONArray rows=new JSONArray();for(Saved old:all())rows.put(encode(old.id,old.id.equals(id)?name:old.name,old.points));p.edit().putString("routes",rows.toString()).apply();}catch(Exception ignored){}}
     void move(String id,int delta){try{ArrayList<Saved> rows=all();int at=-1;for(int i=0;i<rows.size();i++)if(rows.get(i).id.equals(id)){at=i;break;}int to=at+delta;if(at<0||to<0||to>=rows.size())return;Saved s=rows.remove(at);rows.add(to,s);JSONArray out=new JSONArray();for(Saved old:rows)out.put(encode(old.id,old.name,old.points));p.edit().putString("routes",out.toString()).apply();}catch(Exception ignored){}}
@@ -52,7 +52,7 @@ final class RouteCanvas extends View {
     Runnable changed=()->{};
     private final RouteViewport viewport=new RouteViewport();
     private float lastX,lastY,downX,downY;
-    RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);setContentDescription("路线画布，单指拖动，使用下方滑块缩放，点按记录点查看详情");}
+    RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);setContentDescription(UiText.get("route_drawing_001"));}
     @Override protected void onMeasure(int width,int height){int size=MeasureSpec.getSize(width);setMeasuredDimension(size,size);}
     void setRoute(List<RoutePoint> route,int count,boolean fit){
         points=new ArrayList<>(route);visibleCount=Math.max(0,Math.min(points.size(),count));
@@ -72,7 +72,7 @@ final class RouteCanvas extends View {
     private boolean updateFollow(){if(!followSelf)return false;if(playback){if(visibleCount==0)return false;RoutePoint q=points.get(visibleCount-1);viewLon=q.lon;viewLat=q.lat;}else{Location fix=LocationService.last(a);if(fix==null)return false;viewLon=fix.getLongitude();viewLat=fix.getLatitude();}viewport.center();return true;}
     void centerOn(int index){if(index<0||index>=points.size())return;RoutePoint q=points.get(index);viewLon=q.lon;viewLat=q.lat;followSelf=false;viewport.center();invalidate();}
     void stopFollowing(){followSelf=false;changed.run();invalidate();}
-    void centerSelf(){followSelf=true;if(!updateFollow()){followSelf=false;a.toast(playback?"暂无回放记录点":"请先获取当前位置");return;}changed.run();invalidate();}
+    void centerSelf(){followSelf=true;if(!updateFollow()){followSelf=false;a.toast(playback?UiText.get("route_drawing_002"):UiText.get("route_drawing_003"));return;}changed.run();invalidate();}
     void zoom(float value){viewport.zoomTo(value);changed.run();invalidate();}
     double sideMeters(){return viewport.sideMeters();}
     void sideMeters(double value){viewport.sideMeters(value);changed.run();invalidate();}
@@ -87,7 +87,7 @@ final class RouteCanvas extends View {
         for(int i=1;i<visibleCount;i++){float[] q=xy(points.get(i-1)),r=xy(points.get(i));c.drawLine(q[0],q[1],r[0],r[1],paint);}
         paint.setStyle(Paint.Style.FILL);
         for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));paint.setColor(i==visibleCount-1?0xFFE58323:0xFF246BCE);c.drawCircle(q[0],q[1],a.dp(i==visibleCount-1?5:3),paint);}
-        if(visibleCount==0){paint.setColor(a.secondaryTextColor());paint.setTextSize(a.dp(14));paint.setTextAlign(Paint.Align.LEFT);c.drawText("暂无路线定位点",a.dp(16),a.dp(45),paint);}
+        if(visibleCount==0){paint.setColor(a.secondaryTextColor());paint.setTextSize(a.dp(14));paint.setTextAlign(Paint.Align.LEFT);c.drawText(UiText.get("route_drawing_004"),a.dp(16),a.dp(45),paint);}
         c.restoreToCount(clip);drawRuler(c);
     }
     private String distance(double meters){return meters>=1000?String.format(Locale.ROOT,"%.2f km",meters/1000):String.format(Locale.ROOT,"%.0f m",meters);}
@@ -99,7 +99,7 @@ final class RouteCanvas extends View {
             if(m>0&&x<w-a.dp(30)){paint.setTextAlign(Paint.Align.CENTER);c.drawText(distance(m),x,h-a.dp(8),paint);}
             if(m>0&&y>a.dp(30)){paint.setTextAlign(Paint.Align.LEFT);c.drawText(distance(m),a.dp(8),y+a.dp(3),paint);}
         }
-        paint.setTextAlign(Paint.Align.RIGHT);paint.setTextSize(a.dp(11));c.drawText("边长 "+distance(side),w-a.dp(10),a.dp(19),paint);paint.setTextAlign(Paint.Align.LEFT);
+        paint.setTextAlign(Paint.Align.RIGHT);paint.setTextSize(a.dp(11));c.drawText(UiText.get("route_drawing_005")+distance(side),w-a.dp(10),a.dp(19),paint);paint.setTextAlign(Paint.Align.LEFT);
     }
     @Override public boolean onTouchEvent(MotionEvent e){
         int action=e.getActionMasked();
@@ -122,12 +122,12 @@ final class RouteCanvas extends View {
         for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));double d=(q[0]-x)*(q[0]-x)+(q[1]-y)*(q[1]-y);if(d<=limit)hits.add(i);}
         if(hits.isEmpty())return;
         if(hits.size()==1){showPoint(hits.get(0));return;}
-        String[] labels=new String[hits.size()];for(int i=0;i<hits.size();i++)labels[i]="记录点 "+(hits.get(i)+1)+" / "+points.size();
-        android.app.AlertDialog choices=new ToolDialog(a).setTitle("选择重叠或邻近的记录点").setItems(labels,null).setNegativeButton("返回",null).show();
+        String[] labels=new String[hits.size()];for(int i=0;i<hits.size();i++)labels[i]=UiText.get("route_drawing_006")+(hits.get(i)+1)+" / "+points.size();
+        android.app.AlertDialog choices=new ToolDialog(a).setTitle(UiText.get("route_drawing_007")).setItems(labels,null).setNegativeButton(UiText.get("action_back"),null).show();
         choices.getListView().setOnItemClickListener((parent,view,n,id)->showPoint(hits.get(n)));
     }
     private void showPoint(int index){
         RoutePoint q=points.get(index);java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss XXX",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone(a.displayZone(java.time.ZoneId.systemDefault())));
-        new ToolDialog(a).setTitle("记录点 "+(index+1)+" / "+points.size()).setMessage("坐标（经度、纬度）："+CoordinateFormat.pair(q.lon,q.lat,6)+"\n记录时间："+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?"\n水平误差半径："+String.format(Locale.ROOT,"%.1f 米",q.accuracy):"")).setNegativeButton("返回",null).show();
+        new ToolDialog(a).setTitle(UiText.get("route_drawing_006")+(index+1)+" / "+points.size()).setMessage(UiText.get("route_drawing_008")+CoordinateFormat.pair(q.lon,q.lat,6)+UiText.get("route_drawing_009")+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?UiText.get("route_drawing_010")+String.format(Locale.ROOT,UiText.get("gps_141"),q.accuracy):"")).setNegativeButton(UiText.get("action_back"),null).show();
     }
 }

@@ -18,7 +18,7 @@ final class ConfigurationData {
         "astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
         "location_continuous","status_true_north","status_battery_reverse_current","course_name_prefix","course_teacher_prefix","status_satellite_rotate","status_receive_pause","status_camera_background","quake_source_Wolfx"));
     private static final Set<String> INTEGER=new HashSet<>(Arrays.asList(
-        "ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color","theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
+        "status_camera_iso","status_camera_exposure_ms","ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color","theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
         "text_primary_color","text_secondary_color","text_accent_color","button_primary_color","button_primary_text_color","button_secondary_color","button_secondary_text_color"));
     private static final Set<String> STRING=new HashSet<>(Arrays.asList(
         "astro_order","astro_selected","astro_orientation_reference","status_light_camera","location_provider","quake_order","status_order","status_sensor_order","status_light_source","status_battery_order","status_device_order","tab_order","weather_order","status_sat_company_order","status_sat_sort"));
@@ -98,6 +98,8 @@ final class ConfigurationData {
         if(kind.equals("long")){if(key.equals("location_interval")){if(!Arrays.asList(1000L,5000L,10000L,30000L,60000L,180000L,300000L,600000L).contains(x))throw invalid();}else if(!Arrays.asList(0L,300000L,900000L,1800000L,3600000L).contains(x))throw invalid();return x;}
         range(n,Integer.MIN_VALUE,Integer.MAX_VALUE);
         if(key.endsWith("_color")) {if((x&0xff000000L)!=0xff000000L)throw invalid();}
+        else if(key.equals("status_camera_iso"))range(n,1,204800);
+        else if(key.equals("status_camera_exposure_ms"))range(n,1,1000);
         else if(key.equals("background_brightness"))range(n,0,100);
         else if(key.equals("route_interval"))range(n,2,60);
         else if(key.equals("quake_radius"))range(n,50,5000);

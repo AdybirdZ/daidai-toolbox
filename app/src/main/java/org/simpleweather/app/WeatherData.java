@@ -57,17 +57,17 @@ public final class WeatherData {
     public static String degrees(double n) { return number(n) + "℃"; }
     public static String condition(int code) {
         switch (code) {
-            case 0: return "晴"; case 1: return "少云"; case 2: return "多云"; case 3: return "阴";
-            case 45: return "雾"; case 48: return "沉积雾凇的雾";
-            case 51: return "小毛毛雨"; case 53: return "中毛毛雨"; case 55: return "大毛毛雨";
-            case 56: return "小冻毛毛雨"; case 57: return "中或大冻毛毛雨";
-            case 61: return "小雨"; case 63: return "中雨"; case 65: return "大雨";
-            case 66: return "小冻雨"; case 67: return "中或大冻雨";
-            case 71: return "小雪"; case 73: return "中雪"; case 75: return "大雪"; case 77: return "米雪";
-            case 80: return "小阵雨"; case 81: return "中阵雨"; case 82: return "大阵雨";
-            case 85: return "小阵雪"; case 86: return "大阵雪";
-            case 95: return "小或中雷暴"; case 96: return "小或中雷暴伴冰雹"; case 97: return "大雷暴"; case 99: return "大雷暴伴冰雹";
-            default: return "天气未知";
+            case 0: return UiText.get("weather_data_001"); case 1: return UiText.get("weather_data_002"); case 2: return UiText.get("weather_data_003"); case 3: return UiText.get("weather_data_004");
+            case 45: return UiText.get("weather_data_005"); case 48: return UiText.get("weather_data_006");
+            case 51: return UiText.get("weather_data_007"); case 53: return UiText.get("weather_data_008"); case 55: return UiText.get("weather_data_009");
+            case 56: return UiText.get("weather_data_010"); case 57: return UiText.get("weather_data_011");
+            case 61: return UiText.get("weather_data_012"); case 63: return UiText.get("weather_data_013"); case 65: return UiText.get("weather_data_014");
+            case 66: return UiText.get("weather_data_015"); case 67: return UiText.get("weather_data_016");
+            case 71: return UiText.get("weather_data_017"); case 73: return UiText.get("weather_data_018"); case 75: return UiText.get("weather_data_019"); case 77: return UiText.get("weather_data_020");
+            case 80: return UiText.get("weather_data_021"); case 81: return UiText.get("weather_data_022"); case 82: return UiText.get("weather_data_023");
+            case 85: return UiText.get("weather_data_024"); case 86: return UiText.get("weather_data_025");
+            case 95: return UiText.get("weather_data_026"); case 96: return UiText.get("weather_data_027"); case 97: return UiText.get("weather_data_028"); case 99: return UiText.get("weather_data_029");
+            default: return UiText.get("unknown_weather");
         }
     }
     public static int code(JSONObject object, String field, int index) {
@@ -76,15 +76,15 @@ public final class WeatherData {
     }
     public static String wind(double direction) {
         if (!Double.isFinite(direction)) return "";
-        return new String[]{"北风", "东北风", "东风", "东南风", "南风", "西南风", "西风", "西北风"}[(int)Math.floor(((direction % 360 + 360) % 360 + 22.5) / 45) % 8];
+        return new String[]{UiText.get("weather_data_030"), UiText.get("weather_data_031"), UiText.get("weather_data_032"), UiText.get("weather_data_033"), UiText.get("weather_data_034"), UiText.get("weather_data_035"), UiText.get("weather_data_036"), UiText.get("weather_data_037")}[(int)Math.floor(((direction % 360 + 360) % 360 + 22.5) / 45) % 8];
     }
     public static String clock(String iso) { return iso.length() >= 16 ? iso.substring(11, 16) : "—"; }
     public static String day(String iso, LocalDate today) {
         try {
             LocalDate date = LocalDate.parse(iso);
-            if (date.equals(today)) return "今天";
-            if (date.equals(today.plusDays(1))) return "明天";
-            return new String[]{"周一", "周二", "周三", "周四", "周五", "周六", "周日"}[date.getDayOfWeek().getValue() - 1];
+            if (date.equals(today)) return UiText.get("weather_data_038");
+            if (date.equals(today.plusDays(1))) return UiText.get("weather_data_039");
+            return new String[]{UiText.get("schedule_001"), UiText.get("schedule_002"), UiText.get("schedule_003"), UiText.get("schedule_004"), UiText.get("schedule_005"), UiText.get("schedule_006"), UiText.get("schedule_007")}[date.getDayOfWeek().getValue() - 1];
         } catch (Exception e) { return "—"; }
     }
 }

@@ -73,7 +73,7 @@
     <string name="camera_auto">自动曝光未锁定，亮度可能被系统补偿</string>
     <string name="camera_sample">相机亮度样本 %1$.0f / 255 · 相对参考值</string>
     <string name="camera_exposure_values"> · %1$.2f ms · ISO %2$d</string>
-    <string name="camera_exposure_note">支持手动传感器控制时，固定曝光时间和感光度，优先采用 10 ms、ISO 100，并按设备支持范围调整；否则先进行自动曝光，再尝试锁定。设备不支持锁定或拒绝请求时，显示自动曝光未锁定提示。每次重新启动摄像头会重新设置曝光。\n\n固定曝光可减少亮度变化被系统自动补偿，但图像处理、镜头差异、暗部噪声与亮部饱和仍会影响读数；相机亮度不等同于照度，不能代替经校准的照度计。</string>
+    <string name="camera_exposure_note">支持手动传感器控制时，固定曝光时间和感光度，默认请求 50 ms、ISO 300，可在相机设置中调整，并按设备支持范围调整；否则先进行自动曝光，再尝试锁定。设备不支持锁定或拒绝请求时，显示自动曝光未锁定提示。每次重新启动摄像头会重新设置曝光。\n\n固定曝光可减少亮度变化被系统自动补偿，但图像处理、镜头差异、暗部噪声与亮部饱和仍会影响读数；相机亮度不等同于照度，不能代替经校准的照度计。</string>
     <string name="update_1211_title">1.2.11 · 统一配色与天文指向修正</string>
     <string name="update_1211_detail">• 文字与按钮使用统一颜色选择，提供红、橙、黄、绿、青、蓝、紫及十六进制自定义；深色按钮固定白字，配套浅色按钮背景。\n• 课程颜色支持七种预设与自定义，兼容旧版课程颜色，无效值回退蓝色。\n• 恢复默认设置、底部栏目和缓存管理移至全局设置。\n• 对准天空改为固定星图上的小型红十字，按设备三维朝向显示方位角与高度角，仅用于地平坐标和无网格模式；说明集中至星图下方。\n• 地区搜索结果及收藏条目显示经度和纬度。\n• 相机亮度采样优先固定曝光时间及感光度，不支持时尝试锁定自动曝光，并显示实际曝光状态。\n• 版本号 1.2.11 / versionCode 35。</string>
     <string-array name="seven_colors"><item>红色</item><item>橙色</item><item>黄色</item><item>绿色</item><item>青色</item><item>蓝色（默认）</item><item>紫色</item></string-array>
@@ -101,4 +101,19 @@
     <string-array name="color_names_seven"><item>红色</item><item>橙色</item><item>黄色</item><item>绿色</item><item>青色</item><item>蓝色</item><item>紫色</item></string-array>
     <string name="settings_display_order">显示与排序</string>
     <string name="settings_current_sign">瞬时电流符号</string>
+    <string name="camera_settings">相机设置</string>
+    <string name="camera_exposure_settings">感光度与曝光时间</string>
+    <string name="camera_iso">感光度（ISO）</string>
+    <string name="camera_exposure_ms">曝光时间（毫秒）</string>
+    <string name="camera_parameters_note">默认感光度为 ISO 300，曝光时间为 50 ms。可输入 ISO 1～204800、曝光时间 1～1000 ms；实际值以设备支持范围为准。仅支持手动传感器控制的摄像头可应用这些参数；不支持时尝试锁定自动曝光。保存后立即应用。</string>
+    <string name="camera_parameters_saved">相机参数已保存</string>
+    <string name="camera_parameters_invalid">请输入 ISO 1～204800、曝光时间 1～1000 ms 范围内的整数</string>
+    <string name="update_1213_title">1.2.13 · 历史文字资源与相机参数</string>
+    <string name="update_1213_detail">• 将历史界面文字及历次更新记录迁移至 XML 语言资源，保留数据解析字段和已保存资料的稳定标识。\n• 相机亮度采样默认请求 ISO 300、曝光时间 50 ms，新增参数设置；实际采用值受设备支持范围限制，不支持手动控制时保留自动曝光锁定回退。\n• 删除地点示意图上方的“屏幕上沿”标签。\n• 版本号 1.2.13 / versionCode 37。</string>
+    <string name="place_delete_suffix">”？</string>
+    <string name="intensity_scale_prefix">" MMI："</string>
+    <string name="sky_civil_twilight">民用%1$s中，天空较亮</string>
+    <string name="sky_nautical_twilight">航海%1$s中，可寻找亮星</string>
+    <string name="sky_astronomical_twilight">天文%1$s中，天色较暗</string>
+    <string name="meteor_radiant_label">%1$s流星雨</string>
 </resources>
