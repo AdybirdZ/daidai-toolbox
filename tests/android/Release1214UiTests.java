@@ -12,9 +12,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import org.json.*;
 
-/** Exercise actual dialog navigation, color selection, fixed chart projection and Camera2. */
+/** Verify in-place sky toggles, fixed selection indicators and settings explanations. */
 public final class Release1214UiTests extends Instrumentation {
-    Activity a;View courseEditor;int checks;final Map<String,Map<String,?>> before=new HashMap<>();String cameraResult="";
+    Activity a;View courseEditor;int checks;final Map<String,Map<String,?>> before=new HashMap<>();
     Object field(Object o,String name){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(Exception e){throw new RuntimeException(e);}}
     void field(Object o,String name,Object value){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);f.set(o,value);}catch(Exception e){throw new RuntimeException(e);}}
     Object call(Object o,String name,Class<?>[] types,Object... args){try{Method m=o.getClass().getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(o,args);}catch(Exception e){throw new RuntimeException(e);}}
