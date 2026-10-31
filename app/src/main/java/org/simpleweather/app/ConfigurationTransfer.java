@@ -50,7 +50,7 @@ final class ConfigurationTransfer {
     }
     private void confirm(ConfigurationData.Document doc){
         if(!alive()){busy=false;return;}
-        new ToolDialog(a).setTitle(a.getString(R.string.config_import_title)).setMessage(a.getString(R.string.config_import_summary,doc.regions,doc.places,doc.routes,doc.courses)+(doc.backgroundSpecified?a.getString(R.string.config_background_replace):a.getString(R.string.config_background_legacy))+a.getString(R.string.config_import_warning))
+        new ToolDialog(a).setTitle(a.getString(R.string.config_import_title)).setMessage(a.getString(R.string.config_import_summary,doc.regions,doc.places,doc.routes,doc.courses,doc.lists)+(doc.backgroundSpecified?a.getString(R.string.config_background_replace):a.getString(R.string.config_background_legacy))+a.getString(R.string.config_import_warning))
             .setNegativeButton(a.getString(R.string.action_cancel),null).setPositiveButton(a.getString(R.string.config_confirm),(d,n)->apply(doc)).setOnDismissListener(d->{if(!applying)busy=false;}).show();
     }
     private void apply(ConfigurationData.Document doc){
@@ -64,7 +64,7 @@ final class ConfigurationTransfer {
                 for(String group:ConfigurationData.GROUPS)before.put(group,new HashMap<>(a.getSharedPreferences(group,0).getAll()));
                 if(doc.backgroundSpecified&&doc.background!=null)Files.write(temp.toPath(),doc.background);
                 changed=true;
-                for(String group:ConfigurationData.GROUPS){SharedPreferences prefs=a.getSharedPreferences(group,0);Map<String,Object> next=new HashMap<>(before.get(group));
+                for(String group:ConfigurationData.GROUPS){if(group.equals("random_choice")&&!doc.randomSpecified)continue;SharedPreferences prefs=a.getSharedPreferences(group,0);Map<String,Object> next=new HashMap<>(before.get(group));
                     next.keySet().removeIf(k->ConfigurationData.type(group,k)!=null);next.putAll(doc.groups.get(group));
                     if(group.equals("toolbox")){next.put("quake_wolfx_ack_112",false);next.put("last_tab",0);}
                     if(!write(prefs,next))throw new IOException();

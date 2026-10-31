@@ -62,7 +62,7 @@ public final class WeatherApi {
         reserve();
         HttpsURLConnection conn = (HttpsURLConnection)new URL(url).openConnection();
         conn.setConnectTimeout(12000); conn.setReadTimeout(18000); conn.setInstanceFollowRedirects(false);
-        conn.setRequestProperty("User-Agent", "DaidaiToolbox/1.2.15 (personal non-commercial Android client)");
+        conn.setRequestProperty("User-Agent", "DaidaiToolbox/1.3.0 (personal non-commercial Android client)");
         conn.setRequestProperty("Accept", "application/json");
         try {
             int status = conn.getResponseCode();

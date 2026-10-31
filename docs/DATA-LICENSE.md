@@ -247,3 +247,9 @@ Wolfx 仍只接入 cenc_eqlist，非全球目录，无预警流。默认关闭�
 全局设置中的“权限与系统限制”集中提供应用详情、系统定位及电池优化设置入口。电池优化说明读取 Android PowerManager 报告的豁免状态，跳转系统电池优化列表；未新增 REQUEST_IGNORE_BATTERY_OPTIMIZATIONS 权限，不自动申请或变更系统豁免。系统行为参考 [Android Doze 与应用待机](https://developer.android.com/training/monitoring-device-state/doze-standby)。
 
 电池电流、电荷通过 Android BatteryManager 公共接口读取。标准单位分别为微安、微安时；兼容设置仅按用户确认的单位换算，不按品牌猜测，不校准电池、不估算设计容量或健康百分比。设置保留系统原始值，系统未提供可信数据时单位切换不能恢复真实值。依据：[Android BatteryManager](https://developer.android.com/reference/android/os/BatteryManager#BATTERY_PROPERTY_CURRENT_NOW)。其他设备曾有非标准电荷上报的[社区反馈](https://github.com/almothafar/BattWatch/issues/69)，该反馈不构成对本应用用户机型的实测验证。
+
+## 1.3.0 本机随机选择
+
+随机选择使用 Android 自带的 `java.security.SecureRandom` 默认系统熵源与自行实现的部分 Fisher–Yates 抽样，不引入第三方库、网络数据或新增权限。未使用时间手动设种子；等概率性质依赖系统随机源的均匀整数输出。动画仅轮换文字展示，不改变已产生的结果。
+
+候选草稿、名单、结果与抽取进度存于本机。完整配置导出包含这些内容，应用不自行发送至网络；用户选择的云文件提供方适用其规则。此功能不是具备审计、公证或抗篡改保证的专业抽奖服务。

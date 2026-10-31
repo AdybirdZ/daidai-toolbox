@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class ConfigurationUiTests extends Instrumentation {
     private Activity activity;private Object transfer;private int checks;
     private final Map<String,Map<String,?>> original=new HashMap<>();private byte[] background;
-    private static final String[] GROUPS={"toolbox","weather","status_places","status_routes","timetable"};
+    private static final String[] GROUPS={"toolbox","weather","status_places","status_routes","timetable","random_choice"};
     private Object field(Object o,String key){try{Field f=o.getClass().getDeclaredField(key);f.setAccessible(true);return f.get(o);}catch(Exception e){throw new RuntimeException(e);}}
     private void field(Object o,String key,Object v){try{Field f=o.getClass().getDeclaredField(key);f.setAccessible(true);f.set(o,v);}catch(Exception e){throw new RuntimeException(e);}}
     private Object call(Object o,String name,Class<?>[] types,Object... values){try{Method m=o.getClass().getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(o,values);}catch(Exception e){throw new RuntimeException(e);}}

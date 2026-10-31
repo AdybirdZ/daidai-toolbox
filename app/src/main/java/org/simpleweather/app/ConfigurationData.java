@@ -7,15 +7,15 @@ import java.util.*;
 final class ConfigurationData {
     static final String FORMAT="daidai-toolbox-configuration";
     static final int MAX_BYTES=40*1024*1024, MAX_BACKGROUND=8*1024*1024;
-    static final String[] GROUPS={"toolbox","weather","status_places","status_routes","timetable"};
+    static final String[] GROUPS={"toolbox","weather","status_places","status_routes","timetable","random_choice"};
     static final class Document {
         final Map<String,Map<String,Object>> groups=new LinkedHashMap<>();
-        boolean backgroundSpecified;
+        boolean backgroundSpecified,randomSpecified;
         byte[] background;
-        int places,routes,courses,regions;
+        int places,routes,courses,regions,lists;
     }
     private static final Set<String> BOOLEAN=new HashSet<>(Arrays.asList(
-        "astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
+        "random_remove_drawn","random_animation","astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
         "location_continuous","status_true_north","status_battery_reverse_current","course_name_prefix","course_teacher_prefix","status_satellite_rotate","status_receive_pause","status_camera_background","quake_source_Wolfx"));
     private static final Set<String> INTEGER=new HashSet<>(Arrays.asList(
         "status_camera_iso","status_camera_exposure_ms","status_camera_outdoor_iso","status_camera_outdoor_exposure_ms","ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color","theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
@@ -33,7 +33,7 @@ final class ConfigurationData {
         }else if(group.equals("weather")&&(key.equals("selected")||key.equals("saved")))return "string";
         else if(group.equals("status_places")&&(key.equals("places")||key.equals("selected")))return "string";
         else if(group.equals("status_routes")&&key.equals("routes"))return "string";
-        else if(group.equals("timetable")&&key.equals("data"))return "string";
+        else if((group.equals("timetable")||group.equals("random_choice"))&&key.equals("data"))return "string";
         return null; // Runtime state, permissions, acknowledgements and quotas are never restored.
     }
     static JSONObject encode(Map<String,Map<String,?>> source,byte[] background)throws Exception {
@@ -54,7 +54,8 @@ final class ConfigurationData {
         if(!FORMAT.equals(root.optString("format")))throw invalid();long version=whole(root.get("version"));if(version!=1&&version!=2)throw invalid();
         if(version==2&&!"WGS84".equals(root.optString("coordinateSystem")))throw invalid();
         Document doc=new Document();
-        for(String group:GROUPS){JSONObject values=root.getJSONObject(group);if(values.length()>1000)throw invalid();Map<String,Object> out=new LinkedHashMap<>();
+        doc.randomSpecified=root.has("random_choice");
+        for(String group:GROUPS){JSONObject values=group.equals("random_choice")&&!doc.randomSpecified?new JSONObject():root.getJSONObject(group);if(values.length()>1000)throw invalid();Map<String,Object> out=new LinkedHashMap<>();
             Iterator<String> keys=values.keys();while(keys.hasNext()){String key=keys.next();String kind=type(group,key);if(kind==null)continue;
                 Object v=values.get(key);if(version==2){if(!(v instanceof JSONObject)||!kind.equals(((JSONObject)v).optString("type")))throw invalid();v=((JSONObject)v).get("value");}
                 out.put(key,checked(group,key,kind,v));
@@ -113,6 +114,8 @@ final class ConfigurationData {
         return (int)x;
     }
     private static void validateModels(Document doc)throws Exception {
+        Map<String,Object> choices=doc.groups.get("random_choice");
+        if(choices.containsKey("data")){RandomChoiceModel m=RandomChoiceModel.parse((String)choices.get("data"));choices.put("data",m.json().toString());doc.lists=m.lists.size();}
         Map<String,Object> weather=doc.groups.get("weather");
         if(weather.containsKey("selected")&&!((String)weather.get("selected")).isEmpty())new City(new JSONObject((String)weather.get("selected")));
         if(weather.containsKey("saved")){JSONArray a=array((String)weather.get("saved"));if(a.length()>20)throw invalid();for(int i=0;i<a.length();i++)new City(a.getJSONObject(i));doc.regions=a.length();}

@@ -35,7 +35,7 @@ public final class Release1214UiTests extends Instrumentation {
     ScrollView scroll;View originalSky;int savedY;final ArrayList<Integer> scrollEvents=new ArrayList<>();
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;
         try{
-            for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes"})before.put(group,new HashMap<>(prefs(group).getAll()));
+            for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putBoolean("tab_show_4",true).putBoolean("tab_show_3",true).putBoolean("astro_align_sky",false).putString("astro_selected","织女一").putInt("astro_coordinates",0).putLong("quake_interval",0).putInt("ui_choice_color",0xffb83232).putInt("ui_button_color",0xff287c60).commit();
             a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
             ui(()->{

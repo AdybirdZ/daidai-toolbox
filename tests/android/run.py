@@ -3,7 +3,7 @@ import argparse,os,shutil,subprocess,zipfile
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
 workspace=root.parent
-parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','EnglishPreviewUiTests'],default='StatusUiTests');opts=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','Release130UiTests','EnglishPreviewUiTests'],default='StatusUiTests');opts=parser.parse_args()
 if not opts.serial.startswith('emulator-'):raise SystemExit('Use an isolated Android emulator, not a personal device.')
 sdk=workspace/'tools/android-sdk';tools=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar'
 java_dir=Path(shutil.which('javac')).parent

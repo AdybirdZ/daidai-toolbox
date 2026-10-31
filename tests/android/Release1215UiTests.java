@@ -68,7 +68,7 @@ public final class Release1215UiTests extends Instrumentation {
     }
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;
         try{
-            for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes"})before.put(group,new HashMap<>(prefs(group).getAll()));
+            for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().putInt("seen_version",Integer.MAX_VALUE).remove("status_battery_current_unit").remove("status_battery_charge_unit").putBoolean("status_battery_reverse_current",false).putInt("last_tab",0).putBoolean("status_camera_background",false).putString("status_light_source","sensor").putString("status_light_camera","back").putInt("status_camera_iso",640).putInt("status_camera_exposure_ms",25).remove("status_camera_outdoor_iso").remove("status_camera_outdoor_exposure_ms").putLong("quake_interval",0).putBoolean("status_sensor_show_5",true).commit();
             for(int id=0;id<9;id++)prefs("toolbox").edit().putBoolean("status_show_"+id,id==4||id==7).commit();
             a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();

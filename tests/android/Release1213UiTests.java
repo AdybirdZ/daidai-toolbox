@@ -33,7 +33,7 @@ public final class Release1213UiTests extends Instrumentation {
     @Override public void onCreate(Bundle b){super.onCreate(b);start();}
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;Object camera=null;
         try{
-            for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes"})before.put(group,new HashMap<>(prefs(group).getAll()));
+            for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putBoolean("outline",false).putBoolean("status_camera_background",false).putString("status_light_camera","back").putBoolean("tab_show_4",true).putBoolean("astro_align_sky",true).putString("astro_selected","").putInt("astro_coordinates",0).putLong("quake_interval",0).commit();
             prefs("toolbox").edit().remove("status_camera_iso").remove("status_camera_exposure_ms").commit();
             a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
