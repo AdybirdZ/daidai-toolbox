@@ -116,7 +116,7 @@
     <string name="astronomy_114" formatted="false">"计算说明与来源"</string>
     <string name="astronomy_115" formatted="false">"yyyy年M月d日 HH:mm"</string>
     <string name="astronomy_116" formatted="false">"当地星空 · 仰视示意"</string>
-    <string name="astronomy_117" formatted="false">"关闭对准天空"</string>
+    <string name="astronomy_117" formatted="false">"停止对准天空"</string>
     <string name="astronomy_118" formatted="false">"对准天空"</string>
     <string name="astronomy_119" formatted="false">"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n流星雨按常年参考极大日前后 3 天显示，该区间不代表实际完整活跃期。恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。"</string>
     <string name="astronomy_120" formatted="false">"计算公式与方法参考"</string>
@@ -1108,7 +1108,7 @@
     <string name="settings_085" formatted="false">"默认显示所有传感器。可取消勾选以停止本页读取对应传感器，使用箭头调整顺序；不影响系统或其他应用。"</string>
     <string name="settings_086" formatted="false">"传感器显示与排序"</string>
     <string name="settings_087" formatted="false">"默认显示全部信息。勾选可设置显示项目，使用箭头调整顺序。"</string>
-    <string name="settings_088" formatted="false">"默认按卫星系统排序，顺序为中国 BDS、美国 GPS、欧洲 Galileo、俄罗斯 GLONASS、日本 QZSS、印度 NavIC、星基增强 SBAS、其他系统。也可按载噪密度比从高到低排序，单位为 dB-Hz。卫星以系统名称和编号标识。"</string>
+    <string name="settings_088" formatted="false">"默认按卫星系统排序；也可按载噪密度比从高到低排序，单位为 dB-Hz。卫星以系统名称和编号标识。"</string>
     <string name="settings_089" formatted="false">"按卫星系统排序（默认）"</string>
     <string name="settings_090" formatted="false">"按载噪密度比从高到低"</string>
     <string name="settings_091" formatted="false">"卫星系统顺序"</string>

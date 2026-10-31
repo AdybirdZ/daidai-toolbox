@@ -23,7 +23,7 @@ final class EarthquakeApi {
         if(limits.until(source)>System.currentTimeMillis())throw new IOException(UiText.get("earthquake_api_001"));
         limits.until(source,System.currentTimeMillis()+60_000);
         HttpURLConnection c=(HttpURLConnection)new URL(url(source,since,minimum)).openConnection();
-        c.setConnectTimeout(18_000);c.setReadTimeout(22_000);c.setInstanceFollowRedirects(false);c.setRequestProperty("Accept",source.equals("GEOFON")?"application/xml":"application/json");c.setRequestProperty("User-Agent","DaidaiToolbox/1.2.13 (recent earthquake catalogue)");
+        c.setConnectTimeout(18_000);c.setReadTimeout(22_000);c.setInstanceFollowRedirects(false);c.setRequestProperty("Accept",source.equals("GEOFON")?"application/xml":"application/json");c.setRequestProperty("User-Agent","DaidaiToolbox/1.2.14 (recent earthquake catalogue)");
         try{
             int code=c.getResponseCode();
             if(code==429||code==503){limits.until(source,retryAfter(c.getHeaderField("Retry-After"),System.currentTimeMillis()));throw new IOException(UiText.get("earthquake_api_002"));}

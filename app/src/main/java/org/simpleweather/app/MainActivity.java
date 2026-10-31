@@ -251,7 +251,7 @@ public class MainActivity extends Activity {
         gap(c,19);line(c);gap(c,19);
         metricRow(c,UiText.get("main_031"),WeatherData.clock(WeatherData.textAt(data.daily,"sunrise",today)),UiText.get("main_032"),WeatherData.clock(WeatherData.textAt(data.daily,"sunset",today)));
         gap(c,19);line(c);gap(c,14);
-        c.addView(text(UiText.get("main_033"),13,MUTED,false));
+        TextParagraphs.append(this,c,getString(R.string.uv_guidance),13,MUTED);link(c,getString(R.string.uv_guidance_source),"https://www.epa.gov/sites/default/files/documents/uviguide.pdf");link(c,getString(R.string.uv_safety_source),"https://www.cdc.gov/skin-cancer/sun-safety/index.html");
     }
     private void metricRow(LinearLayout parent,String a,String av,String b,String bv) {
         LinearLayout r=row();String[] labels={a,b},values={av,bv};
@@ -359,6 +359,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_1214_title),getString(R.string.update_1214_detail));
         updateEntry(c,getString(R.string.update_1213_title),getString(R.string.update_1213_detail));
         updateEntry(c,getString(R.string.update_1212_title),getString(R.string.update_1212_detail));
         updateEntry(c,getString(R.string.update_1211_title),getString(R.string.update_1211_detail));

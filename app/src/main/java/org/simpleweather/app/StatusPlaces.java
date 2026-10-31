@@ -63,6 +63,6 @@ final class StatusPlaces {
             buttons.addView(a.button(UiText.get("gps_092"),false,()->new ToolDialog(a).setTitle(UiText.get("schedule_086")+p.name+UiText.get("place_delete_suffix")).setMessage(UiText.get("status_places_034")).setNegativeButton(UiText.get("action_cancel"),null).setPositiveButton(UiText.get("gps_092"),(d,n)->{List<StatusPlace> next=all();next.removeIf(x->x.id.equals(p.id));if(p.id.equals(store.getString("selected","")))store.edit().remove("selected").apply();save(next);a.toast(UiText.get("status_places_035"));}).show()),new LinearLayout.LayoutParams(0,-2,1));c.addView(buttons);a.gap(c,8);
             LinearLayout sort=a.row();sort.addView(a.button(UiText.get("gps_101"),false,()->move(p.id,-1)),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(sort,8);sort.addView(a.button(UiText.get("gps_102"),false,()->move(p.id,1)),new LinearLayout.LayoutParams(0,-2,1));c.addView(sort);a.gap(c,20);
         }
-        c.addView(a.button(UiText.get("gps_057"),false,()->edit(null,null)));ScrollView s=new ScrollView(a);s.addView(c);manager=new ToolDialog(a).setTitle(UiText.get("status_places_036")).setView(s).setNegativeButton(UiText.get("action_back"),null).show();
+        c.addView(a.button(UiText.get("gps_057"),false,()->edit(null,null)));a.gap(c,12);TextParagraphs.append(a,c,a.getString(R.string.saved_order_note),13,a.MUTED);ScrollView s=new ScrollView(a);s.addView(c);manager=new ToolDialog(a).setTitle(UiText.get("status_places_036")).setView(s).setNegativeButton(UiText.get("action_back"),null).show();
     }
 }

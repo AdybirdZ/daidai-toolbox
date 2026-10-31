@@ -108,3 +108,7 @@ Status 1.2.3: route drawing uses only Android LocationManager callbacks already 
 Camera2 用于读取本机相机 Y 平面相对亮度，支持时固定曝光时间与感光度；否则尝试锁定自动曝光，界面如实报告状态。没有新增权限、在线数据源或第三方运行时依赖，不保存相机画面。设备方向使用 Android 旋转矢量和 GeomagneticField，本地修正磁偏角后在所选地区的地平星图显示，不上传姿态数据。
 
 官方接口说明：[手动传感器能力](https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)、[自动曝光锁定](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#CONTROL_AE_LOCK)、[曝光时间](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#SENSOR_EXPOSURE_TIME)。固定曝光不能替代照度标定。
+
+## 1.2.14 紫外线说明参考
+
+紫外线指数仍来自 Open-Meteo 原有字段。防护说明由本项目编写，参考 [EPA 紫外线指数指南](https://www.epa.gov/sites/default/files/documents/uviguide.pdf) 及 [CDC 防晒建议](https://www.cdc.gov/skin-cancer/sun-safety/index.html)，不包含其图像或其他第三方素材。说明不是个体化医疗判断，来源及估算边界见 docs/DATA-LICENSE.md。

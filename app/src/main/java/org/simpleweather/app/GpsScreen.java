@@ -136,7 +136,7 @@ final class GpsScreen {
             if(routeCanvas!=null){routeCanvas.setRoute(displayedRoute,displayedRoute.size(),true);syncRouteViewport();}updateReplay();
         });r.addView(open,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(r,6);r.addView(a.button(UiText.get("gps_099"),false,()->editRoute(row,dialog)),a.lp(64,48));a.gapHorizontal(r,6);r.addView(a.button(UiText.get("gps_092"),false,()->confirmRouteDeletion(()->{routeStore.remove(row.id);dialog[0].dismiss();a.toast(UiText.get("gps_100"));routeList();})),a.lp(64,48));c.addView(r);a.gap(c,6);
             LinearLayout sort=a.row();sort.addView(a.button(UiText.get("gps_101"),false,()->{routeStore.move(row.id,-1);dialog[0].dismiss();routeList();}),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(sort,6);sort.addView(a.button(UiText.get("gps_102"),false,()->{routeStore.move(row.id,1);dialog[0].dismiss();routeList();}),new LinearLayout.LayoutParams(0,-2,1));c.addView(sort);a.gap(c,12);}
-        ScrollView scroll=new ScrollView(a);scroll.addView(c);dialog[0]=new ToolDialog(a).setTitle(UiText.get("gps_103")).setView(scroll).setNegativeButton(UiText.get("action_back"),null).show();
+        a.gap(c,12);TextParagraphs.append(a,c,a.getString(R.string.saved_order_note),13,a.MUTED);ScrollView scroll=new ScrollView(a);scroll.addView(c);dialog[0]=new ToolDialog(a).setTitle(UiText.get("gps_103")).setView(scroll).setNegativeButton(UiText.get("action_back"),null).show();
     }
     private void editRoute(RouteStore.Saved row,AlertDialog[] holder){
         EditText input=new EditText(a);input.setSingleLine(true);input.setText(row.name);input.setSelectAllOnFocus(true);input.setHint(UiText.get("gps_104"));

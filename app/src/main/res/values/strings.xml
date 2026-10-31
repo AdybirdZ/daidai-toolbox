@@ -116,4 +116,16 @@
     <string name="sky_nautical_twilight">航海%1$s中，可寻找亮星</string>
     <string name="sky_astronomical_twilight">天文%1$s中，天色较暗</string>
     <string name="meteor_radiant_label">%1$s流星雨</string>
+    <string name="uv_guidance">紫外线指数表示紫外线对皮肤和眼睛的潜在危害，无单位。这里显示的是所选地区今日最高指数的天气模型估算值，不是当前实测值；云层较薄时也可能需要防护。\n\n低（指数不足 3）：多数人短时间户外活动风险较低；皮肤敏感者、长时间户外活动或处于雪地、水面等反射较强环境时，仍应注意防护。\n\n中等（3 至不足 6）：外出时建议遮阴，佩戴遮阳帽及防紫外线太阳镜，穿着遮盖皮肤的衣物；暴露部位使用广谱防晒霜。\n\n高（6 至不足 8）：应加强防护，尽量避开日间日照较强的时段，减少长时间暴晒；结合遮阴、衣物和防晒霜，不要只依赖防晒霜。\n\n很高（8 至不足 11）：未防护的皮肤更容易晒伤，应尽量缩短日照较强时段的户外停留时间，并采取完整防护措施。\n\n极高（11 及以上）：晒伤风险很高，尽量避免日照较强时段的户外活动；必须外出时应遮阴并充分防护。\n\n建议选择 SPF 30 或以上、同时防护 UVA 和 UVB 的广谱防晒霜，并按产品说明足量使用；持续户外活动通常每 2 小时补涂，游泳、出汗或擦拭后及时补涂。婴幼儿以遮阴和衣物防护为主。皮肤类型、海拔及地面反射会影响个人风险，防晒措施不能完全阻隔紫外线。</string>
+    <string name="uv_guidance_source">紫外线指数与防护参考 · 美国环境保护署</string>
+    <string name="uv_safety_source">防晒参考 · 美国疾病控制与预防中心</string>
+    <string name="default_order">默认排序为：%1$s。</string>
+    <string name="order_separator">"、"</string>
+    <string name="order_sections_note">默认显示全部栏目。勾选可设置显示项目，使用箭头调整顺序。</string>
+    <string name="order_weather_note">默认显示全部栏目。勾选可设置显示项目，使用箭头调整顺序；天气数据旁的来源署名始终保留。</string>
+    <string name="order_tabs_note">默认显示天气、课程表、状态和地震。至少保留一个栏目；仅显示一个栏目时隐藏底栏，显示五个及以上栏目时使用左右箭头翻页。</string>
+    <string name="quake_sort_note">默认排序为：按发生时刻从新到旧。</string>
+    <string name="saved_order_note">默认排序为：按添加顺序排列，新条目置于末尾。使用箭头可调整顺序，编辑名称不会改变位置。</string>
+    <string name="update_1214_title">1.2.14 · 星图交互与设置规范</string>
+    <string name="update_1214_detail">• 对准天空开关直接启停星图传感器，不再重建页面，保持阅读位置。\n• 细化紫外线指数区间与防护建议，补充官方参考链接。\n• 在浏览器中打开改用无背景链接样式。\n• 开关、复选框与单选指示固定蓝色，文字颜色仍可独立调整。\n• 移除中国地震台网选项后的默认关闭标注，保留原有启用确认。\n• 设置说明统一放在控件下方，所有排序页面补充默认排序。\n• 版本号 1.2.14 / versionCode 38。</string>
 </resources>

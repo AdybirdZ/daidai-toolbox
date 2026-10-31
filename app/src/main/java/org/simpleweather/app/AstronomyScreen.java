@@ -30,7 +30,7 @@ final class AstronomyScreen {
             switch(id){
                 case 0:timeControl();break;
                 case 1:observing();break;
-                case 2:LinearLayout sky=a.card();sky.addView(a.text(UiText.get("astronomy_116"),17,a.TITLE,true));a.gap(sky,12);sky.addView(a.button(a.preferences.getBoolean("astro_align_sky",false)?UiText.get("astronomy_117"):UiText.get("astronomy_118"),false,()->{a.preferences.edit().putBoolean("astro_align_sky",!a.preferences.getBoolean("astro_align_sky",false)).apply();a.refreshScreen();}),a.lp(-1,48));a.gap(sky,8);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);TextParagraphs.append(a,sky,view.chartNote(),12,a.MUTED);break;
+                case 2:skyCard(view);break;
                 case 3:LinearLayout info=a.card();info.addView(a.text(UiText.get("astronomy_109"),17,a.TITLE,true));a.gap(info,10);info.addView(selectedInfo);break;
                 case 4:moonInfo();break;
                 case 5:positions();break;
@@ -42,6 +42,12 @@ final class AstronomyScreen {
         }
     }
     private void timeButton(LinearLayout row,String title,Runnable click){if(row.getChildCount()>0)a.gapHorizontal(row,8);TextView button=a.button(title,false,click);button.setPadding(a.dp(4),a.dp(10),a.dp(4),a.dp(10));row.addView(button,new LinearLayout.LayoutParams(0,-2,1));}
+    private void skyCard(Sky view){
+        LinearLayout sky=a.card();sky.addView(a.text(UiText.get("astronomy_116"),17,a.TITLE,true));a.gap(sky,12);
+        TextView toggle=a.button(a.preferences.getBoolean("astro_align_sky",false)?UiText.get("astronomy_117"):UiText.get("astronomy_118"),false,()->{});
+        toggle.setOnClickListener(v->a.updateReadingValues(()->{boolean on=!a.preferences.getBoolean("astro_align_sky",false);a.preferences.edit().putBoolean("astro_align_sky",on).apply();view.setAligned(on);toggle.setText(on?UiText.get("astronomy_117"):UiText.get("astronomy_118"));}));
+        sky.addView(toggle,a.lp(-1,48));a.gap(sky,8);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);TextParagraphs.append(a,sky,view.chartNote(),12,a.MUTED);
+    }
     private void timeControl(){
         LinearLayout card=a.card();card.addView(a.text(UiText.get("astronomy_106"),17,a.TITLE,true));a.gap(card,12);
         LinearLayout clock=a.row();timeButton(clock,UiText.get("astronomy_122"),()->change.accept(at.minusSeconds(900)));timeButton(clock,UiText.get("astronomy_123"),()->change.accept(Instant.now()));timeButton(clock,UiText.get("astronomy_124"),()->change.accept(at.plusSeconds(900)));card.addView(clock);a.gap(card,8);
@@ -121,8 +127,14 @@ final class AstronomyScreen {
             for(Astronomy.Planet planet:Astronomy.planets(at))targets.add(new Target(planet.name,"astro_planet_"+planet.name,planet.ra,planet.dec,planet.magnitude,1,true,at,lat,lon));
             for(Astronomy.Star object:Astronomy.DEEP_SKY)targets.add(new Target(object.name,"astro_deep_"+object.name,object.ra,object.dec,object.mag,2,true,at,lat,lon));
             targets.add(new Target(UiText.raw("identity_astronomy_081"),3,at,lat,lon));targets.add(new Target(UiText.raw("identity_astronomy_082"),4,at,lat,lon));
-            aligned=a.preferences.getBoolean("astro_align_sky",false)&&SkyPointing.supported(mode);if(aligned){sensors=(SensorManager)a.getSystemService(android.content.Context.SENSOR_SERVICE);Sensor rotation=sensors==null?null:sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);if(rotation!=null)sensors.registerListener(this,rotation,SensorManager.SENSOR_DELAY_GAME);}
+            setAligned(a.preferences.getBoolean("astro_align_sky",false));
             updateDescription();setClickable(true);
+        }
+        void setAligned(boolean on){
+            if(sensors!=null){sensors.unregisterListener(this);sensors=null;}
+            aligned=on&&SkyPointing.supported(mode);aimAltitude=aimAzimuth=Double.NaN;
+            if(aligned){sensors=(SensorManager)a.getSystemService(android.content.Context.SENSOR_SERVICE);Sensor rotation=sensors==null?null:sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);if(rotation!=null)sensors.registerListener(this,rotation,SensorManager.SENSOR_DELAY_GAME);}
+            invalidate();
         }
         private void updateDescription(){setContentDescription(UiText.get("astronomy_167")+(mode==1?UiText.get("astronomy_168"):mode==2?UiText.get("astronomy_169"):UiText.get("astronomy_170"))+(selected.isEmpty()?"":UiText.get("astronomy_171")+UiText.label(selected)));}
         String chartNote(){return (mode==1?UiText.get("astronomy_172"):mode==2?UiText.get("astronomy_173"):UiText.get("astronomy_174"))+"\n\n"+a.getString(R.string.sky_objects_note)+"\n\n"+a.getString(R.string.sky_aim_note);}
@@ -163,7 +175,7 @@ final class AstronomyScreen {
             if(chosen!=null){c.save();c.rotate(SkyGeometry.selectionAngle(android.os.SystemClock.uptimeMillis()),chosen.x,chosen.y);p.setColor(0xFF8CEAF5);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(1.5f));for(int arm=0;arm<4;arm++){c.drawLine(chosen.x+a.dp(8),chosen.y,chosen.x+a.dp(16),chosen.y,p);c.rotate(90,chosen.x,chosen.y);}c.restore();p.setStyle(Paint.Style.FILL);if(isShown()&&hasWindowFocus()&&getWindowVisibility()==VISIBLE)postInvalidateDelayed(33);}
         }
         @Override public void onWindowFocusChanged(boolean focused){super.onWindowFocusChanged(focused);if(focused)invalidate();}
-        @Override public void onSensorChanged(SensorEvent event){if(event.sensor.getType()!=Sensor.TYPE_ROTATION_VECTOR)return;float[] matrix=new float[9];SensorManager.getRotationMatrixFromVector(matrix,event.values);updatePointing(matrix);}
+        @Override public void onSensorChanged(SensorEvent event){if(!aligned||event.sensor.getType()!=Sensor.TYPE_ROTATION_VECTOR)return;float[] matrix=new float[9];SensorManager.getRotationMatrixFromVector(matrix,event.values);updatePointing(matrix);}
         private void updatePointing(float[] matrix){double declination=new GeomagneticField((float)lat,(float)lon,0,System.currentTimeMillis()).getDeclination();double[] direction=SkyPointing.direction(matrix,"top".equals(a.preferences.getString("astro_orientation_reference","camera")),a.getWindowManager().getDefaultDisplay().getRotation(),declination);aimAltitude=direction[0];aimAzimuth=direction[1];invalidate();}
         @Override public void onAccuracyChanged(Sensor sensor,int accuracy){}
         @Override protected void onDetachedFromWindow(){if(sensors!=null)sensors.unregisterListener(this);super.onDetachedFromWindow();}

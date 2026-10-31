@@ -147,7 +147,7 @@ final class EarthquakeScreen {
     private void dialog(String title,LinearLayout c){ScrollView s=new ScrollView(a);s.addView(c);new ToolDialog(a).setTitle(title).setView(s).setNegativeButton(UiText.get("action_back"),null).show();}
     private void action(LinearLayout c,String title,Runnable r){c.addView(a.button(title,false,r));a.gap(c,10);}
     private interface Choice {void select(int n);}
-    private void choose(String title,String[] labels,int selected,Choice callback){new ToolDialog(a).setTitle(title).setSingleChoiceItems(labels,selected,(d,n)->callback.select(n)).setNegativeButton(UiText.get("action_back"),null).show();}
+    private void choose(String title,String[] labels,int selected,Choice callback){new SettingsScreen(a).singleChoice(title,title.equals(UiText.get("earthquake_092"))?a.getString(R.string.quake_sort_note):null,labels,selected,callback::select);}
     void settings(){
         LinearLayout c=form();action(c,UiText.get("earthquake_089"),()->choose(UiText.get("earthquake_089"),DAYS,dayIndex(),n->{p.edit().putInt("quake_days",DAY_VALUES[n]).apply();changed();}));
         action(c,UiText.get("earthquake_090"),this::areaSettings);
@@ -165,10 +165,10 @@ final class EarthquakeScreen {
         slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar b,int n,boolean user){label.run();if(user){p.edit().putFloat(key,n/10f).apply();updateControls();updateList();}}public void onStartTrackingTouch(SeekBar b){}public void onStopTrackingTouch(SeekBar b){changed();}});c.addView(slider,a.lp(-1,56));a.gap(c,12);
     }
     private void areaSettings(){
-        LinearLayout c=form();c.addView(a.text(UiText.get("earthquake_113"),13,a.MUTED,false));a.gap(c,12);
+        LinearLayout c=form();
         RadioGroup group=new RadioGroup(a);for(int i=0;i<AREAS.length;i++){RadioButton b=new RadioButton(a);b.setId(200+i);b.setText(AREAS[i]);b.setMinHeight(a.dp(48));group.addView(b);}group.check(200+area());c.addView(group);
         LinearLayout nearby=a.column();a.gap(nearby,12);nearby.addView(a.text(UiText.get("earthquake_114"),14,a.INK,true));EditText radius=new EditText(a);radius.setSingleLine(true);radius.setInputType(InputType.TYPE_CLASS_NUMBER);radius.setText(Integer.toString(p.getInt("quake_radius",1000)));radius.setContentDescription(UiText.get("earthquake_115"));nearby.addView(radius);a.gap(nearby,10);nearby.addView(a.button(UiText.get("earthquake_116"),false,()->{int n=EarthquakeOptions.radius(radius.getText().toString());if(n<0){radius.setError(UiText.get("earthquake_117"));return;}p.edit().putInt("quake_radius",n).apply();changed();a.toast(UiText.get("earthquake_118"));}));nearby.setVisibility(area()==2?View.VISIBLE:View.GONE);c.addView(nearby);
-        group.setOnCheckedChangeListener((g,id)->{p.edit().putInt("quake_area",id-200).apply();nearby.setVisibility(id==202?View.VISIBLE:View.GONE);changed();});dialog(UiText.get("earthquake_090"),c);
+        group.setOnCheckedChangeListener((g,id)->{p.edit().putInt("quake_area",id-200).apply();nearby.setVisibility(id==202?View.VISIBLE:View.GONE);changed();});a.gap(c,12);TextParagraphs.append(a,c,UiText.get("earthquake_113"),13,a.MUTED);dialog(UiText.get("earthquake_090"),c);
     }
     private void referenceSettings(){
         LinearLayout c=form();RadioGroup group=new RadioGroup(a);String[] names={UiText.get("earthquake_119"),UiText.get("earthquake_120")};for(int i=0;i<2;i++){RadioButton b=new RadioButton(a);b.setId(210+i);b.setText(names[i]);b.setMinHeight(a.dp(48));group.addView(b);}group.check(p.getBoolean("quake_manual_location",false)?211:210);c.addView(group);a.gap(c,12);
@@ -180,7 +180,7 @@ final class EarthquakeScreen {
     private void fields(){LinearLayout c=form();String[] keys={"depth","distance","intensity","source","review"},names={UiText.get("earthquake_130"),UiText.get("earthquake_131"),UiText.get("earthquake_132"),UiText.get("earthquake_133"),UiText.get("earthquake_134")};for(int i=0;i<keys.length;i++)toggle(c,names[i],"quake_field_"+keys[i],true);c.addView(a.text(UiText.get("earthquake_135"),13,a.MUTED,false));dialog(UiText.get("earthquake_100"),c);}
     private void toggle(LinearLayout c,String name,String key,boolean def){CheckBox b=new CheckBox(a);b.setText(name);b.setChecked(p.getBoolean(key,def));b.setOnCheckedChangeListener((v,on)->{p.edit().putBoolean(key,on).apply();changed();});c.addView(b,a.lp(-1,52));}
     private void sources(){LinearLayout c=form();for(String source:EarthquakeData.SOURCES){
-        CheckBox b=new CheckBox(a);b.setText(EarthquakeData.sourceName(source)+(source.equals("Wolfx")?UiText.get("earthquake_136"):source.equals("USGS")?UiText.get("earthquake_137"):" · CC BY 4.0"));b.setChecked(enabled(source));boolean[] updating={false};
+        CheckBox b=new CheckBox(a);b.setText(EarthquakeData.sourceName(source)+(source.equals("Wolfx")?"":source.equals("USGS")?UiText.get("earthquake_137"):" · CC BY 4.0"));b.setChecked(enabled(source));boolean[] updating={false};
         b.setOnCheckedChangeListener((v,on)->{if(updating[0])return;if(source.equals("Wolfx")&&on){updating[0]=true;b.setChecked(false);updating[0]=false;new ToolDialog(a).setTitle(UiText.get("earthquake_138")).setView(TextParagraphs.notice(a,EarthquakeInfo.WOLFX_NOTICE)).setPositiveButton(UiText.get("earthquake_139"),(d,n)->{p.edit().putBoolean("quake_wolfx_ack_112",true).putBoolean("quake_source_Wolfx",true).apply();updating[0]=true;b.setChecked(true);updating[0]=false;changed();}).setNegativeButton(UiText.get("action_cancel"),null).show();return;}
             if(!on){int count=0;for(String item:EarthquakeData.SOURCES)if(enabled(item))count++;if(count==1){updating[0]=true;b.setChecked(true);updating[0]=false;a.toast(UiText.get("earthquake_140"));return;}}
             p.edit().putBoolean("quake_source_"+source,on).apply();changed();});b.setMinHeight(a.dp(52));c.addView(b,a.lp(-1,-2));a.gap(c,6);
