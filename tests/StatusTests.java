@@ -54,6 +54,20 @@ public final class StatusTests {
         check(shown.visible&&shown.id.equals(restored.id)&&shown.color==restored.color&&shown.longitude==restored.longitude,"Visibility update preserves identity, color and coordinates");
         check(!restored.visible,"Visibility change leaves original snapshot intact");
         check(new StatusPlace("opaque","点",0,0,0,0x00246BCE,true).color==0xFF246BCE,"Saved marker colors remain opaque and visible");
+        check(BatteryReadings.current(-900000,"uA",false)==-900,"Standard microampere conversion");
+        check(BatteryReadings.current(-900,"mA",false)==-900,"Explicit milliampere compatibility");
+        check(BatteryReadings.current(-900,"uA",false)==-.9,"Small raw values do not trigger heuristic multiplication");
+        check(BatteryReadings.current(-900,"mA",true)==900,"Sign override remains independent of units");
+        check(BatteryReadings.current(500000,"uA",false)==500,"Positive charging current preserved");
+        check(BatteryReadings.current(Integer.MAX_VALUE,"mA",true)==-2147483647.,"No integer negation overflow");
+        check(Double.isNaN(BatteryReadings.current(Integer.MIN_VALUE,"mA",true)),"Missing current is not a reading");
+        check(BatteryReadings.current(0,"mA",false)==0,"Zero current is valid");
+        check(BatteryReadings.charge(3600000,"uAh")==3600,"Standard charge conversion");
+        check(BatteryReadings.charge(3600,"mAh")==3600,"Explicit milliampere-hour compatibility");
+        check(BatteryReadings.charge(3600,"uAh")==3.6,"No unit inference based on charge magnitude");
+        check(Double.isNaN(BatteryReadings.charge(Integer.MIN_VALUE,"mAh"))&&Double.isNaN(BatteryReadings.charge(-1,"mAh")),"Missing or invalid charge remains unavailable");
+        check(BatteryReadings.charge(0,"uAh")==0,"Empty charge remains valid zero");
+        check(BatteryReadings.current(-900000,"unknown",false)==-900&&BatteryReadings.charge(3600000,"unknown")==3600,"Unexpected preferences safely fall back to standard units");
         System.out.println("StatusTests: "+checks+" checks passed");
     }
 }

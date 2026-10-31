@@ -245,3 +245,5 @@ Wolfx 仍只接入 cenc_eqlist，非全球目录，无预警流。默认关闭�
 本轮无新增依赖、网络数据来源或权限。通过已有 Android Camera2 接口交替采集两组曝光参数下的 Y 平面亮度，仅在内存中求均值，不保存、上传图像，也不将亮度样本称为照度。优先手动曝光；能力不足或失败时保留明确标注的自动曝光参考。两组结果不是同一时刻采集，实际参数受硬件限制。
 
 全局设置中的“权限与系统限制”集中提供应用详情、系统定位及电池优化设置入口。电池优化说明读取 Android PowerManager 报告的豁免状态，跳转系统电池优化列表；未新增 REQUEST_IGNORE_BATTERY_OPTIMIZATIONS 权限，不自动申请或变更系统豁免。系统行为参考 [Android Doze 与应用待机](https://developer.android.com/training/monitoring-device-state/doze-standby)。
+
+电池电流、电荷通过 Android BatteryManager 公共接口读取。标准单位分别为微安、微安时；兼容设置仅按用户确认的单位换算，不按品牌猜测，不校准电池、不估算设计容量或健康百分比。设置保留系统原始值，系统未提供可信数据时单位切换不能恢复真实值。依据：[Android BatteryManager](https://developer.android.com/reference/android/os/BatteryManager#BATTERY_PROPERTY_CURRENT_NOW)。其他设备曾有非标准电荷上报的[社区反馈](https://github.com/almothafar/BattWatch/issues/69)，该反馈不构成对本应用用户机型的实测验证。

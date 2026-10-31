@@ -70,7 +70,25 @@ final class SettingsScreen {
     void location(){LinearLayout c=form();action(c,UiText.get("earthquake_101"),()->order("status"));action(c,a.getString(R.string.settings_compass),this::statusNorth);action(c,a.getString(R.string.settings_location),this::positionSettings);action(c,a.getString(R.string.settings_satellite),this::satelliteLifecycle);action(c,a.getString(R.string.settings_route),this::routeInterval);action(c,a.getString(R.string.settings_sensors),this::sensorSettings);action(c,a.getString(R.string.settings_battery),this::batterySettings);action(c,a.getString(R.string.settings_device),()->statusFieldOrder("device",UiText.get("settings_055"),GpsScreen.DEVICE_LABELS));dialog(UiText.get("settings_056"),c);}
     private void positionSettings(){LinearLayout c=form();action(c,UiText.get("settings_057"),this::locationProvider);action(c,a.getString(R.string.location_interval_title),this::locationInterval);action(c,UiText.get("settings_058"),this::locationLifecycle);dialog(a.getString(R.string.settings_location),c);}
     private void sensorSettings(){LinearLayout c=form();action(c,a.getString(R.string.settings_display_order),this::statusSensors);action(c,UiText.get("settings_059"),this::lightSource);dialog(a.getString(R.string.settings_sensors),c);}
-    private void batterySettings(){LinearLayout c=form();action(c,a.getString(R.string.settings_display_order),()->statusFieldOrder("battery",UiText.get("settings_060"),GpsScreen.BATTERY_LABELS));action(c,a.getString(R.string.settings_current_sign),this::batteryCurrent);dialog(a.getString(R.string.settings_battery),c);}
+    private void batterySettings(){LinearLayout c=form();action(c,a.getString(R.string.settings_display_order),()->statusFieldOrder("battery",UiText.get("settings_060"),GpsScreen.BATTERY_LABELS));action(c,a.getString(R.string.battery_readings_settings),this::batteryReadings);dialog(a.getString(R.string.settings_battery),c);}
+    private void batteryReadings(){
+        LinearLayout c=form();
+        action(c,a.getString(R.string.battery_current_unit),()->batteryUnit(false));
+        action(c,a.getString(R.string.battery_charge_unit),()->batteryUnit(true));
+        action(c,a.getString(R.string.settings_current_sign),this::batteryCurrent);
+        android.os.BatteryManager manager=(android.os.BatteryManager)a.getSystemService(Context.BATTERY_SERVICE);
+        int current=Integer.MIN_VALUE,charge=Integer.MIN_VALUE;
+        if(manager!=null){try{current=manager.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);}catch(Exception ignored){}try{charge=manager.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);}catch(Exception ignored){}}
+        String missing=UiText.get("earthquake_options_001");
+        note(c,a.getString(R.string.battery_raw_values,current==Integer.MIN_VALUE?missing:Integer.toString(current),charge==Integer.MIN_VALUE?missing:Integer.toString(charge)));
+        note(c,a.getString(R.string.battery_units_note));dialog(a.getString(R.string.battery_readings_settings),c);
+    }
+    private void batteryUnit(boolean charge){
+        String key=charge?BatteryReadings.CHARGE_UNIT:BatteryReadings.CURRENT_UNIT;
+        String standard=charge?"uAh":"uA",milli=charge?"mAh":"mA";
+        String[] labels=charge?new String[]{a.getString(R.string.battery_unit_uah),a.getString(R.string.battery_unit_mah)}:new String[]{a.getString(R.string.battery_unit_ua),a.getString(R.string.battery_unit_ma)};
+        singleChoice(a.getString(charge?R.string.battery_charge_unit:R.string.battery_current_unit),a.getString(R.string.battery_units_note),labels,milli.equals(prefs.getString(key,standard))?1:0,n->{prefs.edit().putString(key,n==1?milli:standard).apply();a.refreshScreen();});
+    }
     private void permissions(){
         LinearLayout c=form();
         action(c,UiText.get("gps_135"),()->openSystemSettings(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName()))));
