@@ -78,16 +78,31 @@ public final class Release130UiTests extends Instrumentation {
             });
             ui(()->{call(model(),"reset",new Class[]{});prefs("toolbox").edit().putBoolean("random_remove_drawn",false).putBoolean("random_animation",true).commit();tapKey(root(),"random_start");});
             String fixed=json();SystemClock.sleep(4700);ui(()->{check(!(Boolean)field(screen(),"animating")&&json().equals(fixed),"Animation decelerates and completes without redrawing");});
+            animationLayout();
             configurationRoundTrip();
             ui(()->{call(a,"switchTab",new Class[]{int.class},6);String kept=json();call(a,"restoreDefaults",new Class[]{});check(json().equals(kept)&&state("lists").size()==1,"Restore defaults retains saved lists and progress");call(a,"switchTab",new Class[]{int.class},6);
                 tapKey(root(),"random_lists");View saved=dialogKey("random_lists");tap(saved,a.getString(a.getResources().getIdentifier("random_list_entry","string",a.getPackageName()),"Group",4));tapKey(dialog("Group"),"random_delete");tapKey(dialogKey("random_delete"),"action_cancel");
             });waitForIdleSync();ui(()->{View saved=dialogKey("random_lists");check(state("lists").size()==1,"Cancel delete preserves list");tap(saved,a.getString(a.getResources().getIdentifier("random_list_entry","string",a.getPackageName()),"Group",4));tapKey(dialog("Group"),"random_delete");tapKey(dialogKey("random_delete"),"random_confirm");
-            });waitForIdleSync();ui(()->{View saved=dialogKey("random_lists");check(state("lists").isEmpty()&&text(saved,label("random_no_lists"))!=null,"Confirm delete refreshes empty list state");tapKey(saved,"action_back");call(a,"updates",new Class[]{});View updates=dialogKey("settings_100");check(prefix(updates,"1.3.1 ·")!=null&&prefix(updates,"1.0.0 ·")!=null,"Current and historical updates retained");tapKey(updates,"action_close");
+            });waitForIdleSync();ui(()->{View saved=dialogKey("random_lists");check(state("lists").isEmpty()&&text(saved,label("random_no_lists"))!=null,"Confirm delete refreshes empty list state");tapKey(saved,"action_back");call(a,"updates",new Class[]{});View updates=dialogKey("settings_100");check(prefix(updates,"1.3.2 ·")!=null&&prefix(updates,"1.0.0 ·")!=null,"Current and historical updates retained");tapKey(updates,"action_close");
             });
             SystemClock.sleep(500);waitForIdleSync();Bitmap screenshot=getUiAutomation().takeScreenshot();if(screenshot!=null){try(java.io.FileOutputStream out=new java.io.FileOutputStream(new java.io.File(getTargetContext().getExternalFilesDir(null),"random-selection-130.png"))){screenshot.compress(Bitmap.CompressFormat.PNG,100,out);}screenshot.recycle();}
             result.putString("stream","\nPASS: "+checks+" random selection Android checks.\n");
         }catch(Throwable error){code=Activity.RESULT_CANCELED;result.putString("stream","\nFAIL: "+android.util.Log.getStackTraceString(error));}
         finally{if(a!=null)ui(()->a.finish());waitForIdleSync();for(Map.Entry<String,Map<String,?>> g:before.entrySet())restore(prefs(g.getKey()),g.getValue());}finish(code,result);
+    }
+    void animationLayout(){
+        String draft=(String)field(model(),"draft"),quantity=(String)field(model(),"quantity");
+        ui(()->{StringBuilder entries=new StringBuilder();for(int i=0;i<8;i++)entries.append(i).append(" ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNOPQRSTUVWXYZ\n");inputs(root()).get(0).setText(entries.toString());inputs(root()).get(1).setText("8");tapKey(root(),"random_start");});
+        SystemClock.sleep(180);waitForIdleSync();
+        ui(()->{TextView animated=(TextView)field(screen(),"result"),reveal=(TextView)field(screen(),"skip");
+            check((Boolean)field(screen(),"animating")&&animated.getText().toString().split("\n").length==8,"Eight items animate simultaneously");
+            check(animated.getLineCount()>8,"Long candidates wrap during animation");
+            check(animated.getHeight()-animated.getCompoundPaddingTop()-animated.getCompoundPaddingBottom()>=animated.getLayout().getHeight(),"All animated lines fit without clipping");
+            check(reveal.getVisibility()==View.VISIBLE&&reveal.getTop()>=animated.getBottom(),"Reveal button is laid out below every animated line");
+            tapKey(root(),"random_reveal");check(animated.getText().toString().split("\n").length==8,"Revealing retains every drawn item");
+            inputs(root()).get(0).setText(draft);inputs(root()).get(1).setText(quantity);call(model(),"reset",new Class[]{});call(screen(),"flush",new Class[]{});
+            check(!label("battery_optimization_on").contains("豁免")&&!label("battery_optimization_off").contains("豁免"),"Battery optimization uses enabled and disabled wording");
+        });
     }
     Object transfer;
     void idleTransfer(){for(int i=0;i<200;i++){if(!(Boolean)field(transfer,"busy"))return;SystemClock.sleep(50);}throw new AssertionError("Transfer timeout");}

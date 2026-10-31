@@ -142,8 +142,8 @@
     <string name="camera_outdoor_settings">"室外测量参数"</string>
     <string name="camera_profile_defaults">"默认感光度为 ISO %1$d，曝光时间为 %2$d ms。"</string>
     <string name="battery_optimization_title">"关闭电池优化"</string>
-    <string name="battery_optimization_on">"当前未豁免系统电池优化。"</string>
-    <string name="battery_optimization_off">"当前已豁免系统电池优化。"</string>
+    <string name="battery_optimization_on">"当前系统电池优化已开启。"</string>
+    <string name="battery_optimization_off">"当前系统电池优化已关闭。"</string>
     <string name="battery_optimization_open">"前往系统设置"</string>
     <string name="battery_optimization_unavailable">"设备未提供可打开的电池优化设置页面。"</string>
     <string name="battery_optimization_note">"可在系统电池优化列表中找到本应用并选择“不优化”，以减少持续定位受到的省电限制；不同设备的名称和入口可能不同。关闭优化可能增加耗电，不会自动开启持续定位或后台相机，也不能保证后台运行不被中断。"</string>
@@ -207,4 +207,6 @@
     <string name="random_remaining_count">尚有 %1$d 项未抽取</string>
     <string name="random_remaining_empty">当前没有未抽取内容</string>
     <string name="random_remaining_note">这里显示当前候选内容中尚未抽到的项目。修改候选内容后，抽取进度会在下一次抽取时重新建立。</string>
+    <string name="update_132_title">1.3.2 · 抽取动画与电池优化文案</string>
+    <string name="update_132_detail">修复随机抽取动画显示多个项目时，底部项目因显示区域高度不足而被裁切的问题。动画区域根据抽取数量及文字换行高度预留空间，“立即显示结果”按钮位于内容下方。\n\n电池优化状态改用“已开启”和“已关闭”表述。</string>
 </resources>

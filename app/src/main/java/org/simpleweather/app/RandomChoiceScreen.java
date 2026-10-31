@@ -51,10 +51,20 @@ final class RandomChoiceScreen {
         if(animating)return;try{int n=Integer.parseInt(model.quantity);if(RandomChoiceModel.items(model.draft).isEmpty()){a.toast(a.getString(R.string.random_empty));return;}if(n<1||n>model.available(exclude())){a.toast(a.getString(R.string.random_invalid_quantity,model.available(exclude())));return;}
             model.draw(n,exclude(),random);a.hideKeyboard();flush();updateStatus();
             float scale=Settings.Global.getFloat(a.getContentResolver(),Settings.Global.ANIMATOR_DURATION_SCALE,1);
-            if(a.preferences.getBoolean("random_animation",true)&&scale>0){animating=true;frame=0;result.setMinHeight(a.dp(120));result.setMaxHeight(a.dp(120));result.setEllipsize(TextUtils.TruncateAt.END);start.setEnabled(false);skip.setVisibility(View.VISIBLE);nextFrame();}else showResult();
+            if(a.preferences.getBoolean("random_animation",true)&&scale>0){animating=true;frame=0;reserveAnimationHeight();start.setEnabled(false);skip.setVisibility(View.VISIBLE);nextFrame();}else showResult();
         }catch(NumberFormatException e){a.toast(a.getString(R.string.random_invalid_quantity,safeAvailable()));}catch(Exception e){a.toast(a.getString(R.string.random_invalid_input));}
     }
     private int safeAvailable(){try{return model.available(exclude());}catch(Exception e){return 0;}}
+    private void reserveAnimationHeight(){
+        int measuredWidth=result.getWidth()>0?result.getWidth():Math.max(a.dp(48),a.getResources().getDisplayMetrics().widthPixels-a.dp(72));
+        int width=Math.max(1,measuredWidth-result.getCompoundPaddingLeft()-result.getCompoundPaddingRight());
+        ArrayList<Integer> heights=new ArrayList<>();
+        for(String word:model.pool)heights.add(StaticLayout.Builder.obtain(word,0,word.length(),result.getPaint(),width).setLineSpacing(result.getLineSpacingExtra(),result.getLineSpacingMultiplier()).setIncludePad(true).build().getHeight());
+        heights.sort(Collections.reverseOrder());int height=result.getCompoundPaddingTop()+result.getCompoundPaddingBottom();
+        for(int i=0;i<model.result.size();i++)height+=heights.get(i);
+        height+=(int)Math.ceil(Math.max(0,model.result.size()-1)*result.getLineSpacingExtra());
+        result.setMaxHeight(Integer.MAX_VALUE);result.setEllipsize(null);result.setMinHeight(Math.max(a.dp(120),height));
+    }
     private void nextFrame(){if(!animating)return;if(frame>=16){finishAnimation();return;}List<String> words=new ArrayList<>(model.pool);Collections.shuffle(words,random);int count=Math.min(model.result.size(),words.size());result.setText(String.join("\n",words.subList(0,count)));frame++;handler.postDelayed(animate,65+frame*frame*2);}
     private void finishAnimation(){handler.removeCallbacks(animate);animating=false;if(result!=null){result.setMinHeight(a.dp(96));result.setMaxHeight(Integer.MAX_VALUE);result.setEllipsize(null);}if(start!=null)start.setEnabled(true);if(skip!=null)skip.setVisibility(View.GONE);showResult();}
     private void showResult(){if(result!=null)result.setText(model.result.isEmpty()?a.getString(R.string.random_no_result):String.join("\n",model.result));}
