@@ -6,7 +6,6 @@ import android.content.*;
 import android.content.pm.PackageManager;
 import android.location.*;
 import android.os.*;
-import android.provider.Settings;
 import android.widget.*;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -183,7 +182,6 @@ final class GpsScreen {
     private void infoCard(){
         LinearLayout info=a.card();info.addView(a.text(UiText.get("gps_131"),17,a.TITLE,true));a.gap(info,12);TextParagraphs.append(a,info,UiText.get("gps_132"),13,a.MUTED);
         info.addView(a.text(UiText.get("gps_133"),13,a.MUTED,false));
-        a.gap(info,12);info.addView(a.button(UiText.get("gps_134"),false,()->a.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))));a.gap(info,8);info.addView(a.button(UiText.get("gps_135"),false,()->a.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName())))));
     }
     private TextView value(LinearLayout c,String title){c.addView(a.text(title,12,a.MUTED,false));a.gap(c,8);TextView t=a.text("—",25,a.INK,true);c.addView(t);a.gap(c,20);return t;}
     private boolean network(){return a.preferences.getString("location_provider","gps").equals("network");}

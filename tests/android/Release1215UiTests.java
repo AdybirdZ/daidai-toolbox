@@ -38,21 +38,50 @@ public final class Release1215UiTests extends Instrumentation {
     void actual(int p,long ms,int iso){Object r=sample(p);check(r!=null,"Profile has real image/result match: "+p);check((Long)field(r,"exposureNanos")==ms*1000000L&&(Integer)field(r,"iso")==iso,"Actual exposure matches profile "+p+": "+field(r,"exposureNanos")+" / "+field(r,"iso"));}
     void collectInputs(View v,ArrayList<EditText> list){if(v instanceof EditText)list.add((EditText)v);if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)collectInputs(((ViewGroup)v).getChildAt(i),list);}
     String all(View v){String out=v instanceof TextView?((TextView)v).getText().toString()+"\n":"";if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)out+=all(((ViewGroup)v).getChildAt(i));return out;}
+    View permissionHub;
+    void activePackage(String expected){
+        for(int i=0;i<60;i++){
+            android.view.accessibility.AccessibilityNodeInfo root=getUiAutomation().getRootInActiveWindow();
+            if(root!=null&&expected.contentEquals(root.getPackageName())){check(true,"Active package: "+expected);return;}
+            SystemClock.sleep(100);
+        }
+        throw new AssertionError("Did not reach active package "+expected);
+    }
+    void systemBack(){
+        try(android.os.ParcelFileDescriptor fd=getUiAutomation().executeShellCommand("input keyevent 4");java.io.InputStream in=new android.os.ParcelFileDescriptor.AutoCloseInputStream(fd)){while(in.read()!=-1){}}
+        catch(Exception e){throw new RuntimeException(e);}
+        activePackage(a.getPackageName());waitForIdleSync();
+    }
+    void systemEntry(String label){
+        ui(()->tap(permissionHub,label));activePackage("com.android.settings");systemBack();
+        ui(()->check(dialog("权限与系统限制")==permissionHub,"System Back retains permission hub: "+label));
+    }
+    void permissions(){
+        Object settings=create("SettingsScreen",new Class[]{a.getClass()},a);
+        final View[] parents=new View[2];
+        ui(()->{call(settings,"show",new Class[]{});parents[0]=dialog("设置");tap(parents[0],"全局设置");parents[1]=dialog("全局设置");tap(parents[1],"权限与系统限制");permissionHub=dialog("权限与系统限制");check(text(permissionHub,"打开应用权限设置")!=null&&text(permissionHub,"打开系统定位设置")!=null&&text(permissionHub,"关闭电池优化")!=null,"All three existing entries grouped under Global settings");});
+        waitForIdleSync();
+        systemEntry("打开应用权限设置");systemEntry("打开系统定位设置");
+        ui(()->{tap(permissionHub,"关闭电池优化");View opt=dialog("关闭电池优化");check(prefix(opt,"当前")!=null&&prefix(opt,"当前").getText().toString().contains("电池优化"),"System optimization state shown");check(text(opt,"前往系统设置")!=null,"Explicit user action to system settings");tap(opt,"返回");check(dialog("权限与系统限制")==permissionHub,"Optimization Back returns to permissions");tap(permissionHub,"关闭电池优化");tap(dialog("关闭电池优化"),"前往系统设置");});
+        activePackage("com.android.settings");systemBack();
+        ui(()->{check(dialog("权限与系统限制")==permissionHub,"System optimization Back returns to permissions");tap(permissionHub,"返回");check(dialog("全局设置")==parents[1],"Permissions Back returns to Global settings");tap(parents[1],"返回");check(dialog("设置")==parents[0],"Global Back returns to Settings");tap(parents[0],"关闭");});
+    }
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;
         try{
             for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putBoolean("status_camera_background",false).putString("status_light_source","sensor").putString("status_light_camera","back").putInt("status_camera_iso",640).putInt("status_camera_exposure_ms",25).remove("status_camera_outdoor_iso").remove("status_camera_outdoor_exposure_ms").putLong("quake_interval",0).putBoolean("status_sensor_show_5",true).commit();
-            for(int id=0;id<9;id++)prefs("toolbox").edit().putBoolean("status_show_"+id,id==4).commit();
+            for(int id=0;id<9;id++)prefs("toolbox").edit().putBoolean("status_show_"+id,id==4||id==7).commit();
             a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
+            permissions();
             ui(()->{
                 Object settings=create("SettingsScreen",new Class[]{a.getClass()},a);
-                call(settings,"batterySettings",new Class[]{});View b=dialog("电池");tap(b,"关闭电池优化");View opt=dialog("关闭电池优化");check(prefix(opt,"当前")!=null&&prefix(opt,"当前").getText().toString().contains("电池优化"),"System optimization state shown");check(text(opt,"前往系统设置")!=null,"Explicit user action to system settings");tap(opt,"返回");check(dialog("电池")==b,"Optimization returns to battery group");tap(b,"返回");
+                call(settings,"batterySettings",new Class[]{});View b=dialog("电池");check(text(b,"关闭电池优化")==null,"Battery monitoring settings contain no system restriction entry");tap(b,"返回");
                 call(settings,"cameraSettings",new Class[]{});View camera=dialog("相机设置");check(text(camera,"室内测量参数")!=null&&text(camera,"室外测量参数")!=null,"Both profiles at camera settings root");tap(camera,"室内测量参数");View indoor=dialog("室内测量参数");ArrayList<EditText> inputs=new ArrayList<>();collectInputs(indoor,inputs);check(inputs.size()==2&&inputs.get(0).getText().toString().equals("640")&&inputs.get(1).getText().toString().equals("25"),"Existing user parameters retained as indoor profile");tap(indoor,"恢复默认");check(inputs.get(0).getText().toString().equals("1000")&&inputs.get(1).getText().toString().equals("200"),"Indoor restore fields");check(prefs("toolbox").getInt("status_camera_iso",0)==640,"Restore does not write before Save");tap(indoor,"保存");check(dialog("室内测量参数")==indoor,"Save retains leaf page");tap(indoor,"返回");check(dialog("相机设置")==camera,"Indoor back returns to camera group");
                 tap(camera,"室外测量参数");View outdoor=dialog("室外测量参数");inputs.clear();collectInputs(outdoor,inputs);check(inputs.get(0).getText().toString().equals("50")&&inputs.get(1).getText().toString().equals("5"),"Outdoor defaults are ISO 50 and 5 ms");inputs.get(0).setText("0");tap(outdoor,"保存");check(!prefs("toolbox").contains("status_camera_outdoor_iso"),"Reject invalid outdoor ISO without writing");inputs.get(0).setText("100");inputs.get(1).setText("10");tap(outdoor,"保存");check(prefs("toolbox").getInt("status_camera_iso",0)==1000&&prefs("toolbox").getInt("status_camera_outdoor_iso",0)==100,"Editing outdoor leaves indoor unchanged");tap(outdoor,"恢复默认");tap(outdoor,"保存");tap(outdoor,"返回");tap(camera,"返回");
                 call(a,"updates",new Class[]{});View history=dialog("版本更新记录");check(prefix(history,"1.2.15 ·")!=null&&prefix(history,"1.0.0 ·")!=null,"New and historical updates retained");tap(history,"关闭");
                 call(a,"switchTab",new Class[]{int.class},2);
             });waitForIdleSync();ui(()->{
-                check(text(a.getWindow().getDecorView(),"暂停环境光采集")==null,"No camera button in system sensor mode");check(!all(a.getWindow().getDecorView()).contains("双参数测量需要"),"No unrelated long camera explanation in sensor mode");
+                check(text(a.getWindow().getDecorView(),"打开应用权限设置")==null&&text(a.getWindow().getDecorView(),"打开系统定位设置")==null,"Status information no longer duplicates permission entries");check(text(a.getWindow().getDecorView(),"暂停环境光采集")==null,"No camera button in system sensor mode");check(!all(a.getWindow().getDecorView()).contains("双参数测量需要"),"No unrelated long camera explanation in sensor mode");
                 prefs("toolbox").edit().putString("status_light_source","camera").commit();call(a,"refreshScreen",new Class[]{});
             });waitForIdleSync();ui(()->{
                 hw=field(field(a,"gps"),"hardware");reader=field(hw,"cameraReader");check(reader!=null,"Camera begins without a start dialog");statusScroll=(ScrollView)field(a,"pageScroll");statusScroll.scrollTo(0,250);

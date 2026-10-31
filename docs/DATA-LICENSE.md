@@ -240,8 +240,8 @@ Wolfx 仍只接入 cenc_eqlist，非全球目录，无预警流。默认关闭�
 
 紫外线指数继续使用原有 Open-Meteo 模型字段，无新增数据接口或依赖。强度分级及防护说明由本项目重新表述，参考美国环境保护署 [A Guide to the UV Index](https://www.epa.gov/sites/default/files/documents/uviguide.pdf) 和美国疾病控制与预防中心 [Sun Safety](https://www.cdc.gov/skin-cancer/sun-safety/index.html)，不转载其图像。五档区间按小于 3、3 至小于 6、6 至小于 8、8 至小于 11、11 及以上展示连续模型值；这些建议不表示个体晒伤时间或防护保证。参考内容于 2026-10-31 核对。
 
-## 1.2.15 本机相机与电池设置
+## 1.2.15 本机相机与系统设置
 
 本轮无新增依赖、网络数据来源或权限。通过已有 Android Camera2 接口交替采集两组曝光参数下的 Y 平面亮度，仅在内存中求均值，不保存、上传图像，也不将亮度样本称为照度。优先手动曝光；能力不足或失败时保留明确标注的自动曝光参考。两组结果不是同一时刻采集，实际参数受硬件限制。
 
-电池设置读取 Android PowerManager 报告的优化豁免状态，跳转系统电池优化列表；未新增 REQUEST_IGNORE_BATTERY_OPTIMIZATIONS 权限，不自动申请或变更系统豁免。系统行为参考 [Android Doze 与应用待机](https://developer.android.com/training/monitoring-device-state/doze-standby)。
+全局设置中的“权限与系统限制”集中提供应用详情、系统定位及电池优化设置入口。电池优化说明读取 Android PowerManager 报告的豁免状态，跳转系统电池优化列表；未新增 REQUEST_IGNORE_BATTERY_OPTIMIZATIONS 权限，不自动申请或变更系统豁免。系统行为参考 [Android Doze 与应用待机](https://developer.android.com/training/monitoring-device-state/doze-standby)。
