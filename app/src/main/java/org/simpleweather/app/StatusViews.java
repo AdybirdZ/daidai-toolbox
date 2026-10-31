@@ -12,7 +12,7 @@ final class StatusViews {
         final MainActivity a;final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
         Square(MainActivity a){super(a);this.a=a;}
         @Override protected void onMeasure(int w,int h){int size=MeasureSpec.getSize(w);setMeasuredDimension(size,size);}
-        void text(Canvas c,String t,float x,float y,int size,int color){p.setStyle(Paint.Style.FILL);p.setColor(color);p.setTextSize(a.dp(size));p.setTextAlign(Paint.Align.CENTER);c.drawText(t,x,y,p);}
+        void text(Canvas c,String t,float x,float y,int size,int color){p.setStyle(Paint.Style.FILL);p.setColor(color==a.INK?a.primaryTextColor():color==a.MUTED?a.secondaryTextColor():color);p.setTextSize(a.dp(size));p.setTextAlign(Paint.Align.CENTER);c.drawText(t,x,y,p);}
         void circle(Canvas c,float x,float y,float r,int color,float width){p.setColor(color);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(width));c.drawCircle(x,y,r,p);p.setStyle(Paint.Style.FILL);}
         float[] point(float x,float y,float r,double degrees){double t=Math.toRadians(degrees);return new float[]{x+r*(float)Math.sin(t),y-r*(float)Math.cos(t)};}
     }

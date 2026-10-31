@@ -13,13 +13,14 @@ public final class ConfigurationTests {
     private static void bad(JSONObject j,String why)throws Exception{boolean rejected=false;try{ConfigurationData.parse(j.toString());}catch(Exception e){rejected=true;}check(rejected,why);}
     public static void main(String[] args)throws Exception{
         Map<String,Map<String,?>> source=new HashMap<>();Map<String,Object> toolbox=new HashMap<>();
-        toolbox.put("theme_color",0xffB83232);toolbox.put("outline",true);toolbox.put("outline_color",0xff246bce);toolbox.put("location_interval",600000L);toolbox.put("quake_interval",0L);toolbox.put("quake_ref_lat",-33.5f);toolbox.put("quake_ref_lon",151.2f);toolbox.put("weather_order","1,2,0,3,4,5");
+        for(String role:new String[]{"ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color"})toolbox.put(role,0xff7852a8);toolbox.put("theme_color",0xffB83232);toolbox.put("outline",true);toolbox.put("outline_color",0xff246bce);toolbox.put("location_interval",600000L);toolbox.put("quake_interval",0L);toolbox.put("quake_ref_lat",-33.5f);toolbox.put("quake_ref_lon",151.2f);toolbox.put("weather_order","1,2,0,3,4,5");
         toolbox.put("quake_source_USGS",false);toolbox.put("quake_wolfx_ack_112",true);toolbox.put("quake_source_Wolfx",true);toolbox.put("location_continuous",true);toolbox.put("status_camera_background",true);source.put("toolbox",toolbox);
         source.put("timetable",Collections.singletonMap("data",new ScheduleModel().json().toString()));
         source.put("status_places",Collections.singletonMap("places","[{\"id\":\"point1\",\"name\":\"地点\",\"lon\":116.4,\"lat\":39.9,\"created\":1,\"color\":-16776961,\"visible\":false}]"));
         source.put("status_routes",Collections.singletonMap("routes","[{\"id\":\"route1\",\"name\":\"路线\",\"points\":[{\"lon\":116.4,\"lat\":39.9,\"time\":1},{\"lon\":116.5,\"lat\":39.8,\"time\":2}]}]"));
         source.put("weather",Collections.singletonMap("saved","[{\"name\":\"苏州市\",\"country\":\"中国\",\"admin1\":\"江苏省\",\"longitude\":120.6,\"latitude\":31.3}]"));
         byte[] background={1,2,3,4};JSONObject encoded=ConfigurationData.encode(source,background);ConfigurationData.Document d=ConfigurationData.parse(encoded.toString());Map<String,Object> p=d.groups.get("toolbox");
+        check(p.get("ui_button_color").equals(0xff7852a8)&&p.get("ui_link_color").equals(0xff7852a8)&&p.get("ui_body_color").equals(0xff7852a8)&&p.get("ui_title_color").equals(0xff7852a8)&&p.get("ui_choice_color").equals(0xff7852a8)&&p.get("ui_note_color").equals(0xff7852a8),"Six independent color roles survive configuration transfer");
         check(p.get("theme_color").equals(0xffB83232),"Unified theme color survives configuration transfer");
         check(p.get("outline_color") instanceof Integer,"Color keeps SharedPreferences int type");check(p.get("location_interval") instanceof Long,"Small interval remains long after JSON round trip");check(p.get("quake_ref_lat") instanceof Float,"Coordinates keep float preference type");
         check(p.get("outline").equals(true)&&p.get("quake_interval").equals(0L),"Flags and disabled auto refresh survive");

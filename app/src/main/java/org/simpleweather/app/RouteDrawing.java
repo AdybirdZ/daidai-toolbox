@@ -87,14 +87,14 @@ final class RouteCanvas extends View {
         for(int i=1;i<visibleCount;i++){float[] q=xy(points.get(i-1)),r=xy(points.get(i));c.drawLine(q[0],q[1],r[0],r[1],paint);}
         paint.setStyle(Paint.Style.FILL);
         for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));paint.setColor(i==visibleCount-1?0xFFE58323:0xFF246BCE);c.drawCircle(q[0],q[1],a.dp(i==visibleCount-1?5:3),paint);}
-        if(visibleCount==0){paint.setColor(a.MUTED);paint.setTextSize(a.dp(14));paint.setTextAlign(Paint.Align.LEFT);c.drawText("暂无路线定位点",a.dp(16),a.dp(45),paint);}
+        if(visibleCount==0){paint.setColor(a.secondaryTextColor());paint.setTextSize(a.dp(14));paint.setTextAlign(Paint.Align.LEFT);c.drawText("暂无路线定位点",a.dp(16),a.dp(45),paint);}
         c.restoreToCount(clip);drawRuler(c);
     }
     private String distance(double meters){return meters>=1000?String.format(Locale.ROOT,"%.2f km",meters/1000):String.format(Locale.ROOT,"%.0f m",meters);}
     private void drawRuler(Canvas c){
         float w=getWidth(),h=getHeight(),tick=a.dp(5);double side=sideMeters(),rough=side/4,base=Math.pow(10,Math.floor(Math.log10(rough))),step=base;
         for(double multiple:new double[]{1,2,5,10})if(base*multiple<=rough)step=base*multiple;
-        paint.setColor(0xFF718097);paint.setStrokeWidth(a.dp(1));paint.setStyle(Paint.Style.STROKE);c.drawRect(.5f,.5f,w-.5f,h-.5f,paint);paint.setStyle(Paint.Style.FILL);paint.setTextSize(a.dp(10));
+        paint.setColor(a.secondaryTextColor());paint.setStrokeWidth(a.dp(1));paint.setStyle(Paint.Style.STROKE);c.drawRect(.5f,.5f,w-.5f,h-.5f,paint);paint.setStyle(Paint.Style.FILL);paint.setTextSize(a.dp(10));
         for(double m=0;m<=side+.0001;m+=step){float x=(float)(m/side*w),y=h-(float)(m/side*h);c.drawLine(x,0,x,tick,paint);c.drawLine(x,h,x,h-tick,paint);c.drawLine(0,y,tick,y,paint);c.drawLine(w,y,w-tick,y,paint);
             if(m>0&&x<w-a.dp(30)){paint.setTextAlign(Paint.Align.CENTER);c.drawText(distance(m),x,h-a.dp(8),paint);}
             if(m>0&&y>a.dp(30)){paint.setTextAlign(Paint.Align.LEFT);c.drawText(distance(m),a.dp(8),y+a.dp(3),paint);}

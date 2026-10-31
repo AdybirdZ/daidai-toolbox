@@ -30,25 +30,25 @@ final class AstronomyScreen {
             switch(id){
                 case 0:timeControl();break;
                 case 1:observing();break;
-                case 2:LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.INK,true));a.gap(sky,12);sky.addView(a.button(a.preferences.getBoolean("astro_align_sky",false)?"关闭对准天空":"对准天空",false,()->{a.preferences.edit().putBoolean("astro_align_sky",!a.preferences.getBoolean("astro_align_sky",false)).apply();a.refreshScreen();}),a.lp(-1,48));a.gap(sky,8);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);TextParagraphs.append(a,sky,view.chartNote(),12,a.MUTED);break;
-                case 3:LinearLayout info=a.card();info.addView(a.text("选中的天体信息",17,a.INK,true));a.gap(info,10);info.addView(selectedInfo);break;
+                case 2:LinearLayout sky=a.card();sky.addView(a.text("当地星空 · 仰视示意",17,a.TITLE,true));a.gap(sky,12);sky.addView(a.button(a.preferences.getBoolean("astro_align_sky",false)?"关闭对准天空":"对准天空",false,()->{a.preferences.edit().putBoolean("astro_align_sky",!a.preferences.getBoolean("astro_align_sky",false)).apply();a.refreshScreen();}),a.lp(-1,48));a.gap(sky,8);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);TextParagraphs.append(a,sky,view.chartNote(),12,a.MUTED);break;
+                case 3:LinearLayout info=a.card();info.addView(a.text("选中的天体信息",17,a.TITLE,true));a.gap(info,10);info.addView(selectedInfo);break;
                 case 4:moonInfo();break;
                 case 5:positions();break;
                 case 6:events();break;
                 case 7:meteor();break;
-                case 8:LinearLayout note=a.card();note.addView(a.text("计算说明与来源",17,a.INK,true));a.gap(note,12);TextParagraphs.append(a,note,"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n流星雨按常年参考极大日前后 3 天显示，该区间不代表实际完整活跃期。恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。",12,a.MUTED);a.gap(note,10);a.link(note,"计算公式与方法参考","https://stjarnhimlen.se/comp/ppcomp.html");a.link(note,"内置天体坐标与星等 · CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");break;
+                case 8:LinearLayout note=a.card();note.addView(a.text("计算说明与来源",17,a.TITLE,true));a.gap(note,12);TextParagraphs.append(a,note,"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n流星雨按常年参考极大日前后 3 天显示，该区间不代表实际完整活跃期。恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。",12,a.MUTED);a.gap(note,10);a.link(note,"计算公式与方法参考","https://stjarnhimlen.se/comp/ppcomp.html");a.link(note,"内置天体坐标与星等 · CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");break;
             }
             a.gap(a.body,16);
         }
     }
     private void timeButton(LinearLayout row,String title,Runnable click){if(row.getChildCount()>0)a.gapHorizontal(row,8);TextView button=a.button(title,false,click);button.setPadding(a.dp(4),a.dp(10),a.dp(4),a.dp(10));row.addView(button,new LinearLayout.LayoutParams(0,-2,1));}
     private void timeControl(){
-        LinearLayout card=a.card();card.addView(a.text("时间控制",17,a.INK,true));a.gap(card,12);
+        LinearLayout card=a.card();card.addView(a.text("时间控制",17,a.TITLE,true));a.gap(card,12);
         LinearLayout clock=a.row();timeButton(clock,"−15 分钟",()->change.accept(at.minusSeconds(900)));timeButton(clock,"当前时刻",()->change.accept(Instant.now()));timeButton(clock,"+15 分钟",()->change.accept(at.plusSeconds(900)));card.addView(clock);a.gap(card,8);
         LinearLayout days=a.row();timeButton(days,"−1 天",()->change.accept(at.atZone(zone).minusDays(1).toInstant()));timeButton(days,"设置时间",()->NumericInputs.dateTime(a,at.atZone(zone),change));timeButton(days,"+1 天",()->change.accept(at.atZone(zone).plusDays(1).toInstant()));card.addView(days);
     }
     private void observing(){
-        LinearLayout c=a.card();c.addView(a.text("观星条件 · 经验参考",17,a.INK,true));a.gap(c,12);
+        LinearLayout c=a.card();c.addView(a.text("观星条件 · 经验参考",17,a.TITLE,true));a.gap(c,12);
         double sun=Astronomy.sunPosition(at,city.latitude,city.longitude)[0],moon=Astronomy.moonPosition(at,city.latitude,city.longitude)[0],lit=Astronomy.illumination(at);
         c.addView(a.text(Astronomy.skyDescription(at,city.latitude,city.longitude),16,a.INK,true));a.gap(c,10);
         c.addView(a.text(moon>0?"月球在地平线上方 · 照亮比例约 "+Math.round(lit*100)+"%":"月球在地平线下方，月光影响较小",13,a.MUTED,false));a.gap(c,10);
@@ -62,7 +62,7 @@ final class AstronomyScreen {
         c.addView(a.text(good?"天气条件相对适合观星；需考虑月光及光污染。":"至少一项条件未达到参考标准，请结合实际观测环境判断。",13,good?0xFF287C60:0xFF8B6021,false));a.gap(c,8);c.addView(a.text("经验筛选：太阳低于 −12°、云量 ≤ 40%、降水概率 ≤ 20%、湿度 ≤ 85%、风速 ≤ 25 km/h、能见度 ≥ 8 km。天气来源 Open-Meteo。未计算本地光污染。",11,a.MUTED,false));
     }
     private void moonInfo(){
-        LinearLayout c=a.card();c.addView(a.text("月球信息",17,a.INK,true));a.gap(c,10);double phase=Astronomy.phase(at);
+        LinearLayout c=a.card();c.addView(a.text("月球信息",17,a.TITLE,true));a.gap(c,10);double phase=Astronomy.phase(at);
         c.addView(new MoonPhase(a,phase),a.lp(-1,160));a.gap(c,10);
         c.addView(a.text(Astronomy.phaseName(phase)+" · 照亮约 "+Math.round(Astronomy.illumination(at)*100)+"%",21,a.INK,true));a.gap(c,10);
         c.addView(a.text(String.format(Locale.ROOT,"近似月龄 %.1f 天 · 距下次满月约 %.1f 天",phase*29.53059,(.5-phase+1)%1*29.53059),12,a.MUTED,false));a.gap(c,10);
@@ -81,25 +81,25 @@ final class AstronomyScreen {
         }
     }
     private void positions(){
-        LinearLayout c=a.card();c.addView(a.text("日月与行星位置",17,a.INK,true));a.gap(c,14);double[] sun=Astronomy.sunPosition(at,city.latitude,city.longitude),moon=Astronomy.moonPosition(at,city.latitude,city.longitude);
+        LinearLayout c=a.card();c.addView(a.text("日月与行星位置",17,a.TITLE,true));a.gap(c,14);double[] sun=Astronomy.sunPosition(at,city.latitude,city.longitude),moon=Astronomy.moonPosition(at,city.latitude,city.longitude);
         c.addView(a.text("太阳  "+String.format(Locale.ROOT,"高度角 %.1f° · 方位角 %.1f°",sun[0],sun[1])+" "+Astronomy.compass(sun[1]),14,a.INK,false));a.gap(c,10);c.addView(a.text("月球  "+String.format(Locale.ROOT,"高度角 %.1f° · 方位角 %.1f°",moon[0],moon[1])+" "+Astronomy.compass(moon[1]),14,a.INK,false));a.gap(c,10);
         for(Astronomy.Planet p:Astronomy.planets(at)){double[] h=Astronomy.planetPosition(p,at,city.latitude,city.longitude);c.addView(a.text(p.name+"  "+String.format(Locale.ROOT,"高度角 %.1f° · 方位角 %.1f° · 视星等 %.2f",h[0],h[1],p.magnitude),13,a.INK,false));a.gap(c,7);}
 
     }
     private String event(List<Astronomy.Event> events,boolean rise){for(Astronomy.Event e:events)if(e.rising==rise)return e.at.atZone(zone).format(DateTimeFormatter.ofPattern("HH:mm"));return "当日无此事件";}
     private void events(){
-        LinearLayout c=a.card();c.addView(a.text("当日日月事件与曙暮光",17,a.INK,true));a.gap(c,14);LocalDate date=at.atZone(zone).toLocalDate();String[] labels={"日出 / 日落","民用曙光 / 暮光","航海曙光 / 暮光","天文曙光 / 暮光","月升 / 月落"};double[] alt={-.833,-6,-12,-18,-.3};
+        LinearLayout c=a.card();c.addView(a.text("当日日月事件与曙暮光",17,a.TITLE,true));a.gap(c,14);LocalDate date=at.atZone(zone).toLocalDate();String[] labels={"日出 / 日落","民用曙光 / 暮光","航海曙光 / 暮光","天文曙光 / 暮光","月升 / 月落"};double[] alt={-.833,-6,-12,-18,-.3};
         for(int n=0;n<labels.length;n++){List<Astronomy.Event> events=Astronomy.crossings(date,zone,city.latitude,city.longitude,n==4,alt[n]);c.addView(a.text(labels[n],12,a.MUTED,false));a.gap(c,7);c.addView(a.text(event(events,true)+"  /  "+event(events,false),15,a.INK,true));a.gap(c,16);}c.addView(a.text("时间按当前天文显示时区标注。高纬度地区可能出现当日无升落事件或无天文夜的情况。曙暮光时刻不用于预测霞光。",11,a.MUTED,false));
     }
     private void meteor(){
-        LinearLayout c=a.card();c.addView(a.text("流星雨 · 参考极大日前后 3 天",17,a.INK,true));a.gap(c,12);LocalDate today=at.atZone(zone).toLocalDate();List<String> active=new ArrayList<>(),upcoming=new ArrayList<>();
+        LinearLayout c=a.card();c.addView(a.text("流星雨 · 参考极大日前后 3 天",17,a.TITLE,true));a.gap(c,12);LocalDate today=at.atZone(zone).toLocalDate();List<String> active=new ArrayList<>(),upcoming=new ArrayList<>();
         List<Astronomy.Shower> next=new ArrayList<>();
         for(Astronomy.Shower m:Astronomy.SHOWERS){
             if(m.activeOn(today)){double[] h=Astronomy.horizontal(m.ra,m.dec,at,city.latitude,city.longitude);active.add(m.name+" · 参考显示期（极大日 "+m.peak.toString().substring(2)+"）\n辐射点高度角 "+String.format(Locale.ROOT,"%.1f°",h[0])+" · 方位角 "+String.format(Locale.ROOT,"%.1f°",h[1])+" "+Astronomy.compass(h[1]));}
             else next.add(m);
         }
         next.sort(Comparator.comparing(m->m.nextPeak(today)));for(Astronomy.Shower m:next){if(upcoming.size()==4)break;upcoming.add(m.nextPeak(today).toString()+"  "+m.name);}
-        if(!active.isEmpty()){c.addView(a.text("所选日期的参考流星雨",13,a.BLUE,true));a.gap(c,8);for(String item:active){c.addView(a.text(item,14,a.INK,false));a.gap(c,10);}}
+        if(!active.isEmpty()){c.addView(a.text("所选日期的参考流星雨",13,a.TITLE,true));a.gap(c,8);for(String item:active){c.addView(a.text(item,14,a.INK,false));a.gap(c,10);}}
         if(active.isEmpty()){c.addView(a.text("所选日期不在内置流星雨的参考显示期内。",13,a.MUTED,false));a.gap(c,8);}if(!upcoming.isEmpty()){c.addView(a.text("后续参考极大日",13,a.MUTED,true));a.gap(c,8);for(String item:upcoming){c.addView(a.text(item,14,a.INK,false));a.gap(c,9);}}
         c.addView(a.text("辐射点位置由近似赤经、赤纬换算。此处按常年参考极大日前后 3 天显示，不代表实际完整活跃期；每年的极大时刻及观测条件请查阅当年 IMO 日历。",12,a.MUTED,false));a.link(c,"IMO · 年度流星雨日历","https://www.imo.net/resources/calendar/");
     }

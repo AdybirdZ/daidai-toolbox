@@ -53,7 +53,7 @@
     <string name="action_back">返回</string>
     <string name="action_save">保存</string>
     <string name="action_restore">恢复默认</string>
-    <string name="theme_color_title">文字与按钮颜色</string>
+    <string name="theme_color_title">界面颜色</string>
     <string name="color_custom">自定义十六进制颜色</string>
     <string name="color_hex_title">输入 #RRGGBB 颜色</string>
     <string name="color_invalid">请输入以 # 开头的六位十六进制颜色值，例如 #246BCE</string>
@@ -77,4 +77,28 @@
     <string name="update_1211_title">1.2.11 · 统一配色与天文指向修正</string>
     <string name="update_1211_detail">• 文字与按钮使用统一颜色选择，提供红、橙、黄、绿、青、蓝、紫及十六进制自定义；深色按钮固定白字，配套浅色按钮背景。\n• 课程颜色支持七种预设与自定义，兼容旧版课程颜色，无效值回退蓝色。\n• 恢复默认设置、底部栏目和缓存管理移至全局设置。\n• 对准天空改为固定星图上的小型红十字，按设备三维朝向显示方位角与高度角，仅用于地平坐标和无网格模式；说明集中至星图下方。\n• 地区搜索结果及收藏条目显示经度和纬度。\n• 相机亮度采样优先固定曝光时间及感光度，不支持时尝试锁定自动曝光，并显示实际曝光状态。\n• 版本号 1.2.11 / versionCode 35。</string>
     <string-array name="seven_colors"><item>红色</item><item>橙色</item><item>黄色</item><item>绿色</item><item>青色</item><item>蓝色（默认）</item><item>紫色</item></string-array>
+    <string name="color_role_button">普通按钮颜色</string>
+    <string name="color_role_link">链接按钮颜色</string>
+    <string name="color_role_body">正文颜色</string>
+    <string name="color_role_title">标题颜色</string>
+    <string name="color_role_choice">选择项颜色</string>
+    <string name="color_role_note">说明文字颜色</string>
+    <string name="color_black">黑色</string>
+    <string name="color_gray">灰色</string>
+    <string name="color_default_suffix">（默认）</string>
+    <string name="settings_compass">指南针</string>
+    <string name="settings_location">定位</string>
+    <string name="settings_satellite">卫星</string>
+    <string name="settings_route">路线绘制</string>
+    <string name="settings_sensors">传感器</string>
+    <string name="settings_battery">电池</string>
+    <string name="settings_device">设备与环境</string>
+    <string name="location_interval_title">网络定位间隔</string>
+    <string name="location_interval_note">此间隔是向系统请求网络定位更新的最短间隔；系统可能延迟更新或复用已有结果。</string>
+    <string name="time_display_note">此设置用于当前天气的数据时刻、逐小时预报、天文、地震及路线记录详情。默认情况下，天气和天文使用所选地区时区，地震和路线详情使用设备时区。每日天气预报及日出日落按所选地区时区显示；课程表按设备日期确定当前周次。</string>
+    <string name="update_1212_title">1.2.12 · 分类配色与设置整理</string>
+    <string name="update_1212_detail">• 界面颜色分为普通按钮、链接按钮、正文、标题、选择项和说明文字六类，分别设置；普通按钮默认蓝色，说明文字默认灰色，其他类别默认黑色，深色按钮固定白字。\n• 状态设置按定位、卫星、传感器和电池等内容合并，网络定位间隔说明移至对应设置顶部。\n• 课程预设颜色显示中文名称，自定义颜色显示十六进制值；保留旧版课程颜色。\n• 调整课程编辑输入框的内部留白。\n• 版本号 1.2.12 / versionCode 36。</string>
+    <string-array name="color_names_seven"><item>红色</item><item>橙色</item><item>黄色</item><item>绿色</item><item>青色</item><item>蓝色</item><item>紫色</item></string-array>
+    <string name="settings_display_order">显示与排序</string>
+    <string name="settings_current_sign">瞬时电流符号</string>
 </resources>

@@ -4,6 +4,9 @@ package org.simpleweather.app;
 final class ThemeColors {
     static final int BLUE=0xFF246BCE;
     static final int[] PRESETS={0xFFB83232,0xFFAD540D,0xFF806500,0xFF247446,0xFF087681,BLUE,0xFF7852A8};
+    static final int GRAY=0xFF616161;
+    static int roleDefault(String role){return "ui_button_color".equals(role)?BLUE:"ui_note_color".equals(role)?GRAY:0xFF000000;}
+    static int presetIndex(int color){for(int i=0;i<PRESETS.length;i++)if(PRESETS[i]==color)return i;return -1;}
     static int opaque(int value){return (value>>>24)==255?value:BLUE;}
     static int dark(int seed){int c=opaque(seed);while(contrast(c,0xFFFFFFFF)<4.8||contrast(c,pale(seed))<4.8)c=mix(c,0xFF000000,.96);return c;}
     static int pale(int seed){return mix(opaque(seed),0xFFFFFFFF,.10);}

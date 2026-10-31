@@ -8,7 +8,7 @@ final class EarthquakeInfo {
         TextParagraphs.append(a,c,text,14,a.INK);
     }
     static void append(MainActivity a,LinearLayout c){
-        c.addView(a.text("地震数据与说明",17,a.INK,true));a.gap(c,12);
+        c.addView(a.text("地震数据与说明",17,a.TITLE,true));a.gap(c,12);
         paragraph(a,c,"本功能提供近期地震目录查询，不提供地震预警、地震波到达倒计时或后台地震通知。目录可能遗漏地震，发布时间不固定，事件参数也可能修订；空列表不表示没有发生地震。最低震级默认为 M≥1.0，可设为 M≥0.0 至 M≥7.0，该设置仅用于筛选，不代表数据源的完整收录范围。“中国及周边”为经度 70° E～140° E、纬度 15° N～55° N 的矩形范围，不对应行政边界。");
         int option=a.preferences.getInt("global_time_mode",a.preferences.getInt("quake_timezone",0));java.time.ZoneId zone=EarthquakeOptions.zone(option);
         paragraph(a,c,"时间显示："+EarthquakeOptions.offset(zone,System.currentTimeMillis())+"（"+(option==0?"设备时区":option==1?"北京时间":"协调世界时")+"）。日期均带年份；选择采用夏令时的时区时，各事件按发生日期的实际偏移显示。中国地震台网转发目录按 UTC+08:00 解析后转换。距离为参考位置到震中的地表大圆距离，不代表到震源的距离，计算在本机完成。参考位置改变后自动更新列表；地震页的“刷新定位”按状态设置中的定位方式获取一次位置，无需先进入状态页，也不会自动开启持续定位。");

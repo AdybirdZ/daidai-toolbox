@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class MainActivity extends Activity {
+    static final int TITLE=0xFF010102;
     static final int BG=0xFFF5F7FB, WHITE=Color.WHITE, INK=0xFF20324C, MUTED=0xFF718097, BLUE=0xFF246BCE, PALE=0xFFEAF2FF;
     private final ExecutorService workers=Executors.newFixedThreadPool(2);
     private final Handler main=new Handler(Looper.getMainLooper());
@@ -81,7 +82,7 @@ public class MainActivity extends Activity {
     LinearLayout row() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.HORIZONTAL);l.setGravity(Gravity.CENTER_VERTICAL);return l;}
     LinearLayout.LayoutParams lp(int w,int h) {return new LinearLayout.LayoutParams(w<0?w:dp(w),h<0?h:dp(h));}
     TextView text(String value,int size,int color,boolean bold) {
-        TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(resolveTextColor(color));
+        TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(resolveTextColor(color));t.setTag(color==TITLE?UiColors.TITLE:color==INK||color==BLUE?UiColors.BODY:color==MUTED?UiColors.NOTE:"text-fixed");
         t.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));t.setIncludeFontPadding(false);
         t.setLineSpacing(dp(3),1);t.setTextIsSelectable(false);t.setLongClickable(false);return t;
     }
@@ -92,7 +93,7 @@ public class MainActivity extends Activity {
     }
     TextView button(String title, boolean primary, Runnable click) {
         TextView t=text(title,14,primary?buttonPrimaryText():buttonSecondaryText(),true);t.setGravity(Gravity.CENTER);
-        t.setMinHeight(dp(48));t.setPadding(dp(16),dp(10),dp(16),dp(10));tap(t,primary?buttonPrimaryColor():buttonSecondaryColor(),16,click);t.setTag(primary?"theme-primary":"theme-secondary");return t;
+        t.setTextColor(primary?buttonPrimaryText():buttonSecondaryText());t.setMinHeight(dp(48));t.setPadding(dp(16),dp(10),dp(16),dp(10));tap(t,primary?buttonPrimaryColor():buttonSecondaryColor(),16,click);t.setTag(primary?"theme-primary":"theme-secondary");return t;
     }
     void gap(LinearLayout parent,int h) {View v=new View(this);parent.addView(v,lp(1,h));}
     void spacer(LinearLayout parent) {parent.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));}
@@ -122,22 +123,25 @@ public class MainActivity extends Activity {
     String[] weatherNames(){String[] out=new String[WEATHER_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=weatherName(i);return out;}
     boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",false);}
     int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
-    int themeColor(){int fallback=preferences==null?ThemeColors.BLUE:preferences.getInt("text_accent_color",ThemeColors.BLUE);return ThemeColors.opaque(preferences==null?fallback:preferences.getInt("theme_color",fallback));}
-    int primaryTextColor(){return ThemeColors.dark(themeColor());}
-    int secondaryTextColor(){return primaryTextColor();}
+    int themeColor(){return UiColors.seed(this,UiColors.BUTTON);}
+    int primaryTextColor(){return UiColors.ink(this,UiColors.BODY);}
+    int secondaryTextColor(){return UiColors.ink(this,UiColors.NOTE);}
     int accentColor(){return primaryTextColor();}
-    int buttonPrimaryColor(){return primaryTextColor();}
+    int titleTextColor(){return UiColors.ink(this,UiColors.TITLE);}
+    int linkTextColor(){return UiColors.ink(this,UiColors.LINK);}
+    int buttonPrimaryColor(){return UiColors.ink(this,UiColors.BUTTON);}
     int buttonPrimaryText(){return Color.WHITE;}
-    int buttonSecondaryColor(){return ThemeColors.pale(themeColor());}
-    int buttonSecondaryText(){return primaryTextColor();}
+    int buttonSecondaryColor(){return UiColors.pale(this,UiColors.BUTTON);}
+    int buttonSecondaryText(){return buttonPrimaryColor();}
     void applyTheme(){ToolDialog.refresh(this);refreshScreen();}
-    int resolveTextColor(int color){if(color==INK)return primaryTextColor();if(color==MUTED)return secondaryTextColor();if(color==BLUE)return accentColor();if(color==WHITE)return buttonPrimaryText();return color;}
+    void markLink(TextView view){boolean button="theme-secondary".equals(view.getTag())||"theme-primary".equals(view.getTag());UiColors.mark(view,UiColors.LINK);if(button){view.setTag("theme-link-button");view.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x22000000),shape(UiColors.pale(this,UiColors.LINK),16),null));}}
+    int resolveTextColor(int color){if(color==TITLE)return titleTextColor();if(color==INK)return primaryTextColor();if(color==MUTED)return secondaryTextColor();if(color==BLUE)return accentColor();if(color==WHITE)return buttonPrimaryText();return color;}
     ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
     List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),TAB_NAME_IDS.length);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3||id==5))result.add(id);if(result.isEmpty())result.add(0);return result;}
     void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
     void refreshScreen(){List<Integer> visible=visibleTabs();if(!visible.contains(tab))tab=visible.get(0);switchTab(tab);}
     private void pageHeader(){
-        TextView title=text(getString(R.string.app_name)+" · "+tabName(tab),25,INK,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
+        TextView title=text(getString(R.string.app_name)+" · "+tabName(tab),25,TITLE,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
         LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->schedule.addCourse()));}body.addView(actions);gap(body,16);
     }
     void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
@@ -145,15 +149,15 @@ public class MainActivity extends Activity {
         navigation.removeAllViews();List<Integer> visible=visibleTabs();navigation.setVisibility(visible.size()<2?View.GONE:View.VISIBLE);if(visible.size()<2)return;
         navigationOffset=Math.max(0,Math.min(navigationOffset,Math.max(0,visible.size()-3)));
         if(visible.size()>=5){TextView left=button("‹",false,()->{navigationOffset=Math.max(0,navigationOffset-1);renderNavigation();});left.setContentDescription("底栏向左翻页");left.setEnabled(navigationOffset>0);left.setAlpha(navigationOffset>0?1:.35f);left.setPadding(0,0,0,0);navigation.addView(left,lp(40,50));}
-        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(tabName(id),false,()->switchTab(id));item.setContentDescription("切换到"+tabName(id));item.setMaxLines(1);item.setHorizontallyScrolling(false);item.setAutoSizeTextTypeUniformWithConfiguration(10,visible.size()==4?12:14,1,android.util.TypedValue.COMPLEX_UNIT_SP);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(secondaryTextColor());tap(item,Color.TRANSPARENT,16,()->switchTab(id));}if(navigation.getChildCount()>0)gapHorizontal(navigation,6);navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
+        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(tabName(id),false,()->switchTab(id));item.setContentDescription("切换到"+tabName(id));item.setMaxLines(1);item.setHorizontallyScrolling(false);item.setAutoSizeTextTypeUniformWithConfiguration(10,visible.size()==4?12:14,1,android.util.TypedValue.COMPLEX_UNIT_SP);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(buttonSecondaryText());tap(item,Color.TRANSPARENT,16,()->switchTab(id));}if(navigation.getChildCount()>0)gapHorizontal(navigation,6);navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
         if(visible.size()>=5){TextView right=button("›",false,()->{navigationOffset=Math.min(visible.size()-3,navigationOffset+1);renderNavigation();});right.setContentDescription("底栏向右翻页");right.setEnabled(navigationOffset<visible.size()-3);right.setAlpha(navigationOffset<visible.size()-3?1:.35f);right.setPadding(0,0,0,0);gapHorizontal(navigation,6);navigation.addView(right,lp(40,50));}
     }
 
     LinearLayout card() {LinearLayout c=column();c.setPadding(dp(18),dp(20),dp(18),dp(18));c.setBackground(shape(WHITE,24));body.addView(c,lp(-1,-2));return c;}
     private void section(LinearLayout parent,String name,String aside) {
-        LinearLayout r=row();r.addView(text(name,17,INK,true));spacer(r);
+        LinearLayout r=row();r.addView(text(name,17,TITLE,true));spacer(r);
         TextView source=text(aside,11,MUTED,false);source.setPadding(dp(5),dp(8),0,dp(8));source.setMinHeight(dp(32));
-        tap(source,Color.TRANSPARENT,6,()->open("https://open-meteo.com/"));r.addView(source);parent.addView(r);gap(parent,12);
+        markLink(source);tap(source,Color.TRANSPARENT,6,()->open("https://open-meteo.com/"));r.addView(source);parent.addView(r);gap(parent,12);
     }
     private void showWeather() {
         tab=0;picking=false;searchVersion++;startScreen();
@@ -173,7 +177,7 @@ public class MainActivity extends Activity {
     }
     private void weatherLocation(){
         LinearLayout cityRow=row();
-        TextView cityTitle=text(city.label(),26,INK,true);cityTitle.setMinHeight(dp(48));cityTitle.setGravity(Gravity.CENTER_VERTICAL);cityTitle.setPadding(dp(4),0,dp(4),0);
+        TextView cityTitle=text(city.label(),26,TITLE,true);cityTitle.setMinHeight(dp(48));cityTitle.setGravity(Gravity.CENTER_VERTICAL);cityTitle.setPadding(dp(4),0,dp(4),0);
         cityRow.addView(cityTitle,new LinearLayout.LayoutParams(0,-2,1));gapHorizontal(cityRow,10);
         TextView save=button(store.isSaved(city)?"★":"☆",false,()->{boolean saved=store.toggle(city);toast(saved?"已收藏地区":"已取消收藏");showWeather();});
         save.setTextSize(25);save.setPadding(0,0,0,0);save.setContentDescription(store.isSaved(city)?"取消收藏当前地区":"收藏当前地区");cityRow.addView(save,lp(48,48));body.addView(cityRow);
@@ -182,10 +186,10 @@ public class MainActivity extends Activity {
     private void currentWeather(Instant now){
         boolean old=data.currentIsOld(now);
         LinearLayout hero=column();hero.setPadding(dp(22),dp(22),dp(18),dp(20));
-        GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{buttonSecondaryColor(),WHITE});gradient.setCornerRadius(dp(28));if(outlined())gradient.setStroke(dp(1),outlineColor());hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
+        GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{PALE,WHITE});gradient.setCornerRadius(dp(28));if(outlined())gradient.setStroke(dp(1),outlineColor());hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
         LinearLayout heroTop=row();
         TextView label=text(old?"上次天气 · 历史缓存":"当前天气 · 模型估算",12,MUTED,false);heroTop.addView(label);spacer(heroTop);
-        TextView refresh=text(loading?"更新中…":"刷新 ↻",13,BLUE,true);refresh.setMinHeight(dp(40));refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(8),0,dp(5),0);tap(refresh,Color.TRANSPARENT,10,()->load(true));heroTop.addView(refresh);hero.addView(heroTop);
+        TextView refresh=text(loading?"更新中…":"刷新 ↻",13,BLUE,true);UiColors.mark(refresh,UiColors.BUTTON);refresh.setMinHeight(dp(40));refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(8),0,dp(5),0);tap(refresh,Color.TRANSPARENT,10,()->load(true));heroTop.addView(refresh);hero.addView(heroTop);
         LinearLayout currentRow=row();LinearLayout temperature=column();
         TextView number=text(WeatherData.degrees(WeatherData.value(data.current,"temperature_2m")),54,INK,false);number.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));temperature.addView(number);
         int code=WeatherData.code(data.current,"weather_code",-1);
@@ -197,7 +201,7 @@ public class MainActivity extends Activity {
         ZoneId shownZone=displayZone(data.zone);String updated=DateTimeFormatter.ofPattern("M月d日 HH:mm").withZone(shownZone).format(data.currentTime);
         hero.addView(text("数据时刻 "+updated+" · "+(preferences.getInt("global_time_mode",0)==0?"地区当地时间":preferences.getInt("global_time_mode",0)==1?"北京时间":"协调世界时"),11,MUTED,false));
         gap(hero,8);
-        LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text(getString(R.string.source_open_meteo),11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
+        LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text(getString(R.string.source_open_meteo),11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);markLink(source);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
 
 
     }
@@ -254,7 +258,7 @@ public class MainActivity extends Activity {
         for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
     }
     private void footer() {
-        TextView about=text(getString(R.string.about_title)+" · "+versionName(),12,BLUE,false);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
+        TextView about=text(getString(R.string.about_title)+" · "+versionName(),12,BLUE,false);markLink(about);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
     }
 
     private void load(boolean force) {
@@ -282,7 +286,7 @@ public class MainActivity extends Activity {
     }
     private void showPicker() {
         picking=true;searchVersion++;startScreen();
-        LinearLayout heading=row();heading.addView(text("选择地区",25,INK,true));spacer(heading);heading.addView(button("完成",false,()->{hideKeyboard();switchTab(tab);}));body.addView(heading);gap(body,10);
+        LinearLayout heading=row();heading.addView(text("选择地区",25,TITLE,true));spacer(heading);heading.addView(button("完成",false,()->{hideKeyboard();switchTab(tab);}));body.addView(heading);gap(body,10);
         body.addView(text("搜索城市、区县或海外地区",13,MUTED,false));gap(body,18);
         LinearLayout input=row();
         search=new EditText(this);search.setSingleLine(true);search.setTextSize(16);search.setTextColor(primaryTextColor());search.setHintTextColor(secondaryTextColor());search.setHint("例如：杭州、海淀、Tokyo");search.setBackground(shape(WHITE,18));search.setPadding(dp(13),dp(15),dp(10),dp(15));search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);input.addView(search,new LinearLayout.LayoutParams(0,-2,1));
@@ -291,12 +295,12 @@ public class MainActivity extends Activity {
         search.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int count,int after){}public void onTextChanged(CharSequence s,int start,int before,int count){searchVersion++;renderLocal(s.toString());}public void afterTextChanged(Editable e){}});
         search.setOnEditorActionListener((v,action,event)->{if(action==EditorInfo.IME_ACTION_SEARCH){searchOnline();return true;}return false;});
         renderLocal("");
-        gap(body,20);TextView credit=text(getString(R.string.city_credit),11,MUTED,false);credit.setLineSpacing(dp(5),1);credit.setMinHeight(dp(48));tap(credit,Color.TRANSPARENT,8,()->open("https://github.com/AdybirdZ/daidai-toolbox/blob/main/docs/CITY-CATALOG.md"));credit.setPadding(dp(12),dp(8),dp(12),dp(8));body.addView(credit,new LinearLayout.LayoutParams(-2,-2));
+        gap(body,20);TextView credit=text(getString(R.string.city_credit),11,MUTED,false);credit.setLineSpacing(dp(5),1);credit.setMinHeight(dp(48));markLink(credit);tap(credit,Color.TRANSPARENT,8,()->open("https://github.com/AdybirdZ/daidai-toolbox/blob/main/docs/CITY-CATALOG.md"));credit.setPadding(dp(12),dp(8),dp(12),dp(8));body.addView(credit,new LinearLayout.LayoutParams(-2,-2));
     }
     private void renderLocal(String query) {
         results.removeAllViews();String q=query.trim();
         if(q.isEmpty()) {
-            List<City> saved=store.saved();if(!saved.isEmpty()){results.addView(text("我的地区",16,INK,true));gap(results,10);cityList(saved);gap(results,22);}
+            List<City> saved=store.saved();if(!saved.isEmpty()){results.addView(text("我的地区",16,TITLE,true));gap(results,10);cityList(saved);gap(results,22);}
             results.addView(text("请输入城市、区县或海外地区名称进行搜索。",13,MUTED,false));
         } else {
             List<City> matched=new ArrayList<>();
@@ -308,7 +312,7 @@ public class MainActivity extends Activity {
     }
     private void cityList(List<City> cities) {
         for(City c:cities) {
-            LinearLayout item=row();item.setPadding(dp(14),dp(14),dp(12),dp(14));LinearLayout labels=column();labels.addView(text(c.label(),16,INK,true));gap(labels,6);labels.addView(text(c.detail(),12,MUTED,false));gap(labels,5);labels.addView(text(CoordinateFormat.pair(c.longitude,c.latitude,6),12,MUTED,false));item.addView(labels,new LinearLayout.LayoutParams(0,-2,1));item.addView(text(city.key().equals(c.key())?"当前":"›",14,BLUE,false));tap(item,WHITE,16,()->choose(c));results.addView(item,lp(-1,-2));gap(results,8);
+            LinearLayout item=row();item.setPadding(dp(14),dp(14),dp(12),dp(14));LinearLayout labels=column();labels.addView(text(c.label(),16,TITLE,true));gap(labels,6);labels.addView(text(c.detail(),12,MUTED,false));gap(labels,5);labels.addView(text(CoordinateFormat.pair(c.longitude,c.latitude,6),12,MUTED,false));item.addView(labels,new LinearLayout.LayoutParams(0,-2,1));item.addView(text(city.key().equals(c.key())?"当前":"›",14,BLUE,false));tap(item,WHITE,16,()->choose(c));results.addView(item,lp(-1,-2));gap(results,8);
         }
     }
     private void searchOnline() {
@@ -355,6 +359,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_1212_title),getString(R.string.update_1212_detail));
         updateEntry(c,getString(R.string.update_1211_title),getString(R.string.update_1211_detail));
         updateEntry(c,getString(R.string.update_1210_title),getString(R.string.update_1210_detail));
         updateEntry(c,"1.2.9 · 颜色、对准天空与环境光改进","• 全局设置新增主要文字、说明文字、强调文字及按钮背景/文字颜色，可选择红、橙、黄、绿、青、蓝、紫、黑、白或输入 #RRGGBB；无效的历史颜色统一回退为蓝色。\r\n• 天文对准天空使用设备旋转矢量传感器，在星图中心显示红色实体十字，可选择外置相机方向或手机上沿方向。\r\n• 环境光改为后台读取相机亮度样本，不打开预览窗口、不需要手动启动；可设置切换栏目、锁屏和后台时是否继续使用相机，默认关闭。\r\n• 重新整理状态页传感器说明、设置顺序和段落，明确电池温度与环境温度的含义；删除天气详情中重复的紫外线数值说明及星空说明中的冗余文字。\r\n• 修正中国地区目录规范名称与别名去重，甘孜统一为“甘孜藏族自治州”，避免离线目录与在线搜索出现同一地区的重复结果。\r\n• 版本号 1.2.9 / versionCode 33。" );
@@ -410,10 +415,10 @@ public class MainActivity extends Activity {
         EarthquakeInfo.append(this,content);
         link(content,"Open-Meteo · 天气数据来源","https://open-meteo.com/");link(content,"Open-Meteo · 使用条款与隐私","https://open-meteo.com/en/terms");link(content,"GeoNames · 地区数据来源","https://www.geonames.org/");link(content,getString(R.string.city_sources_link),"https://github.com/AdybirdZ/daidai-toolbox/blob/main/docs/CITY-CATALOG.md");link(content,"CC BY 4.0 · 数据许可","https://creativecommons.org/licenses/by/4.0/");link(content,"中央气象台 · 官方页面","https://www.nmc.cn/");link(content,"天文计算方法参考","https://stjarnhimlen.se/comp/ppcomp.html");link(content,"Android · 卫星状态官方文档","https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,"Android · 传感器官方说明","https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,"天体坐标与星等 · Wikidata CC0","https://www.wikidata.org/wiki/Wikidata:Licensing");
         EarthquakeInfo.links(this,content);
-        gap(content,10);content.addView(text("参考开源项目",17,INK,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");
+        gap(content,10);content.addView(text("参考开源项目",17,TITLE,true));gap(content,10);content.addView(text("天气与课程表功能参考以下项目；本应用的原生界面与逻辑独立实现。",14,MUTED,false));gap(content,12);link(content,"天气战士 · 全球版 · GitHub","https://github.com/anyin233/weather-fighter-global");link(content,"拾光课程表 · GitHub","https://github.com/ShiGuangSchedule/shiguangschedule");link(content,"呆呆工具箱 · GitHub","https://github.com/AdybirdZ/daidai-toolbox");
         ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle(getString(R.string.about_title)).setView(scroll).setPositiveButton("关闭",null).show();
     }
-    void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
+    void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);markLink(t);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
     void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast("未找到可打开链接的浏览器");}}
     private void hideKeyboard() {View focused=getCurrentFocus();if(focused!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focused.getWindowToken(),0);focused.clearFocus();}}
     void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(message,16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
