@@ -118,7 +118,7 @@
     <string name="astronomy_116" formatted="false">"当地星空 · 仰视示意"</string>
     <string name="astronomy_117" formatted="false">"停止对准天空"</string>
     <string name="astronomy_118" formatted="false">"对准天空"</string>
-    <string name="astronomy_119" formatted="false">"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n流星雨按常年参考极大日前后 3 天显示，该区间不代表实际完整活跃期。恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。"</string>
+    <string name="astronomy_119" formatted="false">"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。"</string>
     <string name="astronomy_120" formatted="false">"计算公式与方法参考"</string>
     <string name="astronomy_121" formatted="false">"内置天体坐标与星等 · CC0"</string>
     <string name="astronomy_122" formatted="false">"−15 分钟"</string>
@@ -174,7 +174,7 @@
     <string name="astronomy_172" formatted="false">"赤道坐标系：北天极居中，赤经 0h 在上、6h 在左；青色曲线为当地地平线。勾陈一靠近北天极，并非中心本身。"</string>
     <string name="astronomy_173" formatted="false">"不显示坐标网格；保留地平投影，北在上、东在左。"</string>
     <string name="astronomy_174" formatted="false">"地平坐标系：天顶居中，北在上、东在左；圆周为地平线，内圈为高度 30°、60°。"</string>
-    <string name="astronomy_175" formatted="false">"点击星空中的太阳、月球、亮星、行星或深空天体中心，查看方位角和高度角。"</string>
+    <string name="astronomy_175" formatted="false">"尚未选择天体。"</string>
     <string name="astronomy_176" formatted="false">" · 大致中心"</string>
     <string name="astronomy_177" formatted="false">"\n高度角 "</string>
     <string name="astronomy_178" formatted="false">"\n赤经 "</string>
@@ -302,21 +302,21 @@
     <string name="earthquake_display_004" formatted="false">"欧洲—地中海地震中心（"</string>
     <string name="earthquake_info_001" formatted="false">"Wolfx 为非官方数据转发服务。本应用仅接入其中国地震台网近期目录，接口最多提供约 50 条记录，不提供全球目录或地震预警。\n\n中国地震台网数据通过该服务向不特定用户公开展示的授权依据尚未完全确认，本应用未取得中国地震台网的再发布授权。跨域访问支持（CORS）、接口可访问、非商业用途、署名及免责声明均不能替代授权。\n\n启用后，应用会向 Wolfx 请求目录，服务方可接收 IP 地址；请求不包含参考位置坐标。接口不保证完整覆盖所选时段、收录全部地震或在固定时间内更新。\n\n如官方机构或相关权利人要求停用，维护者将立即停止接入，下架其维护的相关安装包，并配合处理。可随时在地震数据源设置中关闭此服务。"</string>
     <string name="earthquake_info_002" formatted="false">"地震数据与说明"</string>
-    <string name="earthquake_info_003" formatted="false">"本功能提供近期地震目录查询，不提供地震预警、地震波到达倒计时或后台地震通知。目录可能遗漏地震，发布时间不固定，事件参数也可能修订；空列表不表示没有发生地震。最低震级默认为 M≥1.0，可设为 M≥0.0 至 M≥7.0，该设置仅用于筛选，不代表数据源的完整收录范围。“中国及周边”为经度 70° E～140° E、纬度 15° N～55° N 的矩形范围，不对应行政边界。"</string>
+    <string name="earthquake_info_003" formatted="false">"本功能提供近期地震目录查询，不提供地震预警、地震波到达倒计时或后台地震通知。目录可能遗漏地震，发布时间不固定，事件参数也可能修订；空列表不表示没有发生地震。筛选条件不代表来源的完整收录范围。"</string>
     <string name="earthquake_info_004" formatted="false">"时间显示："</string>
     <string name="earthquake_info_005" formatted="false">"（"</string>
     <string name="earthquake_info_006" formatted="false">"设备时区"</string>
     <string name="earthquake_info_007" formatted="false">"北京时间"</string>
     <string name="earthquake_info_008" formatted="false">"协调世界时"</string>
-    <string name="earthquake_info_009" formatted="false">"）。日期均带年份；选择采用夏令时的时区时，各事件按发生日期的实际偏移显示。中国地震台网转发目录按 UTC+08:00 解析后转换。距离为参考位置到震中的地表大圆距离，不代表到震源的距离，计算在本机完成。参考位置改变后自动更新列表；地震页的“刷新定位”按状态设置中的定位方式获取一次位置，无需先进入状态页，也不会自动开启持续定位。"</string>
+    <string name="earthquake_info_009" formatted="false">"）。日期均带年份；采用夏令时的时区按事件发生日期的实际偏移显示。中国地震台网转发目录按 UTC+08:00 解析后转换。距离为参考位置到震中的地表大圆距离，不代表到震源的距离。"</string>
     <string name="earthquake_info_010" formatted="false">"来源：德国地学研究中心 GEOFON（GFZ / GEVN）和欧洲—地中海地震中心（EMSC / SeismicPortal），按 CC BY 4.0 署名。\n\nEvent locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks.\n\n美国地质调查局（USGS）的全球补充目录仅采用其国家地震信息中心提供的参数（net=us），不复制第三方图像，也不将整套聚合目录视为公有领域数据。\n\n本应用进行事件匹配、筛选、时间格式转换和部分地名翻译。合并记录保留各来源参数，不对震级取平均；各来源也不一定完全独立。列表优先显示具体贡献机构，聚合平台及转发信息在详情中注明。同次地震优先采用中国地震台网的已复核结果，其次为其他机构的已复核结果，最后为自动结果或状态未知的记录；同级采用较新结果，不因来源为中国地震台网而直接认定已复核。"</string>
     <string name="earthquake_info_011" formatted="false">"烈度优先采用美国地质调查局的公众震感汇总（cdi），标为“来源报告烈度”；该值不等同于官方现场调查结果。ShakeMap 的 mmi 字段为模型结果，标为“估算烈度”。\n\n本地估算为震中参考烈度，不代表最大烈度或参考位置处的烈度。来源更新后，应用自动采用当前有效值；模型结果即使经过复核，也不会改标为实测结果。本应用仅采用修订麦加利烈度（MMI），列表省略标度和模型括注，详情保留完整说明。"</string>
     <string name="earthquake_info_012" formatted="false">"数据源未提供可用烈度时，满足 Mw 5.0～7.9、深度大于 0 且不超过 30 km 等条件的记录，采用 Allen、Wald 和 Worden（2012）经验模型；其他具有有效震级和深度的记录，采用 GlobalQuake 旧开源版本的峰值地面加速度（PGA）及 MMI 阈值参考算法。\n\n后者接受震级 −2～10.5、深度 0～800 km 的输入，但这是算法接受的数值范围，并非全球适用性或精度保证。小震、深震及不同地质构造下的结果可能存在较大误差；两种模型结果不宜视为相同标定尺度下的精确比较。"</string>
-    <string name="earthquake_info_013" formatted="false">"GlobalQuake 参考算法按旧版 MIT 许可适配，未使用其现行闭源版本。本应用保留来源震级类型，非 Mw 时注明“按来源震级近似”；采用 10 km 或来源标记为默认、固定深度时，在详情中提示。不估填缺失深度；未达到模型首档显示阈值时，不显示为 MMI 0 度。场地效应、断层破裂形态及构造适用性未逐事件核验，估算仅供参考，不用于防灾决策。"</string>
-    <string name="earthquake_info_014" formatted="false">"部分目录的 10 km 可能为默认浅源深度，固定深度不代表可靠实测。Wolfx 的 intensity 字段标度和模型仍未核实，不采用该字段，也不将它认作正式最大烈度。"</string>
-    <string name="earthquake_info_015" formatted="false">"中国地震台网目录由 Wolfx 非官方转发，默认关闭，启用前须确认使用提示，无强制阅读倒计时。德国、欧洲和美国来源补充全球记录。Wolfx 文档中的日本气象厅区域目录未接入本应用。"</string>
-    <string name="earthquake_info_016" formatted="false">"\n\n德国和欧洲来源的 CC BY 4.0 许可不适用于中国地震台网或 Wolfx 数据。具体速报产品的现行数据分级、公开展示及转发条件仍待确认；本应用尚未提交申请或取得相关新授权。"</string>
-    <string name="earthquake_info_017" formatted="false">"地震查询会向所选数据源发送 IP 地址、客户端标识、时间范围和最低震级，不发送参考位置坐标、课程表、背景或收藏信息。地震页处于前台时按设置自动刷新，默认间隔为 15 分钟；关闭自动刷新后，即使无缓存也不自动请求。手动刷新至少间隔 1 分钟，并遵守来源的限流要求。\n\n目录及烈度字段缓存在本机，请求失败时保留上次结果。清除缓存不删除设置或限流记录；关闭某数据源后，不再请求该来源，也不显示其缓存记录。"</string>
+    <string name="earthquake_info_013" formatted="false">"GlobalQuake 参考算法按旧版 MIT 许可适配，未使用其现行闭源版本。本应用保留来源震级类型，非 Mw 时注明“按来源震级近似”。采用 10 km 或来源标记为默认、固定深度时，在详情中提示；这类深度可能为目录默认值，不代表可靠实测。缺失深度不予估填；未达模型首档阈值时不显示为 MMI 0 度。场地效应、断层破裂形态及构造适用性未逐事件核验，估算仅供参考，不用于防灾决策。"</string>
+    <string name="earthquake_info_014" formatted="false">"Wolfx 的 intensity 字段标度和模型尚未核实，本应用不采用该字段，也不将其认作正式最大烈度。"</string>
+    <string name="earthquake_info_015" formatted="false">"德国、欧洲和美国来源提供全球补充目录。"</string>
+    <string name="earthquake_info_016" formatted="false">"\n\n德国和欧洲来源的 CC BY 4.0 许可不适用于中国地震台网或 Wolfx 数据。"</string>
+    <string name="earthquake_info_017" formatted="false">"地震查询会向所选来源发送 IP 地址、客户端标识、时间范围和最低震级。地震页处于前台时按设置刷新，默认间隔为 15 分钟；关闭自动刷新后，即使无缓存也不自动请求。手动刷新至少间隔 1 分钟，并遵守来源限流要求。\n\n目录及烈度字段缓存在本机，请求失败时保留上次结果。清除缓存不删除设置或限流记录；关闭某来源后，不再请求或显示该来源的缓存记录。"</string>
     <string name="earthquake_info_018" formatted="false">"德国地学研究中心 · 来源与许可"</string>
     <string name="earthquake_info_019" formatted="false">"欧洲—地中海地震中心 · 许可与条款"</string>
     <string name="earthquake_info_020" formatted="false">"美国地质调查局 · 全球目录接口文档"</string>
@@ -543,7 +543,7 @@
     <string name="gps_034" formatted="false">"停止定位"</string>
     <string name="gps_035" formatted="false">"开始定位"</string>
     <string name="gps_036" formatted="false">"当前方式："</string>
-    <string name="gps_037" formatted="false">" · 设置中可切换"</string>
+    <string name="gps_037" formatted="false">""</string>
     <string name="gps_038" formatted="false">"定位卫星 · 设备接收状态"</string>
     <string name="gps_039" formatted="false">"停止卫星接收"</string>
     <string name="gps_040" formatted="false">"开始卫星接收"</string>
@@ -565,7 +565,7 @@
     <string name="gps_056" formatted="false">"保存当前位置"</string>
     <string name="gps_057" formatted="false">"手动添加地点"</string>
     <string name="gps_058" formatted="false">"选择 / 管理地点"</string>
-    <string name="gps_059" formatted="false">"各地点按所设颜色显示，圆环标记所选目标，中心表示当前位置，外圈比例以所选目标的距离为准；未选择目标时按最远可见地点调整。超出外圈的其他地点以较小圆点显示在外圈上。可在地点管理中设置颜色及显示状态，点击图中地点可选为目标。方向传感器与最近定位有效时，图形随设备朝向旋转；否则真北向上。距离为地表大圆距离，方位为起点处的初始方位角，不包含道路或障碍物信息。定位与磁场误差会影响结果，不用于安全导航。地点默认保存在本机，可导入或导出本应用 JSON 文件。清除缓存或恢复默认设置不会删除；卸载应用将删除这些数据。"</string>
+    <string name="gps_059" formatted="false">"各地点按所设颜色显示，圆环标记所选目标，中心表示当前位置，外圈比例以所选目标的距离为准；未选择目标时按最远可见地点调整。超出外圈的其他地点以较小圆点显示在外圈上。可在地点管理中设置颜色及显示状态，点击图中地点可选为目标。方向传感器与最近定位有效时，图形随设备朝向旋转；否则真北向上。距离为地表大圆距离，方位为起点处的初始方位角，不包含道路或障碍物信息。定位与磁场误差会影响结果，不用于安全导航。地点保存在本机，可导入或导出本应用 JSON 文件。清除缓存或恢复默认设置不会删除；卸载应用将删除这些数据。"</string>
     <string name="gps_060" formatted="false">"路线"</string>
     <string name="gps_061" formatted="false">"导入"</string>
     <string name="gps_062" formatted="false">"导出"</string>
@@ -575,7 +575,7 @@
     <string name="gps_066" formatted="false">"开始绘制"</string>
     <string name="gps_067" formatted="false">"缩放"</string>
     <string name="gps_068" formatted="false">"路线缩放"</string>
-    <string name="gps_069" formatted="false">"查看 / 回放已保存路线"</string>
+    <string name="gps_069" formatted="false">"已保存路线"</string>
     <string name="gps_070" formatted="false">"跳到开头"</string>
     <string name="gps_071" formatted="false">"上一个记录点"</string>
     <string name="gps_072" formatted="false">"播放"</string>
@@ -585,7 +585,7 @@
     <string name="gps_076" formatted="false">"回放速度 · "</string>
     <string name="gps_077" formatted="false">" 个记录点/秒"</string>
     <string name="gps_078" formatted="false">"回放速度，1 至 20 个记录点每秒"</string>
-    <string name="gps_079" formatted="false">"单指拖动可平移路线，拖动缩放滑块可调整范围；最左端画框边长为 30 米，最右端为 10 千米。边缘刻度随缩放变化，缩放以路线框中心为基准，不支持双指缩放。点击记录点可查看序号、坐标和记录时刻。\n\n选择已保存路线后，首先预览路线；点击播放后从起点逐点显示。点击“跟随当前位置”后，回放时持续跟随橙色记录点，实时记录时跟随设备位置；再次点击或拖动画布可解除跟随。暂停时可逐点切换或跳转至首尾记录点，跳转后以该点为中心。\n\n默认每 5 秒记录一次定位结果，可在状态设置中调整为 2～60 秒；使用网络定位时，有效记录间隔不短于网络定位间隔。开始绘制前须开启持续定位并开始定位。未收到有效定位结果时暂停记录，恢复后继续。路线默认保存在本机，可导入或导出本应用 JSON 文件。"</string>
+    <string name="gps_079" formatted="false">"单指拖动可平移路线，拖动缩放滑块可调整范围；最左端画框边长为 30 米，最右端为 10 千米。边缘刻度随缩放变化，缩放以路线框中心为基准，不支持双指缩放。点击记录点可查看序号、坐标和记录时刻。\n\n选择已保存路线后，首先预览路线；点击播放后从起点逐点显示。点击“跟随当前位置”后，回放时持续跟随橙色记录点，实时记录时跟随设备位置；再次点击或拖动画布可解除跟随。暂停时可逐点切换或跳转至首尾记录点，跳转后以该点为中心。\n\n默认每 5 秒记录一次定位结果，可在状态设置中调整为 2～60 秒；使用网络定位时，有效记录间隔不短于网络定位间隔。开始绘制前须开启持续定位并开始定位。未收到有效定位结果时暂停记录，恢复后继续。路线保存在本机，可导入或导出本应用 JSON 文件。"</string>
     <string name="gps_080" formatted="false">"请先在状态设置中开启持续定位，并开始定位"</string>
     <string name="gps_081" formatted="false">"正在记录路线 · 等待定位点"</string>
     <string name="gps_082" formatted="false">"正在记录路线 · "</string>
@@ -595,7 +595,7 @@
     <string name="gps_086" formatted="false">"例如：晚间跑步"</string>
     <string name="gps_087" formatted="false">"保存路线"</string>
     <string name="gps_088" formatted="false">"本次路线共有 "</string>
-    <string name="gps_089" formatted="false">" 个记录点。输入名称后保存，也可以删除本次路线。路线默认保存在本机，可自行导入或导出。"</string>
+    <string name="gps_089" formatted="false">" 个记录点。"</string>
     <string name="gps_090" formatted="false">"未命名路线"</string>
     <string name="gps_091" formatted="false">"路线已保存 · "</string>
     <string name="gps_092" formatted="false">"删除"</string>
@@ -631,15 +631,15 @@
     <string name="gps_122" formatted="false">"相对湿度"</string>
     <string name="gps_123" formatted="false">"等待结果"</string>
     <string name="gps_124" formatted="false">"已在设置中隐藏所有传感器。"</string>
-    <string name="gps_125" formatted="false">"本应用以尽可能高的频率请求传感器数据，界面目标刷新间隔为 50 毫秒；实际频率取决于硬件和系统调度，无新数据时保留最近结果。设备未配备或系统未开放的传感器显示“设备未提供”。\n\n传感器坐标轴固定于设备自然方向，不随界面旋转：X 轴向右，Y 轴向上，Z 轴垂直屏幕向外。陀螺仪提供绕各轴的角速度，不直接提供转角；加速度计读数包含重力影响，可用于运动和倾斜检测；线性加速度传感器尽量去除重力影响，用于观察设备运动；重力传感器提供重力加速度估计值，用于姿态参考。\n\n下方电池栏目中的电池温度反映电池自身温度，与传感器中的环境温度不同。环境光可选择系统传感器或相机；相机读数为图像亮度样本，仅用于相对比较，不等同于经校准的照度值。"</string>
+    <string name="gps_125" formatted="false">"本应用以尽可能高的频率请求传感器数据，界面目标刷新间隔为 50 毫秒；实际频率取决于硬件和系统调度，无新数据时保留最近结果。设备未配备或系统未开放的传感器显示“设备未提供”。\n\n传感器坐标轴固定于设备自然方向，不随界面旋转：X 轴向右，Y 轴向上，Z 轴垂直屏幕向外。陀螺仪提供绕各轴的角速度，不直接提供转角；加速度计读数包含重力影响，可用于运动和倾斜检测；线性加速度传感器尽量去除重力影响，用于观察设备运动；重力传感器提供重力加速度估计值，用于姿态参考。\n\n下方电池栏目中的电池温度反映电池自身温度，与传感器中的环境温度不同。系统环境光传感器以照度表示读数。"</string>
     <string name="gps_126" formatted="false">"等待系统电池状态"</string>
     <string name="gps_127" formatted="false">"已在设置中隐藏所有电池信息。"</string>
     <string name="gps_128" formatted="false">"健康状态由 Android 系统提供，不代表实际剩余容量，也不构成电池安全保证。瞬时电流的正负号可在状态设置中调整，不同厂商定义不同。系统未提供的数据不显示为零。"</string>
     <string name="gps_129" formatted="false">"读取系统信息"</string>
     <string name="gps_130" formatted="false">"已在设置中隐藏所有设备信息。"</string>
     <string name="gps_131" formatted="false">"状态使用说明"</string>
-    <string name="gps_132" formatted="false">"指南针、传感器及电池信息仅在状态页处于前台时读取。已开始的卫星接收默认在切换栏目、锁屏或进入后台时暂停，返回后自动恢复；关闭自动继续选项后，须手动开始接收。\n\n如需离开状态页后持续定位，可在“设置 → 状态”中开启“切换栏目、锁屏和后台持续定位”，然后手动开始定位。运行期间可通过通知或状态页停止定位。未允许通知时，可通过系统活动应用管理查看服务。系统省电策略、权限变更或强制停止可能中断定位。\n\n水平和垂直定位误差由 Android 系统提供，通常对应约 68% 的置信水平，并非实际误差的上限保证。垂直误差表示高度方向的不确定范围；未提供时显示“未提供垂直精度”。海拔字段采用 WGS84 椭球高，不等同于以海平面为基准的正高。系统未返回高度时显示“未提供海拔”，不表示海拔为零。\n\n卫星硬件定位使用设备支持的卫星信号，应用无需联网；室内或遮挡环境可能无法获得有效结果。天空图仅显示设备实际报告的卫星，系统辅助定位可能使用网络。\n\n网络定位依赖系统网络位置服务及网络连接。系统可能向定位服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商的规则。设备未提供网络位置服务时，无法使用此方式。网络定位间隔为请求系统更新的最短间隔，实际更新可能延迟或复用已有结果。\n\n坐标采用 WGS84，按经度、纬度的顺序显示：E 为东经，W 为西经，N 为北纬，S 为南纬。应用不上传定位坐标；地震距离和地点方位均在本机计算。距上次定位的时间按定位结果的实际时刻计算。"</string>
-    <string name="gps_133" formatted="false">"本应用不读取设备序列号、IMEI、MAC 地址、已安装应用列表或通信内容。卫星图仅显示设备接收状态，不提供测绘底图、基站改正数据或无线电发射功能。权限及数据使用范围见“设置 → 关于 → 数据来源与隐私”。"</string>
+    <string name="gps_132" formatted="false">"指南针、系统传感器及电池信息仅在状态页处于前台时读取，相机采集按独立设置执行。已开始的卫星接收默认在切换栏目、锁屏或进入后台时暂停，返回后自动恢复；关闭自动继续选项后，须手动开始接收。\n\n如需离开状态页后持续定位，可在“设置 → 状态”中开启“切换栏目、锁屏和后台持续定位”，然后手动开始定位。运行期间可通过通知或状态页停止定位。未允许通知时，可通过系统活动应用管理查看服务。系统省电策略、权限变更或强制停止可能中断定位。\n\n水平和垂直定位误差由 Android 系统提供，通常对应约 68% 的置信水平，并非实际误差的上限保证。垂直误差表示高度方向的不确定范围；未提供时显示“未提供垂直精度”。海拔字段采用 WGS84 椭球高，不等同于以海平面为基准的正高。系统未返回高度时显示“未提供海拔”，不表示海拔为零。\n\n卫星硬件定位使用设备支持的卫星信号，应用无需联网；室内或遮挡环境可能无法获得有效结果。系统辅助定位可能使用网络。\n\n网络定位依赖系统网络位置服务及网络连接。系统可能向定位服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商的规则。设备未提供网络位置服务时，无法使用此方式。网络定位间隔为请求系统更新的最短间隔，实际更新可能延迟或复用已有结果。\n\n坐标采用 WGS84，按经度、纬度的顺序显示：E 为东经，W 为西经，N 为北纬，S 为南纬。应用不上传定位坐标；地震距离和地点方位均在本机计算。距上次定位的时间按定位结果的实际时刻计算。"</string>
+    <string name="gps_133" formatted="false">"本应用不读取设备序列号、IMEI、MAC 地址、已安装应用列表或通信内容。权限及数据使用范围见“设置 → 关于 → 数据来源与隐私”。"</string>
     <string name="gps_134" formatted="false">"打开手机定位设置"</string>
     <string name="gps_135" formatted="false">"打开应用权限设置"</string>
     <string name="gps_136" formatted="false">"定位方式已修改，卫星接收已停止"</string>
@@ -765,10 +765,10 @@
     <string name="main_042" formatted="false">"例如：杭州、海淀、Tokyo"</string>
     <string name="main_043" formatted="false">"搜索"</string>
     <string name="main_044" formatted="false">"我的地区"</string>
-    <string name="main_045" formatted="false">"请输入城市、区县或海外地区名称进行搜索。"</string>
+    <string name="main_045" formatted="false">"尚未输入搜索内容。"</string>
     <string name="main_046" formatted="false">"搜索其他地区"</string>
     <string name="main_047" formatted="false">"本地匹配"</string>
-    <string name="main_048" formatted="false">"输入地区名称后，点击“搜索”查询城市或区县。"</string>
+    <string name="main_048" formatted="false">"可点击“搜索”查询在线地区目录。"</string>
     <string name="main_049" formatted="false">"当前"</string>
     <string name="main_050" formatted="false">"请输入至少两个字符"</string>
     <string name="main_051" formatted="false">"正在查找“"</string>
@@ -842,8 +842,8 @@
     <string name="main_058" formatted="false">"早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。"</string>
     <string name="main_059" formatted="false">"缓存已清除"</string>
     <string name="main_060" formatted="false">"部分缓存未能删除，请重试"</string>
-    <string name="main_061" formatted="false">"\n\n天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n课程表、背景图片、收藏、地点、路线及最近定位保存在本机。应用不上传定位坐标；地震距离与地点方位在本机计算。网络定位及系统辅助定位可能由系统向服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商规则。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。"</string>
-    <string name="main_062" formatted="false">"状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息，仅在状态页处于前台时读取。开始卫星接收须获得精确定位权限，并同时启动当前位置更新；停止卫星接收后定位仍可独立运行，停止定位则同时停止卫星接收。卫星接收默认离开状态页后暂停，返回后恢复；关闭自动继续选项后，须再次手动开始。持续定位为独立选项，默认关闭；开启并手动开始后，通过前台服务运行，可在通知或状态页停止。\n\n本应用仅显示设备报告的卫星，不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。已保存地点、路线及目标选择默认存于本机，清除缓存或恢复默认设置会保留，卸载应用将删除。主动导出的 JSON 文件包含坐标、时间和名称，地点还包含颜色及显示状态；文件保存位置由用户通过系统选择器指定，云盘等提供方适用其自身隐私规则。导入在本机处理，不上传文件。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。"</string>
+    <string name="main_061" formatted="false">"天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。"</string>
+    <string name="main_062" formatted="false">"课程表、背景、收藏、地点、路线及最近定位保存在本机；地震距离、地点方位和配置导入也在本机处理，不上传这些资料。清除缓存或恢复默认设置会保留已保存地点、路线及目标选择，卸载应用将删除本机资料。\n\n状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息。卫星状态需精确定位权限，离开状态页后的接收行为按设置执行；持续定位须主动开启，以前台服务运行。系统网络定位及辅助定位可能向服务商发送 IP、基站或 Wi-Fi 信息，适用其规则。应用不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。\n\n相机环境光采集需相机权限，仅在内存中处理亮度样本，不保存或上传画面。可随时暂停采集以关闭摄像头；离开状态页后默认停止，允许后台采集时仍受系统限制。\n\n主动导出的 JSON 文件可能包含坐标、时刻、名称及其他个人配置；地点文件还包含颜色和显示状态。保存位置由系统文件选择器指定，云盘等提供方适用其自身隐私规则。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。"</string>
     <string name="main_063" formatted="false">"Open-Meteo · 天气数据来源"</string>
     <string name="main_064" formatted="false">"Open-Meteo · 使用条款与隐私"</string>
     <string name="main_065" formatted="false">"GeoNames · 地区数据来源"</string>
@@ -1062,7 +1062,7 @@
     <string name="settings_039" formatted="false">"手机上沿方向"</string>
     <string name="settings_040" formatted="false">"地平坐标系（默认）"</string>
     <string name="settings_041" formatted="false">"赤道坐标系（北天极居中）"</string>
-    <string name="settings_042" formatted="false">"默认手动选择显示的天体。按星等筛选时，仅显示不超过所设星等上限的内置天体，手动选择状态予以保留。太阳和月球始终显示，不参与筛选。"</string>
+    <string name="settings_042" formatted="false">"按星等筛选时，手动选择状态予以保留。太阳和月球始终显示，不参与筛选。"</string>
     <string name="settings_043" formatted="false">"手动选择（默认）"</string>
     <string name="settings_044" formatted="false">"按星等上限显示"</string>
     <string name="settings_045" formatted="false">"恒星 · 默认全部显示"</string>
@@ -1071,7 +1071,7 @@
     <string name="settings_048" formatted="false">"显示星等 ≤ %.1f"</string>
     <string name="settings_049" formatted="false">"默认星等上限为 6.0 等，范围为 −2.0～8.0 等，步长为 0.1 等。星等越小，天体越亮。筛选仅适用于内置天体，不代表完整星表，也不保证肉眼可见。行星使用所选时刻的估算星等；深空天体使用近似总视星等，其光分布在较大区域，总星等较小也可能难以观测。"</string>
     <string name="settings_050" formatted="false">"左侧图标表示白天，右侧表示夜间；最右侧的数为 WMO 天气电码。“电码”指气象业务编码表中的编号，“天气代码”指接口返回的字段。\n\nOpen-Meteo 文档仅列出部分 WMO 天气电码。本应用为这些代码提供图标，因此编号不连续，并非图标缺失。\n\n中文名称参照 WMO 英文电码表：57、67 分别为“中或大冻毛毛雨”“中或大冻雨”；雷暴类包括 95、96、97、99。预报代码可由模型计算，不等同于原始观测电码。\n\n“小或中雷暴伴冰雹”和“大雷暴伴冰雹”仅由提供相应冰雹预报的模型返回，例如 DWD ICON、UKMO；是否返回取决于模型及其覆盖范围。"</string>
-    <string name="settings_051" formatted="false">"“天气未知”是数据异常提示，没有对应的 WMO 电码。当天气代码缺失、为空、不是有效的非负整数，或本版本尚不支持该代码时，显示此提示及问号图标。正常返回本版本支持的代码时，不会出现此提示。"</string>
+    <string name="settings_051" formatted="false">"“天气未知”是数据异常提示，没有对应的 WMO 电码。当天气代码缺失、为空、不是有效的非负整数，或本版本尚不支持该代码时，显示此提示及问号图标。"</string>
     <string name="settings_052" formatted="false">"Open-Meteo · 官方代码文档"</string>
     <string name="settings_053" formatted="false">"WMO · 英文电码原文"</string>
     <string name="settings_054" formatted="false">"天气图例"</string>
@@ -1108,7 +1108,7 @@
     <string name="settings_085" formatted="false">"默认显示所有传感器。可取消勾选以停止本页读取对应传感器，使用箭头调整顺序；不影响系统或其他应用。"</string>
     <string name="settings_086" formatted="false">"传感器显示与排序"</string>
     <string name="settings_087" formatted="false">"默认显示全部信息。勾选可设置显示项目，使用箭头调整顺序。"</string>
-    <string name="settings_088" formatted="false">"默认按卫星系统排序；也可按载噪密度比从高到低排序，单位为 dB-Hz。卫星以系统名称和编号标识。"</string>
+    <string name="settings_088" formatted="false">"载噪密度比的单位为 dB-Hz。卫星以系统名称和编号标识。"</string>
     <string name="settings_089" formatted="false">"按卫星系统排序（默认）"</string>
     <string name="settings_090" formatted="false">"按载噪密度比从高到低"</string>
     <string name="settings_091" formatted="false">"卫星系统顺序"</string>
@@ -1187,12 +1187,12 @@
     <string name="status_places_008" formatted="false">"粉色"</string>
     <string name="status_places_009" formatted="false">"地点颜色"</string>
     <string name="status_places_010" formatted="false">"在地点图中显示"</string>
-    <string name="status_places_011" formatted="false">"暂无最近定位。点击“重新定位”可自动填写坐标。"</string>
+    <string name="status_places_011" formatted="false">"暂无最近定位。"</string>
     <string name="status_places_012" formatted="false">"最近定位距今 "</string>
     <string name="status_places_013" formatted="false">" 秒；"</string>
     <string name="status_places_014" formatted="false">"水平定位误差半径约 %.1f 米。"</string>
     <string name="status_places_015" formatted="false">"未提供精度。"</string>
-    <string name="status_places_016" formatted="false">"请确认坐标。"</string>
+    <string name="status_places_016" formatted="false">""</string>
     <string name="status_places_017" formatted="false">"重新定位"</string>
     <string name="status_places_018" formatted="false">"点击“重新定位”后，将使用新定位结果填写本表单经纬度；不会自动修改已保存地点。"</string>
     <string name="status_places_019" formatted="false">"保存地点"</string>

@@ -159,7 +159,25 @@ final class GpsScreen {
     private void setReplayEnabled(TextView b,boolean enabled){b.setEnabled(enabled);b.setAlpha(enabled?1f:.35f);}
     static final String[] SENSOR_NAMES={UiText.get("gps_113"),UiText.get("gps_114"),UiText.get("gps_115"),UiText.get("gps_116"),UiText.get("gps_117"),UiText.get("gps_118"),UiText.get("gps_119"),UiText.get("gps_120"),UiText.get("gps_121"),UiText.get("gps_122")};
     static final String[] UNITS={"rad/s","m/s²","m/s²","m/s²","μT","hPa","lx","cm","℃","%"};
-    private void sensorsCard(){LinearLayout c=card(UiText.get("settings_sensors"));java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_sensor_order",""),StatusHardware.TYPES.length);for(int index:order){int type=StatusHardware.TYPES[index];if(!a.preferences.getBoolean("status_sensor_show_"+type,true))continue;c.addView(a.text(SENSOR_NAMES[index],15,a.TITLE,true));a.gap(c,8);TextView data=a.text(UiText.get("gps_123"),14,a.MUTED,false);c.addView(data);sensorViews.put(type,data);android.hardware.Sensor s=hardware.sensor(type);if(s!=null&&!(index==6&&"camera".equals(a.preferences.getString("status_light_source","sensor")))){a.gap(c,5);c.addView(a.text(s.getName(),11,a.MUTED,false));}a.gap(c,16);}if(sensorViews.isEmpty())c.addView(a.text(UiText.get("gps_124"),14,a.MUTED,false));TextParagraphs.append(a,c,UiText.get("gps_125"),13,a.MUTED);TextParagraphs.append(a,c,a.getString(R.string.camera_exposure_note),13,a.MUTED);}
+    private TextView cameraToggle;
+    private void sensorsCard(){
+        cameraToggle=null;LinearLayout c=card(UiText.get("settings_sensors"));
+        boolean camera="camera".equals(a.preferences.getString("status_light_source","sensor"));
+        for(int index:DisplayOrder.parse(a.preferences.getString("status_sensor_order",""),StatusHardware.TYPES.length)){
+            int type=StatusHardware.TYPES[index];if(!a.preferences.getBoolean("status_sensor_show_"+type,true))continue;
+            c.addView(a.text(SENSOR_NAMES[index],15,a.TITLE,true));a.gap(c,8);
+            TextView data=a.text(UiText.get("gps_123"),14,a.MUTED,false);c.addView(data);sensorViews.put(type,data);
+            if(type==android.hardware.Sensor.TYPE_LIGHT&&camera){
+                a.gap(c,10);cameraToggle=a.button(a.getString(hardware.cameraPaused()?R.string.camera_resume:R.string.camera_pause),false,()->{
+                    hardware.toggleCamera();set(cameraToggle,a.getString(hardware.cameraPaused()?R.string.camera_resume:R.string.camera_pause));updateSensors();
+                });c.addView(cameraToggle);
+                a.gap(c,10);TextParagraphs.append(a,c,a.getString(R.string.camera_samples_note),13,a.MUTED);
+            }else{android.hardware.Sensor sensor=hardware.sensor(type);if(sensor!=null){a.gap(c,5);c.addView(a.text(sensor.getName(),11,a.MUTED,false));}}
+            a.gap(c,16);
+        }
+        if(sensorViews.isEmpty())c.addView(a.text(UiText.get("gps_124"),14,a.MUTED,false));
+        else TextParagraphs.append(a,c,UiText.get("gps_125"),13,a.MUTED);
+    }
     private void batteryCard(){LinearLayout c=card(UiText.get("settings_battery"));java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_battery_order",""),BATTERY_LABELS.length);for(int id:order){if(!a.preferences.getBoolean("status_battery_show_"+id,true))continue;c.addView(a.text(BATTERY_LABELS[id],12,a.MUTED,false));a.gap(c,6);TextView value=a.text(UiText.get("gps_126"),15,a.INK,true);batteryViews.put(id,value);c.addView(value);a.gap(c,16);}if(batteryViews.isEmpty())c.addView(a.text(UiText.get("gps_127"),14,a.MUTED,false));c.addView(a.text(UiText.get("gps_128"),13,a.MUTED,false));}
     private void deviceCard(){LinearLayout c=card(UiText.get("settings_device"));java.util.List<Integer> order=DisplayOrder.parse(a.preferences.getString("status_device_order",""),DEVICE_LABELS.length);for(int id:order){if(!a.preferences.getBoolean("status_device_show_"+id,true))continue;c.addView(a.text(DEVICE_LABELS[id],12,a.MUTED,false));a.gap(c,6);TextView value=a.text(UiText.get("gps_129"),14,a.INK,false);deviceViews.put(id,value);c.addView(value);a.gap(c,16);}if(deviceViews.isEmpty())c.addView(a.text(UiText.get("gps_130"),14,a.MUTED,false));}
     private void infoCard(){
@@ -171,6 +189,7 @@ final class GpsScreen {
     private boolean network(){return a.preferences.getString("location_provider","gps").equals("network");}
     private String mode(){return network()?UiText.get("earthquake_location_005"):UiText.get("earthquake_location_006");}
     void configurationChanged(){hardware.configurationChanged();lastSecond=-1;update();}
+    void destroy(){pause();hardware.shutdown();}
     void stopForImport(){pause();hardware.shutdown();LocationService.stop(a);}
     void modeChanged(){locationStarting=false;pendingPermission=false;pendingSatellite=false;LocationService.stop(a);hardware.stopGnss(UiText.get("gps_136"));}
     void intervalChanged(){if(LocationService.running)startService();}

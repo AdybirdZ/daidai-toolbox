@@ -147,7 +147,7 @@ final class EarthquakeScreen {
     private void dialog(String title,LinearLayout c){ScrollView s=new ScrollView(a);s.addView(c);new ToolDialog(a).setTitle(title).setView(s).setNegativeButton(UiText.get("action_back"),null).show();}
     private void action(LinearLayout c,String title,Runnable r){c.addView(a.button(title,false,r));a.gap(c,10);}
     private interface Choice {void select(int n);}
-    private void choose(String title,String[] labels,int selected,Choice callback){new SettingsScreen(a).singleChoice(title,title.equals(UiText.get("earthquake_092"))?a.getString(R.string.quake_sort_note):null,labels,selected,callback::select);}
+    private void choose(String title,String[] labels,int selected,Choice callback){new SettingsScreen(a).singleChoice(title,title.equals(UiText.get("earthquake_092"))?"":null,labels,selected,callback::select);}
     void settings(){
         LinearLayout c=form();action(c,UiText.get("earthquake_089"),()->choose(UiText.get("earthquake_089"),DAYS,dayIndex(),n->{p.edit().putInt("quake_days",DAY_VALUES[n]).apply();changed();}));
         action(c,UiText.get("earthquake_090"),this::areaSettings);

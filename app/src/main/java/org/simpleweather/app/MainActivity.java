@@ -359,6 +359,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_1215_title),getString(R.string.update_1215_detail));
         updateEntry(c,getString(R.string.update_1214_title),getString(R.string.update_1214_detail));
         updateEntry(c,getString(R.string.update_1213_title),getString(R.string.update_1213_detail));
         updateEntry(c,getString(R.string.update_1212_title),getString(R.string.update_1212_detail));
@@ -411,7 +412,8 @@ public class MainActivity extends Activity {
     String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,getString(R.string.about_version,versionName())+UiText.get("main_061"));
+        EarthquakeInfo.paragraph(this,content,getString(R.string.about_version,versionName()));
+        EarthquakeInfo.paragraph(this,content,UiText.get("main_061"));
         EarthquakeInfo.paragraph(this,content,UiText.get("main_062"));
         EarthquakeInfo.paragraph(this,content,getString(R.string.city_sources));
         EarthquakeInfo.append(this,content);
@@ -441,7 +443,7 @@ public class MainActivity extends Activity {
     @Override protected void onResume(){super.onResume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();else if(request==44)gps.notificationPermissionResult();else if(request==45)earthquakes.locationPermissionResult();else if(request==46)gps.satellitePermissionResult();else if(request==47)gps.placesPermissionResult();else if(request==48&&tab==2)refreshScreen();}
     @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){gps.fileResult(request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
-    @Override protected void onDestroy(){dead=true;if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.pause();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
+    @Override protected void onDestroy(){dead=true;if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.destroy();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }
 
 
