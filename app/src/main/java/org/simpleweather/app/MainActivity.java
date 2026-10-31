@@ -66,6 +66,7 @@ public class MainActivity extends Activity {
         }
         city=store.selected(catalog.get(0));data=store.cached(city);
         preferences=getSharedPreferences("toolbox",0);
+        applyKeepScreenAwake();
         if(preferences.getInt("settings_schema",0)<4){SharedPreferences.Editor e=preferences.edit();if(!preferences.contains("background_brightness"))e.putInt("background_brightness",100-Math.max(0,Math.min(100,preferences.getInt("shade",80))));if(preferences.getInt("radar_region",0)>7)e.putInt("radar_region",0);if(preferences.getInt("map_product",0)==4)e.putInt("map_product",0);e.remove("shade").putInt("settings_schema",4).apply();}
         if(preferences.getInt("star_names_schema",0)<1){String[][] renamed={{UiText.raw("identity_main_002"),UiText.raw("identity_astronomy_036")},{UiText.raw("identity_main_003"),UiText.raw("identity_astronomy_042")},{UiText.raw("identity_main_004"),UiText.raw("identity_astronomy_050")}};SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_star_"+pair[0],newKey="astro_star_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);}e.putInt("star_names_schema",1).apply();}
         if(preferences.getInt("deep_names_schema",0)<1){
@@ -135,6 +136,7 @@ public class MainActivity extends Activity {
     int buttonSecondaryColor(){return UiColors.pale(this,UiColors.BUTTON);}
     int buttonSecondaryText(){return buttonPrimaryColor();}
     void applyTheme(){ToolDialog.refresh(this);refreshScreen();}
+    void applyKeepScreenAwake(){if(preferences!=null&&preferences.getBoolean("keep_screen_awake",false))getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);}
     void markLink(TextView view){boolean button="theme-secondary".equals(view.getTag())||"theme-primary".equals(view.getTag());UiColors.mark(view,UiColors.LINK);if(button){view.setTag("theme-link-button");view.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x22000000),shape(UiColors.pale(this,UiColors.LINK),16),null));}}
     int resolveTextColor(int color){if(color==TITLE)return titleTextColor();if(color==INK)return primaryTextColor();if(color==MUTED)return secondaryTextColor();if(color==BLUE)return accentColor();if(color==WHITE)return buttonPrimaryText();return color;}
     ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
@@ -361,6 +363,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_131_title),getString(R.string.update_131_detail));
         updateEntry(c,getString(R.string.update_130_title),getString(R.string.update_130_detail));
         updateEntry(c,getString(R.string.update_1215_title),getString(R.string.update_1215_detail));
         updateEntry(c,getString(R.string.update_1214_title),getString(R.string.update_1214_detail));
@@ -446,7 +449,7 @@ public class MainActivity extends Activity {
     @Override protected void onResume(){super.onResume();if(randomChoice!=null&&tab==6)randomChoice.resume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();else if(request==44)gps.notificationPermissionResult();else if(request==45)earthquakes.locationPermissionResult();else if(request==46)gps.satellitePermissionResult();else if(request==47)gps.placesPermissionResult();else if(request==48&&tab==2)refreshScreen();}
     @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){gps.fileResult(request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
-    @Override protected void onDestroy(){dead=true;if(randomChoice!=null)randomChoice.pause();if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.destroy();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
+    @Override protected void onDestroy(){dead=true;if(randomChoice!=null)randomChoice.pause();if(gps!=null)gps.prepareNextLaunch();if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.destroy();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }
 
 

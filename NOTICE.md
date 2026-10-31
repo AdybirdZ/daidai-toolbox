@@ -113,6 +113,11 @@ Camera2 用于读取本机相机 Y 平面相对亮度，支持时固定曝光时
 
 紫外线指数仍来自 Open-Meteo 原有字段。防护说明由本项目编写，参考 [EPA 紫外线指数指南](https://www.epa.gov/sites/default/files/documents/uviguide.pdf) 及 [CDC 防晒建议](https://www.cdc.gov/skin-cancer/sun-safety/index.html)，不包含其图像或其他第三方素材。说明不是个体化医疗判断，来源及估算边界见 docs/DATA-LICENSE.md。
 
-## Random selection in 1.3.0
+## Random draw in 1.3.0
 
 Uses the platform java.security.SecureRandom implementation and an independently written partial Fisher–Yates sampler. No external library, online random service, visual asset or additional dataset is incorporated. Candidate lists and draw state remain local unless the user exports them through the system document picker.
+
+
+## Random draw in 1.3.1
+
+The remaining-items view only reports the current local candidate pool and does not add a network source or external library. Saved-list action buttons and their dialogs are local interface behavior. The Keep screen awake option uses Android window flags while the app is in the foreground; it does not request battery-optimization exemption or provide background execution.

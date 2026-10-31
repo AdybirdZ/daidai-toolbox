@@ -188,6 +188,7 @@ final class GpsScreen {
     private String mode(){return network()?UiText.get("earthquake_location_005"):UiText.get("earthquake_location_006");}
     void configurationChanged(){hardware.configurationChanged();lastSecond=-1;update();}
     void destroy(){pause();hardware.shutdown();}
+    void prepareNextLaunch(){hardware.prepareNextLaunch();}
     void stopForImport(){pause();hardware.shutdown();LocationService.stop(a);}
     void modeChanged(){locationStarting=false;pendingPermission=false;pendingSatellite=false;LocationService.stop(a);hardware.stopGnss(UiText.get("gps_136"));}
     void intervalChanged(){if(LocationService.running)startService();}

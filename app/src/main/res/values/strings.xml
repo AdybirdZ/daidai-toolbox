@@ -36,7 +36,7 @@
     <string name="config_export_failed">无法导出配置，请检查数据、存储空间及目标文件权限</string>
     <string name="config_exported">配置已导出</string>
     <string name="config_import_invalid">无法导入：文件格式、版本或内容无效，或超过 40 MB。原有数据未修改。</string>
-    <string name="config_import_summary">文件包含 %1$d 个收藏地区、%2$d 个地点、%3$d 条路线、%4$d 门课程和 %5$d 份随机选择名单。导入将覆盖现有配置及文件包含的资料；旧版文件未包含的随机选择资料予以保留。</string>
+    <string name="config_import_summary">文件包含 %1$d 个收藏地区、%2$d 个地点、%3$d 条路线、%4$d 门课程和 %5$d 份随机抽取名单。导入将覆盖现有配置及文件包含的资料；旧版文件未包含的随机抽取资料予以保留。</string>
     <string name="config_background_replace">\n\n背景图片也将按文件内容恢复。</string>
     <string name="config_background_legacy">\n\n旧版配置文件未包含背景图片，当前背景将保留。</string>
     <string name="config_import_warning">\n\n定位及相机的后台持续运行将关闭，Wolfx 数据源须在本机重新阅读说明后启用。权限、最近定位、缓存及接口限流记录不从文件恢复。是否继续？</string>
@@ -63,7 +63,7 @@
     <string name="settings_reset_done">已恢复默认设置</string>
     <string name="settings_bottom_tabs">底部栏目</string>
     <string name="settings_cache">缓存管理</string>
-    <string name="settings_reset_description">恢复全局设置、栏目设置、定位方式、课程信息前缀、学期和上课时间等默认设置。已保存的课程、地点、路线、随机选择名单、收藏地区及天气缓存不受影响。若已有课程超出默认周次或节次范围，将保留所需范围及对应上课时间。</string>
+    <string name="settings_reset_description">恢复全局设置、栏目设置、定位方式、课程信息前缀、学期和上课时间等默认设置。已保存的课程、地点、路线、随机抽取名单、收藏地区及天气缓存不受影响。若已有课程超出默认周次或节次范围，将保留所需范围及对应上课时间。</string>
     <string name="sky_objects_note">只绘制地平线上方的天体；白天仅作方位示意。点击天体中心查看详情；旋转的断开十字表示选中。</string>
     <string name="sky_aim_note">对准天空仅适用于地平坐标系和不显示坐标网格模式。星图保持固定，红色实体十字标示设备指向在天球上的位置；指向地平线下方时不显示。默认采用外置相机朝向，也可在天文设置中选择手机上沿方向。方向由旋转矢量传感器计算，并按所选地区估算磁偏角修正为真北；应选择实际观测地区。结果受磁场、传感器精度和设备坐标影响，仅作观测辅助，不用于导航。</string>
     <string name="camera_unavailable">相机亮度采样不可用，请检查权限及摄像头状态</string>
@@ -123,7 +123,7 @@
     <string name="order_separator">"、"</string>
     <string name="order_sections_note">默认显示全部栏目。勾选可设置显示项目，使用箭头调整顺序。</string>
     <string name="order_weather_note">默认显示全部栏目。勾选可设置显示项目，使用箭头调整顺序；天气数据旁的来源署名始终保留。</string>
-    <string name="order_tabs_note">默认显示天气、课程表、状态、地震和随机选择。至少保留一个栏目；仅显示一个栏目时隐藏底栏，显示五个及以上栏目时使用左右箭头翻页。</string>
+    <string name="order_tabs_note">默认显示天气、课程表、状态、地震和随机抽取。至少保留一个栏目；仅显示一个栏目时隐藏底栏，显示五个及以上栏目时使用左右箭头翻页。</string>
     <string name="quake_sort_note">默认排序为：按发生时刻从新到旧。</string>
     <string name="saved_order_note">"默认按添加顺序排列。可用“上移”“下移”调整顺序；编辑不会改变位置。"</string>
     <string name="update_1214_title">1.2.14 · 星图交互与设置规范</string>
@@ -160,7 +160,7 @@
     <string name="battery_unit_mah">毫安时 · mAh</string>
     <string name="battery_raw_values">系统原始读数（打开页面时）\n电流：%1$s\n电荷：%2$s</string>
     <string name="battery_units_note">Android 标准单位为微安、微安时，应用将其换算为毫安、毫安时。部分设备可能采用不同单位；请分别确认电流和电荷的返回单位后调整，不能仅凭品牌或数值大小判断。设置只改变换算，不校准硬件；若系统未提供可信读数，调整单位也不能恢复真实值。</string>
-    <string name="tab_random">随机选择</string>
+    <string name="tab_random">随机抽取</string>
     <string name="random_candidates">候选内容</string>
     <string name="random_quantity">抽取数量</string>
     <string name="random_start">开始抽取</string>
@@ -192,8 +192,19 @@
     <string name="random_remove">连续抽取时排除已抽取项</string>
     <string name="random_animation">文字轮换动画</string>
     <string name="random_settings_note">默认不排除已抽取项，开启动画。排除开启后，仅从当前名单中尚未抽中的内容抽取；数量不足时须减少抽取数量或重置进度。载入名单会重置进度。动画仅用于展示，不影响结果；关闭系统动画时直接显示结果。名单、草稿和结果仅保存在本机，并纳入完整配置导入导出。</string>
-    <string name="random_restore_failed">随机选择资料无法读取，请尝试导入此前导出的完整配置。</string>
-    <string name="random_save_failed">随机选择资料未能保存</string>
-    <string name="update_130_title">1.3.0 · 随机选择</string>
-    <string name="update_130_detail">新增随机选择栏目，可输入候选内容、设置抽取数量、保存和载入名单。支持连续抽取时排除已抽取项、重置进度及复制结果。\n\n提供可关闭的文字轮换减速动画，使用系统安全随机源进行不重复抽样。草稿、结果、名单与进度保存在本机，纳入完整配置导入导出，并兼容旧版配置文件。</string>
+    <string name="random_restore_failed">随机抽取资料无法读取，请尝试导入此前导出的完整配置。</string>
+    <string name="random_save_failed">随机抽取资料未能保存</string>
+    <string name="update_130_title">1.3.0 · 随机抽取</string>
+    <string name="update_130_detail">新增随机抽取栏目，可输入候选内容、设置抽取数量、保存和载入名单。支持连续抽取时排除已抽取项、重置进度及复制结果。\n\n提供可关闭的文字轮换减速动画，使用系统安全随机源进行不重复抽样。草稿、结果、名单与进度保存在本机，纳入完整配置导入导出，并兼容旧版配置文件。</string>
+    <string name="keep_screen_awake_title">禁止系统休眠</string>
+    <string name="keep_screen_awake_note">开启后，应用处于前台时请求系统保持屏幕亮起；离开应用或关闭此选项后恢复系统默认休眠策略。此设置不会保持后台运行。</string>
+    <string name="update_131_title">1.3.1 · 随机抽取与屏幕设置</string>
+    <string name="update_131_detail">新增禁止系统休眠设置。完全退出应用后重新进入时，如果环境光使用相机采集，将默认暂停相机采集，需在状态页面手动恢复。
+
+修正多项抽取同时播放动画时只显示一个候选内容的问题，动画现在按最终抽取数量同时轮换多个内容；栏目名称统一为“随机抽取”。名单操作改为有间距的按钮，避免对话框切换闪烁；重命名输入框打开时即显示浅色背景。复制结果、重置进度与立即显示结果之间增加间距。新增查看剩余内容按钮，并将保存名单与已保存名单放在同一行。</string>
+    <string name="random_remaining">查看剩余内容</string>
+    <string name="random_remaining_title">剩余内容</string>
+    <string name="random_remaining_count">尚有 %1$d 项未抽取</string>
+    <string name="random_remaining_empty">当前没有未抽取内容</string>
+    <string name="random_remaining_note">这里显示当前候选内容中尚未抽到的项目。修改候选内容后，抽取进度会在下一次抽取时重新建立。</string>
 </resources>

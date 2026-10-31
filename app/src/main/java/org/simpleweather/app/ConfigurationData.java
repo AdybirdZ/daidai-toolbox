@@ -15,7 +15,7 @@ final class ConfigurationData {
         int places,routes,courses,regions,lists;
     }
     private static final Set<String> BOOLEAN=new HashSet<>(Arrays.asList(
-        "random_remove_drawn","random_animation","astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
+        "random_remove_drawn","random_animation","keep_screen_awake","astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
         "location_continuous","status_true_north","status_battery_reverse_current","course_name_prefix","course_teacher_prefix","status_satellite_rotate","status_receive_pause","status_camera_background","quake_source_Wolfx"));
     private static final Set<String> INTEGER=new HashSet<>(Arrays.asList(
         "status_camera_iso","status_camera_exposure_ms","status_camera_outdoor_iso","status_camera_outdoor_exposure_ms","ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color","theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",

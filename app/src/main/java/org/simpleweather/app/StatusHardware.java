@@ -28,7 +28,7 @@ final class StatusHardware implements SensorEventListener {
         boolean validAngles(){return StatusMath.satelliteAngles(elevation,azimuth);}
         boolean plotted(){return validAngles()&&elevation>=0;}
     }
-    StatusHardware(MainActivity a){this.a=a;sensors=(SensorManager)a.getSystemService(Context.SENSOR_SERVICE);locations=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);}
+    StatusHardware(MainActivity a){this.a=a;sensors=(SensorManager)a.getSystemService(Context.SENSOR_SERVICE);locations=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);if(a.preferences.getBoolean("status_camera_pause_on_launch",false)){cameraPaused=true;a.preferences.edit().remove("status_camera_pause_on_launch").apply();}}
     Sensor sensor(int type){return sensors==null?null:sensors.getDefaultSensor(type);}
     private boolean compassWanted,allSensorsWanted,cameraWanted;private String cameraFacing="";private int cameraIso,cameraExposure,cameraOutdoorIso,cameraOutdoorExposure;private boolean cameraPaused;
     void resume(boolean compass,boolean allSensors){
@@ -46,6 +46,7 @@ final class StatusHardware implements SensorEventListener {
         if(cameraReader!=null){cameraReader.stop();cameraReader=null;}
         if(!cameraPaused&&active&&cameraWanted)startCamera();
     }
+    void prepareNextLaunch(){if("camera".equals(a.preferences.getString("status_light_source","sensor")))a.preferences.edit().putBoolean("status_camera_pause_on_launch",true).apply();}
     int sensorDelay(){return SensorManager.SENSOR_DELAY_FASTEST;}
     boolean sensorEnabled(int type){return a.preferences.getBoolean("status_sensor_show_"+type,true);}
     void shutdown(){pause(false);if(cameraReader!=null){cameraReader.stop();cameraReader=null;}}
