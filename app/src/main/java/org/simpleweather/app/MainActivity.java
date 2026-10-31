@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class MainActivity extends Activity {
+    @Override protected void attachBaseContext(android.content.Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     static final int TITLE=0xFF010102;
     static final int BG=0xFFF5F7FB, WHITE=Color.WHITE, INK=0xFF20324C, MUTED=0xFF718097, BLUE=0xFF246BCE, PALE=0xFFEAF2FF;
     private final ExecutorService workers=Executors.newFixedThreadPool(2);
@@ -51,11 +52,13 @@ public class MainActivity extends Activity {
     private boolean picking, loading, dead;
     private String notice="";
     private int searchVersion;
+    private int reopenSettings;
     private int cacheGeneration;
     private boolean deferMapReload;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        if(state!=null)reopenSettings=state.getInt("toolbox_language_settings",0);
         configuration=new ConfigurationTransfer(this);
         getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
@@ -77,6 +80,7 @@ public class MainActivity extends Activity {
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=state==null?preferences.getInt("last_tab",0):state.getInt("toolbox_tab",preferences.getInt("last_tab",0));if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));navigationOffset=state.getInt("toolbox_navigation",0);pendingScrollY=state.getInt("toolbox_scroll",0);}if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);if(getIntent().getBooleanExtra("configuration_applied",false)){tab=0;getIntent().removeExtra("configuration_applied");}switchTab(tab);load(false);
+        if(reopenSettings>0){int level=reopenSettings;reopenSettings=0;new SettingsScreen(this).settingsPath(level==2);}
         if(preferences.getInt("seen_version",0)<versionCode())main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",versionCode()).apply();}},700);
     }
     int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
@@ -337,6 +341,12 @@ public class MainActivity extends Activity {
     void switchTab(int next){hideKeyboard();if(randomChoice!=null)randomChoice.pause();if(next!=2)gps.stopForNavigation();if(earthquakes!=null)earthquakes.pause();tab=next;List<Integer> items=visibleTabs();if(items.size()>=5){int pos=items.indexOf(tab);if(pos<navigationOffset)navigationOffset=pos;else if(pos>=navigationOffset+3)navigationOffset=pos-2;}picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==0)showWeather();else{startScreen();if(next==1)schedule.render();else if(next==2)gps.render();else if(next==3){maps=new MapScreen(this);maps.render(!deferMapReload);deferMapReload=false;}else if(next==4)new AstronomyScreen(this,city,data,astronomyTime,this::showAstronomy).render();else if(next==5)earthquakes.render();else if(next==6)randomChoice.render();}}
     void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
+    void changeLanguage(String choice){
+        if(AppLanguage.choice(this).equals(choice))return;
+        if(randomChoice!=null)randomChoice.flush();
+        reopenSettings=2;preferences.edit().putString(LanguagePolicy.KEY,choice).apply();
+        ToolDialog.closeAll();LocationService.languageChanged();recreate();
+    }
     void settings(){new SettingsScreen(this).show();}
     void exportConfiguration(){randomChoice.flush();configuration.exportFile();}
     void importConfiguration(){configuration.importFile();}
@@ -349,7 +359,7 @@ public class MainActivity extends Activity {
     String versionName(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(Exception e){return "—";}}
     private int versionCode(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionCode;}catch(Exception e){return 0;}}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",versionCode()).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();}
+    void restoreDefaults(){boolean languageChanged=!AppLanguage.choice(this).equals("system");gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",versionCode()).apply();schedule.resetSettings();navigationOffset=0;tab=0;resetBackground();if(languageChanged){reopenSettings=1;ToolDialog.closeAll();LocationService.languageChanged();recreate();}}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
@@ -363,6 +373,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_200_title),getString(R.string.update_200_detail));
         updateEntry(c,getString(R.string.update_132_title),getString(R.string.update_132_detail));
         updateEntry(c,getString(R.string.update_131_title),getString(R.string.update_131_detail));
         updateEntry(c,getString(R.string.update_130_title),getString(R.string.update_130_detail));
@@ -440,7 +451,7 @@ public class MainActivity extends Activity {
         if(body!=null)body.requestLayout();if(gps!=null)gps.configurationChanged();
     }
     @Override protected void onSaveInstanceState(Bundle state){
-        if(randomChoice!=null)randomChoice.flush();state.putInt("toolbox_tab",tab);state.putInt("toolbox_navigation",navigationOffset);
+        if(randomChoice!=null)randomChoice.flush();state.putInt("toolbox_language_settings",reopenSettings);state.putInt("toolbox_tab",tab);state.putInt("toolbox_navigation",navigationOffset);
         state.putInt("toolbox_scroll",pageScroll==null?0:pageScroll.getScrollY());state.putLong("toolbox_astro_time",astronomyTime.toEpochMilli());
         if(earthquakes!=null)earthquakes.saveState(state);super.onSaveInstanceState(state);
     }

@@ -3,7 +3,7 @@ import argparse,os,shutil,subprocess,zipfile
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
 workspace=root.parent
-parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','Release130UiTests','EnglishPreviewUiTests'],default='StatusUiTests');opts=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','Release130UiTests','EnglishPreviewUiTests','LanguageUiTests'],default='StatusUiTests');parser.add_argument('--language',choices=['zh-CN','en'],default='zh-CN');opts=parser.parse_args()
 if not opts.serial.startswith('emulator-'):raise SystemExit('Use an isolated Android emulator, not a personal device.')
 sdk=workspace/'tools/android-sdk';tools=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar'
 java_dir=Path(shutil.which('javac')).parent
@@ -24,6 +24,7 @@ run([tools/'zipalign.exe','-f','4',unsigned,aligned])
 run([java_dir/'java.exe','-jar',tools/'lib/apksigner.jar','sign','--ks',root/'.signing/development.jks','--ks-key-alias','simpleweather','--ks-pass','pass:android','--key-pass','pass:android','--out',apk,aligned])
 adb=sdk/'platform-tools/adb.exe'
 run([adb,'-s',opts.serial,'install','-r',apk])
-result=run([adb,'-s',opts.serial,'shell','am','instrument','-w','org.simpleweather.qa/org.simpleweather.qa.'+opts.suite],capture_output=True,text=True,encoding='utf-8')
+result=run([adb,'-s',opts.serial,'shell','am','instrument','-w','-e','language',opts.language,'org.simpleweather.qa/org.simpleweather.qa.'+opts.suite],capture_output=True,text=True,encoding='utf-8')
+(out/("result-"+opts.language+".txt")).write_text(result.stdout,encoding="utf-8")
 print(result.stdout)
 if 'PASS:' not in result.stdout or 'FAIL:' in result.stdout:raise SystemExit('Native regression checks failed')

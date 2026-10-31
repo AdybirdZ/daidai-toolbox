@@ -14,11 +14,11 @@ import java.util.*;
 import java.util.concurrent.*;
 
 final class EarthquakeScreen {
-    static final String[] SECTION_NAMES={UiText.get("earthquake_001"),UiText.get("earthquake_002"),UiText.get("earthquake_003")};
-    static final String[] DAYS={UiText.get("earthquake_004"),UiText.get("earthquake_005"),UiText.get("earthquake_006"),UiText.get("earthquake_007")};
+    static String[] sectionNames(){return new String[]{UiText.get("earthquake_001"),UiText.get("earthquake_002"),UiText.get("earthquake_003")};}
+    static String[] dayNames(){return new String[]{UiText.get("earthquake_004"),UiText.get("earthquake_005"),UiText.get("earthquake_006"),UiText.get("earthquake_007")};}
     static final int[] DAY_VALUES={1,3,7,30};
-    static final String[] AREAS={UiText.get("earthquake_008"),UiText.get("earthquake_009"),UiText.get("earthquake_010")};
-    static final String[] SORTS={UiText.get("earthquake_011"),UiText.get("earthquake_012"),UiText.get("earthquake_013")};
+    static String[] areas(){return new String[]{UiText.get("earthquake_008"),UiText.get("earthquake_009"),UiText.get("earthquake_010")};}
+    static String[] sorts(){return new String[]{UiText.get("earthquake_011"),UiText.get("earthquake_012"),UiText.get("earthquake_013")};}
     private final MainActivity a;
     private final SharedPreferences p,limits;
     private final EarthquakeCache cache;
@@ -49,9 +49,9 @@ final class EarthquakeScreen {
     private boolean enabled(String source){return source.equals("Wolfx")?p.getBoolean("quake_wolfx_ack_112",false)&&p.getBoolean("quake_source_Wolfx",false):p.getBoolean("quake_source_"+source,true);}
     void render(){
         visible=true;statusBox=null;listBox=null;summary=null;refresh=null;referenceText=null;locationControls=null;
-        for(int section:DisplayOrder.parse(p.getString("quake_order",""),SECTION_NAMES.length)){
+        for(int section:DisplayOrder.parse(p.getString("quake_order",""),sectionNames().length)){
             if(!p.getBoolean("quake_show_"+section,true))continue;
-            LinearLayout c=a.card();c.addView(a.text(SECTION_NAMES[section],17,a.TITLE,true));a.gap(c,12);
+            LinearLayout c=a.card();c.addView(a.text(sectionNames()[section],17,a.TITLE,true));a.gap(c,12);
             if(section==0)controls(c);
             else if(section==1){statusBox=a.column();c.addView(statusBox);}
             else if(section==2){listBox=a.column();c.addView(listBox);}
@@ -66,7 +66,7 @@ final class EarthquakeScreen {
         refresh=a.button(inFlight.isEmpty()?UiText.get("earthquake_014"):UiText.get("earthquake_015"),true,()->refresh(true));c.addView(refresh);
         locationControls=a.column();c.addView(locationControls);updateLocationControls();
     }
-    private void updateControls(){if(summary!=null)summary.setText(UiText.get("earthquake_016")+days()+UiText.get("earthquake_017")+AREAS[area()].replace(UiText.get("color_default_suffix"),"")+(area()==2?" · "+p.getInt("quake_radius",1000)+" km":"")+UiText.get("earthquake_018")+String.format(Locale.ROOT,"%.1f",global())+UiText.get("earthquake_019")+String.format(Locale.ROOT,"%.1f",regional())+"\n"+SORTS[sort()].replace(UiText.get("color_default_suffix"),""));}
+    private void updateControls(){if(summary!=null)summary.setText(UiText.get("earthquake_016")+days()+UiText.get("earthquake_017")+areas()[area()].replace(UiText.get("color_default_suffix"),"")+(area()==2?" · "+p.getInt("quake_radius",1000)+" km":"")+UiText.get("earthquake_018")+String.format(Locale.ROOT,"%.1f",global())+UiText.get("earthquake_019")+String.format(Locale.ROOT,"%.1f",regional())+"\n"+sorts()[sort()].replace(UiText.get("color_default_suffix"),""));}
     private void updateLocationControls(){if(locationControls==null)return;locationControls.removeAllViews();if(!p.getBoolean("quake_manual_location",false)){a.gap(locationControls,10);locationControls.addView(a.button(UiText.get("earthquake_020"),false,()->location.start()));}}
     private void updateReference(){if(referenceText!=null)referenceText.setText(referenceLabel()+(location.status.isEmpty()?"":"\n"+location.status));}
     private String referenceKey(){double[] ref=reference();Location l=LocationService.last(a);return Arrays.toString(ref)+":"+(l==null?0:l.getTime());}
@@ -149,11 +149,11 @@ final class EarthquakeScreen {
     private interface Choice {void select(int n);}
     private void choose(String title,String[] labels,int selected,Choice callback){new SettingsScreen(a).singleChoice(title,title.equals(UiText.get("earthquake_092"))?"":null,labels,selected,callback::select);}
     void settings(){
-        LinearLayout c=form();action(c,UiText.get("earthquake_089"),()->choose(UiText.get("earthquake_089"),DAYS,dayIndex(),n->{p.edit().putInt("quake_days",DAY_VALUES[n]).apply();changed();}));
+        LinearLayout c=form();action(c,UiText.get("earthquake_089"),()->choose(UiText.get("earthquake_089"),dayNames(),dayIndex(),n->{p.edit().putInt("quake_days",DAY_VALUES[n]).apply();changed();}));
         action(c,UiText.get("earthquake_090"),this::areaSettings);
         action(c,UiText.get("earthquake_091"),this::magnitudeSettings);
 
-        action(c,UiText.get("earthquake_092"),()->choose(UiText.get("earthquake_092"),SORTS,sort(),n->{p.edit().putInt("quake_sort",n).apply();changed();}));
+        action(c,UiText.get("earthquake_092"),()->choose(UiText.get("earthquake_092"),sorts(),sort(),n->{p.edit().putInt("quake_sort",n).apply();changed();}));
         action(c,UiText.get("earthquake_093"),()->choose(UiText.get("earthquake_094"),new String[]{UiText.get("action_close"),UiText.get("earthquake_095"),UiText.get("earthquake_096"),UiText.get("earthquake_097"),UiText.get("earthquake_098")},index(new int[]{0,300000,900000,1800000,3600000},(int)p.getLong("quake_interval",900000)),n->{p.edit().putLong("quake_interval",new long[]{0,300000,900000,1800000,3600000}[n]).apply();changed();}));
         action(c,UiText.get("earthquake_099"),this::referenceSettings);action(c,UiText.get("earthquake_100"),this::fields);action(c,UiText.get("earthquake_101"),()->new SettingsScreen(a).earthquakeOrder());action(c,UiText.get("earthquake_102"),this::sources);action(c,UiText.get("earthquake_info_038"),()->EarthquakeInfo.terms(a));action(c,UiText.get("earthquake_103"),()->new ToolDialog(a).setTitle(UiText.get("earthquake_104")).setMessage(UiText.get("earthquake_105")).setPositiveButton(UiText.get("earthquake_106"),(d,n)->{a.toast(clear()?UiText.get("earthquake_107"):UiText.get("earthquake_108"));}).setNegativeButton(UiText.get("action_cancel"),null).show());
         dialog(UiText.get("earthquake_109"),c);
@@ -166,7 +166,7 @@ final class EarthquakeScreen {
     }
     private void areaSettings(){
         LinearLayout c=form();
-        RadioGroup group=new RadioGroup(a);for(int i=0;i<AREAS.length;i++){RadioButton b=new RadioButton(a);b.setId(200+i);b.setText(AREAS[i]);b.setMinHeight(a.dp(48));group.addView(b);}group.check(200+area());c.addView(group);
+        RadioGroup group=new RadioGroup(a);for(int i=0;i<areas().length;i++){RadioButton b=new RadioButton(a);b.setId(200+i);b.setText(areas()[i]);b.setMinHeight(a.dp(48));group.addView(b);}group.check(200+area());c.addView(group);
         LinearLayout nearby=a.column();a.gap(nearby,12);nearby.addView(a.text(UiText.get("earthquake_114"),14,a.INK,true));EditText radius=new EditText(a);radius.setSingleLine(true);radius.setInputType(InputType.TYPE_CLASS_NUMBER);radius.setText(Integer.toString(p.getInt("quake_radius",1000)));radius.setContentDescription(UiText.get("earthquake_115"));nearby.addView(radius);a.gap(nearby,10);nearby.addView(a.button(UiText.get("earthquake_116"),false,()->{int n=EarthquakeOptions.radius(radius.getText().toString());if(n<0){radius.setError(UiText.get("earthquake_117"));return;}p.edit().putInt("quake_radius",n).apply();changed();a.toast(UiText.get("earthquake_118"));}));nearby.setVisibility(area()==2?View.VISIBLE:View.GONE);c.addView(nearby);
         group.setOnCheckedChangeListener((g,id)->{p.edit().putInt("quake_area",id-200).apply();nearby.setVisibility(id==202?View.VISIBLE:View.GONE);changed();});a.gap(c,12);TextParagraphs.append(a,c,UiText.get("earthquake_113"),13,a.MUTED);dialog(UiText.get("earthquake_090"),c);
     }
@@ -181,7 +181,7 @@ final class EarthquakeScreen {
     private void toggle(LinearLayout c,String name,String key,boolean def){CheckBox b=new CheckBox(a);b.setText(name);b.setChecked(p.getBoolean(key,def));b.setOnCheckedChangeListener((v,on)->{p.edit().putBoolean(key,on).apply();changed();});c.addView(b,a.lp(-1,52));}
     private void sources(){LinearLayout c=form();for(String source:EarthquakeData.SOURCES){
         CheckBox b=new CheckBox(a);b.setText(EarthquakeData.sourceName(source)+(source.equals("Wolfx")?"":source.equals("USGS")?UiText.get("earthquake_137"):" · CC BY 4.0"));b.setChecked(enabled(source));boolean[] updating={false};
-        b.setOnCheckedChangeListener((v,on)->{if(updating[0])return;if(source.equals("Wolfx")&&on){updating[0]=true;b.setChecked(false);updating[0]=false;new ToolDialog(a).setTitle(UiText.get("earthquake_138")).setView(TextParagraphs.notice(a,EarthquakeInfo.WOLFX_NOTICE)).setPositiveButton(UiText.get("earthquake_139"),(d,n)->{p.edit().putBoolean("quake_wolfx_ack_112",true).putBoolean("quake_source_Wolfx",true).apply();updating[0]=true;b.setChecked(true);updating[0]=false;changed();}).setNegativeButton(UiText.get("action_cancel"),null).show();return;}
+        b.setOnCheckedChangeListener((v,on)->{if(updating[0])return;if(source.equals("Wolfx")&&on){updating[0]=true;b.setChecked(false);updating[0]=false;new ToolDialog(a).setTitle(UiText.get("earthquake_138")).setView(TextParagraphs.notice(a,EarthquakeInfo.wolfxNotice())).setPositiveButton(UiText.get("earthquake_139"),(d,n)->{p.edit().putBoolean("quake_wolfx_ack_112",true).putBoolean("quake_source_Wolfx",true).apply();updating[0]=true;b.setChecked(true);updating[0]=false;changed();}).setNegativeButton(UiText.get("action_cancel"),null).show();return;}
             if(!on){int count=0;for(String item:EarthquakeData.SOURCES)if(enabled(item))count++;if(count==1){updating[0]=true;b.setChecked(true);updating[0]=false;a.toast(UiText.get("earthquake_140"));return;}}
             p.edit().putBoolean("quake_source_"+source,on).apply();changed();});b.setMinHeight(a.dp(52));c.addView(b,a.lp(-1,-2));a.gap(c,6);
         }a.gap(c,10);c.addView(a.text(UiText.get("earthquake_141"),13,a.MUTED,false));dialog(UiText.get("earthquake_142"),c);}

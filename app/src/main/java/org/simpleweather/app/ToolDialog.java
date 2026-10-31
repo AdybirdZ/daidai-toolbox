@@ -34,6 +34,7 @@ final class ToolDialog extends AlertDialog.Builder {
         return dialog;
     }
     @Override public AlertDialog show(){AlertDialog dialog=create();dialog.show();return dialog;}
+    static void closeAll(){for(AlertDialog d:new java.util.ArrayList<>(OPEN.keySet()))if(d!=null&&d.isShowing())d.dismiss();}
     static void refresh(Context context){for(AlertDialog d:new java.util.ArrayList<>(OPEN.keySet()))if(d!=null&&d.isShowing()&&d.getWindow()!=null)decorate(d.getContext(),d.getWindow().getDecorView());}
     private static void decorate(Context context,View v){UiColors.decorate(context,v);}
 }

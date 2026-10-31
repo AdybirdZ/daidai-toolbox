@@ -19,13 +19,13 @@ final class AstronomyScreen {
     private TextView selectedInfo;
 
     AstronomyScreen(MainActivity a,City city,WeatherData data,Instant at,Consumer<Instant> change){this.a=a;this.city=city;this.data=data;this.at=at;this.change=change;ZoneId z;try{z=ZoneId.of(data!=null?data.zone.getId():city.timezone);}catch(Exception e){z=ZoneId.of("UTC");}int tm=a.preferences.getInt("global_time_mode",0);if(tm==1)z=ZoneId.of("Asia/Shanghai");else if(tm==2)z=ZoneOffset.UTC;zone=z;}
-    static final String[] SECTION_NAMES={UiText.get("astronomy_106"),UiText.get("astronomy_107"),UiText.get("astronomy_108"),UiText.get("astronomy_109"),UiText.get("astronomy_110"),UiText.get("astronomy_111"),UiText.get("astronomy_112"),UiText.get("astronomy_113"),UiText.get("astronomy_114")};
+    static String[] sectionNames(){return new String[]{UiText.get("astronomy_106"),UiText.get("astronomy_107"),UiText.get("astronomy_108"),UiText.get("astronomy_109"),UiText.get("astronomy_110"),UiText.get("astronomy_111"),UiText.get("astronomy_112"),UiText.get("astronomy_113"),UiText.get("astronomy_114")};}
     void render(){
         a.body.addView(a.text(city.label()+" · "+at.atZone(zone).format(DateTimeFormatter.ofPattern(UiText.get("astronomy_115")))+" · "+EarthquakeOptions.offset(zone,at.toEpochMilli()),14,a.MUTED,false));a.gap(a.body,12);
         // Create the selection model before either card, so arbitrary ordering remains valid.
         Sky view=new Sky(a,at,city.latitude,city.longitude,at.atZone(zone).toLocalDate(),description->{if(selectedInfo!=null)selectedInfo.setText(description);});
         selectedInfo=a.text(view.selectionDescription(),13,a.MUTED,false);
-        for(int id:DisplayOrder.parse(a.preferences.getString("astro_order",""),SECTION_NAMES.length)){
+        for(int id:DisplayOrder.parse(a.preferences.getString("astro_order",""),sectionNames().length)){
             if(!a.preferences.getBoolean("astro_show_"+id,true))continue;
             switch(id){
                 case 0:timeControl();break;

@@ -10,6 +10,7 @@ import java.io.*;
 
 /** Single-image grant; crop in local memory, flatten EXIF, save only after confirmation. */
 public final class BackgroundCropActivity extends Activity {
+    @Override protected void attachBaseContext(android.content.Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     private CropView crop;
     private LinearLayout root;
     private TextView state;

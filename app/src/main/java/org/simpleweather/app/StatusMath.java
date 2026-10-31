@@ -2,9 +2,9 @@ package org.simpleweather.app;
 
 /** Offline directions, spherical distances and display geometry; no mapping service. */
 final class StatusMath {
-    static final String[] DIRECTIONS={UiText.get("astronomy_026"),UiText.get("status_math_001"),UiText.get("astronomy_027"),UiText.get("status_math_002"),UiText.get("astronomy_028"),UiText.get("status_math_003"),UiText.get("astronomy_029"),UiText.get("status_math_004"),UiText.get("astronomy_030"),UiText.get("status_math_005"),UiText.get("astronomy_031"),UiText.get("status_math_006"),UiText.get("astronomy_032"),UiText.get("status_math_007"),UiText.get("astronomy_033"),UiText.get("status_math_008")};
+    static String[] directions(){return new String[]{UiText.get("astronomy_026"),UiText.get("status_math_001"),UiText.get("astronomy_027"),UiText.get("status_math_002"),UiText.get("astronomy_028"),UiText.get("status_math_003"),UiText.get("astronomy_029"),UiText.get("status_math_004"),UiText.get("astronomy_030"),UiText.get("status_math_005"),UiText.get("astronomy_031"),UiText.get("status_math_006"),UiText.get("astronomy_032"),UiText.get("status_math_007"),UiText.get("astronomy_033"),UiText.get("status_math_008")};}
     static double norm(double n){return Double.isFinite(n)?(n%360+360)%360:Double.NaN;}
-    static String direction(double n){return Double.isFinite(n)?DIRECTIONS[(int)Math.floor((norm(n)+11.25)/22.5)%16]:UiText.get("status_math_009");}
+    static String direction(double n){return Double.isFinite(n)?directions()[(int)Math.floor((norm(n)+11.25)/22.5)%16]:UiText.get("status_math_009");}
     static double delta(double target,double heading){return norm(target-heading+180)-180;}
     static double smooth(double previous,double current,double factor){return !Double.isFinite(previous)?norm(current):norm(previous+delta(current,previous)*factor);}
     static boolean coordinate(double lon,double lat){return Double.isFinite(lon)&&Double.isFinite(lat)&&Math.abs(lon)<=180&&Math.abs(lat)<=90;}

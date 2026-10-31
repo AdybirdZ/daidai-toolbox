@@ -6,7 +6,7 @@ import org.w3c.dom.*;
 public final class TextTestLauncher {
     public static void main(String[] args)throws Exception{
         final Map<String,String> texts=new HashMap<>();final Map<String,List<String>> arrays=new HashMap<>();
-        for(File file:new File(args[0]).listFiles((d,n)->n.endsWith(".xml"))){
+        for(String folder:args[0].split(java.util.regex.Pattern.quote(File.pathSeparator)))for(File file:new File(folder).listFiles((d,n)->n.endsWith(".xml"))){
             Document doc=DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
             NodeList strings=doc.getElementsByTagName("string");for(int i=0;i<strings.getLength();i++){Element e=(Element)strings.item(i);texts.put(e.getAttribute("name"),unescape(e.getTextContent()));}
             NodeList lists=doc.getElementsByTagName("string-array");for(int i=0;i<lists.getLength();i++){Element e=(Element)lists.item(i);List<String> items=new ArrayList<>();NodeList children=e.getElementsByTagName("item");for(int n=0;n<children.getLength();n++)items.add(unescape(children.item(n).getTextContent()));arrays.put(e.getAttribute("name"),items);}

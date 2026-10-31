@@ -3,7 +3,7 @@ package org.simpleweather.app;
 import android.widget.*;
 
 final class EarthquakeInfo {
-    static final String WOLFX_NOTICE=UiText.get("earthquake_info_001");
+    static String wolfxNotice(){return UiText.get("earthquake_info_001");}
     static void paragraph(MainActivity a,LinearLayout c,String text){
         TextParagraphs.append(a,c,text,14,a.INK);
     }
@@ -18,7 +18,7 @@ final class EarthquakeInfo {
         paragraph(a,c,UiText.get("earthquake_info_013"));
         paragraph(a,c,UiText.get("earthquake_info_014"));
         paragraph(a,c,UiText.get("earthquake_info_015"));
-        paragraph(a,c,WOLFX_NOTICE+UiText.get("earthquake_info_016"));
+        paragraph(a,c,wolfxNotice()+UiText.get("earthquake_info_016"));
         paragraph(a,c,UiText.get("earthquake_info_017"));
     }
     static void links(MainActivity a,LinearLayout c){

@@ -2,6 +2,7 @@ package org.simpleweather.app;
 import java.time.*;
 import java.util.*;
 public final class EnglishModelTests {
+    private static int checks;
     public static void main(String[] args){
         check(WeatherData.condition(95).equals("Slight or moderate thunderstorm"),"Weather model labels use English XML");
         check(UiText.label(Astronomy.STARS[4].name).equals("Vega"),"Stable star identity has an English display label");
@@ -17,7 +18,7 @@ public final class EnglishModelTests {
         check(EarthquakeAgencies.name(UiText.raw("identity_earthquake_data_004")).contains("National Earthquake Information Center"),"Stored agency text maps to English name");
         check(CameraExposure.DEFAULT_ISO==1000&&CameraExposure.DEFAULT_MS==200,"Camera defaults");
         check(!CameraExposure.valid(0,50)&&!CameraExposure.valid(300,1001)&&CameraExposure.valid(640,25),"Camera input boundaries");
-        System.out.println("English model and stable-identity behavior checks passed");
+        System.out.println("English model tests: "+checks+" checks passed");
     }
-    static void check(boolean value,String why){if(!value)throw new AssertionError(why);}
+    static void check(boolean value,String why){checks++;if(!value)throw new AssertionError(why);}
 }

@@ -1,0 +1,1293 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="astronomy_001" formatted="false">"dawn"</string>
+    <string name="astronomy_002" formatted="false">"dusk"</string>
+    <string name="astronomy_003" formatted="false">"The Sun is above the horizon; the sky is bright."</string>
+    <string name="astronomy_004" formatted="false">"Civil "</string>
+    <string name="astronomy_005" formatted="false">"; the sky is bright."</string>
+    <string name="astronomy_006" formatted="false">"Nautical "</string>
+    <string name="astronomy_007" formatted="false">"; bright stars may be visible."</string>
+    <string name="astronomy_008" formatted="false">"; the sky is relatively dark."</string>
+    <string name="astronomy_009" formatted="false">"Astronomical night"</string>
+    <string name="astronomy_010" formatted="false">"Earth"</string>
+    <string name="astronomy_011" formatted="false">"Mercury"</string>
+    <string name="astronomy_012" formatted="false">"Venus"</string>
+    <string name="astronomy_013" formatted="false">"Mars"</string>
+    <string name="astronomy_014" formatted="false">"Jupiter"</string>
+    <string name="astronomy_015" formatted="false">"Saturn"</string>
+    <string name="astronomy_016" formatted="false">"Uranus"</string>
+    <string name="astronomy_017" formatted="false">"Neptune"</string>
+    <string name="astronomy_018" formatted="false">"New Moon"</string>
+    <string name="astronomy_019" formatted="false">"Waxing crescent"</string>
+    <string name="astronomy_020" formatted="false">"First quarter"</string>
+    <string name="astronomy_021" formatted="false">"Waxing gibbous"</string>
+    <string name="astronomy_022" formatted="false">"Full Moon"</string>
+    <string name="astronomy_023" formatted="false">"Waning gibbous"</string>
+    <string name="astronomy_024" formatted="false">"Last quarter"</string>
+    <string name="astronomy_025" formatted="false">"Waning crescent"</string>
+    <string name="astronomy_026" formatted="false">"N"</string>
+    <string name="astronomy_027" formatted="false">"NE"</string>
+    <string name="astronomy_028" formatted="false">"E"</string>
+    <string name="astronomy_029" formatted="false">"SE"</string>
+    <string name="astronomy_030" formatted="false">"S"</string>
+    <string name="astronomy_031" formatted="false">"SW"</string>
+    <string name="astronomy_032" formatted="false">"W"</string>
+    <string name="astronomy_033" formatted="false">"NW"</string>
+    <string name="astronomy_034" formatted="false">"Dubhe"</string>
+    <string name="astronomy_035" formatted="false">"Merak"</string>
+    <string name="astronomy_036" formatted="false">"Phecda"</string>
+    <string name="astronomy_037" formatted="false">"Megrez"</string>
+    <string name="astronomy_038" formatted="false">"Alioth"</string>
+    <string name="astronomy_039" formatted="false">"Mizar"</string>
+    <string name="astronomy_040" formatted="false">"Alkaid"</string>
+    <string name="astronomy_041" formatted="false">"Quadrantids"</string>
+    <string name="astronomy_042" formatted="false">"Lyrids"</string>
+    <string name="astronomy_043" formatted="false">"Eta Aquariids"</string>
+    <string name="astronomy_044" formatted="false">"Perseids"</string>
+    <string name="astronomy_045" formatted="false">"Orionids"</string>
+    <string name="astronomy_046" formatted="false">"Leonids"</string>
+    <string name="astronomy_047" formatted="false">"Geminids"</string>
+    <string name="astronomy_048" formatted="false">"Ursids"</string>
+    <string name="astronomy_049" formatted="false">"M45 Pleiades"</string>
+    <string name="astronomy_050" formatted="false">"M31 Andromeda Galaxy"</string>
+    <string name="astronomy_051" formatted="false">"M44 Beehive Cluster"</string>
+    <string name="astronomy_052" formatted="false">"M13 Hercules Globular Cluster"</string>
+    <string name="astronomy_053" formatted="false">"M11 Wild Duck Cluster"</string>
+    <string name="astronomy_054" formatted="false">"M5 Globular Cluster"</string>
+    <string name="astronomy_055" formatted="false">"M34 Open Cluster"</string>
+    <string name="astronomy_056" formatted="false">"M35 Open Cluster"</string>
+    <string name="astronomy_057" formatted="false">"M36 Open Cluster"</string>
+    <string name="astronomy_058" formatted="false">"M37 Open Cluster"</string>
+    <string name="astronomy_059" formatted="false">"M39 Open Cluster"</string>
+    <string name="astronomy_060" formatted="false">"M67 Open Cluster"</string>
+    <string name="astronomy_061" formatted="false">"M92 Globular Cluster"</string>
+    <string name="astronomy_062" formatted="false">"M42 Orion Nebula"</string>
+    <string name="astronomy_063" formatted="false">"M81 Bode\'s Galaxy"</string>
+    <string name="astronomy_064" formatted="false">"Sirius"</string>
+    <string name="astronomy_065" formatted="false">"Canopus"</string>
+    <string name="astronomy_066" formatted="false">"Alpha Centauri"</string>
+    <string name="astronomy_067" formatted="false">"Arcturus"</string>
+    <string name="astronomy_068" formatted="false">"Vega"</string>
+    <string name="astronomy_069" formatted="false">"Capella"</string>
+    <string name="astronomy_070" formatted="false">"Rigel"</string>
+    <string name="astronomy_071" formatted="false">"Procyon"</string>
+    <string name="astronomy_072" formatted="false">"Betelgeuse"</string>
+    <string name="astronomy_073" formatted="false">"Achernar"</string>
+    <string name="astronomy_074" formatted="false">"Altair"</string>
+    <string name="astronomy_075" formatted="false">"Acrux"</string>
+    <string name="astronomy_076" formatted="false">"Aldebaran"</string>
+    <string name="astronomy_077" formatted="false">"Spica"</string>
+    <string name="astronomy_078" formatted="false">"Antares"</string>
+    <string name="astronomy_079" formatted="false">"Fomalhaut"</string>
+    <string name="astronomy_080" formatted="false">"Deneb"</string>
+    <string name="astronomy_081" formatted="false">"Regulus"</string>
+    <string name="astronomy_082" formatted="false">"Polaris"</string>
+    <string name="astronomy_083" formatted="false">"Alpheratz"</string>
+    <string name="astronomy_084" formatted="false">"Hamal"</string>
+    <string name="astronomy_085" formatted="false">"Algieba"</string>
+    <string name="astronomy_086" formatted="false">"Rasalhague"</string>
+    <string name="astronomy_087" formatted="false">"Eltanin"</string>
+    <string name="astronomy_088" formatted="false">"Ruchbah"</string>
+    <string name="astronomy_089" formatted="false">"Caph"</string>
+    <string name="astronomy_090" formatted="false">"Denebola"</string>
+    <string name="astronomy_091" formatted="false">"Almach"</string>
+    <string name="astronomy_092" formatted="false">"Albireo"</string>
+    <string name="astronomy_093" formatted="false">"Zeta Cygni"</string>
+    <string name="astronomy_094" formatted="false">"Scheat"</string>
+    <string name="astronomy_095" formatted="false">"Markab"</string>
+    <string name="astronomy_096" formatted="false">"Gamma Cassiopeiae"</string>
+    <string name="astronomy_097" formatted="false">"Elnath"</string>
+    <string name="astronomy_098" formatted="false">"Alhena"</string>
+    <string name="astronomy_099" formatted="false">"Castor"</string>
+    <string name="astronomy_100" formatted="false">"Pollux"</string>
+    <string name="astronomy_101" formatted="false">"Alnitak"</string>
+    <string name="astronomy_102" formatted="false">"Alnilam"</string>
+    <string name="astronomy_103" formatted="false">"Mintaka"</string>
+    <string name="astronomy_104" formatted="false">"Bellatrix"</string>
+    <string name="astronomy_105" formatted="false">"Saiph"</string>
+    <string name="astronomy_106" formatted="false">"Time controls"</string>
+    <string name="astronomy_107" formatted="false">"Stargazing conditions"</string>
+    <string name="astronomy_108" formatted="false">"Local sky"</string>
+    <string name="astronomy_109" formatted="false">"Selected object"</string>
+    <string name="astronomy_110" formatted="false">"Moon information"</string>
+    <string name="astronomy_111" formatted="false">"Sun, Moon and planet positions"</string>
+    <string name="astronomy_112" formatted="false">"Today\'s rise, set and twilight events"</string>
+    <string name="astronomy_113" formatted="false">"Meteor showers"</string>
+    <string name="astronomy_114" formatted="false">"Methods and sources"</string>
+    <string name="astronomy_115" formatted="false">"yyyy-MM-dd HH:mm"</string>
+    <string name="astronomy_116" formatted="false">"Local sky · Looking upward"</string>
+    <string name="astronomy_117" formatted="false">"Stop sky alignment"</string>
+    <string name="astronomy_118" formatted="false">"Point at sky"</string>
+    <string name="astronomy_119" formatted="false">"Solar, lunar, planetary and sky-chart positions are calculated locally using low-precision approximations, without third-party astronomy services. Terrain obstruction, atmospheric changes and orbital perturbations are not fully modeled. Do not use these results for surveying or navigation.\n\nBuilt-in stellar and deep-sky coordinates and apparent magnitudes are approximate references. A deep-sky object\'s integrated apparent magnitude does not directly indicate naked-eye visibility."</string>
+    <string name="astronomy_120" formatted="false">"Formula and method references"</string>
+    <string name="astronomy_121" formatted="false">"Built-in coordinates and magnitudes · CC0"</string>
+    <string name="astronomy_122" formatted="false">"−15 min"</string>
+    <string name="astronomy_123" formatted="false">"Now"</string>
+    <string name="astronomy_124" formatted="false">"+15 min"</string>
+    <string name="astronomy_125" formatted="false">"−1 day"</string>
+    <string name="astronomy_126" formatted="false">"Set time"</string>
+    <string name="astronomy_127" formatted="false">"+1 day"</string>
+    <string name="astronomy_128" formatted="false">"Stargazing conditions · Empirical guide"</string>
+    <string name="astronomy_129" formatted="false">"Moon above horizon · Approximate illumination "</string>
+    <string name="astronomy_130" formatted="false">"Moon below horizon; less moonlight interference."</string>
+    <string name="astronomy_131" formatted="false">"Weather data are missing or outdated. Refresh the Weather page. Object positions remain available offline."</string>
+    <string name="astronomy_132" formatted="false">"Complete weather data are unavailable for this time. Refresh Weather or change the astronomy time."</string>
+    <string name="astronomy_133" formatted="false">"Cloud cover "</string>
+    <string name="astronomy_134" formatted="false">"% · Precipitation probability "</string>
+    <string name="astronomy_135" formatted="false">"%\nHumidity "</string>
+    <string name="astronomy_136" formatted="false">"% · Wind "</string>
+    <string name="astronomy_137" formatted="false">" km/h\nVisibility "</string>
+    <string name="astronomy_138" formatted="false">"Weather is relatively suitable for stargazing. Consider moonlight and light pollution."</string>
+    <string name="astronomy_139" formatted="false">"At least one reference criterion is not met. Assess actual observing conditions."</string>
+    <string name="astronomy_140" formatted="false">"Empirical criteria: Sun below −12°, cloud cover ≤40%, precipitation probability ≤20%, humidity ≤85%, wind ≤25 km/h and visibility ≥8 km. Weather: Open-Meteo. Local light pollution is not modeled."</string>
+    <string name="astronomy_141" formatted="false">" · Approximate illumination "</string>
+    <string name="astronomy_142" formatted="false">"Approximate lunar age %.1f days · About %.1f days until full Moon"</string>
+    <string name="astronomy_143" formatted="false">"Phase follows the selected time. Waxing phases are lit on the right and waning phases on the left; the diagram is not rotated to the local viewing orientation and excludes eclipses and surface detail. Lunar age and time to full Moon use a mean synodic-month approximation."</string>
+    <string name="astronomy_144" formatted="false">"Moon phase · "</string>
+    <string name="astronomy_145" formatted="false">"Sun  "</string>
+    <string name="astronomy_146" formatted="false">"Altitude %.1f° · Azimuth %.1f°"</string>
+    <string name="astronomy_147" formatted="false">"Moon  "</string>
+    <string name="astronomy_148" formatted="false">"Altitude %.1f° · Azimuth %.1f° · Apparent magnitude %.2f"</string>
+    <string name="astronomy_149" formatted="false">"No event on this date"</string>
+    <string name="astronomy_150" formatted="false">"Sunrise / sunset"</string>
+    <string name="astronomy_151" formatted="false">"Civil dawn / dusk"</string>
+    <string name="astronomy_152" formatted="false">"Nautical dawn / dusk"</string>
+    <string name="astronomy_153" formatted="false">"Astronomical dawn / dusk"</string>
+    <string name="astronomy_154" formatted="false">"Moonrise / moonset"</string>
+    <string name="astronomy_155" formatted="false">"Times use the selected astronomy time zone. At high latitudes, rise or set events or astronomical night may not occur on a given day. Twilight times do not predict colorful skies."</string>
+    <string name="astronomy_156" formatted="false">"Meteor showers · Within 3 days of typical peak"</string>
+    <string name="astronomy_157" formatted="false">" · Reference display period (peak "</string>
+    <string name="astronomy_158" formatted="false">")\nRadiant altitude "</string>
+    <string name="astronomy_159" formatted="false">" · Azimuth "</string>
+    <string name="astronomy_160" formatted="false">"Reference showers for selected date"</string>
+    <string name="astronomy_161" formatted="false">"The selected date is outside the built-in reference display periods."</string>
+    <string name="astronomy_162" formatted="false">"Upcoming typical peak dates"</string>
+    <string name="astronomy_163" formatted="false">"Radiants are calculated from approximate right ascension and declination. The three-day window either side of a typical peak is not the full active period. Consult the current IMO calendar for annual peak times and observing conditions."</string>
+    <string name="astronomy_164" formatted="false">"IMO · Annual meteor-shower calendar"</string>
+    <string name="astronomy_165" formatted="false">"Sun"</string>
+    <string name="astronomy_166" formatted="false">"Moon"</string>
+    <string name="astronomy_167" formatted="false">"Local sky · "</string>
+    <string name="astronomy_168" formatted="false">"Equatorial coordinates, north celestial pole centered"</string>
+    <string name="astronomy_169" formatted="false">"No coordinate grid"</string>
+    <string name="astronomy_170" formatted="false">"Horizontal coordinates, north up and east left"</string>
+    <string name="astronomy_171" formatted="false">" · Selected: "</string>
+    <string name="astronomy_172" formatted="false">"Equatorial coordinates: north celestial pole at center, right ascension 0h up and 6h left. The cyan curve is the local horizon. Polaris is near the pole, not at the center."</string>
+    <string name="astronomy_173" formatted="false">"No coordinate grid. Horizontal projection with north up and east left."</string>
+    <string name="astronomy_174" formatted="false">"Horizontal coordinates: zenith at center, north up and east left. The outer circle is the horizon; inner rings mark altitudes of 30° and 60°."</string>
+    <string name="astronomy_175" formatted="false">"No celestial object selected."</string>
+    <string name="astronomy_176" formatted="false">" · Approximate center"</string>
+    <string name="astronomy_177" formatted="false">"\nAltitude "</string>
+    <string name="astronomy_178" formatted="false">"\nRight ascension "</string>
+    <string name="astronomy_179" formatted="false">" · Declination "</string>
+    <string name="astronomy_180" formatted="false">"\nApproximate apparent magnitude "</string>
+    <string name="astronomy_181" formatted="false">" (V-band estimate)\nExcludes atmospheric extinction, earthshine and lunar eclipses."</string>
+    <string name="astronomy_182" formatted="false">"\nApparent magnitude: not estimated near new Moon"</string>
+    <string name="astronomy_183" formatted="false">"\nApproximate integrated magnitude: "</string>
+    <string name="astronomy_184" formatted="false">" (reference)\nLight is spread over an extended area; integrated magnitude does not determine naked-eye visibility."</string>
+    <string name="astronomy_185" formatted="false">"\nApparent magnitude "</string>
+    <string name="astronomy_186" formatted="false">"\nBelow horizon. Selection retained; crosshair hidden."</string>
+    <string name="astronomy_187" formatted="false">"\nHidden by current display settings. Selection retained; crosshair hidden."</string>
+    <string name="astronomy_188" formatted="false">"North celestial pole"</string>
+    <string name="background_crop_001" formatted="false">"Loading image…"</string>
+    <string name="background_crop_002" formatted="false">"Unable to load image. Go back and select a smaller image."</string>
+    <string name="background_crop_003" formatted="false">"Adjust background crop"</string>
+    <string name="background_crop_004" formatted="false">"Drag to position the image. Pinch or drag the slider to resize it. The bright frame marks the area to save."</string>
+    <string name="background_crop_005" formatted="false">"Background zoom"</string>
+    <string name="background_crop_006" formatted="false">"Reset"</string>
+    <string name="background_crop_007" formatted="false">"Use selected area"</string>
+    <string name="background_crop_008" formatted="false">"Saving selected area…"</string>
+    <string name="background_crop_009" formatted="false">"Unable to save crop. Try a smaller image."</string>
+    <string name="background_crop_010" formatted="false">"Unable to save. Try again."</string>
+    <string name="background_crop_011" formatted="false">"Background crop: drag and pinch to adjust"</string>
+    <string name="coordinate_format_001" formatted="false">"Longitude "</string>
+    <string name="coordinate_format_002" formatted="false">" · Latitude "</string>
+    <string name="earthquake_agencies_001" formatted="false">"Earthquake Department, Disaster and Emergency Management Authority, Türkiye"</string>
+    <string name="earthquake_agencies_002" formatted="false">"Alaska Earthquake Center"</string>
+    <string name="earthquake_agencies_003" formatted="false">"Seismology Office, Slovenian Environment Agency"</string>
+    <string name="earthquake_agencies_004" formatted="false">"Geoscience Australia"</string>
+    <string name="earthquake_agencies_005" formatted="false">"Indonesian Agency for Meteorology, Climatology and Geophysics"</string>
+    <string name="earthquake_agencies_006" formatted="false">"National Seismological Center, University of Chile"</string>
+    <string name="earthquake_agencies_007" formatted="false">"Central Weather Administration, Taiwan"</string>
+    <string name="earthquake_agencies_008" formatted="false">"Central Weather Bureau, Taiwan"</string>
+    <string name="earthquake_agencies_009" formatted="false">"European–Mediterranean Seismological Centre"</string>
+    <string name="earthquake_agencies_010" formatted="false">"Swiss Seismological Service"</string>
+    <string name="earthquake_agencies_011" formatted="false">"German Research Centre for Geosciences"</string>
+    <string name="earthquake_agencies_012" formatted="false">"GeoNet, GNS Science, New Zealand"</string>
+    <string name="earthquake_agencies_013" formatted="false">"Geological Survey Department, Cyprus"</string>
+    <string name="earthquake_agencies_014" formatted="false">"Geophysical Survey, Russian Academy of Sciences"</string>
+    <string name="earthquake_agencies_015" formatted="false">"Hawaiian Volcano Observatory seismic network"</string>
+    <string name="earthquake_agencies_016" formatted="false">"Institute of Geosciences, University of Panama"</string>
+    <string name="earthquake_agencies_017" formatted="false">"Institute of Geosciences, Polytechnic University of Tirana, Albania"</string>
+    <string name="earthquake_agencies_018" formatted="false">"National Geographic Institute, Spain"</string>
+    <string name="earthquake_agencies_019" formatted="false">"Nicaraguan Institute of Territorial Studies"</string>
+    <string name="earthquake_agencies_020" formatted="false">"National Institute of Geophysics and Volcanology, Italy"</string>
+    <string name="earthquake_agencies_021" formatted="false">"Institute and Observatory of Geophysics of Antananarivo, Madagascar"</string>
+    <string name="earthquake_agencies_022" formatted="false">"Japan Meteorological Agency"</string>
+    <string name="earthquake_agencies_023" formatted="false">"State Earthquake Service, Baden-Württemberg, Germany"</string>
+    <string name="earthquake_agencies_024" formatted="false">"Geophysical Institute of Peru"</string>
+    <string name="earthquake_agencies_025" formatted="false">"Montana Regional Seismograph Network, Montana Bureau of Mines and Geology"</string>
+    <string name="earthquake_agencies_026" formatted="false">"Main Center of Special Monitoring, Ukraine"</string>
+    <string name="earthquake_agencies_027" formatted="false">"Seismic Monitoring and Research Group, University of Malta"</string>
+    <string name="earthquake_agencies_028" formatted="false">"Northern California Seismic Network, U.S. Geological Survey"</string>
+    <string name="earthquake_agencies_029" formatted="false">"National Center for Seismology, India"</string>
+    <string name="earthquake_agencies_030" formatted="false">"National Earthquake Information Center, U.S. Geological Survey"</string>
+    <string name="earthquake_agencies_031" formatted="false">"U.S. Geological Survey"</string>
+    <string name="earthquake_agencies_032" formatted="false">"Cooperative New Madrid Seismic Network, USA"</string>
+    <string name="earthquake_agencies_033" formatted="false">"Institute of Geodynamics, National Observatory of Athens, Greece"</string>
+    <string name="earthquake_agencies_034" formatted="false">"National Seismological Centre, Department of Mines and Geology, Nepal"</string>
+    <string name="earthquake_agencies_035" formatted="false">"National Institute for Seismic Prevention, Argentina"</string>
+    <string name="earthquake_agencies_036" formatted="false">"National Institute of Oceanography and Applied Geophysics, Italy"</string>
+    <string name="earthquake_agencies_037" formatted="false">"San Calixto Observatory, Bolivia"</string>
+    <string name="earthquake_agencies_038" formatted="false">"Portuguese Institute for Sea and Atmosphere"</string>
+    <string name="earthquake_agencies_039" formatted="false">"Polish Geological Institute – National Research Institute"</string>
+    <string name="earthquake_agencies_040" formatted="false">"Philippine Institute of Volcanology and Seismology"</string>
+    <string name="earthquake_agencies_041" formatted="false">"Puerto Rico Seismic Network and Strong Motion Program, University of Puerto Rico at Mayagüez"</string>
+    <string name="earthquake_agencies_042" formatted="false">"National Polytechnic School, Ecuador"</string>
+    <string name="earthquake_agencies_043" formatted="false">"French National Seismic Monitoring Network"</string>
+    <string name="earthquake_agencies_044" formatted="false">"South African National Seismograph Network"</string>
+    <string name="earthquake_agencies_045" formatted="false">"Southern California Seismic Network"</string>
+    <string name="earthquake_agencies_046" formatted="false">"Department of Geophysics, Aristotle University of Thessaloniki, Greece"</string>
+    <string name="earthquake_agencies_047" formatted="false">"Earthquake Observation Division, Thailand"</string>
+    <string name="earthquake_agencies_048" formatted="false">"Bureau of Economic Geology, University of Texas at Austin"</string>
+    <string name="earthquake_agencies_049" formatted="false">"Volcanological and Seismological Observatory, National University of Costa Rica"</string>
+    <string name="earthquake_agencies_050" formatted="false">"National Seismological Service, Institute of Geophysics, National Autonomous University of Mexico"</string>
+    <string name="earthquake_agencies_051" formatted="false">"University of Utah Seismograph Stations Regional Network"</string>
+    <string name="earthquake_agencies_052" formatted="false">"Pacific Northwest Seismic Network, University of Washington"</string>
+    <string name="earthquake_agencies_053" formatted="false">"Yemen Seismological and Volcanological Observatory Center"</string>
+    <string name="earthquake_agencies_054" formatted="false">"China Earthquake Networks Center"</string>
+    <string name="earthquake_agencies_055" formatted="false">"Kandilli Observatory and Earthquake Research Institute, Türkiye"</string>
+    <string name="earthquake_agencies_056" formatted="false">"Institute of Geophysics, Czech Academy of Sciences"</string>
+    <string name="earthquake_agencies_057" formatted="false">"Royal Netherlands Meteorological Institute"</string>
+    <string name="earthquake_agencies_058" formatted="false">"Laboratory of Detection and Geophysics, France"</string>
+    <string name="earthquake_agencies_059" formatted="false">"NORSAR, Norway"</string>
+    <string name="earthquake_agencies_060" formatted="false">"National Data Center, Kazakhstan"</string>
+    <string name="earthquake_agencies_061" formatted="false">"National Earthquake Center, Syria"</string>
+    <string name="earthquake_agencies_062" formatted="false">"National Survey for Seismic Protection, Armenia"</string>
+    <string name="earthquake_agencies_063" formatted="false">"Swedish National Seismic Network"</string>
+    <string name="earthquake_agencies_064" formatted="false">"GeoSphere Austria"</string>
+    <string name="earthquake_agencies_065" formatted="false">"British Geological Survey"</string>
+    <string name="earthquake_agencies_066" formatted="false">"Federal Institute for Geosciences and Natural Resources, Germany"</string>
+    <string name="earthquake_agencies_067" formatted="false">"Contributor not provided"</string>
+    <string name="earthquake_agencies_068" formatted="false">"National Earthquake Information Center, U.S. Geological Survey (USGS / NEIC)"</string>
+    <string name="earthquake_agencies_069" formatted="false">"Contributor name not yet verified"</string>
+    <string name="earthquake_api_001" formatted="false">"Requests are cooling down. Try again later."</string>
+    <string name="earthquake_api_002" formatted="false">"Requests paused: source is rate-limited or under maintenance."</string>
+    <string name="earthquake_api_003" formatted="false">"Source temporarily unavailable (HTTP "</string>
+    <string name="earthquake_api_004" formatted="false">")"</string>
+    <string name="earthquake_api_005" formatted="false">"Response too large. Reduce the time range or increase minimum magnitude."</string>
+    <string name="earthquake_api_006" formatted="false">"Unknown earthquake source"</string>
+    <string name="earthquake_data_001" formatted="false">"China Earthquake Networks (via Wolfx)"</string>
+    <string name="earthquake_data_002" formatted="false">"Review status not provided"</string>
+    <string name="earthquake_data_003" formatted="false">", "</string>
+    <string name="earthquake_data_004" formatted="false">"Reviewed"</string>
+    <string name="earthquake_data_005" formatted="false">"Invalid response format from European–Mediterranean Seismological Centre"</string>
+    <string name="earthquake_data_006" formatted="false">"Region not provided"</string>
+    <string name="earthquake_data_007" formatted="false">"Invalid event parameters from European–Mediterranean Seismological Centre"</string>
+    <string name="earthquake_data_008" formatted="false">"Invalid response format from U.S. Geological Survey"</string>
+    <string name="earthquake_data_009" formatted="false">"Marked reviewed by source"</string>
+    <string name="earthquake_data_010" formatted="false">"Automatic solution; parameters may be revised"</string>
+    <string name="earthquake_data_011" formatted="false">"Invalid event parameters from U.S. Geological Survey"</string>
+    <string name="earthquake_data_012" formatted="false">"China Earthquake Networks Center (via Wolfx, unofficial interface)"</string>
+    <string name="earthquake_data_013" formatted="false">"Invalid Wolfx catalog format or event parameters"</string>
+    <string name="earthquake_data_014" formatted="false">"Data containing external entities are not accepted"</string>
+    <string name="earthquake_data_015" formatted="false">"External entities are disabled"</string>
+    <string name="earthquake_data_016" formatted="false">"Invalid response format from German Research Centre for Geosciences"</string>
+    <string name="earthquake_data_017" formatted="false">"Manually processed"</string>
+    <string name="earthquake_data_018" formatted="false">"Source marks depth as fixed or assigned; it is not a reliable measured depth."</string>
+    <string name="earthquake_data_019" formatted="false">"10 km may be a default shallow depth and does not establish the actual depth."</string>
+    <string name="earthquake_data_020" formatted="false">"Invalid event parameters from German Research Centre for Geosciences"</string>
+    <string name="earthquake_display_001" formatted="false">"Automatic result"</string>
+    <string name="earthquake_display_002" formatted="false">"Unknown status"</string>
+    <string name="earthquake_display_003" formatted="false">"China Earthquake Networks"</string>
+    <string name="earthquake_display_004" formatted="false">"European–Mediterranean Seismological Centre ("</string>
+    <string name="earthquake_info_001" formatted="false">"Wolfx is an unofficial relay service. This app uses only its recent China Earthquake Networks catalog, containing up to about 50 records. It does not provide a global catalog or earthquake early warnings.\n\nAuthorization for public redistribution of China Earthquake Networks data through this service has not been fully confirmed. This app has not obtained redistribution permission from China Earthquake Networks. CORS support, technical access, noncommercial use, attribution and disclaimers do not replace permission.\n\nWhen enabled, the app requests the catalog from Wolfx, which may receive your IP address. Requests exclude reference coordinates. The interface does not guarantee complete coverage, all events or a fixed update delay.\n\nIf an official agency or rights holder requests discontinuation, the maintainer will immediately stop the integration, remove the affected installation packages under their control and cooperate with further action. You can disable this source at any time."</string>
+    <string name="earthquake_info_002" formatted="false">"Earthquake data and notes"</string>
+    <string name="earthquake_info_003" formatted="false">"This feature browses recent earthquake catalogs; it does not provide early warnings, wave-arrival countdowns or background earthquake notifications. Events may be missing, publication timing varies, and parameters may be revised. An empty list does not mean no earthquakes occurred. Filters do not imply complete source coverage."</string>
+    <string name="earthquake_info_004" formatted="false">"Time display: "</string>
+    <string name="earthquake_info_005" formatted="false">" ("</string>
+    <string name="earthquake_info_006" formatted="false">"Device time zone"</string>
+    <string name="earthquake_info_007" formatted="false">"Beijing time"</string>
+    <string name="earthquake_info_008" formatted="false">"Coordinated Universal Time"</string>
+    <string name="earthquake_info_009" formatted="false">"). Dates include the year; time zones using daylight saving show the offset applicable on the event date. The relayed China Earthquake Networks Center catalog is parsed as UTC+08:00 before conversion. Distances are surface great-circle distances from the reference position to the epicenter, not distances to the hypocenter."</string>
+    <string name="earthquake_info_010" formatted="false">"Sources: GEOFON at the German Research Centre for Geosciences (GFZ / GEVN) and the European–Mediterranean Seismological Centre (EMSC / SeismicPortal), attributed under CC BY 4.0.\n\nEvent locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks.\n\nThe supplementary U.S. Geological Survey global catalog uses only National Earthquake Information Center solutions (net=us). Third-party images are not copied, and the entire aggregated catalog is not treated as public domain.\n\nThe app matches and filters events, formats times and translates some region names. Merged events retain each source\'s parameters without averaging magnitudes; sources may not be independent. Lists identify contributors; details retain aggregators and relay information. Reviewed Chinese reports take priority, followed by other reviewed reports, then automatic or unknown reports. Newer reports win equal priorities. A Chinese source alone does not imply review."</string>
+    <string name="earthquake_info_011" formatted="false">"Intensity first uses U.S. Geological Survey aggregated felt reports (cdi), labeled source-reported intensity. They are not official field-survey results. ShakeMap mmi values are model results and remain labeled estimated intensity.\n\nLocal estimates represent epicentral reference intensity, not maximum intensity or intensity at the reference location. Valid source updates are adopted automatically. Reviewed models remain models rather than measurements. Only Modified Mercalli Intensity (MMI) is used; the list omits scale and model parentheses, while details retain the full explanation."</string>
+    <string name="earthquake_info_012" formatted="false">"If no usable source intensity is available, events meeting conditions including Mw 5.0–7.9 and depth greater than 0 and no more than 30 km use Allen, Wald and Worden (2012). Other records with valid magnitude and depth use the PGA and MMI threshold reference algorithm from an older open-source GlobalQuake release.\n\nThe latter accepts magnitudes −2–10.5 and depths 0–800 km. These are accepted input ranges, not guarantees of global applicability or accuracy. Small, deep and tectonically different events may have substantial errors. Results from the two models should not be compared as precisely equivalent calibrations."</string>
+    <string name="earthquake_info_013" formatted="false">"The GlobalQuake reference algorithm is adapted from its older MIT-licensed version, not the current closed-source version. Source magnitude types are retained; non-Mw inputs are marked as approximated using the source magnitude. Details flag 10 km depths and depths marked as default or fixed; these may be catalog defaults rather than reliable measurements. Missing depths are not imputed; values below the first model threshold are not labeled MMI 0. Site effects, rupture geometry and tectonic applicability have not been checked event by event. Estimates are for reference, not disaster-response decisions."</string>
+    <string name="earthquake_info_014" formatted="false">"The scale and model of Wolfx\'s intensity field remain unverified. The app does not use it or treat it as an official maximum intensity."</string>
+    <string name="earthquake_info_015" formatted="false">"German, European and US sources provide supplementary global catalogs."</string>
+    <string name="earthquake_info_016" formatted="false">"\n\nThe German and European sources\' CC BY 4.0 licenses do not apply to China Earthquake Networks Center or Wolfx data."</string>
+    <string name="earthquake_info_017" formatted="false">"Earthquake queries send the selected providers an IP address, client identifier, time range and minimum magnitude. The page refreshes in the foreground at the configured interval, 15 minutes by default. With automatic refresh disabled, even an empty cache does not trigger a request. Manual refreshes are at least one minute apart and follow source rate limits.\n\nCatalog and intensity fields are cached locally, retaining the previous result on failure. Clearing caches preserves settings and rate-limit records. Disabling a source stops its requests and hides its cached records."</string>
+    <string name="earthquake_info_018" formatted="false">"GFZ GEOFON · Source and license"</string>
+    <string name="earthquake_info_019" formatted="false">"EMSC · License and terms"</string>
+    <string name="earthquake_info_020" formatted="false">"U.S. Geological Survey · Global catalog API"</string>
+    <string name="earthquake_info_021" formatted="false">"U.S. Geological Survey · Field definitions"</string>
+    <string name="earthquake_info_022" formatted="false">"U.S. Geological Survey · Copyright and attribution"</string>
+    <string name="earthquake_info_023" formatted="false">"MMI empirical model · Original paper"</string>
+    <string name="earthquake_info_024" formatted="false">"GlobalQuake · Reference algorithm and older MIT release"</string>
+    <string name="earthquake_info_025" formatted="false">"Wolfx · Open API documentation"</string>
+    <string name="earthquake_info_026" formatted="false">"Wolfx · Terms of use"</string>
+    <string name="earthquake_info_027" formatted="false">"China Earthquake Networks Center · Official site"</string>
+    <string name="earthquake_info_028" formatted="false">"Magnitude measures earthquake size, calculated from wave amplitudes, seismic moment or other quantities. Mw is moment magnitude, ML local magnitude, mb body-wave magnitude and Ms surface-wave magnitude. Different types should not be compared directly. M alone means the source did not specify a type. Magnitudes may be negative; this app\'s lowest filter is M≥0.0."</string>
+    <string name="earthquake_info_029" formatted="false">"Intensity describes shaking effects at a location. One earthquake can have different intensities at different places. This app uses Modified Mercalli Intensity (MMI), I–XII, describing felt shaking and effects rather than earthquake size. All listed intensity values use MMI; sources, models and assumptions are given in details."</string>
+    <string name="earthquake_info_030" formatted="false">"Maximum intensity is the highest intensity within a survey or model area. Epicentral intensity applies near the epicenter; they need not be equal. This app estimates epicentral MMI, not intensity at your reference location or an official maximum. Felt aggregates come from questionnaires; model intensities come from calculations. Both can be revised."</string>
+    <string name="earthquake_info_031" formatted="false">"The focus is where underground rupture begins; the epicenter is its corresponding surface location. Depth measures how far the focus is below the surface. Displayed distances run along the surface from your reference location to the epicenter, not in a straight line to the underground focus."</string>
+    <string name="earthquake_info_032" formatted="false">"Natural earthquakes can relate to fault motion, volcanic activity or collapse. Induced earthquakes and nonnatural events such as explosions or nuclear tests also occur. Only source-designated earthquake records or corresponding earthquake types are displayed. Causes are not inferred from location, and quarry blasts are excluded."</string>
+    <string name="earthquake_info_033" formatted="false">"Automatic result: the source marks an automatic solution calculated by its computer system from observations. This marker contains no explicit manual processing or review information; it does not establish whether anyone has looked at it."</string>
+    <string name="earthquake_info_034" formatted="false">"Reviewed: for concise display, this app groups source markers manual, reviewed and confirmed together. Manual means human participation and does not guarantee completion of a formal review procedure. Original markers remain in details."</string>
+    <string name="earthquake_info_035" formatted="false">"Unknown status: no recognizable processing or review marker was provided. It must not be assumed to be automatic."</string>
+    <string name="earthquake_info_036" formatted="false">"Review status restates source markers. It is neither independent verification by this app nor a reliability rating. Parameters of any status can be revised. Review does not turn model intensity into a measurement."</string>
+    <string name="earthquake_info_037" formatted="false">"U.S. Geological Survey · Earthquake glossary"</string>
+    <string name="earthquake_info_038" formatted="false">"Earthquake terminology"</string>
+    <string name="earthquake_intensity_001" formatted="false">"Below the model\'s MMI I display threshold"</string>
+    <string name="earthquake_intensity_002" formatted="false">"Below threshold; epicentral intensity not estimated"</string>
+    <string name="earthquake_intensity_003" formatted="false">": "</string>
+    <string name="earthquake_intensity_004" formatted="false">"Source-reported intensity MMI "</string>
+    <string name="earthquake_intensity_005" formatted="false">" (%.1f, aggregated felt reports)"</string>
+    <string name="earthquake_intensity_006" formatted="false">"Estimated intensity MMI "</string>
+    <string name="earthquake_intensity_007" formatted="false">" (%.1f, source ShakeMap model)"</string>
+    <string name="earthquake_intensity_008" formatted="false">"Estimated epicentral intensity MMI "</string>
+    <string name="earthquake_intensity_009" formatted="false">" (%.1f, local empirical model)"</string>
+    <string name="earthquake_intensity_010" formatted="false">"; source magnitude used approximately"</string>
+    <string name="earthquake_intensity_011" formatted="false">"; source default or fixed depth used"</string>
+    <string name="earthquake_intensity_012" formatted="false">"Estimated epicentral intensity: below the model\'s MMI I display threshold (GlobalQuake reference model"</string>
+    <string name="earthquake_intensity_013" formatted="false">" (GlobalQuake reference model"</string>
+    <string name="earthquake_intensity_014" formatted="false">"Estimated intensity MMI: valid magnitude or depth missing"</string>
+    <string name="earthquake_location_001" formatted="false">"Location request timed out. Previous position retained. Check location method and system settings."</string>
+    <string name="earthquake_location_002" formatted="false">"This device does not support the selected method. Change it in location settings."</string>
+    <string name="earthquake_location_003" formatted="false">"The selected method is disabled. Enable system location."</string>
+    <string name="earthquake_location_004" formatted="false">"Refreshing location · "</string>
+    <string name="earthquake_location_005" formatted="false">"Network location"</string>
+    <string name="earthquake_location_006" formatted="false">"Satellite location"</string>
+    <string name="earthquake_location_007" formatted="false">"Location permission required for this method has not been granted"</string>
+    <string name="earthquake_location_008" formatted="false">"Location unavailable. Previous position retained."</string>
+    <string name="earthquake_location_009" formatted="false">"Required location permission denied. Enable it in system app permissions."</string>
+    <string name="earthquake_location_010" formatted="false">"Location request stopped. Previous position retained."</string>
+    <string name="earthquake_location_011" formatted="false">"Location refreshed"</string>
+    <string name="earthquake_location_012" formatted="false">"Selected location method disabled. Previous position retained."</string>
+    <string name="earthquake_options_001" formatted="false">"Not provided"</string>
+    <string name="earthquake_001" formatted="false">"Filters and refresh"</string>
+    <string name="earthquake_002" formatted="false">"Update status"</string>
+    <string name="earthquake_003" formatted="false">"Earthquake list"</string>
+    <string name="earthquake_004" formatted="false">"Last 1 day"</string>
+    <string name="earthquake_005" formatted="false">"Last 3 days"</string>
+    <string name="earthquake_006" formatted="false">"Last 7 days (default)"</string>
+    <string name="earthquake_007" formatted="false">"Last 30 days"</string>
+    <string name="earthquake_008" formatted="false">"Global (default)"</string>
+    <string name="earthquake_009" formatted="false">"China and surroundings"</string>
+    <string name="earthquake_010" formatted="false">"Near reference location"</string>
+    <string name="earthquake_011" formatted="false">"Newest first (default)"</string>
+    <string name="earthquake_012" formatted="false">"Largest magnitude first"</string>
+    <string name="earthquake_013" formatted="false">"Nearest first"</string>
+    <string name="earthquake_014" formatted="false">"Refresh catalog"</string>
+    <string name="earthquake_015" formatted="false">"Updating…"</string>
+    <string name="earthquake_016" formatted="false">"Last "</string>
+    <string name="earthquake_017" formatted="false">" days · "</string>
+    <string name="earthquake_018" formatted="false">" · Global M≥"</string>
+    <string name="earthquake_019" formatted="false">" / China and surroundings M≥"</string>
+    <string name="earthquake_020" formatted="false">"Refresh location"</string>
+    <string name="earthquake_021" formatted="false">"Manual reference · Coordinates not saved"</string>
+    <string name="earthquake_022" formatted="false">"Manual reference · "</string>
+    <string name="earthquake_023" formatted="false">"No location fix; distance unavailable"</string>
+    <string name="earthquake_024" formatted="false">"Last fix · "</string>
+    <string name="earthquake_025" formatted="false">" seconds ago"</string>
+    <string name="earthquake_026" formatted="false">" (outdated)"</string>
+    <string name="earthquake_027" formatted="false">"Reference location unavailable"</string>
+    <string name="earthquake_028" formatted="false">"From %s: %.0f km"</string>
+    <string name="earthquake_029" formatted="false">"reference location"</string>
+    <string name="earthquake_030" formatted="false">"last fix"</string>
+    <string name="earthquake_031" formatted="false">"Depth %.1f km"</string>
+    <string name="earthquake_032" formatted="false">"Depth not provided"</string>
+    <string name="earthquake_033" formatted="false">"Disabled"</string>
+    <string name="earthquake_034" formatted="false">"Updating"</string>
+    <string name="earthquake_035" formatted="false">"; previous results retained"</string>
+    <string name="earthquake_036" formatted="false">"Not downloaded"</string>
+    <string name="earthquake_037" formatted="false">"Outdated cache"</string>
+    <string name="earthquake_038" formatted="false">"Local cache"</string>
+    <string name="earthquake_039" formatted="false">"Downloaded"</string>
+    <string name="earthquake_040" formatted="false">"Cached data do not cover the current filters. Connect and refresh."</string>
+    <string name="earthquake_041" formatted="false">"Downloaded at: "</string>
+    <string name="earthquake_042" formatted="false">"Only the latest 50 records are available; the selected period may not be covered. This response: "</string>
+    <string name="earthquake_043" formatted="false">" records"</string>
+    <string name="earthquake_044" formatted="false">" · Earliest event time: "</string>
+    <string name="earthquake_045" formatted="false">"Response reached the record limit and may be incomplete. Reduce the query range."</string>
+    <string name="earthquake_046" formatted="false">"No reference location; showing newest first."</string>
+    <string name="earthquake_047" formatted="false">"Matching records: "</string>
+    <string name="earthquake_048" formatted="false">" · Tap a record for details"</string>
+    <string name="earthquake_049" formatted="false">"No reference location. Obtain a fix or set a manual reference."</string>
+    <string name="earthquake_050" formatted="false">"No earthquake records available. Connect and refresh. Existing cache is retained if requests fail."</string>
+    <string name="earthquake_051" formatted="false">"No downloaded records match these filters. Adjust the period or minimum magnitude. This does not mean no earthquakes occurred."</string>
+    <string name="earthquake_052" formatted="false">"Event time: "</string>
+    <string name="earthquake_053" formatted="false">"Source: "</string>
+    <string name="earthquake_054" formatted="false">"Load more ("</string>
+    <string name="earthquake_055" formatted="false">" remaining)"</string>
+    <string name="earthquake_056" formatted="false">"Magnitude types, depths and positions may differ between sources. Values are not averaged. Reviewed Chinese reports take priority, then other reviewed reports, then automatic or unknown records; newer reports win equal priorities. Automatic Chinese reports are not considered reviewed. Lists name contributors; aggregator and relay information remains below. Only unambiguous events close in time and space are merged; dense aftershock sequences may remain separate."</string>
+    <string name="earthquake_057" formatted="false">"Event ID: "</string>
+    <string name="earthquake_058" formatted="false">"\nEvent time: "</string>
+    <string name="earthquake_059" formatted="false">"Source report time: "</string>
+    <string name="earthquake_060" formatted="false">"Source solution time: "</string>
+    <string name="earthquake_061" formatted="false">"Source update time: "</string>
+    <string name="earthquake_062" formatted="false">"\nEpicenter: "</string>
+    <string name="earthquake_063" formatted="false">"\nStatus: "</string>
+    <string name="earthquake_064" formatted="false">"\nOriginal processing marker: "</string>
+    <string name="earthquake_065" formatted="false">"\nContributor: "</string>
+    <string name="earthquake_066" formatted="false">" · China Earthquake Networks Center"</string>
+    <string name="earthquake_067" formatted="false">" · Original event details"</string>
+    <string name="earthquake_068" formatted="false">"Wolfx · Catalog API notes"</string>
+    <string name="earthquake_069" formatted="false">"This opens the agency\'s website, not an official details page for this event. Relayed parameters are for reference. The unverified intensity field is not used."</string>
+    <string name="earthquake_070" formatted="false">"Aggregated felt reports are not official measured maximum intensities. Source and local model results always remain estimates. All intensities use MMI. Calculation limits and licenses are in About → Data sources and privacy."</string>
+    <string name="earthquake_071" formatted="false">"Earthquake details"</string>
+    <string name="earthquake_072" formatted="false">"Xizang"</string>
+    <string name="earthquake_073" formatted="false">"Xizang–Qinghai border region"</string>
+    <string name="earthquake_074" formatted="false">"Southern Xinjiang, China"</string>
+    <string name="earthquake_075" formatted="false">"Northern Xinjiang, China"</string>
+    <string name="earthquake_076" formatted="false">"Sichuan, China"</string>
+    <string name="earthquake_077" formatted="false">"Qinghai, China"</string>
+    <string name="earthquake_078" formatted="false">"Yunnan, China"</string>
+    <string name="earthquake_079" formatted="false">"Taiwan region"</string>
+    <string name="earthquake_080" formatted="false">"Taiwan"</string>
+    <string name="earthquake_081" formatted="false">"Near the east coast of Honshu, Japan"</string>
+    <string name="earthquake_082" formatted="false">"Updating. Please wait."</string>
+    <string name="earthquake_083" formatted="false">"Request interval not reached or source rate-limited. Try later."</string>
+    <string name="earthquake_084" formatted="false">"Connection failed. Check your network and retry."</string>
+    <string name="earthquake_085" formatted="false">"Downloaded, but unable to save cache"</string>
+    <string name="earthquake_086" formatted="false">"Refreshed successfully"</string>
+    <string name="earthquake_087" formatted="false">"Some sources refreshed successfully"</string>
+    <string name="earthquake_088" formatted="false">"Refresh failed; cached results retained"</string>
+    <string name="earthquake_089" formatted="false">"Time range"</string>
+    <string name="earthquake_090" formatted="false">"Query area"</string>
+    <string name="earthquake_091" formatted="false">"Minimum magnitude"</string>
+    <string name="earthquake_092" formatted="false">"Sort order"</string>
+    <string name="earthquake_093" formatted="false">"Automatic refresh interval"</string>
+    <string name="earthquake_094" formatted="false">"Automatic refresh · While page is visible"</string>
+    <string name="earthquake_095" formatted="false">"5 minutes"</string>
+    <string name="earthquake_096" formatted="false">"15 minutes (default)"</string>
+    <string name="earthquake_097" formatted="false">"30 minutes"</string>
+    <string name="earthquake_098" formatted="false">"1 hour"</string>
+    <string name="earthquake_099" formatted="false">"Distance reference location"</string>
+    <string name="earthquake_100" formatted="false">"List information"</string>
+    <string name="earthquake_101" formatted="false">"Sections and order"</string>
+    <string name="earthquake_102" formatted="false">"Data sources"</string>
+    <string name="earthquake_103" formatted="false">"Clear earthquake cache"</string>
+    <string name="earthquake_104" formatted="false">"Clear earthquake cache?"</string>
+    <string name="earthquake_105" formatted="false">"Deletes downloaded catalogs only. Keeps settings, last fix and rate-limit records."</string>
+    <string name="earthquake_106" formatted="false">"Clear"</string>
+    <string name="earthquake_107" formatted="false">"Earthquake cache cleared"</string>
+    <string name="earthquake_108" formatted="false">"Some earthquake cache files could not be deleted"</string>
+    <string name="earthquake_109" formatted="false">"Earthquake settings"</string>
+    <string name="earthquake_110" formatted="false">"Global minimum magnitude"</string>
+    <string name="earthquake_111" formatted="false">"Minimum magnitude: China and surroundings"</string>
+    <string name="earthquake_112" formatted="false">"Default minimum M≥1.0; range M≥0.0–M≥7.0 in steps of 0.1. Filters do not indicate source completeness. A merged event appears if any report meets the threshold; original magnitude types remain available."</string>
+    <string name="earthquake_113" formatted="false">"China and surroundings uses a broad rectangle of 70° E–140° E and 15° N–55° N, not administrative boundaries. Nearby queries use the locally stored reference position."</string>
+    <string name="earthquake_114" formatted="false">"Search radius · Integer from 50 to 5000 km"</string>
+    <string name="earthquake_115" formatted="false">"Search radius (km)"</string>
+    <string name="earthquake_116" formatted="false">"Save search radius"</string>
+    <string name="earthquake_117" formatted="false">"Enter an integer from 50 to 5000"</string>
+    <string name="earthquake_118" formatted="false">"Search radius saved"</string>
+    <string name="earthquake_119" formatted="false">"Location fix (default)"</string>
+    <string name="earthquake_120" formatted="false">"Manual reference location"</string>
+    <string name="earthquake_121" formatted="false">"Reference longitude (−180° W to +180° E)"</string>
+    <string name="earthquake_122" formatted="false">"Reference latitude (−90° S to +90° N)"</string>
+    <string name="earthquake_123" formatted="false">"Reference longitude"</string>
+    <string name="earthquake_124" formatted="false">"Reference latitude"</string>
+    <string name="earthquake_125" formatted="false">"Enter complete coordinates"</string>
+    <string name="earthquake_126" formatted="false">"Save reference location"</string>
+    <string name="earthquake_127" formatted="false">"Reference saved; distances updated"</string>
+    <string name="earthquake_128" formatted="false">"Enter valid longitude and latitude"</string>
+    <string name="earthquake_129" formatted="false">"Location fix uses the last valid position. Refresh location on the earthquake page requests a new fix with the method set in Status. For a manual reference, enter longitude, then latitude, and save. Positive longitude is east E and negative west W; positive latitude is north N and negative south S. Coordinates are used locally for distances and nearby filters, never sent to catalog sources."</string>
+    <string name="earthquake_130" formatted="false">"Depth"</string>
+    <string name="earthquake_131" formatted="false">"Distance from reference"</string>
+    <string name="earthquake_132" formatted="false">"Intensity information"</string>
+    <string name="earthquake_133" formatted="false">"Source"</string>
+    <string name="earthquake_134" formatted="false">"Review status"</string>
+    <string name="earthquake_135" formatted="false">"All enabled by default. Attribution and calculation notes are in About → Data sources and privacy. Source-reported intensity and model estimates remain distinct."</string>
+    <string name="earthquake_136" formatted="false">" · Disabled by default"</string>
+    <string name="earthquake_137" formatted="false">" · Global supplement"</string>
+    <string name="earthquake_138" formatted="false">"Confirm before enabling the Wolfx relay"</string>
+    <string name="earthquake_139" formatted="false">"I have read and confirm"</string>
+    <string name="earthquake_140" formatted="false">"Keep at least one earthquake source enabled"</string>
+    <string name="earthquake_141" formatted="false">"GFZ GEOFON, EMSC and USGS are enabled by default. Wolfx is disabled until you confirm its usage notice. Wolfx provides only a recent Chinese catalog; other sources supplement global coverage. Events merge only on clear matches. Each source\'s parameters remain in details."</string>
+    <string name="earthquake_142" formatted="false">"Earthquake data sources"</string>
+    <string name="gps_001" formatted="false">"Current location"</string>
+    <string name="gps_002" formatted="false">"Positioning satellites"</string>
+    <string name="gps_003" formatted="false">"Places"</string>
+    <string name="gps_004" formatted="false">"Usage notes"</string>
+    <string name="gps_005" formatted="false">"Route recording not started"</string>
+    <string name="gps_006" formatted="false">"Battery level"</string>
+    <string name="gps_007" formatted="false">"Battery temperature"</string>
+    <string name="gps_008" formatted="false">"Voltage"</string>
+    <string name="gps_009" formatted="false">"Health status"</string>
+    <string name="gps_010" formatted="false">"Power source"</string>
+    <string name="gps_011" formatted="false">"Battery chemistry"</string>
+    <string name="gps_012" formatted="false">"Instantaneous current"</string>
+    <string name="gps_013" formatted="false">"Remaining charge"</string>
+    <string name="gps_014" formatted="false">"Device"</string>
+    <string name="gps_015" formatted="false">"Security update"</string>
+    <string name="gps_016" formatted="false">"Available / total memory"</string>
+    <string name="gps_017" formatted="false">"Available / total app-volume storage"</string>
+    <string name="gps_018" formatted="false">"Uptime (including sleep)"</string>
+    <string name="gps_019" formatted="false">"Current window"</string>
+    <string name="gps_020" formatted="false">"Satellite section hidden; reception stopped"</string>
+    <string name="gps_021" formatted="false">"Waiting for orientation sensor"</string>
+    <string name="gps_022" formatted="false">"Pitch —"</string>
+    <string name="gps_023" formatted="false">"Roll —"</string>
+    <string name="gps_024" formatted="false">"Device heading follows the top edge of the screen. Hold the device flat, away from magnets, metal and electrical equipment. If needed, move it slowly in a figure eight to calibrate. True north requires magnetic declination estimated from a recent location. Pitch is positive with the top edge raised; roll is negative left and positive right."</string>
+    <string name="gps_025" formatted="false">"Longitude · WGS84"</string>
+    <string name="gps_026" formatted="false">"Latitude · WGS84"</string>
+    <string name="gps_027" formatted="false">"Horizontal uncertainty radius"</string>
+    <string name="gps_028" formatted="false">"Altitude · WGS84 ellipsoid"</string>
+    <string name="gps_029" formatted="false">"Vertical uncertainty radius"</string>
+    <string name="gps_030" formatted="false">"Ground speed"</string>
+    <string name="gps_031" formatted="false">"Direction of travel"</string>
+    <string name="gps_032" formatted="false">"Waiting for location"</string>
+    <string name="gps_033" formatted="false">"Direction of travel comes from location data, not device orientation."</string>
+    <string name="gps_034" formatted="false">"Stop location"</string>
+    <string name="gps_035" formatted="false">"Start location"</string>
+    <string name="gps_036" formatted="false">"Current method: "</string>
+    <string name="gps_037" formatted="false">""</string>
+    <string name="gps_038" formatted="false">"Positioning satellites · Device reception"</string>
+    <string name="gps_039" formatted="false">"Stop satellite reception"</string>
+    <string name="gps_040" formatted="false">"Start satellite reception"</string>
+    <string name="gps_041" formatted="false">"Satellite reception stopped"</string>
+    <string name="gps_042" formatted="false">"With rotation disabled, the sky plot has north up, south down, west left and east right. When enabled, it rotates with device heading. The edge is altitude 0° and the center 90°. Azimuth increases clockwise from true north at 0°. Colors identify systems; filled markers contribute to the current fix, hollow markers do not. Tap a satellite for details."</string>
+    <string name="gps_043" formatted="false">"No satellite selected"</string>
+    <string name="gps_044" formatted="false">"Expand or collapse satellite details"</string>
+    <string name="gps_045" formatted="false">"Waiting for device data"</string>
+    <string name="gps_046" formatted="false">"Only satellites reported by the device chipset and Android are shown, not a calculated complete constellation. Precise location permission is required. Starting reception also starts position updates using the Status location method. Stopping reception leaves location running; stopping location also stops reception. Reception and continuous location each follow their own lifecycle settings. Assisted positioning may use a network; this app downloads no ephemerides."</string>
+    <string name="gps_047" formatted="false">"Precise location permission is required to read satellite status"</string>
+    <string name="gps_048" formatted="false">"The selected satellite is no longer reported or is hidden"</string>
+    <string name="gps_049" formatted="false">"%.1f° · Azimuth %.1f° %s"</string>
+    <string name="gps_050" formatted="false">" · Below horizon"</string>
+    <string name="gps_051" formatted="false">"Valid angles not provided"</string>
+    <string name="gps_052" formatted="false">"\nCarrier-to-noise density "</string>
+    <string name="gps_053" formatted="false">"Used in current fix"</string>
+    <string name="gps_054" formatted="false">"Not used in current fix"</string>
+    <string name="gps_055" formatted="false">"Select a saved place"</string>
+    <string name="gps_056" formatted="false">"Save current location"</string>
+    <string name="gps_057" formatted="false">"Add place manually"</string>
+    <string name="gps_058" formatted="false">"Select / manage places"</string>
+    <string name="gps_059" formatted="false">"Places use their chosen colors; a ring marks the target and the center is your current position. The target distance determines the outer range; without a target, the farthest visible place sets it. Out-of-range places appear as smaller points on the edge. Set colors and visibility in place management; tap a point to target it. With valid heading and location, the plot rotates with the device; otherwise true north is up. Distances are great-circle surface distances and bearings are initial bearings, without roads or obstacles. Location and magnetic errors affect results; do not use for safety navigation. Places are stored locally and support app JSON import/export. Clearing cache or resetting settings preserves them; uninstalling deletes them."</string>
+    <string name="gps_060" formatted="false">"Routes"</string>
+    <string name="gps_061" formatted="false">"Import "</string>
+    <string name="gps_062" formatted="false">"Export "</string>
+    <string name="gps_063" formatted="false">"Stop following position"</string>
+    <string name="gps_064" formatted="false">"Follow position"</string>
+    <string name="gps_065" formatted="false">"Finish recording"</string>
+    <string name="gps_066" formatted="false">"Start recording"</string>
+    <string name="gps_067" formatted="false">"Zoom"</string>
+    <string name="gps_068" formatted="false">"Route zoom"</string>
+    <string name="gps_069" formatted="false">"Saved routes"</string>
+    <string name="gps_070" formatted="false">"Jump to start"</string>
+    <string name="gps_071" formatted="false">"Previous point"</string>
+    <string name="gps_072" formatted="false">"Play"</string>
+    <string name="gps_073" formatted="false">"Play route"</string>
+    <string name="gps_074" formatted="false">"Next point"</string>
+    <string name="gps_075" formatted="false">"Jump to end"</string>
+    <string name="gps_076" formatted="false">"Playback speed · "</string>
+    <string name="gps_077" formatted="false">" points/s"</string>
+    <string name="gps_078" formatted="false">"Playback speed, 1 to 20 points per second"</string>
+    <string name="gps_079" formatted="false">"Drag with one finger to pan and use the slider to zoom. The square spans 30 meters at the left endpoint and 10 kilometers at the right. Edge scales follow zoom; zoom is centered on the frame. Pinch zoom is disabled. Tap a point for its index, coordinates and time.\n\nSelecting a saved route first shows its full preview. Playback reveals points from the start. Follow position tracks the orange playback point or your device during recording; tap again or pan to stop following. When paused, step between points or jump to either end, centering the chosen point.\n\nRecording defaults to every 5 seconds, adjustable to 2–60 seconds in Status settings. With network location, recording cannot be faster than the network interval. Enable continuous location and start location before recording. Missing valid fixes pauses recording; new fixes resume it. Routes are stored locally and support app JSON import/export."</string>
+    <string name="gps_080" formatted="false">"Enable continuous location in Status settings and start location first"</string>
+    <string name="gps_081" formatted="false">"Recording route · Waiting for fixes"</string>
+    <string name="gps_082" formatted="false">"Recording route · "</string>
+    <string name="gps_083" formatted="false">" points"</string>
+    <string name="gps_084" formatted="false">"Recording finished · "</string>
+    <string name="gps_085" formatted="false">"No valid location points received"</string>
+    <string name="gps_086" formatted="false">"For example: Evening run"</string>
+    <string name="gps_087" formatted="false">"Save route"</string>
+    <string name="gps_088" formatted="false">"This route contains "</string>
+    <string name="gps_089" formatted="false">" recorded points."</string>
+    <string name="gps_090" formatted="false">"Unnamed route"</string>
+    <string name="gps_091" formatted="false">"Route saved · "</string>
+    <string name="gps_092" formatted="false">"Delete"</string>
+    <string name="gps_093" formatted="false">"Recording deleted"</string>
+    <string name="gps_094" formatted="false">"Delete route"</string>
+    <string name="gps_095" formatted="false">"Delete this route?"</string>
+    <string name="gps_096" formatted="false">"Finish the current recording before viewing saved routes"</string>
+    <string name="gps_097" formatted="false">"No saved routes."</string>
+    <string name="gps_098" formatted="false">" points"</string>
+    <string name="gps_099" formatted="false">"Edit"</string>
+    <string name="gps_100" formatted="false">"Route deleted"</string>
+    <string name="gps_101" formatted="false">"Move up"</string>
+    <string name="gps_102" formatted="false">"Move down"</string>
+    <string name="gps_103" formatted="false">"Saved routes"</string>
+    <string name="gps_104" formatted="false">"Route name"</string>
+    <string name="gps_105" formatted="false">"Rename route"</string>
+    <string name="gps_106" formatted="false">"Route name cannot be empty"</string>
+    <string name="gps_107" formatted="false">"Pause"</string>
+    <string name="gps_108" formatted="false">"Pause route"</string>
+    <string name="gps_109" formatted="false">"Playback: "</string>
+    <string name="gps_110" formatted="false">" points · "</string>
+    <string name="gps_111" formatted="false">"Playing"</string>
+    <string name="gps_112" formatted="false">"Paused"</string>
+    <string name="gps_113" formatted="false">"Gyroscope · Angular velocity"</string>
+    <string name="gps_114" formatted="false">"Accelerometer · Including gravity"</string>
+    <string name="gps_115" formatted="false">"Linear acceleration · Excluding gravity"</string>
+    <string name="gps_116" formatted="false">"Gravity sensor"</string>
+    <string name="gps_117" formatted="false">"Magnetic field"</string>
+    <string name="gps_118" formatted="false">"Air pressure"</string>
+    <string name="gps_119" formatted="false">"Ambient light"</string>
+    <string name="gps_120" formatted="false">"Proximity sensor"</string>
+    <string name="gps_121" formatted="false">"Ambient temperature"</string>
+    <string name="gps_122" formatted="false">"Relative humidity"</string>
+    <string name="gps_123" formatted="false">"Waiting for result"</string>
+    <string name="gps_124" formatted="false">"All sensors are hidden in settings."</string>
+    <string name="gps_125" formatted="false">"The app requests sensor data at the highest available rate and targets a 50 ms display interval. Actual frequency depends on hardware and system scheduling; the last reading is retained until new data arrives. Sensors absent or inaccessible to the system are shown as unavailable.\n\nSensor axes are fixed to the device\'s natural orientation: X points right, Y points up, and Z points outward from the screen. The gyroscope reports angular velocity rather than rotation angle. The accelerometer includes gravity and supports motion and tilt detection; linear acceleration attempts to remove gravity; the gravity sensor estimates gravitational acceleration for orientation reference.\n\nBattery temperature in the Battery section describes the battery itself and differs from ambient temperature. The system ambient-light sensor reports illuminance."</string>
+    <string name="gps_126" formatted="false">"Waiting for system battery status"</string>
+    <string name="gps_127" formatted="false">"All battery information is hidden in settings."</string>
+    <string name="gps_128" formatted="false">"Health status is reported by Android. It does not measure remaining capacity or guarantee safety. Current polarity can be changed in Status settings; manufacturers use different conventions. Missing data are not shown as zero."</string>
+    <string name="gps_129" formatted="false">"Reading system information"</string>
+    <string name="gps_130" formatted="false">"All device information is hidden in settings."</string>
+    <string name="gps_131" formatted="false">"Status usage notes"</string>
+    <string name="gps_132" formatted="false">"Compass, system sensor and battery data are read while Status is in the foreground. Camera sampling follows its separate setting. Started satellite reception pauses on tab changes, screen lock or backgrounding and resumes on return by default. If automatic resume is disabled, reception must be started manually.\n\nTo continue positioning outside Status, enable continuous location in Settings → Status, then start location manually. Stop from the notification or Status. If notifications are denied, use the system\'s active-app controls. Battery restrictions, permission changes or force stop may interrupt location.\n\nAndroid supplies horizontal and vertical uncertainties, typically at approximately 68% confidence; they do not guarantee a maximum error. Vertical uncertainty describes altitude uncertainty. Missing values show Vertical accuracy not provided. Altitude is WGS84 ellipsoid height, not height above mean sea level. Altitude not provided does not mean zero.\n\nSatellite hardware positioning uses supported satellite signals and needs no app network connection. Indoor use or obstructions can prevent fixes. System-assisted positioning may use a network.\n\nNetwork positioning requires a system network-location service and connectivity. The system may send IP, cell-tower or Wi-Fi information to its provider under that provider\'s rules. Devices without such a service cannot use it. The interval is the shortest requested update interval; updates may be delayed or reuse earlier results.\n\nCoordinates use WGS84, longitude then latitude: E east, W west, N north and S south. This app does not upload location coordinates. Earthquake distances and place bearings are calculated locally. Fix age uses the location result\'s actual timestamp."</string>
+    <string name="gps_133" formatted="false">"The app does not read device serial numbers, IMEI, MAC addresses, installed-app lists or communications. See Settings → About → Data sources and privacy for permission and data-use details."</string>
+    <string name="gps_134" formatted="false">"Open system location settings"</string>
+    <string name="gps_135" formatted="false">"Open app permissions"</string>
+    <string name="gps_136" formatted="false">"Location method changed; satellite reception stopped"</string>
+    <string name="gps_137" formatted="false">"Required location permission not granted. Enable it in app permissions."</string>
+    <string name="gps_138" formatted="false">"Notifications disabled. Stop location in Status or system active-app controls."</string>
+    <string name="gps_139" formatted="false">"Starting location…"</string>
+    <string name="gps_140" formatted="false">"Unable to start location. Return to the foreground and retry."</string>
+    <string name="gps_141" formatted="false">"%.1f m"</string>
+    <string name="gps_142" formatted="false">"Accuracy not provided"</string>
+    <string name="gps_143" formatted="false">"Altitude not provided"</string>
+    <string name="gps_144" formatted="false">"Vertical accuracy not provided"</string>
+    <string name="gps_145" formatted="false">" · Last fix "</string>
+    <string name="gps_146" formatted="false">" seconds ago"</string>
+    <string name="gps_147" formatted="false">" · Outdated result"</string>
+    <string name="gps_148" formatted="false">"Waiting for new signal · Previous fix shown below"</string>
+    <string name="gps_149" formatted="false">"High accuracy"</string>
+    <string name="gps_150" formatted="false">"Medium accuracy"</string>
+    <string name="gps_151" formatted="false">"Low accuracy; calibrate"</string>
+    <string name="gps_152" formatted="false">"Unreliable direction accuracy; calibrate"</string>
+    <string name="gps_153" formatted="false">"\nHeading "</string>
+    <string name="gps_154" formatted="false">"True north needs a recent fix. Start location."</string>
+    <string name="gps_155" formatted="false">"Hold device flat and wait for valid orientation data"</string>
+    <string name="gps_156" formatted="false">"Pitch %.1f°"</string>
+    <string name="gps_157" formatted="false">"Roll %.1f°"</string>
+    <string name="gps_158" formatted="false">"\nEstimated local declination %.1f° · Reference fix %d seconds ago"</string>
+    <string name="gps_159" formatted="false">"\nLast satellite status "</string>
+    <string name="gps_160" formatted="false">" · Outdated; temporarily hidden from plot"</string>
+    <string name="gps_161" formatted="false">"\nReported "</string>
+    <string name="gps_162" formatted="false">" satellites · Used in fix "</string>
+    <string name="gps_163" formatted="false">" satellites · Shown "</string>
+    <string name="gps_164" formatted="false">" satellites"</string>
+    <string name="gps_165" formatted="false">"No satellites reported by device"</string>
+    <string name="gps_166" formatted="false">"Saved "</string>
+    <string name="gps_167" formatted="false">" places · Select a target"</string>
+    <string name="gps_168" formatted="false">"Target: "</string>
+    <string name="gps_169" formatted="false">"\nObtain your current location first"</string>
+    <string name="gps_170" formatted="false">"\nSurface distance "</string>
+    <string name="gps_171" formatted="false">"\nTrue bearing %.1f° · %s"</string>
+    <string name="gps_172" formatted="false">"\nCoincident with reference; bearing undefined"</string>
+    <string name="gps_173" formatted="false">"\nTarget is approximately ahead"</string>
+    <string name="gps_174" formatted="false">"\nRelative to heading: turn %s by %.0f°"</string>
+    <string name="gps_175" formatted="false">"right"</string>
+    <string name="gps_176" formatted="false">"left"</string>
+    <string name="gps_177" formatted="false">"\nReference fix "</string>
+    <string name="gps_178" formatted="false">" · Outdated location; refresh"</string>
+    <string name="gps_179" formatted="false">" · Uncertainty radius %.1f m"</string>
+    <string name="gps_180" formatted="false">"Charging"</string>
+    <string name="gps_181" formatted="false">"Discharging"</string>
+    <string name="gps_182" formatted="false">"Full"</string>
+    <string name="gps_183" formatted="false">"Not charging"</string>
+    <string name="gps_184" formatted="false">"Battery status not provided"</string>
+    <string name="gps_185" formatted="false">"System reports no battery"</string>
+    <string name="gps_186" formatted="false">"Good"</string>
+    <string name="gps_187" formatted="false">"Overheated"</string>
+    <string name="gps_188" formatted="false">"Cold"</string>
+    <string name="gps_189" formatted="false">"Dead"</string>
+    <string name="gps_190" formatted="false">"Overvoltage"</string>
+    <string name="gps_191" formatted="false">"System-reported failure"</string>
+    <string name="gps_192" formatted="false">"Unplugged"</string>
+    <string name="gps_193" formatted="false">"AC power"</string>
+    <string name="gps_194" formatted="false">"Wireless charging"</string>
+    <string name="gps_195" formatted="false">"Other power source"</string>
+    <string name="gps_196" formatted="false">"%.0f mAh (not design capacity)"</string>
+    <string name="gps_197" formatted="false">" d "</string>
+    <string name="gps_198" formatted="false">" h "</string>
+    <string name="gps_199" formatted="false">" min"</string>
+    <string name="location_service_001" formatted="false">"Location not started"</string>
+    <string name="location_service_002" formatted="false">"Location stopped"</string>
+    <string name="location_service_003" formatted="false">"Selected location provider unavailable. Change method."</string>
+    <string name="location_service_004" formatted="false">"Selected method disabled. Open system location settings."</string>
+    <string name="location_service_005" formatted="false">"Waiting for "</string>
+    <string name="location_service_006" formatted="false">" result…"</string>
+    <string name="location_service_007" formatted="false">"Waiting for new signal · Previous system fix shown below"</string>
+    <string name="location_service_008" formatted="false">"Insufficient location permission. Grant permission again."</string>
+    <string name="location_service_009" formatted="false">"Location unavailable. Check system settings and restart."</string>
+    <string name="location_service_010" formatted="false">"Continuous location"</string>
+    <string name="location_service_011" formatted="false">"Shown after you start continuous location. Tap Stop to end it."</string>
+    <string name="location_service_012" formatted="false">"Daidai Toolbox · Continuous location active"</string>
+    <string name="location_service_013" formatted="false">" · Continues across tabs and in background"</string>
+    <string name="location_service_014" formatted="false">"Received "</string>
+    <string name="location_service_015" formatted="false">"disabled; waiting for it to be enabled"</string>
+    <string name="main_001" formatted="false">"Previous navigation tabs"</string>
+    <string name="main_002" formatted="false">"Switch to "</string>
+    <string name="main_003" formatted="false">"Next navigation tabs"</string>
+    <string name="main_004" formatted="false">"Region saved"</string>
+    <string name="main_005" formatted="false">"Region removed from favorites"</string>
+    <string name="main_006" formatted="false">"Remove current region from favorites"</string>
+    <string name="main_007" formatted="false">"Save current region"</string>
+    <string name="main_008" formatted="false">"Previous weather · Historical cache"</string>
+    <string name="main_009" formatted="false">"Current weather · Model estimate"</string>
+    <string name="main_010" formatted="false">"Updating…"</string>
+    <string name="main_011" formatted="false">"Refresh ↻"</string>
+    <string name="main_012" formatted="false">"   Feels like "</string>
+    <string name="main_013" formatted="false">"High "</string>
+    <string name="main_014" formatted="false">"    Low "</string>
+    <string name="main_015" formatted="false">"MM-dd HH:mm"</string>
+    <string name="main_016" formatted="false">"Data time "</string>
+    <string name="main_017" formatted="false">"Region local time"</string>
+    <string name="main_018" formatted="false">"Fetching weather"</string>
+    <string name="main_019" formatted="false">"No weather data"</string>
+    <string name="main_020" formatted="false">"Requesting weather data. Please wait."</string>
+    <string name="main_021" formatted="false">"Connect and retry, or choose another region."</string>
+    <string name="main_022" formatted="false">"Retry"</string>
+    <string name="main_023" formatted="false">"Cached forecast expired. Connect and refresh."</string>
+    <string name="main_024" formatted="false">"Now"</string>
+    <string name="main_025" formatted="false">"%02d:00"</string>
+    <string name="main_026" formatted="false">"Bottom percentages are precipitation probability · Swipe to browse"</string>
+    <string name="main_027" formatted="false">"% precipitation probability"</string>
+    <string name="main_028" formatted="false">"Wind speed"</string>
+    <string name="main_029" formatted="false">"Wind direction"</string>
+    <string name="main_030" formatted="false">"Today\'s maximum UV index"</string>
+    <string name="main_031" formatted="false">"Sunrise"</string>
+    <string name="main_032" formatted="false">"Sunset"</string>
+    <string name="main_033" formatted="false">"The UV index is a weather-model estimate indicating sun-exposure risk, not a live surface observation."</string>
+    <string name="main_034" formatted="false">"Older data are shown. Tap Refresh to update."</string>
+    <string name="main_035" formatted="false">"Less than one minute since the last request. Try later."</string>
+    <string name="main_036" formatted="false">"Weather data temporarily unavailable. Try later."</string>
+    <string name="main_037" formatted="false">"Connection failed. Check your network and retry."</string>
+    <string name="main_038" formatted="false">" Showing previously saved data."</string>
+    <string name="main_039" formatted="false">"Choose region"</string>
+    <string name="main_040" formatted="false">"Done"</string>
+    <string name="main_041" formatted="false">"Search cities, districts or overseas places"</string>
+    <string name="main_042" formatted="false">"For example: Hangzhou, Haidian, Tokyo"</string>
+    <string name="main_043" formatted="false">"Search"</string>
+    <string name="main_044" formatted="false">"My regions"</string>
+    <string name="main_045" formatted="false">"No search term entered."</string>
+    <string name="main_046" formatted="false">"Search other regions"</string>
+    <string name="main_047" formatted="false">"Local matches"</string>
+    <string name="main_048" formatted="false">"Select Search to query the online location directory."</string>
+    <string name="main_049" formatted="false">"Current"</string>
+    <string name="main_050" formatted="false">"Enter at least two characters"</string>
+    <string name="main_051" formatted="false">"Searching for “"</string>
+    <string name="main_052" formatted="false">"Region search unavailable. Check your connection or try later."</string>
+    <string name="main_053" formatted="false">"No matching region. Try a city name or pinyin."</string>
+    <string name="main_054" formatted="false">"Search results · Check the area of places with the same name"</string>
+    <string name="main_055" formatted="false">"System image picker not found"</string>
+    <string name="main_056" formatted="false">", expanded"</string>
+    <string name="main_057" formatted="false">", collapsed"</string>
+    <string name="update_129_title_001" formatted="false">"1.2.9 · Colors, sky pointing and ambient light"</string>
+    <string name="update_history_001" formatted="false">"• Added global colors for primary, explanatory and accent text, plus button backgrounds and labels, with presets and custom #RRGGBB values. Invalid historical colors fall back to blue.\n• Sky pointing uses rotation-vector sensors and a red crosshair, with rear-camera or top-edge reference.\n• Camera brightness sampling runs without a preview or manual start; background continuation is optional and off by default.\n• Reorganized sensor notes, settings and paragraphs; distinguished battery and ambient temperature and removed redundant weather and sky text.\n• Normalized Chinese place names and aliases, including Ganzi Tibetan Autonomous Prefecture, to avoid duplicate local and online results.\n• Version 1.2.9 / versionCode 33."</string>
+    <string name="update_128_title_001" formatted="false">"1.2.8 · Region deduplication, export and device tools"</string>
+    <string name="update_history_002" formatted="false">"• Removed preset city buttons; retained saved regions and search. Deduplicated normalized names and coordinates, with an offline Chinese city catalog covering mainland China, Hong Kong, Macao and Taiwan and retaining GeoNames attribution and coordinate checks.\n• Added saved-route renaming and ordering, plus global configuration export for settings, favorite regions, places, routes and timetable JSON.\n• Added rotation-vector sky pointing, with fixed horizontal coordinates when unavailable.\n• Ambient light can use the system sensor or front/rear camera. Camera readings are relative image brightness, not calibrated illuminance.\n• Version 1.2.8 / versionCode 32."</string>
+    <string name="update_127_title_001" formatted="false">"1.2.7 · Language resources, regions and places"</string>
+    <string name="update_history_003" formatted="false">"• New UI text uses XML resources. Added a global language entry; Chinese remains the complete language pending formal switching in 2.0.0.\n• Removed common-region buttons; expanded normalized Chinese city names across mainland China, Hong Kong, Macao and Taiwan, including Suqian and Suzhou districts, with deduplication.\n• Saved places support ordering; editing preserves list position.\n• Added maximum-UV-index notes below weather details.\n• Version 1.2.7 / versionCode 31."</string>
+    <string name="update_126_title_001" formatted="false">"1.2.6 · Route and place import/export"</string>
+    <string name="update_history_004" formatted="false">"• Import/export saved places and routes as JSON through the system picker. Imports require confirmation, keep existing records and skip duplicates.\n• Compass defaults to true north, with default choices first. Removed north-reference parentheses from travel direction.\n• Fixed zoom changing when replay restarts at the end.\n• Added route edge scales and a 30 m–10 km zoom range.\n• Follow-position toggles and follows the orange playback point.\n• Place-diagram range follows the selected target; distant places appear smaller on the edge.\n• Version 1.2.6; original signing key retained."</string>
+    <string name="update_125_title_001" formatted="false">"1.2.5 · Text and status interactions"</string>
+    <string name="update_history_005" formatted="false">"• Refined terminology, prompts and long-note paragraph spacing.\n• Centered replay follows the orange point continuously; dragging cancels following.\n• Combined start/stop controls for location and satellite reception. Reception also starts location so route recording works.\n• Vertical uncertainty appears below altitude in large text.\n• Places support colors, visibility and multiple plotted targets.\n• Overlapping-point details use Back and retain the point-selection list.\n• Version 1.2.5; original signing key retained."</string>
+    <string name="update_124_title_001" formatted="false">"1.2.4 · Status refresh and route fixes"</string>
+    <string name="update_history_006" formatted="false">"• Preserve scroll position when satellite details and status values update.\n• Zoom around the route-frame center, including after panning.\n• Status displays other than GPS location target 50 ms updates; actual data depend on the system. GPS and network intervals retain their settings.\n• Confirm deletion of saved or unsaved routes; cancellation keeps the route.\n• Default order: Compass, Current location, Satellites, Places, Route recording, Sensors, Battery, Device and environment, Usage notes; customized order retained.\n• Version 1.2.4 / versionCode 26; compatible signed upgrade."</string>
+    <string name="update_123_title_001" formatted="false">"1.2.3 · Route recording and global settings"</string>
+    <string name="update_history_007" formatted="false">"• Added route recording with continuous location at 2–60 second intervals, zoom slider, panning, centering and point details; finish to name/save or delete and replay.\n• Enlarged pitch/roll, clarified network interval names and disabled long-press selection in ordinary notes.\n• Refined place-refresh and direction notes. Added global background, outline and time settings shared across pages.\n• Version 1.2.3 / versionCode 25, upgradable over 1.2.2.\n• Maintenance combined recording controls and removed pan mode and pinch zoom; added full-route preview, incremental play/pause, paused stepping and endpoint jumps, 1–20 points/s speed and name-field padding."</string>
+    <string name="update_122_title_001" formatted="false">"1.2.2 · Status, cache and places"</string>
+    <string name="update_history_008" formatted="false">"• Repositioned heavy-thunderstorm hail to avoid an outward-launch appearance.\n• Moved location-setting links to the end of usage notes; ordered Status settings and added battery/device visibility and order.\n• Battery current can retain system polarity or reverse it; default matches 1.2.0, with manufacturer-convention notes.\n• Satellite names use country/region plus abbreviation. Reception pauses outside Status and resumes on return; removed sensor frame-rate settings.\n• Place forms show live fix age and refresh coordinates only on request; removed the app-level place limit.\n• Cache management shows storage usage; reordered settings."</string>
+    <string name="update_121_title_001" formatted="false">"1.2.1 · Status refinements"</string>
+    <string name="update_history_009" formatted="false">"• Added sensor visibility/order, rotating satellite plots, satellite sorting by system or carrier-to-noise density, and battery/gravity explanations.\n• Corrected pitch/roll conventions, displayed local declination and enlarged ground speed and travel direction.\n• Satellite reception pauses across tabs, screen lock and background by default, with a stop option. No app-level place limit.\n• Version 1.2.1 / versionCode 23, upgradable over 1.2.0."</string>
+    <string name="update_120_title_001" formatted="false">"1.2.0 · Status and device tools"</string>
+    <string name="update_history_010" formatted="false">"• Location became Status, retaining methods, intervals, foreground service and shared last fix.\n• Added a 16-point compass, true/magnetic north, pitch/roll and calibration notes with display-rotation compensation.\n• Added device-reported GPS, BeiDou, Galileo, GLONASS and other satellite plots, angles, signal density and fix contribution; precise permission and compatible hardware required. Reception stopped outside the page.\n• Added local saved places, manual/current coordinates, target point, distance and bearing, without road maps or routes.\n• Added available gyroscope, acceleration, gravity, magnetic, pressure and light sensors, plus battery, current, memory, storage and uptime.\n• Status sections support visibility/order and satellite filtering; processing remains local without third-party status services or code."</string>
+    <string name="update_116_title_001" formatted="false">"1.1.6 · Tablet state restoration and more sky objects"</string>
+    <string name="update_history_011" formatted="false">"• Fixed acquired earthquake status becoming cached and loss of tab/time state on tablet rotation or resizing.\n• Added northern bright stars and brighter clusters, nebulae and galaxies with approximate integrated magnitudes and M-number-first names. Included all seven main Orion stars, retained old visibility/selection identities and made all Big Dipper stars selectable.\n• Added manual or magnitude-threshold display in 0.1 steps while preserving manual choices.\n• Clarified negative/positive longitude as west/east and latitude as south/north."</string>
+    <string name="update_115_title_001" formatted="false">"1.1.5 · Portrait orientation and earthquake priorities"</string>
+    <string name="update_history_012" formatted="false">"• Requested portrait pages to avoid rotation-driven reconstruction and state changes.\n• Prioritized reviewed Chinese reports, then other reviewed reports, then automatic or unknown reports; newer equal-priority reports win, with no extra German-source preference.\n• Lists show concrete contributors such as Chilean and Thai agencies, with deduplication and aggregator/relay details retained."</string>
+    <string name="update_114_title_001" formatted="false">"1.1.4 · Earthquake details and coordinates"</string>
+    <string name="update_history_013" formatted="false">"• Simplified statuses to Reviewed, Automatic result and Unknown, retaining original markers in details.\n• Clarified event time and simplified list intensity/source labels, with model/relay detail and below-threshold messages retained.\n• Kept only MMI; removed other scale settings and unhelpful unspecified fixed-depth notes.\n• Translated contributors, standardized longitude-before-latitude with hemisphere letters, and clarified earliest-record status."</string>
+    <string name="update_113_title_001" formatted="false">"1.1.3 · Earthquake UI and wider intensity reference"</string>
+    <string name="update_history_014" formatted="false">"• Filters retain catalog/location refresh only; other controls move to settings. Standardized Last 1 day and removed a duplicate privacy link.\n• Standardized paragraph spacing; put MMI first and migrated the scale once while preserving later choices.\n• Outside conservative paper conditions, use an older MIT-licensed GlobalQuake reference algorithm with valid magnitude/depth, noting approximations, fixed depths and weak-shaking thresholds; not official maximum intensity.\n• Clarified automatic solutions and review/manual terminology; removed mainshock/foreshock/aftershock notes."</string>
+    <string name="update_112_title_001" formatted="false">"1.1.2 · Earthquake filters, location and intensity"</string>
+    <string name="update_history_015" formatted="false">"• Added a 0–7 magnitude slider, step 0.1, default M≥1.0, nearby radius 50–5000 km and location/manual reference choices with automatic distance updates.\n• Added one-shot fixes on the earthquake page, coordinates, full-year dates, clearer sorting and consolidated time/source/privacy notes; added terminology.\n• Added USGS global supplementation and unambiguous event merging. Agency names are translated. Wolfx is off by default until confirmed, with takedown cooperation stated.\n• Distinguished felt reports, source models and local MMI estimates; no unverified Chinese-scale conversion or extrapolation outside the original model range."</string>
+    <string name="update_111_title_001" formatted="false">"1.1.1 · Wolfx Chinese catalog"</string>
+    <string name="update_history_016" formatted="false">"• Integrated up to 50 recent CENC records via Wolfx, with separate cache, refresh and source toggle. Merge with GEOFON/EMSC only on clear matches, retaining parameters.\n• Explicitly stated that public redistribution authorization remains unconfirmed. CORS and noncommercial use are not permission; the source can be disabled.\n• Parse event/report times as Beijing time. No completeness or period-coverage guarantee; unverified intensity fields and early-warning streams are excluded."</string>
+    <string name="update_110_title_001" formatted="false">"1.1.0 · Recent earthquakes and continuous location"</string>
+    <string name="update_history_017" formatted="false">"• Added GEOFON/EMSC recent catalogs, nearby-event merging, magnitude types, times, depth, epicenter, surface distance and source details.\n• Added time/area/magnitude/radius/sort/time-zone/intensity/field/order/foreground-refresh settings and per-source cached status.\n• Retained CC BY 4.0 attribution; Wolfx remained disabled pending upstream authorization. No warning stream or unsupported intensity values.\n• Added optional continuous foreground-service location, off by default, with a persistent stop notification. Last fix is used locally for earthquake distance.\n• Cache management includes earthquake catalogs and blocks stale in-flight responses after clearing. Existing tab order and settings remain."</string>
+    <string name="update_1012_title_001" formatted="false">"1.0.12 · Dialogs and map buttons"</string>
+    <string name="update_history_018" formatted="false">"• Settings appear directly at center without slide animations. Spacing/outlines are prepared before layout; date input follows the same behavior, with hierarchical back navigation and validation.\n• Renamed browser action to Open in browser, matching map buttons in size, radius and spacing, with small-screen wrapping.\n• Researched earthquake sources and licenses without adding the feature."</string>
+    <string name="update_1011_title_001" formatted="false">"1.0.11 · Spacing and section management"</string>
+    <string name="update_history_019" formatted="false">"• Standardized navigation, sorting, time, timetable, crop and dialog spacing. Removed duplicate region-picker triggers and moved Search outside the input.\n• Added Moscow and Paris to common regions; adjusted crop wording and renamed Term settings.\n• Collapsed version entries by default on every visit. Added cache management preserving long-term data and rate limits.\n• Added astronomy time controls and section visibility/order, preserving selection and scroll.\n• Week jumping uses direct input; reduced icon size for white margins. Earthquakes remained research only."</string>
+    <string name="update_1010_title_001" formatted="false">"1.0.10 · Sky and Moon information"</string>
+    <string name="update_history_020" formatted="false">"• Enlarged the square local-sky chart. Labels stay above/below points, hiding on conflicts while retaining selection.\n• Renamed selected-object information. Sun and Moon are selectable; Moon magnitude is locally estimated and Sun magnitude omitted.\n• Added separate Moon phase, illumination, approximate age, time to full Moon and a changing phase diagram.\n• Added the official NMC weather-chart page after satellite imagery.\n• Put default course-prefix options first, preserving selections."</string>
+    <string name="update_109_title_001" formatted="false">"1.0.9 · Celestial coordinates and sky selection"</string>
+    <string name="update_history_021" formatted="false">"• Simplified WMO legend notes and unknown-weather explanations.\n• Refined default wording, full course prefixes and 5-second location interval.\n• Added planet/deep-sky visibility and horizontal, polar equatorial and grid-free modes.\n• Selected objects use a slowly rotating broken crosshair, retained through time changes and hidden below the horizon.\n• Standardized Vega, Altair and Polaris Chinese names, preserving preferences; added Pleiades and Andromeda centers from CC0 coordinates.\n• Clarified horizontal location uncertainty and missing altitude."</string>
+    <string name="update_108_title_001" formatted="false">"1.0.8 · Defaults and references"</string>
+    <string name="update_history_022" formatted="false">"• Codes 57/67 became moderate or heavy freezing drizzle/rain.\n• Improved Chinese/English spacing and default labels. Outlines default off; simplified color and network-location names.\n• Added Weather Fighter Global, Shiguang Schedule and this app\'s GitHub references.\n• New/reset timetables use 17 weeks and 12 university periods; upgrades preserve custom timetables."</string>
+    <string name="update_107_title_001" formatted="false">"1.0.7 · Thunderstorm names and WMO originals"</string>
+    <string name="update_history_023" formatted="false">"• Codes 95/96/97/99 follow WMO: slight or moderate thunderstorm, with hail, heavy thunderstorm, and heavy thunderstorm with hail.\n• Added two hail dots to code 99 day/night icons, totaling four.\n• Refined Chinese number terminology and explanations of codes, models and WMO naming.\n• Added official English WMO code-table links and recorded other differences for later changes."</string>
+    <string name="update_106_title_001" formatted="false">"1.0.6 · Legend and weather codes"</string>
+    <string name="update_history_024" formatted="false">"• Explained the rightmost code value, numbering gaps and official documentation links.\n• Explained model-dependent hail forecasting for 96/99 and added code 97 heavy thunderstorm.\n• Heavy freezing rain has three dark-blue rain strokes.\n• Missing, invalid or unsupported codes show Unknown weather and a question mark rather than clear or cloud icons."</string>
+    <string name="update_105_title_001" formatted="false">"1.0.5 · Sky and weather icons"</string>
+    <string name="update_history_025" formatted="false">"• Big Dipper stars always appeared above the horizon, outside visibility settings.\n• Added orange meteor-radiant markers within three days of typical peak dates, using the same date rules as the list.\n• Removed a China Weather privacy link, standardized link spacing and padded attribution.\n• Refined mainly-clear clouds, rime-fog snowflakes, frozen-weather contrast and shower intensity counts; code 95 was renamed."</string>
+    <string name="update_104_title_001" formatted="false">"1.0.4 · Planet calculations"</string>
+    <string name="update_history_026" formatted="false">"• Recalculated geocentric planets with the reference project\'s simplified JPL Keplerian elements to correct directions.\n• Subtracted Earth\'s heliocentric vector, standardized ecliptic/equatorial conversion and calibrated Mercury–Neptune magnitudes.\n• Version 1.0.4; retained older independent notes."</string>
+    <string name="update_103_title_001" formatted="false">"1.0.3 · Astronomy and layout fixes"</string>
+    <string name="update_history_027" formatted="false">"• Removed sky-time flashes caused by rebuilding at the top; retained scroll.\n• Added local Mercury–Neptune positions and magnitudes.\n• Added bright-star/planet selection details and visibility settings; Big Dipper remained illustrative at this version.\n• Added three-day meteor reference windows and refined source, IMO and common-region spacing.\n• Moved Xiamen and Taipei before Hong Kong."</string>
+    <string name="update_102_title_001" formatted="false">"1.0.2 · Details and location"</string>
+    <string name="update_history_028" formatted="false">"• Time controls use −15 minutes, Now, +15 minutes. Adjusted Sun/Moon label spacing and standardized Moon terminology.\n• Refined maps, weather codes, crop, outlines, settings hierarchy and location intervals.\n• versionCode 4; original package and signing retained."</string>
+    <string name="update_101_title_001" formatted="false">"1.0.1 · Layout and customization"</string>
+    <string name="update_history_029" formatted="false">"• Added hierarchical settings, background cropping/zoom and optional colored outlines.\n• Added weather/navigation visibility and order, with separate hidden-by-default Maps and Astronomy tabs.\n• Added hardware/network location choices.\n• Added custom course weeks/prefixes and numeric time input.\n• Improved weather icons, Celsius units, centering, legend and refresh notices.\n• Astronomy supports date/time input, ±15 minutes and ±1 day while retaining scroll and distinguishing dawn/dusk.\n• Updated privacy notes and removed aurora."</string>
+    <string name="update_100_title_001" formatted="false">"1.0.0 · Daidai Toolbox"</string>
+    <string name="update_history_030" formatted="false">"• Renamed the app Daidai Toolbox with Weather, Timetable and GPS navigation.\n• Added manual weekly courses, period times, rooms, teachers and odd/even weeks.\n• Added image backgrounds and overlays.\n• Added foreground GPS coordinates, horizontal accuracy and status.\n• Added official precipitation, temperature and regional radar pages.\n• Added stargazing, sky plots, Sun/Moon positions, phases and twilight.\n• Consolidated attribution and adjacent Open-Meteo links.\n• Updated the creator footer."</string>
+    <string name="update_010_test_title_001" formatted="false">"0.1.0-test · Simple Weather test release"</string>
+    <string name="main_058" formatted="false">"Early builds originally labeled 1.0.0 are classified as test releases: region search/favorites, current weather, 24-hour and 7-day forecasts, and offline cache."</string>
+    <string name="main_059" formatted="false">"Cache cleared"</string>
+    <string name="main_060" formatted="false">"Some cache files could not be deleted. Try again."</string>
+    <string name="main_061" formatted="false">"Weather data is provided by Open-Meteo and location search is based on GeoNames, with CC BY 4.0 attribution. The app formats descriptions, rounding and units for display.\n\nCurrent weather is a numerical-model estimate, not an on-site station observation or a replacement for official warnings. Current and hourly timestamps follow the time-display setting; daily forecasts and sunrise and sunset retain the selected location\'s time zone.\n\nNo account, advertisements, analytics or app-operated server is used. Weather and location searches require network access; providers may receive IP addresses, search terms and selected location coordinates. The free Open-Meteo API is limited to noncommercial use; commercial use requires separate authorization. Weather is cached for 15 minutes, manual requests are at least one minute apart, and rate limits pause requests.\n\nPrecipitation, temperature, radar, satellite and weather charts are viewed on official pages within the app. Copyright belongs to the National Meteorological Centre and other original rights holders, and those sites process visits under their own policies. Astronomy results are approximated locally."</string>
+    <string name="main_062" formatted="false">"Timetables, backgrounds, favorites, places, routes, random selection lists and draw records, and the most recent location are stored on this device. Earthquake distances, place bearings and configuration imports are processed locally; these data are not uploaded. Clearing cache or restoring defaults retains saved places, routes, random selection lists and progress, and the selected target. Uninstalling the app deletes local data.\n\nStatus uses Android system APIs for orientation, sensors, battery and satellite reception. Satellite status requires precise location permission. Reception away from the Status tab follows your settings. Continuous location must be enabled explicitly and runs as a foreground service. System network and assisted location may send IP, cell tower or Wi-Fi information to service providers under their own policies. The app does not connect to third-party ephemeris services or read device serial numbers, IMEI or MAC addresses.\n\nCamera ambient-light sampling requires camera permission and processes brightness samples only in memory, without saving or uploading images. You can pause sampling to close the camera. Sampling stops by default when leaving Status; allowing background sampling remains subject to system restrictions.\n\nJSON files you choose to export may contain coordinates, timestamps, names and other personal settings. Place files also contain colors and visibility. You choose the destination through the system file picker; cloud providers and other file providers apply their own privacy policies. Compass bearings, place directions and route diagrams are affected by sensors, magnetic fields, location and model errors, and are not intended for professional surveying or safety navigation."</string>
+    <string name="main_063" formatted="false">"Open-Meteo · Weather data"</string>
+    <string name="main_064" formatted="false">"Open-Meteo · Terms and privacy"</string>
+    <string name="main_065" formatted="false">"GeoNames · Region data"</string>
+    <string name="main_066" formatted="false">"CC BY 4.0 · Data license"</string>
+    <string name="main_067" formatted="false">"National Meteorological Center · Official site"</string>
+    <string name="main_068" formatted="false">"Astronomy calculation references"</string>
+    <string name="main_069" formatted="false">"Android · Satellite-status documentation"</string>
+    <string name="main_070" formatted="false">"Android · Sensor documentation"</string>
+    <string name="main_071" formatted="false">"Coordinates and magnitudes · Wikidata CC0"</string>
+    <string name="main_072" formatted="false">"Reference open-source projects"</string>
+    <string name="main_073" formatted="false">"Weather and timetable features refer to these projects; this app\'s native UI and logic are implemented independently."</string>
+    <string name="main_074" formatted="false">"Weather Fighter Global · GitHub"</string>
+    <string name="main_075" formatted="false">"Shiguang Schedule · GitHub"</string>
+    <string name="main_076" formatted="false">"Daidai Toolbox · GitHub"</string>
+    <string name="main_077" formatted="false">"No browser available to open this link"</string>
+    <string name="map_001" formatted="false">"Nationwide"</string>
+    <string name="map_002" formatted="false">"North China"</string>
+    <string name="map_003" formatted="false">"East China"</string>
+    <string name="map_004" formatted="false">"Central China"</string>
+    <string name="map_005" formatted="false">"South China"</string>
+    <string name="map_006" formatted="false">"Radar · "</string>
+    <string name="map_007" formatted="false">"National daily precipitation"</string>
+    <string name="map_008" formatted="false">"National 24-hour precipitation forecast"</string>
+    <string name="map_009" formatted="false">"National hourly temperature"</string>
+    <string name="map_010" formatted="false">"Satellite imagery"</string>
+    <string name="map_011" formatted="false">"Weather charts"</string>
+    <string name="map_012" formatted="false">"Switch weather map"</string>
+    <string name="map_013" formatted="false">"Daily precipitation"</string>
+    <string name="map_014" formatted="false">"Precipitation forecast"</string>
+    <string name="map_015" formatted="false">"Hourly temperature"</string>
+    <string name="map_016" formatted="false">"Official page · Pinch to zoom"</string>
+    <string name="map_017" formatted="false">"Open in browser"</string>
+    <string name="map_018" formatted="false">"Select a weather-map type first"</string>
+    <string name="map_019" formatted="false">"Loading official website…"</string>
+    <string name="map_020" formatted="false">"Loading official page "</string>
+    <string name="map_021" formatted="false">" · Original copyright and privacy rules apply"</string>
+    <string name="map_022" formatted="false">"Unable to load official page. Try another map or open in browser."</string>
+    <string name="map_023" formatted="false">"Official website certificate verification failed. Try later."</string>
+    <string name="map_024" formatted="false">"Cache cleared. Select a map above to reload the official page."</string>
+    <string name="map_025" formatted="false">"Loading official page…"</string>
+    <string name="numeric_inputs_001" formatted="false">"Hour (0–23)"</string>
+    <string name="numeric_inputs_002" formatted="false">"Minute (0–59)"</string>
+    <string name="numeric_inputs_003" formatted="false">"Enter time"</string>
+    <string name="numeric_inputs_004" formatted="false">"OK"</string>
+    <string name="numeric_inputs_005" formatted="false">"Enter an hour from 0 to 23 and minute from 0 to 59"</string>
+    <string name="numeric_inputs_006" formatted="false">"Years 1900–2100; current time zone: "</string>
+    <string name="numeric_inputs_007" formatted="false">"."</string>
+    <string name="numeric_inputs_008" formatted="false">"Year"</string>
+    <string name="numeric_inputs_009" formatted="false">"Month"</string>
+    <string name="numeric_inputs_010" formatted="false">"Day"</string>
+    <string name="numeric_inputs_011" formatted="false">"Hour"</string>
+    <string name="numeric_inputs_012" formatted="false">"Minute"</string>
+    <string name="numeric_inputs_013" formatted="false">"Set astronomy time"</string>
+    <string name="numeric_inputs_014" formatted="false">"This time does not exist due to daylight-saving transition. Select another time."</string>
+    <string name="numeric_inputs_015" formatted="false">"Enter a valid year, month, day, hour and minute"</string>
+    <string name="official_page_001" formatted="false">"Official page · "</string>
+    <string name="official_page_002" formatted="false">" · Pinch to zoom"</string>
+    <string name="official_page_003" formatted="false">"Loading official page "</string>
+    <string name="official_page_004" formatted="false">"Unable to load official page. Check your connection or open it in a browser."</string>
+    <string name="official_page_005" formatted="false">"Official site certificate verification failed. Try later."</string>
+    <string name="route_drawing_001" formatted="false">"Route canvas: drag to pan, use the slider to zoom, and tap points for details"</string>
+    <string name="route_drawing_002" formatted="false">"No playback points"</string>
+    <string name="route_drawing_003" formatted="false">"Obtain your current location first"</string>
+    <string name="route_drawing_004" formatted="false">"No route fixes"</string>
+    <string name="route_drawing_005" formatted="false">"Side length "</string>
+    <string name="route_drawing_006" formatted="false">"Point "</string>
+    <string name="route_drawing_007" formatted="false">"Select an overlapping or nearby point"</string>
+    <string name="route_drawing_008" formatted="false">"Coordinates (longitude, latitude): "</string>
+    <string name="route_drawing_009" formatted="false">"\nRecorded at: "</string>
+    <string name="route_drawing_010" formatted="false">"\nHorizontal uncertainty radius: "</string>
+    <string name="schedule_model_001" formatted="false">"Class end must be later than start"</string>
+    <string name="schedule_model_002" formatted="false">"Must not overlap the previous period"</string>
+    <string name="schedule_model_003" formatted="false">"Must not overlap the next period"</string>
+    <string name="schedule_model_004" formatted="false">"Enter a valid time"</string>
+    <string name="schedule_model_005" formatted="false">"Course name is required, up to 60 characters"</string>
+    <string name="schedule_model_006" formatted="false">"Room and teacher may each contain up to 80 characters"</string>
+    <string name="schedule_model_007" formatted="false">"Select a weekday"</string>
+    <string name="schedule_model_008" formatted="false">"End period must not precede start period"</string>
+    <string name="schedule_model_009" formatted="false">"Weeks must be within the term; end week must not precede start week"</string>
+    <string name="schedule_model_010" formatted="false">"Select a valid week rule"</string>
+    <string name="schedule_model_011" formatted="false">"Select custom weeks within the term"</string>
+    <string name="schedule_model_012" formatted="false">"No weeks in this range meet the odd/even rule"</string>
+    <string name="schedule_model_013" formatted="false">"Conflicts with “"</string>
+    <string name="schedule_model_014" formatted="false">"” in week "</string>
+    <string name="schedule_model_015" formatted="false">" during the selected periods"</string>
+    <string name="schedule_model_016" formatted="false">"Custom · Weeks "</string>
+    <string name="schedule_model_017" formatted="false">" "</string>
+    <string name="schedule_model_018" formatted="false">"Weeks "</string>
+    <string name="schedule_model_019" formatted="false">" · Odd weeks"</string>
+    <string name="schedule_model_020" formatted="false">" · Even weeks"</string>
+    <string name="schedule_001" formatted="false">"Mon"</string>
+    <string name="schedule_002" formatted="false">"Tue"</string>
+    <string name="schedule_003" formatted="false">"Wed"</string>
+    <string name="schedule_004" formatted="false">"Thu"</string>
+    <string name="schedule_005" formatted="false">"Fri"</string>
+    <string name="schedule_006" formatted="false">"Sat"</string>
+    <string name="schedule_007" formatted="false">"Sun"</string>
+    <string name="schedule_008" formatted="false">"Unable to read timetable. Original data retained in a local backup."</string>
+    <string name="schedule_009" formatted="false">"Term has not started"</string>
+    <string name="schedule_010" formatted="false">"Term has ended"</string>
+    <string name="schedule_011" formatted="false">"Current week "</string>
+    <string name="schedule_012" formatted="false">" · Device time · Weeks start on Monday"</string>
+    <string name="schedule_013" formatted="false">" to "</string>
+    <string name="schedule_014" formatted="false">"All courses · Tap to edit or delete"</string>
+    <string name="schedule_015" formatted="false">"No courses"</string>
+    <string name="schedule_016" formatted="false">"Set the term and period times in Timetable settings before adding courses."</string>
+    <string name="schedule_017" formatted="false">" · Period "</string>
+    <string name="schedule_018" formatted="false">" · "</string>
+    <string name="schedule_019" formatted="false">"Today\'s courses · "</string>
+    <string name="schedule_020" formatted="false">"No courses today"</string>
+    <string name="schedule_021" formatted="false">"Week (1–"</string>
+    <string name="schedule_022" formatted="false">"Enter week"</string>
+    <string name="schedule_023" formatted="false">"Enter a week from 1 to "</string>
+    <string name="schedule_024" formatted="false">" "</string>
+    <string name="schedule_025" formatted="false">"Weekly timetable · Swipe horizontally"</string>
+    <string name="schedule_026" formatted="false">"Period"</string>
+    <string name="schedule_027" formatted="false">"Term settings"</string>
+    <string name="schedule_028" formatted="false">"Custom period times"</string>
+    <string name="schedule_029" formatted="false">"Course information prefixes"</string>
+    <string name="schedule_030" formatted="false">"Timetable settings"</string>
+    <string name="schedule_031" formatted="false">"Course: "</string>
+    <string name="schedule_032" formatted="false">"Room: "</string>
+    <string name="schedule_033" formatted="false">"Not entered"</string>
+    <string name="schedule_034" formatted="false">"Teacher: "</string>
+    <string name="schedule_035" formatted="false">"Room prefix"</string>
+    <string name="schedule_036" formatted="false">"Course-name prefix"</string>
+    <string name="schedule_037" formatted="false">"Teacher prefix"</string>
+    <string name="schedule_038" formatted="false">"Show “Room:” (default)"</string>
+    <string name="schedule_039" formatted="false">"Show “@”"</string>
+    <string name="schedule_040" formatted="false">"No prefix"</string>
+    <string name="schedule_041" formatted="false">"Show “Course:” (default)"</string>
+    <string name="schedule_042" formatted="false">"Show “Teacher:” (default)"</string>
+    <string name="schedule_043" formatted="false">"The term defaults to 17 weeks."</string>
+    <string name="schedule_044" formatted="false">"Monday of week 1: "</string>
+    <string name="schedule_045" formatted="false">"Select the Monday of week 1"</string>
+    <string name="schedule_046" formatted="false">"Term length (1–60 weeks)"</string>
+    <string name="schedule_047" formatted="false">"Existing courses extend to week "</string>
+    <string name="schedule_048" formatted="false">". Edit those courses first."</string>
+    <string name="schedule_049" formatted="false">"Enter a term length from 1 to 60 weeks"</string>
+    <string name="schedule_050" formatted="false">"Defaults to Soochow University period times. Edit each start and end time. Periods must be chronological and must not overlap."</string>
+    <string name="schedule_051" formatted="false">"    "</string>
+    <string name="schedule_052" formatted="false">"Add period"</string>
+    <string name="schedule_053" formatted="false">"Up to 20 periods are allowed"</string>
+    <string name="schedule_054" formatted="false">"Delete last period"</string>
+    <string name="schedule_055" formatted="false">"Keep at least one period"</string>
+    <string name="schedule_056" formatted="false">"This period is used by courses. Edit those courses first."</string>
+    <string name="schedule_057" formatted="false">"Delete period "</string>
+    <string name="schedule_058" formatted="false">"?"</string>
+    <string name="schedule_059" formatted="false">"Start: "</string>
+    <string name="schedule_060" formatted="false">"End: "</string>
+    <string name="schedule_061" formatted="false">"Start"</string>
+    <string name="schedule_062" formatted="false">"End"</string>
+    <string name="schedule_063" formatted="false">" "</string>
+    <string name="schedule_064" formatted="false">"Course limit reached"</string>
+    <string name="schedule_065" formatted="false">"Course name (required)"</string>
+    <string name="schedule_066" formatted="false">"Room"</string>
+    <string name="schedule_067" formatted="false">"Teacher"</string>
+    <string name="schedule_068" formatted="false">"Weekday"</string>
+    <string name="schedule_069" formatted="false">"Start period"</string>
+    <string name="schedule_070" formatted="false">"End period"</string>
+    <string name="schedule_071" formatted="false">"Teaching weeks"</string>
+    <string name="schedule_072" formatted="false">"Every week (default)"</string>
+    <string name="schedule_073" formatted="false">"Odd weeks"</string>
+    <string name="schedule_074" formatted="false">"Even weeks"</string>
+    <string name="schedule_075" formatted="false">"Custom"</string>
+    <string name="schedule_076" formatted="false">"Start week"</string>
+    <string name="schedule_077" formatted="false">"End week"</string>
+    <string name="schedule_078" formatted="false">"Select custom weeks"</string>
+    <string name="schedule_079" formatted="false">"Custom weeks: "</string>
+    <string name="schedule_080" formatted="false">"Tap to select"</string>
+    <string name="schedule_081" formatted="false">"Custom teaching weeks"</string>
+    <string name="schedule_082" formatted="false">"Edit course"</string>
+    <string name="schedule_083" formatted="false">"Select custom teaching weeks"</string>
+    <string name="schedule_084" formatted="false">"Enter valid teaching weeks"</string>
+    <string name="schedule_085" formatted="false">"Delete course"</string>
+    <string name="schedule_086" formatted="false">"Delete this arrangement for “"</string>
+    <string name="schedule_087" formatted="false">"”?"</string>
+    <string name="settings_001" formatted="false">"Black (default)"</string>
+    <string name="settings_002" formatted="false">"Blue"</string>
+    <string name="settings_003" formatted="false">"Green"</string>
+    <string name="settings_004" formatted="false">"Red"</string>
+    <string name="settings_005" formatted="false">"Purple"</string>
+    <string name="settings_006" formatted="false">"White"</string>
+    <string name="settings_007" formatted="false">"1 second"</string>
+    <string name="settings_008" formatted="false">"5 seconds (default)"</string>
+    <string name="settings_009" formatted="false">"10 seconds"</string>
+    <string name="settings_010" formatted="false">"30 seconds"</string>
+    <string name="settings_011" formatted="false">"1 minute"</string>
+    <string name="settings_012" formatted="false">"3 minutes"</string>
+    <string name="settings_013" formatted="false">"10 minutes"</string>
+    <string name="settings_014" formatted="false">"Global settings"</string>
+    <string name="settings_015" formatted="false">"About"</string>
+    <string name="settings_016" formatted="false">"Background"</string>
+    <string name="settings_017" formatted="false">"Outlines"</string>
+    <string name="settings_018" formatted="false">"Time display"</string>
+    <string name="settings_019" formatted="false">"OK"</string>
+    <string name="settings_020" formatted="false">"Automatic (default)"</string>
+    <string name="settings_021" formatted="false">"Import and crop background"</string>
+    <string name="settings_022" formatted="false">"Restore default background"</string>
+    <string name="settings_023" formatted="false">"Background brightness · "</string>
+    <string name="settings_024" formatted="false">"Default brightness is 20. Move right to reduce the overlay and reveal the image."</string>
+    <string name="settings_025" formatted="false">"Background brightness"</string>
+    <string name="settings_026" formatted="false">"Outline sections and buttons"</string>
+    <string name="settings_027" formatted="false">"Set outline color"</string>
+    <string name="settings_028" formatted="false">"Outlines are off by default. Preset and custom #RRGGBB colors are supported."</string>
+    <string name="settings_029" formatted="false">"Outline color"</string>
+    <string name="settings_030" formatted="false">"Enter six hexadecimal digits after #, for example #000000"</string>
+    <string name="settings_031" formatted="false">"Outline color saved"</string>
+    <string name="settings_032" formatted="false">"View legend"</string>
+    <string name="settings_033" formatted="false">"Weather settings"</string>
+    <string name="settings_034" formatted="false">"Visible sky objects"</string>
+    <string name="settings_035" formatted="false">"Celestial coordinates"</string>
+    <string name="settings_036" formatted="false">"Sky-pointing direction"</string>
+    <string name="settings_037" formatted="false">"Astronomy settings"</string>
+    <string name="settings_038" formatted="false">"Rear camera direction (default)"</string>
+    <string name="settings_039" formatted="false">"Device top-edge direction"</string>
+    <string name="settings_040" formatted="false">"Horizontal coordinates (default)"</string>
+    <string name="settings_041" formatted="false">"Equatorial coordinates (north celestial pole centered)"</string>
+    <string name="settings_042" formatted="false">"Manual selections are retained when filtering by magnitude. The Sun and Moon are always shown and are not filtered."</string>
+    <string name="settings_043" formatted="false">"Manual selection (default)"</string>
+    <string name="settings_044" formatted="false">"Filter by magnitude limit"</string>
+    <string name="settings_045" formatted="false">"Stars · All shown by default"</string>
+    <string name="settings_046" formatted="false">"Planets · Magnitude varies with time"</string>
+    <string name="settings_047" formatted="false">"Deep-sky objects · Approximate integrated magnitude"</string>
+    <string name="settings_048" formatted="false">"Show magnitude ≤ %.1f"</string>
+    <string name="settings_049" formatted="false">"Default magnitude limit 6.0; range −2.0–8.0 in steps of 0.1. Lower magnitudes are brighter. Only built-in objects are filtered; this is not a complete catalog or a visibility guarantee. Planet magnitudes are estimated for the selected time. Deep-sky integrated magnitudes may be bright even when extended objects are hard to see."</string>
+    <string name="settings_050" formatted="false">"Left icons represent daytime and right icons nighttime. The rightmost value is the WMO weather code. WMO code numbers belong to the meteorological code table; weather_code is the API field.\n\nOpen-Meteo documents only a subset of WMO codes. Icons cover these codes, so gaps in numbering are expected.\n\nNames follow the WMO English table. Codes 57 and 67 mean moderate or heavy freezing drizzle and freezing rain. Thunderstorm codes include 95, 96, 97 and 99. Forecast codes may be model-derived rather than original observation codes.\n\nSlight or moderate thunderstorms with hail and heavy thunderstorms with hail are returned only by models providing the relevant hail forecasts, such as DWD ICON and UKMO, depending on coverage and model capabilities."</string>
+    <string name="settings_051" formatted="false">"Unknown weather is a data-error indicator with no corresponding WMO code. It and a question-mark icon appear if the weather code is missing, null, not a valid nonnegative integer, or unsupported by this version."</string>
+    <string name="settings_052" formatted="false">"Open-Meteo · Official code documentation"</string>
+    <string name="settings_053" formatted="false">"WMO · Original English code table"</string>
+    <string name="settings_054" formatted="false">"Weather legend"</string>
+    <string name="settings_055" formatted="false">"Device information and order"</string>
+    <string name="settings_056" formatted="false">"Status settings"</string>
+    <string name="settings_057" formatted="false">"Location method"</string>
+    <string name="settings_058" formatted="false">"Continuous location"</string>
+    <string name="settings_059" formatted="false">"Ambient-light source"</string>
+    <string name="settings_060" formatted="false">"Battery fields and order"</string>
+    <string name="settings_061" formatted="false">"Satellite systems"</string>
+    <string name="settings_062" formatted="false">"Satellite details order"</string>
+    <string name="settings_063" formatted="false">"Rotate satellite sky plot with device"</string>
+    <string name="settings_064" formatted="false">"Resume satellite reception on returning to Status"</string>
+    <string name="settings_065" formatted="false">"Continue location across tabs, screen lock and background"</string>
+    <string name="settings_066" formatted="false">"Off by default. Start location manually after enabling. A foreground service keeps it running; stop from the notification or Status."</string>
+    <string name="settings_067" formatted="false">"System ambient-light sensor (default)"</string>
+    <string name="settings_068" formatted="false">"Camera luminance sample"</string>
+    <string name="settings_069" formatted="false">"Ambient-light camera"</string>
+    <string name="settings_070" formatted="false">"Keep camera active across tabs, screen lock and background"</string>
+    <string name="settings_071" formatted="false">"Off by default. When enabled, camera sampling may continue outside Status or while locked. Permissions, battery policies or hardware limits may still interrupt it."</string>
+    <string name="settings_072" formatted="false">"Rear camera (default)"</string>
+    <string name="settings_073" formatted="false">"Front camera"</string>
+    <string name="settings_074" formatted="false">"Route recording interval · "</string>
+    <string name="settings_075" formatted="false">"Route recording interval"</string>
+    <string name="settings_076" formatted="false">"Default 5 seconds; range 2–60 seconds in steps of 1 second. Network-location recording cannot be faster than the network interval. Recording pauses without valid fixes and resumes when fixes return."</string>
+    <string name="settings_077" formatted="false">"Route interval settings"</string>
+    <string name="settings_078" formatted="false">"True north (default; declination estimated from last fix)"</string>
+    <string name="settings_079" formatted="false">"Magnetic north"</string>
+    <string name="settings_080" formatted="false">"Compass north reference"</string>
+    <string name="settings_081" formatted="false">"System polarity (default)"</string>
+    <string name="settings_082" formatted="false">"Reverse polarity"</string>
+    <string name="settings_083" formatted="false">"Battery current polarity"</string>
+    <string name="settings_084" formatted="false">"All satellite systems are shown by default. Reception depends on device hardware, system support and conditions. Unchecking hides a system without changing chipset reception."</string>
+    <string name="settings_085" formatted="false">"All sensors are shown by default. Uncheck to stop reading a sensor on this page; use arrows to reorder. Other apps and the system are unaffected."</string>
+    <string name="settings_086" formatted="false">"Sensors and order"</string>
+    <string name="settings_087" formatted="false">"All fields are shown by default. Check fields to display and use arrows to reorder."</string>
+    <string name="settings_088" formatted="false">"Carrier-to-noise density ratio is measured in dB-Hz. Satellites are identified by their system and number."</string>
+    <string name="settings_089" formatted="false">"By satellite system (default)"</string>
+    <string name="settings_090" formatted="false">"By carrier-to-noise density, highest first"</string>
+    <string name="settings_091" formatted="false">"Satellite system order"</string>
+    <string name="settings_092" formatted="false">"Satellite hardware location (default)"</string>
+    <string name="settings_093" formatted="false">"Nationwide (default)"</string>
+    <string name="settings_094" formatted="false">"Weather maps · Default radar"</string>
+    <string name="settings_095" formatted="false">"The app caches forecasts for up to 20 places and the latest earthquake queries for offline use. Embedded pages may store resources, cookies and site data. Search results and current weather also remain temporarily in memory."</string>
+    <string name="settings_096" formatted="false">"Current cache size: "</string>
+    <string name="settings_097" formatted="false">"Clearing cache deletes weather forecasts, earthquake catalogs, embedded-page caches, cookies and site storage, and discards pending weather and earthquake responses started before clearing. Reconnect to download fresh data; select a weather-map type to reload it. Later visits create new cache.\n\nSaved places, routes, last fix, timetable, background, favorite and current regions, all settings, query quotas and rate-limit records remain intact. External browsers manage their own caches."</string>
+    <string name="settings_098" formatted="false">"Clear cache"</string>
+    <string name="settings_099" formatted="false">"Delete local weather, earthquake and embedded-page caches, cookies and site storage. Courses, favorites, background and settings remain."</string>
+    <string name="settings_100" formatted="false">"Version history"</string>
+    <string name="settings_101" formatted="false">"All sections are shown by default: Compass, Current location, Positioning satellites, Places, Route recording, Sensors, Battery, Device and environment, Usage notes. Check sections to show and use arrows to reorder."</string>
+    <string name="settings_102" formatted="false">"All sections are shown by default: Filters and refresh, Update status, Earthquake list. Check sections to show and use arrows to reorder."</string>
+    <string name="settings_103" formatted="false">"All sections are shown by default: Time controls, Stargazing conditions, Local sky, Selected object, Moon information, Sun/Moon/planet positions, Today\'s rise/set/twilight events, Meteor showers, Methods and sources. Check sections to show and use arrows to reorder."</string>
+    <string name="settings_104" formatted="false">"All sections are shown by default: Region, Current weather, Next 24 hours, Next 7 days, Weather details, Sources. Check sections to show and use arrows to reorder. Attribution beside weather data remains visible."</string>
+    <string name="settings_105" formatted="false">"Weather, Timetable, Status and Earthquakes are shown by default. Default order: Weather, Timetable, Status, Weather maps, Astronomy, Earthquakes. Keep at least one tab. Navigation is hidden with one tab; with five or more, use the arrows to browse."</string>
+    <string name="settings_106" formatted="false">"Keep at least one navigation tab"</string>
+    <string name="settings_107" formatted="false">"Status sections and order"</string>
+    <string name="settings_108" formatted="false">"Earthquake sections and order"</string>
+    <string name="settings_109" formatted="false">"Astronomy sections and order"</string>
+    <string name="settings_110" formatted="false">"Weather sections and order"</string>
+    <string name="settings_111" formatted="false">"Navigation tabs and order"</string>
+    <string name="sky_visibility_001" formatted="false">"Approx. mag %.1f"</string>
+    <string name="status_hardware_001" formatted="false">"Satellite reception not started"</string>
+    <string name="status_hardware_002" formatted="false">"Satellite reception paused · Resumes on returning to Status"</string>
+    <string name="status_hardware_003" formatted="false">"Satellite reception stopped · Tab changed or app backgrounded"</string>
+    <string name="status_hardware_004" formatted="false">"Rotation-vector sensor"</string>
+    <string name="status_hardware_005" formatted="false">"Accelerometer + magnetometer"</string>
+    <string name="status_hardware_006" formatted="false">"No usable orientation sensor"</string>
+    <string name="status_hardware_007" formatted="false">"Satellite location enabled; waiting for reception"</string>
+    <string name="status_hardware_008" formatted="false">"System satellite location disabled"</string>
+    <string name="status_hardware_009" formatted="false">"Receiving · Wait in an open area"</string>
+    <string name="status_hardware_010" formatted="false">"Satellite module stopped; waiting for system recovery"</string>
+    <string name="status_hardware_011" formatted="false">"First satellite fix acquired"</string>
+    <string name="status_hardware_012" formatted="false">"No satellites reported yet; this does not mean none are overhead"</string>
+    <string name="status_hardware_013" formatted="false">"Device satellite status received"</string>
+    <string name="status_hardware_014" formatted="false">"Starting satellite reception"</string>
+    <string name="status_hardware_015" formatted="false">"Start reception while Status is in the foreground"</string>
+    <string name="status_hardware_016" formatted="false">"No satellite location provider on this device"</string>
+    <string name="status_hardware_017" formatted="false">"Enable system location first"</string>
+    <string name="status_hardware_018" formatted="false">"Waiting for satellite report · Indoor reception may fail"</string>
+    <string name="status_hardware_019" formatted="false">"Precise location required; approximate permission cannot read satellites"</string>
+    <string name="status_hardware_020" formatted="false">"Satellite status unavailable on this device or system"</string>
+    <string name="status_hardware_021" formatted="false">"Satellite reception has not started"</string>
+    <string name="status_hardware_022" formatted="false">"Not provided by device"</string>
+    <string name="status_hardware_023" formatted="false">"Waiting for sensor result"</string>
+    <string name="status_hardware_024" formatted="false">"Device returned invalid data"</string>
+    <string name="status_math_001" formatted="false">"NNE"</string>
+    <string name="status_math_002" formatted="false">"ENE"</string>
+    <string name="status_math_003" formatted="false">"ESE"</string>
+    <string name="status_math_004" formatted="false">"SSE"</string>
+    <string name="status_math_005" formatted="false">"SSW"</string>
+    <string name="status_math_006" formatted="false">"WSW"</string>
+    <string name="status_math_007" formatted="false">"WNW"</string>
+    <string name="status_math_008" formatted="false">"NNW"</string>
+    <string name="status_math_009" formatted="false">"Direction unavailable"</string>
+    <string name="status_math_010" formatted="false">"Distance unavailable"</string>
+    <string name="status_math_011" formatted="false">"USA GPS"</string>
+    <string name="status_math_012" formatted="false">"SBAS augmentation"</string>
+    <string name="status_math_013" formatted="false">"Russia GLONASS"</string>
+    <string name="status_math_014" formatted="false">"Japan QZSS"</string>
+    <string name="status_math_015" formatted="false">"China BDS"</string>
+    <string name="status_math_016" formatted="false">"Europe Galileo"</string>
+    <string name="status_math_017" formatted="false">"India NavIC"</string>
+    <string name="status_math_018" formatted="false">"Other systems"</string>
+    <string name="status_math_019" formatted="false">"Satellite "</string>
+    <string name="status_place_001" formatted="false">"Invalid place name or coordinates"</string>
+    <string name="status_places_001" formatted="false">"Obtain your current location or add a place manually"</string>
+    <string name="status_places_002" formatted="false">"Place name (up to 60 characters)"</string>
+    <string name="status_places_003" formatted="false">"Longitude (negative W / positive E)"</string>
+    <string name="status_places_004" formatted="false">"Latitude (negative S / positive N)"</string>
+    <string name="status_places_005" formatted="false">"Blue (default)"</string>
+    <string name="status_places_006" formatted="false">"Orange"</string>
+    <string name="status_places_007" formatted="false">"Cyan"</string>
+    <string name="status_places_008" formatted="false">"Pink"</string>
+    <string name="status_places_009" formatted="false">"Place color"</string>
+    <string name="status_places_010" formatted="false">"Show on place diagram"</string>
+    <string name="status_places_011" formatted="false">"No recent location fix."</string>
+    <string name="status_places_012" formatted="false">"Last fix was "</string>
+    <string name="status_places_013" formatted="false">" seconds ago; "</string>
+    <string name="status_places_014" formatted="false">"horizontal uncertainty radius about %.1f m."</string>
+    <string name="status_places_015" formatted="false">"Accuracy not provided."</string>
+    <string name="status_places_016" formatted="false">""</string>
+    <string name="status_places_017" formatted="false">"Refresh location"</string>
+    <string name="status_places_018" formatted="false">"After you tap Refresh location, the new fix fills in this form\'s coordinates. Saved places are not changed automatically."</string>
+    <string name="status_places_019" formatted="false">"Save place"</string>
+    <string name="status_places_020" formatted="false">"Edit place"</string>
+    <string name="status_places_021" formatted="false">"Place saved locally"</string>
+    <string name="status_places_022" formatted="false">"Enter a name of 1–60 characters, longitude −180°–180° and latitude −90°–90°"</string>
+    <string name="status_places_023" formatted="false">"Selected location method disabled. Open system location settings."</string>
+    <string name="status_places_024" formatted="false">"Refreshing location. Please wait…"</string>
+    <string name="status_places_025" formatted="false">"Location refreshed 0 seconds ago; "</string>
+    <string name="status_places_026" formatted="false">"Location request timed out. Check permission, system location and reception conditions."</string>
+    <string name="status_places_027" formatted="false">"Insufficient location permission. Grant it again."</string>
+    <string name="status_places_028" formatted="false">"Location refresh unavailable. Check system settings."</string>
+    <string name="status_places_029" formatted="false">"Location permission denied; cannot refresh"</string>
+    <string name="status_places_030" formatted="false">"Total "</string>
+    <string name="status_places_031" formatted="false">" places · Stored locally"</string>
+    <string name="status_places_032" formatted="false">"No saved places"</string>
+    <string name="status_places_033" formatted="false">"Set as target"</string>
+    <string name="status_places_034" formatted="false">"This deletes only the locally saved place."</string>
+    <string name="status_places_035" formatted="false">"Place deleted"</string>
+    <string name="status_places_036" formatted="false">"Saved places"</string>
+    <string name="status_transfer_001" formatted="false">"Finish the current import or export first"</string>
+    <string name="status_transfer_002" formatted="false">"Nothing to export: "</string>
+    <string name="status_transfer_003" formatted="false">"DaidaiToolbox-"</string>
+    <string name="status_transfer_004" formatted="false">"Unable to export. Check data and file size (maximum 20 MB)."</string>
+    <string name="status_transfer_005" formatted="false">"Export interrupted. Try again."</string>
+    <string name="status_transfer_006" formatted="false">"Exported"</string>
+    <string name="status_transfer_007" formatted="false">"Export failed. Check that the destination is writable."</string>
+    <string name="status_transfer_008" formatted="false">"Cannot import: invalid format, version or records, or larger than 20 MB. Existing data unchanged."</string>
+    <string name="status_transfer_009" formatted="false">"File contains "</string>
+    <string name="status_transfer_010" formatted="false">". Import keeps existing data and skips identical records. Matching identifiers with different content are saved separately without overwriting originals."</string>
+    <string name="status_transfer_011" formatted="false">"Importing"</string>
+    <string name="status_transfer_012" formatted="false">"Please wait…"</string>
+    <string name="status_transfer_013" formatted="false">"Imported "</string>
+    <string name="status_transfer_014" formatted="false">"; skipped "</string>
+    <string name="status_transfer_015" formatted="false">" duplicate records"</string>
+    <string name="status_transfer_016" formatted="false">"Import failed. Check available storage."</string>
+    <string name="status_transfer_017" formatted="false">"Import failed. Existing data unchanged."</string>
+    <string name="status_transfer_data_001" formatted="false">"Invalid file format, version or records"</string>
+    <string name="status_views_001" formatted="false">"Compass dial · Top represents the device\'s top-edge heading"</string>
+    <string name="status_views_002" formatted="false">"Waiting for direction"</string>
+    <string name="status_views_003" formatted="false">"Hold flat and keep away from magnetic objects"</string>
+    <string name="status_views_004" formatted="false">"True north"</string>
+    <string name="status_views_005" formatted="false">"Place diagram · Colors identify places; ring marks the target"</string>
+    <string name="status_views_006" formatted="false">"True north up"</string>
+    <string name="status_views_007" formatted="false">"No visible places"</string>
+    <string name="status_views_008" formatted="false">"Outer range "</string>
+    <string name="status_views_009" formatted="false">"Select place"</string>
+    <string name="status_views_010" formatted="false">"Satellite sky plot · With rotation off: north up, south down, west left and east right; edge is horizon"</string>
+    <string name="status_views_011" formatted="false">"Waiting for device satellite reports"</string>
+    <string name="weather_api_001" formatted="false">"Enter a region name of 2–80 characters"</string>
+    <string name="weather_api_002" formatted="false">"Too many requests. Try later."</string>
+    <string name="weather_api_003" formatted="false">"Data service rate-limited. Try later."</string>
+    <string name="weather_api_004" formatted="false">"Weather service temporarily unavailable ("</string>
+    <string name="weather_api_005" formatted="false">"Invalid data response"</string>
+    <string name="weather_api_006" formatted="false">"Data service returned an error. Try later."</string>
+    <string name="weather_data_001" formatted="false">"Clear"</string>
+    <string name="weather_data_002" formatted="false">"Mainly clear"</string>
+    <string name="weather_data_003" formatted="false">"Partly cloudy"</string>
+    <string name="weather_data_004" formatted="false">"Overcast"</string>
+    <string name="weather_data_005" formatted="false">"Fog"</string>
+    <string name="weather_data_006" formatted="false">"Rime-depositing fog"</string>
+    <string name="weather_data_007" formatted="false">"Light drizzle"</string>
+    <string name="weather_data_008" formatted="false">"Moderate drizzle"</string>
+    <string name="weather_data_009" formatted="false">"Heavy drizzle"</string>
+    <string name="weather_data_010" formatted="false">"Light freezing drizzle"</string>
+    <string name="weather_data_011" formatted="false">"Moderate or heavy freezing drizzle"</string>
+    <string name="weather_data_012" formatted="false">"Light rain"</string>
+    <string name="weather_data_013" formatted="false">"Moderate rain"</string>
+    <string name="weather_data_014" formatted="false">"Heavy rain"</string>
+    <string name="weather_data_015" formatted="false">"Light freezing rain"</string>
+    <string name="weather_data_016" formatted="false">"Moderate or heavy freezing rain"</string>
+    <string name="weather_data_017" formatted="false">"Light snow"</string>
+    <string name="weather_data_018" formatted="false">"Moderate snow"</string>
+    <string name="weather_data_019" formatted="false">"Heavy snow"</string>
+    <string name="weather_data_020" formatted="false">"Snow grains"</string>
+    <string name="weather_data_021" formatted="false">"Light rain showers"</string>
+    <string name="weather_data_022" formatted="false">"Moderate rain showers"</string>
+    <string name="weather_data_023" formatted="false">"Heavy rain showers"</string>
+    <string name="weather_data_024" formatted="false">"Light snow showers"</string>
+    <string name="weather_data_025" formatted="false">"Heavy snow showers"</string>
+    <string name="weather_data_026" formatted="false">"Slight or moderate thunderstorm"</string>
+    <string name="weather_data_027" formatted="false">"Slight or moderate thunderstorm with hail"</string>
+    <string name="weather_data_028" formatted="false">"Heavy thunderstorm"</string>
+    <string name="weather_data_029" formatted="false">"Heavy thunderstorm with hail"</string>
+    <string name="weather_data_030" formatted="false">"N wind"</string>
+    <string name="weather_data_031" formatted="false">"NE wind"</string>
+    <string name="weather_data_032" formatted="false">"E wind"</string>
+    <string name="weather_data_033" formatted="false">"SE wind"</string>
+    <string name="weather_data_034" formatted="false">"S wind"</string>
+    <string name="weather_data_035" formatted="false">"SW wind"</string>
+    <string name="weather_data_036" formatted="false">"W wind"</string>
+    <string name="weather_data_037" formatted="false">"NW wind"</string>
+    <string name="weather_data_038" formatted="false">"Today"</string>
+    <string name="weather_data_039" formatted="false">"Tomorrow"</string>
+    <string name="weather_icon_001" formatted="false">", nighttime"</string>
+    <string name="weather_store_001" formatted="false">"Daily query limit reached. Try tomorrow."</string>
+    <string name="weather_store_002" formatted="false">"Too many requests. Try later."</string>
+</resources>

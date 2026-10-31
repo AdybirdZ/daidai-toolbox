@@ -9,7 +9,7 @@ public final class StatusTests {
     public static void main(String[] args){
         check(StatusMath.norm(-1)==359&&StatusMath.norm(721)==1,"Heading wraps across north");
         check(Double.isNaN(StatusMath.norm(Double.NaN)),"Invalid compass input is not north");
-        for(int i=0;i<16;i++)check(StatusMath.direction(i*22.5).equals(StatusMath.DIRECTIONS[i]),"Sixteen named sectors: "+i);
+        for(int i=0;i<16;i++)check(StatusMath.direction(i*22.5).equals(StatusMath.directions()[i]),"Sixteen named sectors: "+i);
         check(StatusMath.direction(348.75).equals("北")&&StatusMath.direction(11.249).equals("北")&&StatusMath.direction(11.25).equals("东北偏北"),"North and half-sector boundaries");
         check(StatusMath.direction(157.5).equals("东南偏南"),"Southeast by south requested name");
         check(StatusMath.direction(-90).equals("西")&&StatusMath.direction(Double.NaN).equals("方向不可用"),"Negative and invalid directions");

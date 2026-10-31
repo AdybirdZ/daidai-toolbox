@@ -24,7 +24,6 @@
     <string name="source_open_meteo">天气：Open-Meteo · CC BY 4.0 ↗</string>
     <string name="unknown_weather">天气未知</string>
     <string name="language_title">语言</string>
-    <string name="language_unavailable">"正式版目前仅支持中文，多语言支持计划在 2.0.0 实装。英文内测包仅保存在本地，暂未上传 GitHub。"</string>
     <string name="action_cancel">取消</string>
     <string name="config_export_title">"导出全部配置"</string>
     <string name="config_import_title">"导入全部配置"</string>
@@ -209,4 +208,11 @@
     <string name="random_remaining_note">这里显示当前候选内容中尚未抽到的项目。修改候选内容后，抽取进度会在下一次抽取时重新建立。</string>
     <string name="update_132_title">1.3.2 · 抽取动画与电池优化文案</string>
     <string name="update_132_detail">修复随机抽取动画显示多个项目时，底部项目因显示区域高度不足而被裁切的问题。动画区域根据抽取数量及文字换行高度预留空间，“立即显示结果”按钮位于内容下方。\n\n电池优化状态改用“已开启”和“已关闭”表述。</string>
+
+    <string name="language_system">跟随系统（默认）</string>
+    <string name="language_chinese">简体中文</string>
+    <string name="language_english">English</string>
+    <string name="language_note">仅切换应用界面语言，不修改用户输入、保存的资料或网站原文。系统语言不受支持时使用中文。</string>
+    <string name="update_200_title">2.0.0 · 英语与语言切换</string>
+    <string name="update_200_detail">新增英语界面，可在全局设置的语言页面选择简体中文、English 或跟随系统。切换后立即生效并保留当前栏目与已有资料，语言选择纳入全部配置的导入与导出。大版本更新用于底层代码变动或易用性更新。</string>
 </resources>

@@ -14,7 +14,7 @@ import org.json.*;
 
 /** Exercise actual dialog navigation, color selection, fixed chart projection and Camera2. */
 public final class Release130UiTests extends Instrumentation {
-    Activity a;View courseEditor;int checks;final Map<String,Map<String,?>> before=new HashMap<>();String cameraResult="";
+    String language="zh-CN";Activity a;View courseEditor;int checks;final Map<String,Map<String,?>> before=new HashMap<>();String cameraResult="";
     Object field(Object o,String name){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(Exception e){throw new RuntimeException(e);}}
     void field(Object o,String name,Object value){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);f.set(o,value);}catch(Exception e){throw new RuntimeException(e);}}
     Object call(Object o,String name,Class<?>[] types,Object... args){try{Method m=o.getClass().getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(o,args);}catch(Exception e){throw new RuntimeException(e);}}
@@ -42,13 +42,13 @@ public final class Release130UiTests extends Instrumentation {
     void collect(View v,ArrayList<EditText> out){if(v instanceof EditText)out.add((EditText)v);if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)collect(((ViewGroup)v).getChildAt(i),out);}
     int used(){return ((Set<?>)field(model(),"used")).size();}
     void recreate(){ActivityMonitor m=new ActivityMonitor(a.getClass().getName(),null,false);addMonitor(m);ui(()->a.recreate());Activity next=waitForMonitorWithTimeout(m,8000);removeMonitor(m);check(next!=null,"Activity recreation completed");a=next;waitForIdleSync();}
-    @Override public void onCreate(Bundle b){super.onCreate(b);start();}
+    @Override public void onCreate(Bundle b){super.onCreate(b);language=b.getString("language","zh-CN");start();}
 
 
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;
         try{
             for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
-            prefs("toolbox").edit().clear().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",6).putLong("quake_interval",0).commit();prefs("random_choice").edit().clear().commit();
+            prefs("toolbox").edit().clear().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",6).putLong("quake_interval",0).commit();prefs("random_choice").edit().clear().commit();
             a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
             ui(()->{
                 check(text(root(),label("app_name")+" · "+label("tab_random"))!=null,"Localized header");
@@ -80,7 +80,9 @@ public final class Release130UiTests extends Instrumentation {
             String fixed=json();SystemClock.sleep(4700);ui(()->{check(!(Boolean)field(screen(),"animating")&&json().equals(fixed),"Animation decelerates and completes without redrawing");});
             animationLayout();
             configurationRoundTrip();
-            ui(()->{call(a,"switchTab",new Class[]{int.class},6);String kept=json();call(a,"restoreDefaults",new Class[]{});check(json().equals(kept)&&state("lists").size()==1,"Restore defaults retains saved lists and progress");call(a,"switchTab",new Class[]{int.class},6);
+            String kept=json();ActivityMonitor resetMonitor=new ActivityMonitor(a.getClass().getName(),null,false);addMonitor(resetMonitor);
+            ui(()->call(a,"restoreDefaults",new Class[]{}));Activity reset=waitForMonitorWithTimeout(resetMonitor,8000);removeMonitor(resetMonitor);check(reset!=null,"Reset restores system language by recreating activity");a=reset;waitForIdleSync();
+            ui(()->{check(json().equals(kept)&&state("lists").size()==1,"Restore defaults retains saved lists and progress");tapKey(dialogKey("settings_014"),"action_back");tapKey(dialogKey("action_settings"),"action_close");call(a,"switchTab",new Class[]{int.class},6);
                 tapKey(root(),"random_lists");View saved=dialogKey("random_lists");tap(saved,a.getString(a.getResources().getIdentifier("random_list_entry","string",a.getPackageName()),"Group",4));tapKey(dialog("Group"),"random_delete");tapKey(dialogKey("random_delete"),"action_cancel");
             });waitForIdleSync();ui(()->{View saved=dialogKey("random_lists");check(state("lists").size()==1,"Cancel delete preserves list");tap(saved,a.getString(a.getResources().getIdentifier("random_list_entry","string",a.getPackageName()),"Group",4));tapKey(dialog("Group"),"random_delete");tapKey(dialogKey("random_delete"),"random_confirm");
             });waitForIdleSync();ui(()->{View saved=dialogKey("random_lists");check(state("lists").isEmpty()&&text(saved,label("random_no_lists"))!=null,"Confirm delete refreshes empty list state");tapKey(saved,"action_back");call(a,"updates",new Class[]{});View updates=dialogKey("settings_100");check(prefix(updates,"1.3.2 ·")!=null&&prefix(updates,"1.0.0 ·")!=null,"Current and historical updates retained");tapKey(updates,"action_close");

@@ -21,7 +21,7 @@ final class ConfigurationData {
         "status_camera_iso","status_camera_exposure_ms","status_camera_outdoor_iso","status_camera_outdoor_exposure_ms","ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color","theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
         "text_primary_color","text_secondary_color","text_accent_color","button_primary_color","button_primary_text_color","button_secondary_color","button_secondary_text_color"));
     private static final Set<String> STRING=new HashSet<>(Arrays.asList(
-        "status_battery_current_unit","status_battery_charge_unit","astro_order","astro_selected","astro_orientation_reference","status_light_camera","location_provider","quake_order","status_order","status_sensor_order","status_light_source","status_battery_order","status_device_order","tab_order","weather_order","status_sat_company_order","status_sat_sort"));
+        "app_language","status_battery_current_unit","status_battery_charge_unit","astro_order","astro_selected","astro_orientation_reference","status_light_camera","location_provider","quake_order","status_order","status_sensor_order","status_light_source","status_battery_order","status_device_order","tab_order","weather_order","status_sat_company_order","status_sat_sort"));
     private static final Set<String> FLOAT=new HashSet<>(Arrays.asList("astro_magnitude_limit","quake_global_min","quake_regional_min","quake_ref_lat","quake_ref_lon"));
     static String type(String group,String key) {
         if(group.equals("toolbox")){
@@ -81,6 +81,7 @@ final class ConfigurationData {
             if(!(v instanceof String))throw invalid();String s=(String)v;if(s.length()>(group.equals("toolbox")?4096:StatusTransferData.MAX_BYTES))throw invalid();
             if(!group.equals("toolbox")&&!s.isEmpty()&&(!group.equals("status_places")||key.equals("places")))checkNesting(s);
             if(group.equals("toolbox")){
+                if(key.equals(LanguagePolicy.KEY)&&!LanguagePolicy.valid(s))throw invalid();
                 if(key.endsWith("_order")&&!s.matches("[0-9,]*"))throw invalid();
                 if(key.equals("status_battery_current_unit")&&!Arrays.asList("uA","mA").contains(s))throw invalid();
                 if(key.equals("status_battery_charge_unit")&&!Arrays.asList("uAh","mAh").contains(s))throw invalid();

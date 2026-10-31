@@ -11,6 +11,7 @@ import android.widget.*;
 
 /** Displays the publisher's complete original page; no scraping, proxy or image republishing. */
 public final class OfficialPageActivity extends Activity {
+    @Override protected void attachBaseContext(android.content.Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     private int theme(){return UiColors.seed(this,UiColors.BUTTON);}
     private void buttonColor(Button b){b.setTextColor(ThemeColors.dark(theme()));b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ThemeColors.pale(theme())));}
     private WebView web;

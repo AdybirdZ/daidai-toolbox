@@ -26,3 +26,20 @@ for raw,label in zip(arrays['identity_keys'],arrays['identity_label_keys']):
  assert strings[raw].attrib.get('translatable')=='false'
 assert 'relative?"' not in (java/'StatusViews.java').read_text(encoding='utf8')
 print('XML resource references, stable identifiers and historical UI migration verified')
+
+# A shipped language must fully cover built-in UI text and preserve format contracts.
+translatable={k:e for k,e in strings.items() if e.attrib.get('translatable')!='false'}
+english={}
+for path in (root/'app/src/main/res/values-en').glob('*.xml'):
+ for e in ET.parse(path).getroot():
+  if e.tag=='string':
+   key=e.attrib['name'];assert key not in english,('Duplicate English key',key)
+   english[key]=e
+assert set(english)==set(translatable),('English coverage',set(translatable)-set(english),set(english)-set(translatable))
+for key,e in english.items():
+ cn=''.join(translatable[key].itertext());en=''.join(e.itertext())
+ assert not re.search(r'[\u4e00-\u9fff]',en) or key=='language_chinese',('Untranslated English',key)
+ pattern=r'%(?:[0-9]+\$)?[-+0-9.,]*[sdf]'
+ assert sorted(re.findall(pattern,cn))==sorted(re.findall(pattern,en)),('Format mismatch',key)
+ assert e.attrib.get('formatted')==translatable[key].attrib.get('formatted'),('Formatting attribute',key)
+print('English coverage and format contracts verified:',len(english),'strings')
