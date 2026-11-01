@@ -14,7 +14,7 @@
     <string name="todo_all_day">All day or consecutive days</string>
     <string name="todo_date">Start date · YYYY-MM-DD</string>
     <string name="todo_until">End date (inclusive) · YYYY-MM-DD</string>
-    <string name="todo_slots">Time ranges within one day · one per line</string>
+    <string name="todo_slots">Time ranges within one day</string>
     <string name="todo_repeat">Repeat</string>
     <string name="todo_once">Do not repeat (default)</string>
     <string name="todo_daily">Daily</string>
@@ -35,8 +35,8 @@
     <string name="todo_end_reminder">Also remind at the end</string>
     <string name="todo_pin">Pin task</string>
     <string name="todo_parts">Checklist · one item per line</string>
-    <string name="todo_editor_note">Turn off all-day mode to enter separate, non-overlapping ranges on the same day, such as 09:00-10:00 and 15:00-16:00, one per line. Enter hours and minutes directly. A single range cannot cross midnight.\n\nAll-day tasks may span consecutive days. Multi-day tasks cannot repeat. Completing a repeating task completes only its current occurrence. Dates and reminders use the current device time zone and are recalculated if it changes.\n\nUp to 2,000 tasks, 12 time ranges and 50 checklist items per task.</string>
-    <string name="todo_invalid">Check the title, dates, time ranges, repeat rule and checklist.</string>
+    <string name="todo_editor_note">Use Add time range to enter the start and end hours and minutes. Tap an existing range to edit it. Ranges cannot overlap.\n\nAll-day tasks may span consecutive days. Multi-day tasks cannot repeat. Completing a repeating task completes only its current occurrence. Dates and reminders follow the current device time zone and are recalculated if it changes.\n\nUp to 2,000 tasks, 12 time ranges and 50 checklist items per task.</string>
+    <string name="todo_invalid">Check the title, dates, time ranges, repeat rule, checklist and retention days.</string>
     <string name="todo_load_failed">Task data could not be read. The original data has been preserved. Export your configuration before investigating.</string>
     <string name="todo_save_failed">Could not save the task. Please try again.</string>
     <string name="todo_saved">Task saved</string>
@@ -100,4 +100,21 @@
     <string name="todo_last_completed">Last completed: %1$s</string>
     <string name="update_210_title">2.1.0 · To-do</string>
     <string name="todo_normal_label">Normal</string>
+    <string name="todo_add_slot">Add time range</string>
+    <string name="todo_edit_slot">Edit time range</string>
+    <string name="todo_remove_slot">Remove</string>
+    <string name="todo_slot_start">Start time</string>
+    <string name="todo_slot_end">End time</string>
+    <string name="todo_slot_limit">A task can have up to 12 time ranges.</string>
+    <string name="todo_slot_invalid">Enter valid hours and minutes. The end must be later than the start, and ranges must not overlap.</string>
+    <string name="todo_slot_note">Ranges must stay within one day. An end time of 24:00 is allowed.</string>
+    <string name="todo_auto_delete">Automatically delete this task after completion</string>
+    <string name="todo_delete_days">Days to keep · 1–3650</string>
+    <string name="todo_completion_note">Completion can be undone only within 72 hours of the most recent completion action. Undoing and completing again restarts the clock. Editing content or changing the task end time does not restart it.\n\nAutomatic deletion is off by default and can be enabled per task. It keeps the task for the specified number of 24-hour days after the latest completion action. Undoing cancels that deletion countdown. For repeating tasks, the entire task and all future occurrences are deleted. If system execution is delayed, cleanup runs when scheduling resumes or the app is opened again.\n\nOlder completed tasks have no recorded completion instant. They cannot be undone or automatically deleted based on that completion.</string>
+    <string name="todo_missing">This task has been deleted. Your edits were not saved.</string>
+    <string name="todo_delete_now">This task has already passed the retention deadline. Saving will immediately delete the entire task and its future occurrences. Continue?</string>
+    <string name="update_211_title">2.1.1 · Task times and completion management</string>
+    <string name="update_211_detail">Time zones now use UTC offsets, accounting for daylight saving on the relevant date.\n\nToday includes completed tasks. Completion can be undone for 72 hours; completing again after undo restarts the countdown. Each task can optionally be deleted after a chosen number of days following completion. This is off by default.\n\nTime ranges now have add, edit and remove buttons with separate hour and minute fields, multiple ranges and overlap validation.</string>
+    <string name="todo_changed">This task was updated by another action. Close the editor and reopen it before making changes.</string>
+    <string name="todo_import_expiry">\n\nTask completion instants and per-task retention settings are preserved. Importing does not restart the clock; tasks whose enabled retention period has expired will be deleted.</string>
 </resources>

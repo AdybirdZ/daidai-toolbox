@@ -207,8 +207,8 @@ public class MainActivity extends Activity {
         gap(hero,12);
         int today=data.todayIndex(now);
         hero.addView(text(UiText.get("main_013")+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",today))+UiText.get("main_014")+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",today)),14,INK,false));gap(hero,13);
-        ZoneId shownZone=displayZone(data.zone);String updated=DateTimeFormatter.ofPattern(UiText.get("main_015")).withZone(shownZone).format(data.currentTime);
-        hero.addView(text(UiText.get("main_016")+updated+" · "+(preferences.getInt("global_time_mode",0)==0?UiText.get("main_017"):preferences.getInt("global_time_mode",0)==1?UiText.get("earthquake_info_007"):UiText.get("earthquake_info_008")),11,MUTED,false));
+        ZoneId shownZone=displayZone(data.zone);Instant weatherAt=data.currentTime.atZone(data.zone).toInstant();String updated=DateTimeFormatter.ofPattern(UiText.get("main_015")).withZone(shownZone).format(weatherAt);
+        hero.addView(text(UiText.get("main_016")+updated+" · "+EarthquakeOptions.offset(shownZone,weatherAt.toEpochMilli()),11,MUTED,false));
         gap(hero,8);
         LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text(getString(R.string.source_open_meteo),11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);markLink(source);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
 
@@ -340,7 +340,7 @@ public class MainActivity extends Activity {
     }
     private void addUniquePlace(List<City> list,City candidate){candidate=City.resolve(catalog,candidate);if(candidate.excludedAdministrativeArea())return;for(City existing:list)if(existing.samePlace(candidate))return;list.add(candidate);}
     private boolean weatherVisible(){return tab==0&&!picking;}
-    void switchTab(int next){hideKeyboard();if(randomChoice!=null)randomChoice.pause();if(next!=2)gps.stopForNavigation();if(earthquakes!=null)earthquakes.pause();tab=next;List<Integer> items=visibleTabs();if(items.size()>=5){int pos=items.indexOf(tab);if(pos<navigationOffset)navigationOffset=pos;else if(pos>=navigationOffset+3)navigationOffset=pos-2;}picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==0)showWeather();else{startScreen();if(next==1)schedule.render();else if(next==2)gps.render();else if(next==3){maps=new MapScreen(this);maps.render(!deferMapReload);deferMapReload=false;}else if(next==4)new AstronomyScreen(this,city,data,astronomyTime,this::showAstronomy).render();else if(next==5)earthquakes.render();else if(next==6)randomChoice.render();else if(next==7)todo.render();}}
+    void switchTab(int next){hideKeyboard();if(todo!=null)todo.pause();if(randomChoice!=null)randomChoice.pause();if(next!=2)gps.stopForNavigation();if(earthquakes!=null)earthquakes.pause();tab=next;List<Integer> items=visibleTabs();if(items.size()>=5){int pos=items.indexOf(tab);if(pos<navigationOffset)navigationOffset=pos;else if(pos>=navigationOffset+3)navigationOffset=pos-2;}picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==0)showWeather();else{startScreen();if(next==1)schedule.render();else if(next==2)gps.render();else if(next==3){maps=new MapScreen(this);maps.render(!deferMapReload);deferMapReload=false;}else if(next==4)new AstronomyScreen(this,city,data,astronomyTime,this::showAstronomy).render();else if(next==5)earthquakes.render();else if(next==6)randomChoice.render();else if(next==7)todo.render();}}
     void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
     void changeLanguage(String choice){
@@ -354,7 +354,7 @@ public class MainActivity extends Activity {
     void importConfiguration(){configuration.importFile();}
     void randomChoiceSettings(){randomChoice.settings();}
     void todoSettings(){todo.settings();}
-    void prepareConfigurationImport(){TodoScheduler.suspend(this);randomChoice.stopForImport();searchVersion++;cacheGeneration++;gps.stopForImport();earthquakes.destroy();}
+    void prepareConfigurationImport(){todo.pause();TodoScheduler.suspend(this);randomChoice.stopForImport();searchVersion++;cacheGeneration++;gps.stopForImport();earthquakes.destroy();}
     void configurationImportFinished(boolean success,boolean restored){
         toast(getString(success?R.string.config_imported:restored?R.string.config_import_failed:R.string.config_restore_failed));
         Intent next=new Intent(this,MainActivity.class).putExtra("configuration_applied",true);startActivity(next);finish();
@@ -376,6 +376,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_211_title),getString(R.string.update_211_detail));
         updateEntry(c,getString(R.string.update_210_title),getString(R.string.update_210));
         updateEntry(c,getString(R.string.update_200_title),getString(R.string.update_200_detail));
         updateEntry(c,getString(R.string.update_132_title),getString(R.string.update_132_detail));
@@ -462,7 +463,7 @@ public class MainActivity extends Activity {
     }
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(intent.getBooleanExtra("open_todo",false)){preferences.edit().putBoolean("tab_show_7",true).apply();switchTab(7);}if(intent.getBooleanExtra("open_location",false)){preferences.edit().putBoolean("tab_show_2",true).apply();switchTab(2);}}
     @Override public void onBackPressed() {if(picking){hideKeyboard();switchTab(tab);}else if(tab!=visibleTabs().get(0))switchTab(visibleTabs().get(0));else super.onBackPressed();}
-    @Override protected void onPause(){if(randomChoice!=null)randomChoice.pause();if(earthquakes!=null)earthquakes.pause();if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
+    @Override protected void onPause(){if(todo!=null)todo.pause();if(randomChoice!=null)randomChoice.pause();if(earthquakes!=null)earthquakes.pause();if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
     @Override protected void onResume(){super.onResume();TodoScheduler.refresh(this,true);if(todo!=null&&tab==7)todo.resume();if(randomChoice!=null&&tab==6)randomChoice.resume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();else if(request==44)gps.notificationPermissionResult();else if(request==45)earthquakes.locationPermissionResult();else if(request==46)gps.satellitePermissionResult();else if(request==47)gps.placesPermissionResult();else if(request==48&&tab==2)refreshScreen();else if(request==49)TodoScheduler.refresh(this,true);}
     @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){gps.fileResult(request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}

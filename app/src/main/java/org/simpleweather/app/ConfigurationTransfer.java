@@ -50,7 +50,7 @@ final class ConfigurationTransfer {
     }
     private void confirm(ConfigurationData.Document doc){
         if(!alive()){busy=false;return;}
-        new ToolDialog(a).setTitle(a.getString(R.string.config_import_title)).setMessage(a.getString(R.string.config_import_summary,doc.regions,doc.places,doc.routes,doc.courses,doc.lists)+(doc.todoSpecified?a.getString(R.string.todo_config_count,doc.todos):"")+(doc.backgroundSpecified?a.getString(R.string.config_background_replace):a.getString(R.string.config_background_legacy))+a.getString(R.string.config_import_warning))
+        new ToolDialog(a).setTitle(a.getString(R.string.config_import_title)).setMessage(a.getString(R.string.config_import_summary,doc.regions,doc.places,doc.routes,doc.courses,doc.lists)+(doc.todoSpecified?a.getString(R.string.todo_config_count,doc.todos):"")+(doc.backgroundSpecified?a.getString(R.string.config_background_replace):a.getString(R.string.config_background_legacy))+a.getString(R.string.config_import_warning)+(doc.todoSpecified?a.getString(R.string.todo_import_expiry):""))
             .setNegativeButton(a.getString(R.string.action_cancel),null).setPositiveButton(a.getString(R.string.config_confirm),(d,n)->apply(doc)).setOnDismissListener(d->{if(!applying)busy=false;}).show();
     }
     private void apply(ConfigurationData.Document doc){

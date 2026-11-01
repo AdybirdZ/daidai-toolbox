@@ -31,10 +31,10 @@ final class TodoScheduler {
         String action=intent.getAction();
         if("todo.complete".equals(action)||"todo.snooze".equals(action))try{
             TodoModel m=TodoStore.load(c);TodoModel.Item i=m.find(intent.getStringExtra("id"));
-            if(i!=null&&i.updated==intent.getLongExtra("updated",-1)){
+            if(i!=null&&System.currentTimeMillis()<TodoModel.deleteAt(i)&&i.updated==intent.getLongExtra("updated",-1)){
                 LocalDate day=LocalDate.parse(intent.getStringExtra("day"));
                 if(TodoModel.occurs(i,day)){
-                    if("todo.complete".equals(action)){TodoModel.complete(i,day);i.updated=System.currentTimeMillis();TodoStore.save(c,m);runtime(c).edit().remove("snooze:"+i.id).commit();}
+                    if("todo.complete".equals(action)){TodoModel.complete(i,day,System.currentTimeMillis());TodoStore.save(c,m);runtime(c).edit().remove("snooze:"+i.id).commit();}
                     else runtime(c).edit().putString("snooze:"+i.id,day+"|"+i.updated+"|"+(System.currentTimeMillis()+600000)).commit();
                 }
                 c.getSystemService(NotificationManager.class).cancel("todo:"+i.id,id(i.id));
@@ -59,7 +59,10 @@ final class TodoScheduler {
         Context c=local(original);SharedPreferences rt=runtime(c),p=prefs(c);if(suspended)return;
         try{
             channels(c);TodoModel model=TodoStore.load(c);long now=System.currentTimeMillis();ZoneId zone=ZoneId.systemDefault();
+            List<TodoModel.Item> expired=new ArrayList<>();for(TodoModel.Item i:model.items)if(now>=TodoModel.deleteAt(i))expired.add(i);
+            if(model.prune(now)){TodoStore.save(c,model);for(TodoModel.Item i:expired){c.getSystemService(NotificationManager.class).cancel("todo:"+i.id,id(i.id));runtime(c).edit().remove("snooze:"+i.id).commit();}}
             long next=LocalDate.now(zone).plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli();
+            for(TodoModel.Item i:model.items)next=Math.min(next,TodoModel.deleteAt(i));
             Map<String,?> old=rt.getAll();SharedPreferences.Editor edit=rt.edit();for(Map.Entry<String,?> e:old.entrySet())if(e.getKey().startsWith("sent:")&&e.getValue() instanceof Long&&((Long)e.getValue())<now-172800000L)edit.remove(e.getKey());
             Set<String> delivered=new HashSet<>();
             if(p.getBoolean("todo_notify",true)&&allowed(c))for(TodoModel.Item i:model.items){
@@ -71,7 +74,7 @@ final class TodoScheduler {
             }
             edit.commit();summary(c,model,now,zone);
             AlarmManager manager=c.getSystemService(AlarmManager.class);manager.cancel(alarm(c));
-            boolean tasks=false;for(TodoModel.Item i:model.items)if(!i.done){tasks=true;break;}
+            boolean tasks=false;for(TodoModel.Item i:model.items)if(!i.done||TodoModel.deleteAt(i)!=Long.MAX_VALUE){tasks=true;break;}
             if(tasks){try{if(exact(c))manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,next,alarm(c));else manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,next,alarm(c));}catch(SecurityException e){manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,next,alarm(c));}}
         }catch(Exception ignored){} // Corrupt data remains intact; the screen reports the problem.
     }

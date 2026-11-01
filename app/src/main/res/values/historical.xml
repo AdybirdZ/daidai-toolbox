@@ -306,9 +306,9 @@
     <string name="earthquake_info_004" formatted="false">"时间显示："</string>
     <string name="earthquake_info_005" formatted="false">"（"</string>
     <string name="earthquake_info_006" formatted="false">"设备时区"</string>
-    <string name="earthquake_info_007" formatted="false">"北京时间"</string>
-    <string name="earthquake_info_008" formatted="false">"协调世界时"</string>
-    <string name="earthquake_info_009" formatted="false">"）。日期均带年份；采用夏令时的时区按事件发生日期的实际偏移显示。中国地震台网转发目录按 UTC+08:00 解析后转换。距离为参考位置到震中的地表大圆距离，不代表到震源的距离。"</string>
+    <string name="earthquake_info_007" formatted="false">"UTC+8"</string>
+    <string name="earthquake_info_008" formatted="false">"UTC+0"</string>
+    <string name="earthquake_info_009" formatted="false">"）。日期均带年份；采用夏令时的时区按事件发生日期的实际偏移显示。中国地震台网转发目录按 UTC+8 解析后转换。距离为参考位置到震中的地表大圆距离，不代表到震源的距离。"</string>
     <string name="earthquake_info_010" formatted="false">"来源：德国地学研究中心 GEOFON（GFZ / GEVN）和欧洲—地中海地震中心（EMSC / SeismicPortal），按 CC BY 4.0 署名。\n\nEvent locations were obtained from the GEOFON program of the GFZ Helmholtz Centre for Geosciences using data from the GEVN partner networks.\n\n美国地质调查局（USGS）的全球补充目录仅采用其国家地震信息中心提供的参数（net=us），不复制第三方图像，也不将整套聚合目录视为公有领域数据。\n\n本应用进行事件匹配、筛选、时间格式转换和部分地名翻译。合并记录保留各来源参数，不对震级取平均；各来源也不一定完全独立。列表优先显示具体贡献机构，聚合平台及转发信息在详情中注明。同次地震优先采用中国地震台网的已复核结果，其次为其他机构的已复核结果，最后为自动结果或状态未知的记录；同级采用较新结果，不因来源为中国地震台网而直接认定已复核。"</string>
     <string name="earthquake_info_011" formatted="false">"烈度优先采用美国地质调查局的公众震感汇总（cdi），标为“来源报告烈度”；该值不等同于官方现场调查结果。ShakeMap 的 mmi 字段为模型结果，标为“估算烈度”。\n\n本地估算为震中参考烈度，不代表最大烈度或参考位置处的烈度。来源更新后，应用自动采用当前有效值；模型结果即使经过复核，也不会改标为实测结果。本应用仅采用修订麦加利烈度（MMI），列表省略标度和模型括注，详情保留完整说明。"</string>
     <string name="earthquake_info_012" formatted="false">"数据源未提供可用烈度时，满足 Mw 5.0～7.9、深度大于 0 且不超过 30 km 等条件的记录，采用 Allen、Wald 和 Worden（2012）经验模型；其他具有有效震级和深度的记录，采用 GlobalQuake 旧开源版本的峰值地面加速度（PGA）及 MMI 阈值参考算法。\n\n后者接受震级 −2～10.5、深度 0～800 km 的输入，但这是算法接受的数值范围，并非全球适用性或精度保证。小震、深震及不同地质构造下的结果可能存在较大误差；两种模型结果不宜视为相同标定尺度下的精确比较。"</string>

@@ -127,7 +127,7 @@ final class RouteCanvas extends View {
         choices.getListView().setOnItemClickListener((parent,view,n,id)->showPoint(hits.get(n)));
     }
     private void showPoint(int index){
-        RoutePoint q=points.get(index);java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss XXX",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone(a.displayZone(java.time.ZoneId.systemDefault())));
-        new ToolDialog(a).setTitle(UiText.get("route_drawing_006")+(index+1)+" / "+points.size()).setMessage(UiText.get("route_drawing_008")+CoordinateFormat.pair(q.lon,q.lat,6)+UiText.get("route_drawing_009")+format.format(new Date(q.time))+(Float.isFinite(q.accuracy)?UiText.get("route_drawing_010")+String.format(Locale.ROOT,UiText.get("gps_141"),q.accuracy):"")).setNegativeButton(UiText.get("action_back"),null).show();
+        RoutePoint q=points.get(index);java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone(a.displayZone(java.time.ZoneId.systemDefault())));
+        new ToolDialog(a).setTitle(UiText.get("route_drawing_006")+(index+1)+" / "+points.size()).setMessage(UiText.get("route_drawing_008")+CoordinateFormat.pair(q.lon,q.lat,6)+UiText.get("route_drawing_009")+format.format(new Date(q.time))+" · "+EarthquakeOptions.offset(a.displayZone(java.time.ZoneId.systemDefault()),q.time)+(Float.isFinite(q.accuracy)?UiText.get("route_drawing_010")+String.format(Locale.ROOT,UiText.get("gps_141"),q.accuracy):"")).setNegativeButton(UiText.get("action_back"),null).show();
     }
 }

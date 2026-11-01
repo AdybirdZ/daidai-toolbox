@@ -94,7 +94,7 @@
     <string name="settings_device">设备与环境</string>
     <string name="location_interval_title">网络定位间隔</string>
     <string name="location_interval_note">此间隔是向系统请求网络定位更新的最短间隔；系统可能延迟更新或复用已有结果。</string>
-    <string name="time_display_note">此设置用于当前天气的数据时刻、逐小时预报、天文、地震及路线记录详情。默认情况下，天气和天文使用所选地区时区，地震和路线详情使用设备时区。每日天气预报及日出日落按所选地区时区显示；课程表按设备日期确定当前周次。</string>
+    <string name="time_display_note">此设置用于当前天气的数据时刻、逐小时预报、天文、地震、路线记录详情及待办事项时刻。时区以 UTC 偏移形式显示。默认情况下，天气和天文使用所选地区时区，地震、路线详情及待办事项使用设备时区。每日天气预报及日出日落按所选地区时区显示；课程表按设备日期确定当前周次，待办日期和重复规则按设备日历计算。</string>
     <string name="update_1212_title">1.2.12 · 分类配色与设置整理</string>
     <string name="update_1212_detail">• 界面颜色分为普通按钮、链接按钮、正文、标题、选择项和说明文字六类，分别设置；普通按钮默认蓝色，说明文字默认灰色，其他类别默认黑色，深色按钮固定白字。\n• 状态设置按定位、卫星、传感器和电池等内容合并，网络定位间隔说明移至对应设置顶部。\n• 课程预设颜色显示中文名称，自定义颜色显示十六进制值；保留旧版课程颜色。\n• 调整课程编辑输入框的内部留白。\n• 版本号 1.2.12 / versionCode 36。</string>
     <string-array name="color_names_seven"><item>红色</item><item>橙色</item><item>黄色</item><item>绿色</item><item>青色</item><item>蓝色</item><item>紫色</item></string-array>
