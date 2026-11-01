@@ -258,3 +258,12 @@ Wolfx 仍只接入 cenc_eqlist，非全球目录，无预警流。默认关闭�
 ## 1.3.1 随机抽取与前台屏幕设置
 
 本轮没有新增网络数据源、运行时依赖或权限。剩余内容窗口仅读取本机当前候选池和已抽取记录；名单操作和多项动画均在本机完成。禁止系统休眠使用 Android 前台窗口标志，不申请关闭电池优化，也不保持后台运行。完全退出后相机环境光采集通过本机偏好标记在下次进入时保持暂停。
+
+
+## 2.1.0 本机待办与系统通知
+
+待办、重复规则及通知调度为本项目自行实现，使用 Android AlarmManager、NotificationManager 和 Java 时间公共接口，无新增外部数据源或第三方运行时依赖。事项保存在本机，并纳入用户主动执行的完整配置导出；通知内容可能显示在锁屏上，可在待办设置隐藏。
+
+新增 RECEIVE_BOOT_COMPLETED 用于解锁后重启恢复提醒；SCHEDULE_EXACT_ALARM 是用户可选择的特殊访问权限，未授权时采用非准时闹钟。POST_NOTIFICATIONS 沿用已有权限。不开启全屏提醒、不申请自动关闭电池优化、不通过常驻轮询服务保活。
+
+系统行为参考：[通知权限](https://developer.android.com/develop/ui/views/notifications/notification-permission)、[通知渠道](https://developer.android.com/develop/ui/views/notifications/channels)、[闹钟调度](https://developer.android.com/develop/background-work/services/alarms/schedule)。系统授权不等于各厂商设备的投递保证。

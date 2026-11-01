@@ -52,7 +52,7 @@ public final class Release130UiTests extends Instrumentation {
             a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
             ui(()->{
                 check(text(root(),label("app_name")+" · "+label("tab_random"))!=null,"Localized header");
-                check(((List<?>)call(a,"visibleTabs",new Class[]{})).equals(Arrays.asList(0,1,2,5,6)),"Default tabs append random selection and retain map/astronomy hidden");
+                check(((List<?>)call(a,"visibleTabs",new Class[]{})).equals(Arrays.asList(0,1,2,5,6,7)),"Default tabs include random draw and To-do; map/astronomy remain hidden");
                 check(inputs(root()).size()==2,"Candidates and draw quantity are editable");
                 inputs(root()).get(0).setText("A,B\nC,D,A");inputs(root()).get(1).setText("2");
                 call(a,"settings",new Class[]{});View settings=dialogKey("action_settings");tapKey(settings,"tab_random");View choice=dialogKey("tab_random");

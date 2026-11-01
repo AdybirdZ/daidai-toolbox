@@ -122,7 +122,7 @@
     <string name="order_separator">"、"</string>
     <string name="order_sections_note">默认显示全部栏目。勾选可设置显示项目，使用箭头调整顺序。</string>
     <string name="order_weather_note">默认显示全部栏目。勾选可设置显示项目，使用箭头调整顺序；天气数据旁的来源署名始终保留。</string>
-    <string name="order_tabs_note">默认显示天气、课程表、状态、地震和随机抽取。至少保留一个栏目；仅显示一个栏目时隐藏底栏，显示五个及以上栏目时使用左右箭头翻页。</string>
+    <string name="order_tabs_note">默认显示天气、课程表、状态、地震、随机抽取和待办事项，天气地图与天文默认隐藏。可调整显示与顺序；仅显示一个栏目时隐藏底栏。</string>
     <string name="quake_sort_note">默认排序为：按发生时刻从新到旧。</string>
     <string name="saved_order_note">"默认按添加顺序排列。可用“上移”“下移”调整顺序；编辑不会改变位置。"</string>
     <string name="update_1214_title">1.2.14 · 星图交互与设置规范</string>

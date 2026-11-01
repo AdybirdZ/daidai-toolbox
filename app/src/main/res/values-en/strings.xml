@@ -137,7 +137,7 @@
     <string name="order_separator">", "</string>
     <string name="order_sections_note">"All sections are shown by default. Use the checkboxes to choose visible items and the arrows to reorder them."</string>
     <string name="order_weather_note">"All sections are shown by default. Use the checkboxes to choose visible items and the arrows to reorder them. Data attribution remains visible."</string>
-    <string name="order_tabs_note">"Weather, Timetable, Status, Earthquakes and Random selection are shown by default. Keep at least one tab visible. The bottom bar is hidden when only one tab is visible; with five or more visible tabs, use the arrows to browse them."</string>
+    <string name="order_tabs_note">Weather, Schedule, Status, Earthquakes, Random draw and To-do are visible by default. Weather maps and Astronomy are hidden. Choose which tabs to show and their order. The bottom bar is hidden when only one tab is visible.</string>
     <string name="quake_sort_note">"Default order: newest event time first."</string>
     <string name="saved_order_note">"The default order is the order of addition. Use Move up and Move down to reorder items; editing does not change their position."</string>
     <string name="update_1214_title">"1.2.14 · Sky interaction and settings consistency"</string>
