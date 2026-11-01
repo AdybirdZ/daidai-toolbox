@@ -376,6 +376,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_212_title),getString(R.string.update_212_detail));
         updateEntry(c,getString(R.string.update_211_title),getString(R.string.update_211_detail));
         updateEntry(c,getString(R.string.update_210_title),getString(R.string.update_210));
         updateEntry(c,getString(R.string.update_200_title),getString(R.string.update_200_detail));

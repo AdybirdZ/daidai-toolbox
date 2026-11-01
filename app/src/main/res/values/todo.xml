@@ -12,6 +12,7 @@
     <string name="todo_normal">普通（默认）</string>
     <string name="todo_high">高</string>
     <string name="todo_all_day">全天或连续多天</string>
+    <string name="todo_someday">待安排（不限日期和时间）</string>
     <string name="todo_date">开始日期 · 年-月-日</string>
     <string name="todo_until">结束日期（包含当天）· 年-月-日</string>
     <string name="todo_slots">当天时段</string>
@@ -35,7 +36,7 @@
     <string name="todo_end_reminder">结束时再次提醒</string>
     <string name="todo_pin">置顶</string>
     <string name="todo_parts">子任务 · 每行一项</string>
-    <string name="todo_editor_note">使用“新增时间段”分别输入开始和结束的时、分；点击已有时间段可编辑，时间段不能重叠。\n\n全天事项可包含连续多天；跨多天事项不支持重复。重复事项的“完成本次”仅结束当前这次，下一次仍会出现。日期和提醒以设备当前时区为准，切换时区会重新计算。\n\n最多保存 2000 项事项，每项可有 12 个时段、50 项子任务。</string>
+    <string name="todo_editor_note">使用“新增时间段”分别输入开始和结束的时、分；点击已有时间段可编辑，时间段不能重叠。\n\n“待安排”事项不设置日期和时间，也不会产生到时提醒；它会一直保留，直到手动完成或删除。\n\n全天事项可包含连续多天；跨多天事项不支持重复。重复事项的“完成本次”仅结束当前这次，下一次仍会出现。日期和提醒以设备当前时区为准，切换时区会重新计算。\n\n最多保存 2000 项事项，每项可有 12 个时段、50 项子任务。</string>
     <string name="todo_invalid">请检查事项名称、日期、时段、重复规则、子任务及保留天数。</string>
     <string name="todo_load_failed">待办资料无法读取，已保留原始资料。请先导出配置留存，再检查资料。</string>
     <string name="todo_save_failed">未能保存事项，请重试。</string>
@@ -56,6 +57,7 @@
     <string name="todo_uncategorized">未分类</string>
     <string name="todo_empty">没有符合条件的事项</string>
     <string name="todo_done">已完成</string>
+    <string name="todo_someday_status">待安排 · 不限日期和时间</string>
     <string name="todo_repeating">重复事项</string>
     <string name="todo_all_day_label">全天</string>
     <string name="todo_part_count">子任务 %1$d/%2$d</string>
@@ -114,6 +116,8 @@
     <string name="todo_missing">此事项已删除，未保存编辑内容。</string>
     <string name="todo_delete_now">此事项已超过设置的保留期限，保存后将立即删除整个事项及后续重复安排。是否继续？</string>
     <string name="update_211_title">2.1.1 · 待办时间与完成管理</string>
+    <string name="update_212_title">2.1.2 · 待安排事项</string>
+    <string name="update_212_detail">新增待安排事项：不设置日期和时间，不产生到时提醒，可在未来任意时间手动完成。兼容已有待办资料，待安排事项默认不参与“今天”日期筛选。</string>
     <string name="update_211_detail">时区显示统一为 UTC 偏移形式，按对应日期处理夏令时。\n\n今天范围包含已完成事项；完成后可在 72 小时内撤销，重新完成重新计时。每项事项可单独设置完成后保留天数并自动删除，默认关闭。\n\n时间段改为新增、编辑及移除按钮，通过独立时分输入框设置，支持多个时段并检查重叠。</string>
     <string name="todo_changed">此事项已在其他操作中更新。请关闭编辑界面后重新编辑。</string>
     <string name="todo_import_expiry">\n\n事项的完成时刻和单项保留天数会保留，导入不会重新计时；已启用自动删除且到期的事项将被清理。</string>
