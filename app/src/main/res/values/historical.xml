@@ -1290,4 +1290,17 @@
     <string name="weather_icon_001" formatted="false">"，夜间"</string>
     <string name="weather_store_001" formatted="false">"已达到今日查询限额，请明日重试"</string>
     <string name="weather_store_002" formatted="false">"请求过于频繁，请稍后重试"</string>
+    <string name="update_213_title" formatted="false">2.1.3 · 待办重复与课程提醒</string>
+    <string name="update_213_detail" formatted="false">修复重复事项连续完成后的撤销和最近完成时间显示；更改重复方式后从今天开始寻找下一次安排。待安排事项可按星期重复，编辑时自动隐藏无关的日期、重复和提醒标题。日期改为年、月、日分栏输入，并改善控件变化时的页面跳动。课程表新增每日课程提示，可设置提前提示时间和课程开始后自动移除通知。</string>
+    <string name="schedule_notify_settings" formatted="false">每日课程提示</string>
+    <string name="schedule_notify_enabled" formatted="false">开启每日课程提示（默认）</string>
+    <string name="schedule_notify_lead" formatted="false">提前提示分钟数（0～1440）</string>
+    <string name="schedule_notify_remove" formatted="false">课程开始后自动移除通知的分钟数（1～1440）</string>
+    <string name="schedule_notify_note" formatted="false">提示仅针对当前学期、当前周次和已设置的课程。系统通知权限、锁屏显示及后台限制可能影响横幅显示。</string>
+    <string name="schedule_notify_saved" formatted="false">课程提示设置已保存</string>
+    <string name="schedule_notify_invalid" formatted="false">请输入有效的分钟数</string>
+    <string name="course_notify_channel" formatted="false">课程提示</string>
+    <string name="course_notify_channel_note" formatted="false">即将开始的课程提示</string>
+    <string name="course_notify_started" formatted="false">课程已开始</string>
+    <string name="course_notify_in" formatted="false">将在 %1$d 分钟后开始</string>
 </resources>

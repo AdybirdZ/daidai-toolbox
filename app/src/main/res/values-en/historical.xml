@@ -1290,4 +1290,17 @@
     <string name="weather_icon_001" formatted="false">", nighttime"</string>
     <string name="weather_store_001" formatted="false">"Daily query limit reached. Try tomorrow."</string>
     <string name="weather_store_002" formatted="false">"Too many requests. Try later."</string>
+    <string name="update_213_title" formatted="false">2.1.3 · Repeating tasks and course reminders</string>
+    <string name="update_213_detail" formatted="false">Fixed undo and latest-completion timestamps after completing repeating tasks more than once. Changing a repeat rule now searches from today for the next matching occurrence. Unscheduled tasks can repeat on selected weekdays, and unrelated date, repeat and reminder headings are hidden. Dates use separate year, month and day fields, with smoother editor layout changes. Timetable now supports daily course notifications with configurable lead and automatic removal delays.</string>
+    <string name="schedule_notify_settings" formatted="false">Daily course notifications</string>
+    <string name="schedule_notify_enabled" formatted="false">Enable daily course notifications (default)</string>
+    <string name="schedule_notify_lead" formatted="false">Minutes before class (0–1440)</string>
+    <string name="schedule_notify_remove" formatted="false">Remove notification after class starts (minutes, 1–1440)</string>
+    <string name="schedule_notify_note" formatted="false">Notifications use the current term, week and saved courses. System notification permission, lock-screen settings and background limits may affect banners.</string>
+    <string name="schedule_notify_saved" formatted="false">Course notification settings saved</string>
+    <string name="schedule_notify_invalid" formatted="false">Enter valid minute values</string>
+    <string name="course_notify_channel" formatted="false">Course notifications</string>
+    <string name="course_notify_channel_note" formatted="false">Upcoming class notifications</string>
+    <string name="course_notify_started" formatted="false">Class has started</string>
+    <string name="course_notify_in" formatted="false">Starts in %1$d minutes</string>
 </resources>
