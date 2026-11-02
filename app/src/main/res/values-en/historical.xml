@@ -1303,4 +1303,6 @@
     <string name="course_notify_channel_note" formatted="false">Upcoming class notifications</string>
     <string name="course_notify_started" formatted="false">Class has started</string>
     <string name="course_notify_in" formatted="false">Starts in %1$d minutes</string>
+    <string name="update_214_title" formatted="false">2.1.4 · To-do and course-order fixes</string>
+    <string name="update_214_detail" formatted="false">Repeating all-day tasks now generate occurrences within their specified date range. Fixed editor page jumps when controls change. The default retention after enabling automatic deletion is now 3 days, reminder lead times use minutes, hours or days as appropriate, and today’s courses are sorted from earliest to latest period.</string>
 </resources>

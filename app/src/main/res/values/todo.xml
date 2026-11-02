@@ -32,11 +32,13 @@
     <string name="todo_advance">开始提醒</string>
     <string name="todo_no_reminder">不提醒</string>
     <string name="todo_on_time">开始时（默认）</string>
-    <string name="todo_before">提前 %1$d 分钟</string>
+    <string name="todo_before_minutes">提前 %1$d 分钟</string>
+    <string name="todo_before_hours">提前 %1$d 小时</string>
+    <string name="todo_before_days">提前 %1$d 天</string>
     <string name="todo_end_reminder">结束时再次提醒</string>
     <string name="todo_pin">置顶</string>
     <string name="todo_parts">子任务 · 每行一项</string>
-    <string name="todo_editor_note">使用“新增时间段”分别输入开始和结束的时、分；点击已有时间段可编辑，时间段不能重叠。日期使用年、月、日三个输入框。\n\n“待安排”事项不设置日期和时间，也不会产生到时提醒；可选择按星期重复，长期保留，直到手动完成或删除。\n\n全天事项可包含连续多天；跨多天事项不支持重复。重复事项的“完成本次”仅结束当前这次，下一次仍会出现。日期和提醒以设备当前时区为准，切换时区会重新计算。\n\n最多保存 2000 项事项，每项可有 12 个时段、50 项子任务。</string>
+    <string name="todo_editor_note">使用“新增时间段”分别输入开始和结束的时、分；点击已有时间段可编辑，时间段不能重叠。日期使用年、月、日三个输入框。\n\n“待安排”事项不设置日期和时间，也不会产生到时提醒；可选择按星期重复，长期保留，直到手动完成或删除。\n\n全天事项可包含连续多天。选择重复后，结束日期表示重复范围的最后一天，每次重复对应一个全天事项；不重复时，开始日期至结束日期构成一次连续多日事项。重复事项的“完成本次”仅结束当前这次，下一次仍会出现。日期和提醒以设备当前时区为准，切换时区会重新计算。\n\n最多保存 2000 项事项，每项可有 12 个时段、50 项子任务。</string>
     <string name="todo_invalid">请检查事项名称、日期、时段、重复规则、子任务及保留天数。</string>
     <string name="todo_load_failed">待办资料无法读取，已保留原始资料。请先导出配置留存，再检查资料。</string>
     <string name="todo_save_failed">未能保存事项，请重试。</string>
@@ -112,7 +114,7 @@
     <string name="todo_slot_note">时间段须位于同一天，结束时间可填写 24:00。</string>
     <string name="todo_auto_delete">完成后自动删除此事项</string>
     <string name="todo_delete_days">保留天数 · 1～3650</string>
-    <string name="todo_completion_note">撤销完成仅在最后一次点击完成后的 72 小时内可用。撤销后重新完成会重新计时，编辑内容及事项结束时间不影响计时。\n\n自动删除默认关闭，可为每个事项单独开启。启用后，从最后一次点击完成起保留指定天数，每天按 24 小时计算；撤销完成会取消本次删除计时。重复事项也会删除整个事项及后续重复安排。系统未能按时执行时，将在恢复调度或再次打开应用时清理。\n\n旧版未记录实际完成时刻的事项不提供撤销完成，也不据此自动删除。</string>
+    <string name="todo_completion_note">撤销完成仅在最后一次点击完成后的 72 小时内可用。撤销后重新完成会重新计时，编辑内容及事项结束时间不影响计时。\n\n自动删除默认关闭，可为每个事项单独开启。启用后的默认保留天数为 3 天；也可自行设置其他天数。启用后，从最后一次点击完成起保留指定天数，每天按 24 小时计算；撤销完成会取消本次删除计时。重复事项也会删除整个事项及后续重复安排。系统未能按时执行时，将在恢复调度或再次打开应用时清理。\n\n旧版未记录实际完成时刻的事项不提供撤销完成，也不据此自动删除。</string>
     <string name="todo_missing">此事项已删除，未保存编辑内容。</string>
     <string name="todo_delete_now">此事项已超过设置的保留期限，保存后将立即删除整个事项及后续重复安排。是否继续？</string>
     <string name="update_211_title">2.1.1 · 待办时间与完成管理</string>

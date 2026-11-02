@@ -59,6 +59,7 @@ public final class ScheduleModel {
         return null;
     }
     public void put(Course c){courses.removeIf(x->x.id.equals(c.id));courses.add(c);}
+    public List<Course> todayCourses(int day,int week){List<Course> out=new ArrayList<>();for(Course c:courses)if(c.day==day&&c.runs(week))out.add(c);out.sort(Comparator.comparingInt((Course c)->c.first).thenComparingInt(c->c.last).thenComparingInt(c->c.weekStart).thenComparing(c->c.id));return out;}
     public String courseTime(Course c){return slots.get(c.first-1).start+"–"+slots.get(c.last-1).end;}
     public String weekLabel(Course c){if(c.parity==3)return UiText.get("schedule_model_016")+customLabel(c.customWeeks)+UiText.get("schedule_model_017");return UiText.get("schedule_model_018")+c.weekStart+"–"+c.weekEnd+UiText.get("schedule_model_017")+(c.parity==1?UiText.get("schedule_model_019"):c.parity==2?UiText.get("schedule_model_020"):"");}
     public static String customLabel(Collection<Integer> weeks){StringJoiner out=new StringJoiner(UiText.get("earthquake_data_003"));for(int week:weeks)out.add(String.valueOf(week));return out.toString();}

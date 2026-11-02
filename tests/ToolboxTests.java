@@ -51,6 +51,7 @@ public final class ToolboxTests {
         check(copy.courses.size()==2&&copy.courses.get(0).room.equals("A101")&&copy.courses.get(0).teacher.equals("张老师"),"Course location and teacher persist in serialized timetable");
         check(copy.semester.equals(m.semester)&&copy.slots.size()==m.slots.size(),"Semester and custom periods persist");
         ScheduleModel.Course changed=odd.copy();changed.name="高等数学";m.put(changed);check(m.courses.size()==2,"Editing does not duplicate the course");
+        ScheduleModel.Course lateToday=odd.copy();lateToday.id="late";lateToday.first=5;lateToday.last=5;lateToday.day=2;lateToday.parity=0;check(m.validateCourse(lateToday)==null,"Later course can be added for today");m.put(lateToday);ScheduleModel.Course earlyToday=odd.copy();earlyToday.id="early";earlyToday.first=1;earlyToday.last=1;earlyToday.day=2;earlyToday.parity=0;check(m.validateCourse(earlyToday)==null,"Earlier course can be added for today");m.put(earlyToday);List<ScheduleModel.Course> today=m.todayCourses(2,1);check(today.size()==2&&today.get(0).first==1&&today.get(1).first==5,"Today courses are ordered by start period, independent of creation order");
         check(Astronomy.norm(-10)==350,"Negative angles wrap correctly");
         Instant equinox=Instant.parse("2024-03-20T03:06:00Z");check(Math.abs(Astronomy.sun(equinox)[1])<.3,"Solar declination is near zero at equinox");
         Instant solstice=Instant.parse("2024-06-20T20:51:00Z");check(Math.abs(Astronomy.sun(solstice)[1]-23.44)<.3,"June solstice declination is near obliquity");

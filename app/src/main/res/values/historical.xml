@@ -1303,4 +1303,6 @@
     <string name="course_notify_channel_note" formatted="false">即将开始的课程提示</string>
     <string name="course_notify_started" formatted="false">课程已开始</string>
     <string name="course_notify_in" formatted="false">将在 %1$d 分钟后开始</string>
+    <string name="update_214_title" formatted="false">2.1.4 · 待办与课程顺序修复</string>
+    <string name="update_214_detail" formatted="false">支持全天事项在指定日期范围内按重复规则生成安排；修复编辑事项时控件变化引起的页面跳动。自动删除启用后的默认保留天数改为 3 天，提醒提前时间使用分钟、小时或天的合适单位显示。今日课程按开始节次从早到晚排列。</string>
 </resources>

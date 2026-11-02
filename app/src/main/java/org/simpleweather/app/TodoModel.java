@@ -33,6 +33,7 @@ final class TodoModel {
     static boolean scheduled(Item i,LocalDate day){
         if(i.someday)return i.repeat==4&&(i.weekMask&(1<<(day.getDayOfWeek().getValue()-1)))!=0;
         if(day.isBefore(i.date))return false;
+        if(i.allDay&&i.repeat!=0&&day.isAfter(i.until))return false;
         if(i.repeat==0)return !day.isAfter(i.until);
         if(i.repeat==1)return true;
         if(i.repeat==2)return day.getDayOfWeek()==i.date.getDayOfWeek();
@@ -96,10 +97,10 @@ final class TodoModel {
         for(String value:Arrays.asList(i.completedDay,i.previousThrough))if(!value.isEmpty()){LocalDate d=LocalDate.parse(value);if(d.getYear()<1970||d.getYear()>2200)throw new IllegalArgumentException();}
         if(!i.previousThrough.isEmpty()&&(i.completedThrough.isEmpty()||!LocalDate.parse(i.previousThrough).isBefore(LocalDate.parse(i.completedThrough))))throw new IllegalArgumentException();
         if(i.date.getYear()<1970||i.date.getYear()>2200||i.until.getYear()>2200||i.until.isBefore(i.date)||i.until.toEpochDay()-i.date.toEpochDay()>3660)throw new IllegalArgumentException();
-        if(i.repeat!=0&&i.allDay&&!i.until.equals(i.date))throw new IllegalArgumentException();
         if(i.repeat==4&&i.weekMask==0)throw new IllegalArgumentException();
         if(!Arrays.asList(-1,0,5,10,15,30,60,1440).contains(i.advance))throw new IllegalArgumentException();
         if(!i.completedThrough.isEmpty()){LocalDate d=LocalDate.parse(i.completedThrough);if(d.isBefore(i.date)||d.getYear()>2200)throw new IllegalArgumentException();}
+        if(i.allDay&&i.repeat!=0&&!i.completedThrough.isEmpty()&&LocalDate.parse(i.completedThrough).isAfter(i.until))throw new IllegalArgumentException();
         if(!i.allDay&&!i.someday)validateSlots(i.slots);
         if(i.parts.size()>50)throw new IllegalArgumentException();for(Part p:i.parts)if(p.text.trim().isEmpty()||p.text.length()>200)throw new IllegalArgumentException();
     }

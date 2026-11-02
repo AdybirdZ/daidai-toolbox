@@ -32,11 +32,13 @@
     <string name="todo_advance">Start reminder</string>
     <string name="todo_no_reminder">Off</string>
     <string name="todo_on_time">At start (default)</string>
-    <string name="todo_before">%1$d minutes before</string>
+    <string name="todo_before_minutes">%1$d minutes before</string>
+    <string name="todo_before_hours">%1$d hours before</string>
+    <string name="todo_before_days">%1$d days before</string>
     <string name="todo_end_reminder">Also remind at the end</string>
     <string name="todo_pin">Pin task</string>
     <string name="todo_parts">Checklist · one item per line</string>
-    <string name="todo_editor_note">Use Add time range to enter the start and end hours and minutes. Tap an existing range to edit it. Ranges cannot overlap. Enter dates with separate year, month and day fields.\n\nAn unscheduled task has no date or time and never generates a due reminder. It can repeat on selected weekdays and remains until you complete or delete it manually.\n\nAll-day tasks may span consecutive days. Multi-day tasks cannot repeat. Completing a repeating task completes only its current occurrence. Dates and reminders follow the current device time zone and are recalculated if it changes.\n\nUp to 2,000 tasks, 12 time ranges and 50 checklist items per task.</string>
+    <string name="todo_editor_note">Use Add time range to enter the start and end hours and minutes. Tap an existing range to edit it. Ranges cannot overlap. Enter dates with separate year, month and day fields.\n\nAn unscheduled task has no date or time and never generates a due reminder. It can repeat on selected weekdays and remains until you complete or delete it manually.\n\nAll-day tasks may span consecutive days. For a repeating all-day task, the end date is the last date in the repeat window and each occurrence is one all-day task. Without repetition, the start and end dates form one consecutive multi-day task. Completing a repeating task completes only its current occurrence. Dates and reminders follow the current device time zone and are recalculated if it changes.\n\nUp to 2,000 tasks, 12 time ranges and 50 checklist items per task.</string>
     <string name="todo_invalid">Check the title, dates, time ranges, repeat rule, checklist and retention days.</string>
     <string name="todo_load_failed">Task data could not be read. The original data has been preserved. Export your configuration before investigating.</string>
     <string name="todo_save_failed">Could not save the task. Please try again.</string>
@@ -112,7 +114,7 @@
     <string name="todo_slot_note">Ranges must stay within one day. An end time of 24:00 is allowed.</string>
     <string name="todo_auto_delete">Automatically delete this task after completion</string>
     <string name="todo_delete_days">Days to keep · 1–3650</string>
-    <string name="todo_completion_note">Completion can be undone only within 72 hours of the most recent completion action. Undoing and completing again restarts the clock. Editing content or changing the task end time does not restart it.\n\nAutomatic deletion is off by default and can be enabled per task. It keeps the task for the specified number of 24-hour days after the latest completion action. Undoing cancels that deletion countdown. For repeating tasks, the entire task and all future occurrences are deleted. If system execution is delayed, cleanup runs when scheduling resumes or the app is opened again.\n\nOlder completed tasks have no recorded completion instant. They cannot be undone or automatically deleted based on that completion.</string>
+    <string name="todo_completion_note">Completion can be undone only within 72 hours of the most recent completion action. Undoing and completing again restarts the clock. Editing content or changing the task end time does not restart it.\n\nAutomatic deletion is off by default and can be enabled per task. The default retention after enabling is 3 days; another number can be entered. It keeps the task for the specified number of 24-hour days after the latest completion action. Undoing cancels that deletion countdown. For repeating tasks, the entire task and all future occurrences are deleted. If system execution is delayed, cleanup runs when scheduling resumes or the app is opened again.\n\nOlder completed tasks have no recorded completion instant. They cannot be undone or automatically deleted based on that completion.</string>
     <string name="todo_missing">This task has been deleted. Your edits were not saved.</string>
     <string name="todo_delete_now">This task has already passed the retention deadline. Saving will immediately delete the entire task and its future occurrences. Continue?</string>
     <string name="update_211_title">2.1.1 · Task times and completion management</string>
