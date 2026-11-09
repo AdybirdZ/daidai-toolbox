@@ -215,4 +215,8 @@
     <string name="language_note">仅切换应用界面语言，不修改用户输入、保存的资料或网站原文。系统语言不受支持时使用中文。</string>
     <string name="update_200_title">2.0.0 · 英语与语言切换</string>
     <string name="update_200_detail">新增英语界面，可在全局设置的语言页面选择简体中文、English 或跟随系统。切换后立即生效并保留当前栏目与已有资料，语言选择纳入全部配置的导入与导出。大版本更新用于底层代码变动或易用性更新。</string>
-</resources>
+    <string name="module_transfer_title">模块数据导入与导出</string>
+    <string name="module_export_short">导出</string><string name="module_import_short">导入</string>
+    <string name="module_transfer_note">每个模块的资料使用独立 JSON 文件。状态模块包含地点和路线；全局设置包含颜色、语言、时间及栏目顺序。导入会覆盖所选模块，权限、缓存和正在运行的任务不会导入。</string>
+    <string name="module_import_title">导入模块资料</string><string name="module_import_summary">即将覆盖“%1$s”的本机资料。请确认文件来自可信来源。</string><string name="module_exported">模块资料已导出</string></resources>
+

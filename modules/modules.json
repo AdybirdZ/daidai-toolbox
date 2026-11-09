@@ -1,0 +1,15 @@
+{
+  "format": "daidai-toolbox-modules",
+  "schemaVersion": 1,
+  "defaultInstalled": ["weather", "status", "todo"],
+  "modules": [
+    {"id":"weather","entry":"org.simpleweather.app.MainActivity","configurationGroups":["weather"]},
+    {"id":"status","entry":"org.simpleweather.app.MainActivity","configurationGroups":["status_places","status_routes"]},
+    {"id":"todo","entry":"org.simpleweather.app.MainActivity","configurationGroups":["todos"]},
+    {"id":"schedule","entry":"org.simpleweather.app.MainActivity","configurationGroups":["timetable"]},
+    {"id":"astronomy","entry":"org.simpleweather.app.MainActivity","configurationGroups":["toolbox"]},
+    {"id":"earthquake","entry":"org.simpleweather.app.MainActivity","configurationGroups":["toolbox"]},
+    {"id":"random","entry":"org.simpleweather.app.MainActivity","configurationGroups":["random_choice"]},
+    {"id":"global","entry":"org.simpleweather.app.MainActivity","configurationGroups":["toolbox"]}
+  ]
+}

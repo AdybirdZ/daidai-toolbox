@@ -1,4 +1,4 @@
-# 呆呆工具箱 2.1.4
+# 呆呆工具箱 2.1.5
 
 面向个人、非商业使用的 Android 工具箱。支持简体中文与英语，可在全局设置中切换语言或跟随系统。
 
@@ -15,6 +15,12 @@
 - **课程表**：学期、周次、课程信息及每日课程提示；可设置提前提示和课程开始后的自动移除时间。
 
 待安排事项不设置日期或时间，不参与“今天”筛选，也不会产生到时提醒；它会长期保留，用户可在未来手动完成。
+
+## 2.1.5 变更
+
+- 增加按模块导入与导出入口，为 3.0.0 的独立模块边界准备稳定模块 ID；状态模块包含地点和路线。
+- 保留全部配置导入导出，导入前校验并在确认后覆盖，权限、缓存及运行中的任务不随文件恢复。
+- 本版本仅准备模块化数据交换，不提供 GitHub 下载、安装或卸载功能。
 
 ## 2.1.4 变更
 
@@ -58,4 +64,6 @@
 
 独立源码包可用 `python tests/run.py --json-jar <json.jar>` 和 `python build.py --sdk <Android-SDK> --out <输出.apk>`。签名私钥、SDK 与缓存不包含在源码包中；升级已有安装须使用原签名。
 
-[下载正式版](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/v2.1.4) · [开发者准则](docs/DEVELOPER-RULES.md) · [验证记录](TESTING.md)
+[下载正式版](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/v2.1.5) · [开发者准则](docs/DEVELOPER-RULES.md) · [验证记录](TESTING.md)
+
+
