@@ -1,0 +1,16 @@
+{
+  "format": "daidai-toolbox-module-configuration-contract",
+  "schemaVersion": 1,
+  "module": "weather",
+  "hostApi": "daidai-toolbox/3.0.0",
+  "groups": [
+    {
+      "name": "weather",
+      "keys": [
+        "selected",
+        "saved"
+      ]
+    }
+  ],
+  "validation": "The 3.0.0 host validates value types, ranges, nesting and model data before import."
+}

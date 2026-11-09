@@ -1,15 +1,18 @@
 {
   "format": "daidai-toolbox-modules",
   "schemaVersion": 1,
+  "packageDirectory": "modules/packages/3.0.0",
+  "hostApi": "daidai-toolbox/3.0.0",
   "defaultInstalled": ["weather", "status", "todo"],
   "modules": [
-    {"id":"weather","entry":"org.simpleweather.app.MainActivity","configurationGroups":["weather"]},
-    {"id":"status","entry":"org.simpleweather.app.MainActivity","configurationGroups":["status_places","status_routes"]},
-    {"id":"todo","entry":"org.simpleweather.app.MainActivity","configurationGroups":["todos"]},
-    {"id":"schedule","entry":"org.simpleweather.app.MainActivity","configurationGroups":["timetable"]},
-    {"id":"astronomy","entry":"org.simpleweather.app.MainActivity","configurationGroups":["toolbox"]},
-    {"id":"earthquake","entry":"org.simpleweather.app.MainActivity","configurationGroups":["toolbox"]},
-    {"id":"random","entry":"org.simpleweather.app.MainActivity","configurationGroups":["random_choice"]},
-    {"id":"global","entry":"org.simpleweather.app.MainActivity","configurationGroups":["toolbox"]}
+    {"id":"weather","entry":"host://weather","package":"modules/packages/3.0.0/weather.zip","configurationGroups":["weather"]},
+    {"id":"weather-map","entry":"host://weather-map","package":"modules/packages/3.0.0/weather-map.zip","configurationGroups":["toolbox"],"configurationKeys":["radar_region","map_product"]},
+    {"id":"status","entry":"host://status","package":"modules/packages/3.0.0/status.zip","configurationGroups":["status_places","status_routes"]},
+    {"id":"todo","entry":"host://todo","package":"modules/packages/3.0.0/todo.zip","configurationGroups":["todos"]},
+    {"id":"schedule","entry":"host://schedule","package":"modules/packages/3.0.0/schedule.zip","configurationGroups":["timetable"]},
+    {"id":"astronomy","entry":"host://astronomy","package":"modules/packages/3.0.0/astronomy.zip","configurationGroups":["toolbox"]},
+    {"id":"earthquake","entry":"host://earthquake","package":"modules/packages/3.0.0/earthquake.zip","configurationGroups":["toolbox"]},
+    {"id":"random","entry":"host://random","package":"modules/packages/3.0.0/random.zip","configurationGroups":["random_choice"]},
+    {"id":"global","entry":"host://global","package":"modules/packages/3.0.0/global.zip","configurationGroups":["toolbox"]}
   ]
 }

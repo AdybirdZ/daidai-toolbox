@@ -1,0 +1,22 @@
+{
+  "format": "daidai-toolbox-module-configuration-contract",
+  "schemaVersion": 1,
+  "module": "status",
+  "hostApi": "daidai-toolbox/3.0.0",
+  "groups": [
+    {
+      "name": "status_places",
+      "keys": [
+        "places",
+        "selected"
+      ]
+    },
+    {
+      "name": "status_routes",
+      "keys": [
+        "routes"
+      ]
+    }
+  ],
+  "validation": "The 3.0.0 host validates value types, ranges, nesting and model data before import."
+}

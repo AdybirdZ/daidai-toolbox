@@ -1,0 +1,15 @@
+{
+  "format": "daidai-toolbox-module-configuration-contract",
+  "schemaVersion": 1,
+  "module": "global",
+  "hostApi": "daidai-toolbox/3.0.0",
+  "groups": [
+    {
+      "name": "toolbox",
+      "keys": [
+        "host-wide settings"
+      ]
+    }
+  ],
+  "validation": "The 3.0.0 host validates value types, ranges, nesting and model data before import."
+}

@@ -1,0 +1,25 @@
+{
+  "format": "daidai-toolbox-module-package",
+  "schemaVersion": 1,
+  "moduleId": "weather-map",
+  "title": {
+    "zh-CN": "天气地图",
+    "en": "Weather map"
+  },
+  "entry": "host://weather-map",
+  "packageType": "host-extension-asset",
+  "standaloneInstallable": false,
+  "requiresHost": {
+    "applicationId": "org.simpleweather.app",
+    "api": "daidai-toolbox/3.0.0"
+  },
+  "sourceSnapshot": "2.1.5",
+  "sourceCommit": "363fd4bbb08aafc5b4ce079c872ad7480da220fa",
+  "configurationGroups": [
+    "toolbox"
+  ],
+  "hostPermissions": [
+    "android.permission.INTERNET"
+  ],
+  "license": "MIT for application code; see host NOTICE.md and docs/DATA-LICENSE.md for third-party data and services"
+}

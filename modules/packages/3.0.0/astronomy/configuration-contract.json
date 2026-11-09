@@ -1,0 +1,16 @@
+{
+  "format": "daidai-toolbox-module-configuration-contract",
+  "schemaVersion": 1,
+  "module": "astronomy",
+  "hostApi": "daidai-toolbox/3.0.0",
+  "groups": [
+    {
+      "name": "toolbox",
+      "keys": [
+        "astro_*",
+        "global_time_mode"
+      ]
+    }
+  ],
+  "validation": "The 3.0.0 host validates value types, ranges, nesting and model data before import."
+}

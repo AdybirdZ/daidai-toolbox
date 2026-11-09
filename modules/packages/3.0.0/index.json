@@ -1,0 +1,119 @@
+{
+  "format": "daidai-toolbox-module-index",
+  "schemaVersion": 1,
+  "hostApi": "daidai-toolbox/3.0.0",
+  "sourceSnapshot": "2.1.5",
+  "sourceCommit": "363fd4bbb08aafc5b4ce079c872ad7480da220fa",
+  "packageType": "host-extension-asset",
+  "standaloneInstallable": false,
+  "packages": [
+    {
+      "id": "weather",
+      "title": {
+        "zh-CN": "天气",
+        "en": "Weather"
+      },
+      "file": "weather.zip",
+      "sha256": "054ebece8e8682cb00ba183dc84c8c47af22e8536a21424c6dff4f86f9284802",
+      "bytes": 2611,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "weather-map",
+      "title": {
+        "zh-CN": "天气地图",
+        "en": "Weather map"
+      },
+      "file": "weather-map.zip",
+      "sha256": "5bc66bea7ab5664f40515f08d81b80ad48da80f4b0694cf2ea966eda88005959",
+      "bytes": 2663,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "status",
+      "title": {
+        "zh-CN": "状态",
+        "en": "Status"
+      },
+      "file": "status.zip",
+      "sha256": "4afeed2e300c46c427cec46f5742946d5ccc563efe5c04ad9ebf66582c0065b9",
+      "bytes": 2655,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "schedule",
+      "title": {
+        "zh-CN": "课程表",
+        "en": "Schedule"
+      },
+      "file": "schedule.zip",
+      "sha256": "9049ea7ac7e5f4581534f3a65090740b1b64d4f53d0caf1d85daa96abf5d6521",
+      "bytes": 2666,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "astronomy",
+      "title": {
+        "zh-CN": "天文",
+        "en": "Astronomy"
+      },
+      "file": "astronomy.zip",
+      "sha256": "ebe8731adb52c460b51a17ed181150026d1286c41e3ae4de9383613372b4f0d1",
+      "bytes": 2612,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "earthquake",
+      "title": {
+        "zh-CN": "地震",
+        "en": "Earthquake"
+      },
+      "file": "earthquake.zip",
+      "sha256": "bdf39ec3fc4d7619534ff9e966c15f0cfaca50df4cb976b4ed47a4475d3fda85",
+      "bytes": 2654,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "random",
+      "title": {
+        "zh-CN": "随机抽取",
+        "en": "Random draw"
+      },
+      "file": "random.zip",
+      "sha256": "0992199bb01b57a3ad80022f7c73448209376c109170c42d5a501aef22d93dee",
+      "bytes": 2599,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "todo",
+      "title": {
+        "zh-CN": "待办事项",
+        "en": "To-do"
+      },
+      "file": "todo.zip",
+      "sha256": "5d5b15a5d5adb0244b6e6063de5619f7afcf1847ac44e855d93e8cd713e22c1b",
+      "bytes": 2628,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    },
+    {
+      "id": "global",
+      "title": {
+        "zh-CN": "全局设置",
+        "en": "Global settings"
+      },
+      "file": "global.zip",
+      "sha256": "8883529647f0594cef3ea08cf2a8f7a659b4fd1317df460e2ec3ef7b6f62effd",
+      "bytes": 2601,
+      "standaloneInstallable": false,
+      "requiresHost": "daidai-toolbox/3.0.0"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "format": "daidai-toolbox-module-configuration-contract",
+  "schemaVersion": 1,
+  "module": "schedule",
+  "hostApi": "daidai-toolbox/3.0.0",
+  "groups": [
+    {
+      "name": "timetable",
+      "keys": [
+        "data"
+      ]
+    }
+  ],
+  "validation": "The 3.0.0 host validates value types, ranges, nesting and model data before import."
+}
