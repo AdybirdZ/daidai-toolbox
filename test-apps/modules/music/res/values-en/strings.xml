@@ -1,8 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="music_mute_switch">Mute this app (on by default)</string>
-  <string name="music_muted">Muted</string>
-  <string name="music_unmuted">Sound enabled</string>
   <string name="music_speed">Speed: %1$.2f ×</string>
   <string name="music_speed_title">Playback speed</string>
   <string name="music_speed_failed">The selected speed is not supported</string>
@@ -25,7 +22,6 @@
   <string name="music_mark_from">Start here</string>
   <string name="music_mark_to">End here</string>
   <string name="music_preview">Preview segment</string>
-  <string name="music_trim_note">Exports original-speed PCM WAV with the original channels. The source is kept. Mute and speed only affect preview. WAV files are usually larger than compressed audio.</string>
   <string name="music_export_wav">Export WAV</string>
   <string name="music_cancel">Cancel</string>
   <string name="music_bad_interval">Enter a valid interval within the track duration.</string>
@@ -33,22 +29,22 @@
   <string name="music_export_failed">Cannot write the destination file</string>
   <string name="music_exported">Audio segment exported</string>
   <string name="music_title">Daidai Music</string>
-  <string name="music_subtitle">Standalone test version 0.4.0 · Local music player</string>
+  <string name="music_subtitle">Standalone test version 0.5.0 · Local music player</string>
   <string name="music_now_playing">Now playing</string>
   <string name="music_no_track">No track selected</string>
   <string name="music_previous">Previous</string>
   <string name="music_play">Play</string>
   <string name="music_next">Next</string>
   <string name="music_repeat_all">Repeat all</string>
-  <string name="music_stop">End playback and reset</string>
+  <string name="music_stop">Rewind and pause</string>
   <string name="music_import">Import audio</string>
   <string name="music_clear_list">Clear list</string>
   <string name="music_clear_note">Clear the current playback queue? Song metadata, playlists, favorites and audio files will be kept.</string>
   <string name="music_clear">Clear</string>
-  <string name="music_playlist">Playback queue · Hold to edit or remove</string>
+  <string name="music_playlist">Playback queue</string>
   <string name="music_guide_title">Guide and privacy</string>
   <string name="music_local_music">Local music</string>
-  <string name="music_guide">Import local audio and manage metadata, LRC lyrics, covers, favorites and playlists. My songs includes imported tracks and readable audio in the selected storage folder. Clearing the playback queue keeps the library. Importing or scanning an authorized folder can read embedded covers, BPM, composers, arrangers and artists, with artists used as vocalists. Metadata stored only in a desktop player’s private database does not travel with the audio file. Supported formats depend on the device decoder.\n\nBackground and lock-screen playback use notification controls. End playback and reset releases the player; the next playback starts at the beginning. Disconnecting headphones pauses playback. In-app mute is on by default and does not change system volume. Check the output device and volume before unmuting.\n\nPlayback supports 0.5–2× speed and preserves pitch by default. Apply multiple keep/remove edits and join the remaining segments into WAV without changing the original. Export ignores playback speed by default. Offline pitch preservation can affect audio quality. The oscilloscope decodes the song locally without using the microphone.\n\nMetadata, playlists and favorites stay on this device. Files are not uploaded, and unauthorized folders are not scanned. Cloud providers in the system picker may use the network. Ensure you have the right to use your audio files. This app provides no music downloads or online catalogue.</string>
+  <string name="music_guide">Choose a song storage folder before importing. Audio is copied there and played from the copy; files already in the folder are used directly. Copies use device storage. My songs manages metadata, LRC lyrics, artwork, favorites and playlists, and can delete files after confirmation. Removing a song from the playback queue does not delete its file.\n\nImporting or scanning the authorized folder reads embedded artwork, BPM, composer, arranger and artist tags, placing artists in the vocalist field. Metadata stored only in a desktop player’s private database does not travel with the file. Duplicate song titles are allowed: library identity is based on the file, and editing a title does not overwrite audio. Supported formats depend on device codecs.\n\nBackground playback, lock-screen and notification controls are supported. Rewind and pause keeps the current song selected. Disconnecting headphones pauses playback. App volume does not change system volume and is capped by the configured maximum; output also depends on system volume and the playback device.\n\nPlayback speed ranges from 0.5× to 2×, preserving pitch by default. Repeated keep/remove edits can be joined into a WAV export without changing the original. Exports ignore playback speed by default; offline time stretching may affect audio quality. Audio analysis decodes files without using the microphone.\n\nData stays on the device. Audio is not uploaded and unauthorized folders are not scanned. Cloud providers in the system picker may use the network. You are responsible for permission to use your files; no music downloads or online catalogue are provided.</string>
   <string name="music_imported">Imported </string>
   <string name="music_grant_denied">; some files could not be imported. Check file access and available storage.</string>
   <string name="music_empty">Import local audio to begin.</string>
@@ -56,7 +52,7 @@
   <string name="music_remove">Remove</string>
   <string name="music_loading">Loading audio…</string>
   <string name="music_playing">Playing · Background / lock-screen controls</string>
-  <string name="music_paused">Paused / stopped</string>
+  <string name="music_paused">Paused</string>
   <string name="music_pause">Pause</string>
   <string name="music_repeat_one">Repeat one</string>
   <string name="music_shuffle">Shuffle</string>
@@ -66,13 +62,11 @@
   <string name="music_focus_unavailable">Audio focus unavailable. Try again later.</string>
   <string name="music_notification">Daidai Music · Local playback</string>
   <string name="music_audio">Audio</string>
-  <string name="music_storage_settings">Storage and cover</string>
-  <string name="music_storage_reference">Do not copy; keep the original file reference</string>
-  <string name="music_storage_copy">Copy to a selected folder</string>
+  <string name="music_storage_settings">Song storage</string>
   <string name="music_choose_folder">Choose storage folder</string>
-  <string name="music_storage_note">Copy mode copies newly imported songs to the selected folder. Select a folder first. Songs already inside it are not copied again, and previously imported songs are not moved.</string>
+  <string name="music_storage_note">Imported songs are copied into the selected folder and played from that copy. Files already inside the folder are used directly. Duplicate filenames receive a numbered suffix without overwriting existing files. Editing a song title updates library metadata without renaming the audio file.</string>
   <string name="music_cover_show">Show cover while playing</string>
-  <string name="music_cover_clarity">Cover clarity</string>
+  <string name="music_cover_clarity">Artwork opacity</string>
   <string name="music_search_hint">Search title, duration, vocalist, composer, arranger, notes or tags</string>
   <string name="music_search">Search</string>
   <string name="music_edit_metadata">Edit track information</string>

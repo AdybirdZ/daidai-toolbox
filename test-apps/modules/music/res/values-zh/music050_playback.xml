@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_volume_notification">应用内音量 %1$d%% · 上限 %2$d%%</string>
+    <string name="music_rewind_pause_action">回到开头并暂停</string>
+    <string name="music_artwork_back">返回</string>
+    <string name="music_artwork_save">保存曲绘</string>
+    <string name="music_artwork_preview">曲绘预览</string>
+    <string name="music_artwork_album" translatable="false">呆呆音乐</string>
+    <string name="music_artwork_save_legacy">此系统版本通过文件选择器保存曲绘，请选择保存位置。</string>
+    <string name="music_artwork_open_failed">无法打开曲绘。</string>
+    <string name="music_artwork_saved">曲绘已保存。</string>
+    <string name="music_artwork_save_failed">无法保存曲绘，请检查保存位置是否可用。</string>
+</resources>

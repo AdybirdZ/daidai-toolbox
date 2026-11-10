@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_volume_notification">App volume %1$d%% · Limit %2$d%%</string>
+    <string name="music_rewind_pause_action">Rewind and pause</string>
+    <string name="music_artwork_back">Back</string>
+    <string name="music_artwork_save">Save artwork</string>
+    <string name="music_artwork_preview">Artwork preview</string>
+    <string name="music_artwork_album" translatable="false">呆呆音乐</string>
+    <string name="music_artwork_save_legacy">This Android version saves artwork through the system file picker. Choose a destination.</string>
+    <string name="music_artwork_open_failed">Unable to open artwork.</string>
+    <string name="music_artwork_saved">Artwork saved.</string>
+    <string name="music_artwork_save_failed">Unable to save artwork. Check that the destination is available.</string>
+</resources>

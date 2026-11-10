@@ -1,0 +1,41 @@
+{
+  "format": "daidai-toolbox-module-index",
+  "schemaVersion": 1,
+  "packageType": "external-android-application",
+  "moduleId": "music",
+  "version": "0.5.0",
+  "versionCode": 5,
+  "hostAdapterApi": "daidai-android-app/1",
+  "formalHostAvailable": false,
+  "packages": [
+    {
+      "id": "music",
+      "title": {
+        "zh-CN": "呆呆音乐",
+        "en": "Daidai Music"
+      },
+      "file": "music-0.5.0.ddapp",
+      "sha256": "84a738538cae65c2127dffb1d2096b828f72a45885391963ee4f5c4ecb9b13a3",
+      "bytes": 1252580,
+      "standaloneInstallable": true,
+      "executablePayload": true,
+      "apkSha256": "7509f181699e2cb2b9f8b4ee9cb04eedc343399010169d436db7e1455e208477",
+      "signerCertificateSha256": "0d4d9d87dfb81fa0ea922fc764ff4326d16284ca69ca8715bca247e22973e1f4",
+      "android": {
+        "packageName": "org.daidai.prototype.music",
+        "launchActivity": "org.daidai.prototype.music.MainActivity",
+        "versionName": "0.5.0",
+        "versionCode": 5,
+        "minSdk": 26
+      },
+      "requiresHost": {
+        "applicationId": "org.simpleweather.app",
+        "api": "daidai-toolbox/3.0.0",
+        "implementationStatus": "not-yet-implemented"
+      },
+      "manifest": "module.json",
+      "configurationContract": "configuration-contract.json",
+      "verification": "verification.json"
+    }
+  ]
+}

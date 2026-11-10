@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="library_my_songs">My songs</string>
   <string name="library_scanning">Reading the music folder…</string>
@@ -29,7 +29,7 @@
   <string name="library_title_required">Enter a song title.</string>
   <string name="library_number_range">Enter a whole number from %1$d to %2$d, or leave blank.</string>
   <string name="library_file_imported">File imported</string>
-  <string name="library_stop_note">Stop playback ends the background playback service. Playing again starts the song from the beginning.</string>
+  <string name="library_stop_note">Rewind and pause the current song while keeping it selected.</string>
   <string name="library_pitch_change">Change pitch with playback speed</string>
   <string name="library_pitch_note">Pitch stays unchanged by default. When enabled, pitch rises or falls with playback speed.</string>
   <string name="library_queue_empty_keep">Only clears the playback queue. Track information, playlists, likes, lyrics, covers and file access remain.</string>

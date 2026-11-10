@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="library_my_songs">我的歌曲</string>
   <string name="library_scanning">正在读取歌曲文件夹…</string>
@@ -29,10 +29,10 @@
   <string name="library_title_required">请输入歌曲名称。</string>
   <string name="library_number_range">请输入 %1$d～%2$d 之间的整数，或留空。</string>
   <string name="library_file_imported">已导入文件</string>
-  <string name="library_stop_note">停止播放会结束后台播放服务；下次播放从歌曲开头开始。</string>
+  <string name="library_stop_note">回到当前歌曲开头并暂停，保留所选歌曲。</string>
   <string name="library_pitch_change">变速时同步改变音调</string>
   <string name="library_pitch_note">默认保持原音调；开启后，音调随播放速度升高或降低。</string>
-  <string name="library_queue_empty_keep">仅清空播放列表；歌曲资料、歌单、收藏、歌词、封面和文件访问授权均保留。</string>
+  <string name="library_queue_empty_keep">仅清空播放列表；歌曲资料、歌单、收藏、歌词、曲绘和文件访问授权均保留。</string>
   <string name="library_folder_failed">无法读取歌曲文件夹。请检查文件访问权限，或重新选择文件夹；已保存的歌曲资料将保留。</string>
   <string name="library_instrumental_lyrics">纯音乐</string>
 </resources>

@@ -4,7 +4,7 @@
 
 | 应用 | 版本 | 包名 | 说明 |
 | --- | --- | --- | --- |
-| 呆呆音乐 | 0.4.0 | `org.daidai.prototype.music` | [音乐功能与限制](MUSIC-0.4.0.md) |
+| 呆呆音乐 | 0.5.0 | `org.daidai.prototype.music` | [音乐功能与限制](MUSIC-0.5.0.md) |
 | 呆呆传话 | 0.2.0 | `org.daidai.prototype.messaging` | [传话功能与限制](MESSENGER-0.2.0.md) |
 | 呆呆色觉模拟 | 0.2.0 | `org.daidai.prototype.colorvision` | [色觉模拟功能与限制](COLORVISION-0.2.0.md) |
 
@@ -41,4 +41,4 @@ python test.py --out-dir C:\Temp\daidai-test-apps-tests
 
 ## 许可与资料
 
-新写应用代码和文档使用 [MIT 许可](LICENSE)。色觉模型所参考实现的 MIT 声明随源码与 APK 保留；音乐默认封面单独说明授权范围，不能将其视为采用 MIT 的通用素材。详见 [来源声明](NOTICE.md)、[隐私与许可](PRIVACY-LICENSE.md) 和 [技术边界](TECHNICAL-NOTES.md)。
+新写应用代码和文档使用 [MIT 许可](LICENSE)。色觉模型所参考实现的 MIT 声明随源码与 APK 保留；音乐默认曲绘单独说明授权范围，不能将其视为采用 MIT 的通用素材。详见 [来源声明](NOTICE.md)、[隐私与许可](PRIVACY-LICENSE.md) 和 [技术边界](TECHNICAL-NOTES.md)。

@@ -1,0 +1,37 @@
+{
+  "format": "daidai-toolbox-module-package",
+  "schemaVersion": 1,
+  "moduleId": "music",
+  "title": {
+    "zh-CN": "呆呆音乐",
+    "en": "Daidai Music"
+  },
+  "packageType": "external-android-application",
+  "standaloneInstallable": true,
+  "hostAdapterApi": "daidai-android-app/1",
+  "requiresHost": {
+    "applicationId": "org.simpleweather.app",
+    "api": "daidai-toolbox/3.0.0",
+    "implementationStatus": "not-yet-implemented"
+  },
+  "android": {
+    "packageName": "org.daidai.prototype.music",
+    "launchActivity": "org.daidai.prototype.music.MainActivity",
+    "versionName": "0.5.0",
+    "versionCode": 5,
+    "minSdk": 26
+  },
+  "payload": {
+    "file": "payload/music.apk",
+    "bytes": 1278516,
+    "sha256": "7509f181699e2cb2b9f8b4ee9cb04eedc343399010169d436db7e1455e208477",
+    "signerCertificateSha256": "0d4d9d87dfb81fa0ea922fc764ff4326d16284ca69ca8715bca247e22973e1f4"
+  },
+  "permissions": [
+    "android.permission.WAKE_LOCK",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+    "android.permission.POST_NOTIFICATIONS"
+  ],
+  "configurationContract": "configuration-contract.json"
+}

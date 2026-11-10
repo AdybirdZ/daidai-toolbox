@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music050_analysis_switch">切换显示：%1$s</string>
+  <string name="music050_analysis_waveform">时域波形</string>
+  <string name="music050_analysis_xy">X-Y 显示</string>
+  <string name="music050_analysis_spectrum">频谱</string>
+  <string name="music050_analysis_select">请选择歌曲并等待读取完成。</string>
+  <string name="music050_analysis_loading">正在解析音频…</string>
+  <string name="music050_analysis_ready">显示原音频采样</string>
+  <string name="music050_analysis_failed">无法解析此段音频，请尝试重新选择歌曲。</string>
+  <string name="music050_analysis_note">时域波形显示左右声道的归一化数字幅度；X-Y 显示以左声道为横轴、右声道为纵轴。频谱采用 dBFS 数字电平，标记幅度最大的频谱峰值，下方为频谱历史，最新采样位于上方。频谱可横向双指缩放，单指左右移动。分析基于原音频，不包含播放倍速、音调及音量处理，不代表声压级。</string>
+  <string name="music050_scope_range">纵向幅度：每格 %1$s</string>
+  <string name="music050_scope_axes">归一化数字幅度 · 左声道蓝色 / 右声道橙色</string>
+  <string name="music050_scope_xy_axes">纵轴：右声道归一化数字幅度</string>
+  <string name="music050_scope_xy_bottom">横轴：左声道归一化数字幅度</string>
+  <string name="music050_scope_time_bottom">时间（ms）</string>
+  <string name="music050_spectrum_axes">数字电平（dBFS）</string>
+  <string name="music050_spectrum_newest">频谱历史 · 最新在上方</string>
+  <string name="music050_spectrum_log">对数频率轴（默认）</string>
+  <string name="music050_spectrum_linear">线性频率轴</string>
+  <string name="music050_spectrum_peaks">频谱峰值标记数</string>
+  <string name="music050_spectrum_note">频率峰值由原音频的离散傅里叶变换估算；频率分辨率取决于采样率及分析窗口。dBFS 为相对数字满幅的电平，不能用于测量环境噪声或听力风险。</string>
+  <string name="music050_spectrum_peak_list">频谱峰值：%1$s</string>
+</resources>

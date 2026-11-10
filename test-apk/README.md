@@ -4,12 +4,12 @@
 
 | 程序 | 版本 | 下载 | 主要功能 |
 | --- | --- | --- | --- |
-| 呆呆音乐 | 0.4.0 | [APK](DaidaiMusic-0.4.0.apk) | 本地曲库、歌单、歌词、封面、BPM、倍速、剪辑和示波器 |
+| 呆呆音乐 | 0.5.0 | [APK](DaidaiMusic-0.5.0.apk) | 本地曲库、歌单、歌词、曲绘、BPM、倍速、剪辑、时域/X-Y 显示及频谱 |
 | 呆呆传话 | 0.2.0 | [APK](DaidaiMessenger-0.2.0.apk) | 已配对设备间蓝牙通信或私有 IPv4 局域网文本通信 |
 | 呆呆色觉模拟 | 0.2.0 | [APK](DaidaiColorVision-0.2.0.apk) | 相机及图片的红、绿、蓝色觉缺陷近似模拟与多视图对照 |
 
 三个程序独立安装，不依赖工具箱，不会出现在当前工具箱的栏目中；未来 3.0.0 宿主尚未发布。测试版功能可能调整，重要音频和资料请自行保留原文件。色觉模拟不能用于医疗诊断，传话尚未经独立安全审计。
 
-[可构建源码与许可](../test-apps/) · [机器索引](index.json) · [主程序正式发布](https://github.com/AdybirdZ/daidai-toolbox/releases/latest)
+[可构建源码与许可](../test-apps/) · [音乐 0.5.0 说明](../test-apps/MUSIC-0.5.0.md) · [机器索引](index.json) · [主程序正式发布](https://github.com/AdybirdZ/daidai-toolbox/releases/latest)
 
 本目录只保留三个程序的当前测试 APK。视频播放器仍仅本地保存；计算器已取消，不再发布或作为未来模块。

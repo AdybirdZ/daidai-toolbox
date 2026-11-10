@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="music_scope_title">Oscilloscope</string>
-    <string name="music_scope_normal">Waveform</string>
-    <string name="music_scope_xy">X-Y mode</string>
-    <string name="music_scope_loading">Preparing the track waveform…</string>
-    <string name="music_scope_select">Select a track and wait for it to load.</string>
-    <string name="music_scope_failed">Cannot read this track’s waveform.</string>
-    <string name="music_scope_track">Current track: %1$s</string>
-    <string name="music_scope_note">The selected track is decoded locally and displayed at its playback position, including while muted. Waveform mode shows left and right channels in blue and orange. X-Y mode uses the left channel as the horizontal axis and the right as the vertical axis; mono audio forms a diagonal line. Only an 8-second PCM window near playback is cached at a time and deleted on close. The graph shows source audio before speed, pitch and device effects.</string>
+  <string name="music_scope_title">Oscilloscope</string>
+  <string name="music_scope_normal">Time-domain waveform</string>
+  <string name="music_scope_xy">X-Y oscilloscope</string>
+  <string name="music_scope_loading">Preparing the track waveform…</string>
+  <string name="music_scope_select">Select a track and wait for it to load.</string>
+  <string name="music_scope_failed">Cannot read this track’s waveform.</string>
+  <string name="music_scope_track">Current track: %1$s</string>
+  <string name="music_scope_note">Analysis decodes the song locally and follows playback position, including at zero app volume. The time-domain waveform shows channel amplitude over time; the X-Y display plots left against right. The next segment is decoded ahead and buffers are released when analysis closes. Playback speed, pitch and device effects are not included.</string>
 </resources>
