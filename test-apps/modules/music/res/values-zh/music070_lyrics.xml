@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music070_lyrics_settings">歌词显示</string>
+    <string name="music070_lyrics_font_size">当前句字号：%1$d sp</string>
+    <string name="music070_lyrics_font_note">当前句默认字号为 22 sp，可调整为 14～36 sp；相邻歌词的字号随之调整。</string>
+    <string name="music070_lyrics_none">暂无歌词</string>
+    <string name="music070_lyrics_loading">正在读取歌词…</string>
+    <string name="music070_lyrics_unavailable">无法读取歌词，请重新导入</string>
+    <string name="music070_lyrics_untimed">未找到带时间标签的歌词</string>
+    <string name="music070_lyrics_waiting">等待歌词开始</string>
+</resources>

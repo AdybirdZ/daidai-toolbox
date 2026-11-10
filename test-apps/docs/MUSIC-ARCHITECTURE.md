@@ -1,4 +1,4 @@
-# 呆呆音乐 0.6.0 模块边界
+# 呆呆音乐 0.7.0 模块边界
 
 音乐是独立 Android 应用，也保留供未来工具箱宿主接入的模块契约。正式工具箱当前没有音乐安装器，3.0.0 宿主尚未实现。本版本不把音乐提前合并到正式工具箱，不以独立 APK 已可安装代替正式宿主验收。
 
@@ -7,11 +7,12 @@
 | 边界 | 主要实现 | 职责 |
 | --- | --- | --- |
 | 独立启动壳 | `launchers/music/` | 应用包名、版本、系统权限、公开入口和组件注册 |
-| 播放 | `PlaybackService`、`QueuePlanner` | 当前曲目、队列推进、媒体会话、通知、音频焦点、倍速、音调、应用内音量和上限 |
+| 播放 | `PlaybackService`、`QueuePlanner`、`SleepTimer` | 当前曲目、队列推进、媒体会话、通知、音频焦点、倍速、音调、应用内音量和上限、定时停止 |
 | 曲库与文件 | `MusicLibrary`、`MusicFolder`、`MusicImporter`、`AudioFileTags` | 用户授权文件夹、音频复制、元数据读取与保存、BPM 精度和文件身份 |
-| 歌单与检索 | `MusicCollections`、`MusicSearch`、`MusicSearchScreen`、`MusicPeople`、`MusicCredits` | 歌单、喜欢、分类与多字段搜索，人员信息解析与统一显示 |
+| 歌单与检索 | `MusicCollections`、`MusicSearch`、`MusicSearchScreen`、`MusicPeople`、`MusicTags`、`MusicCredits` | 歌单、喜欢、分类与多字段搜索，人员信息解析与统一显示 |
 | 音频编辑 | `AudioEditPlan`、`AudioTrimmer`、`WaveWriter`、`WavSpeedProcessor` | 保留或移除区间、拼接、WAV 导出和可选速度效果 |
 | 音频分析 | `StereoPcmReader`、`MusicAnalysisPanel`、`OscilloscopeView`、`MusicSpectrum`、`MusicSpectrumHistory`、`SpectrumView` | 本地 PCM 解码、时域与 X-Y 绘制、幅度刻度、频谱、谱峰标注及音频时间轴历史 |
+| 歌词 | `MusicLyrics`、`MusicLyricsView`、`MusicLyricsImport` | LRC 限量解析、四句显示、异步文件读取、字号与文件夹复制 |
 | 曲绘预览 | `ArtworkPreviewActivity` | 黑底预览、缩放拖动、用户主动保存曲绘 |
 | 页面编排 | `MusicActivity`、`MusicLibraryScreen`、`MusicSettingsScreen` | 播放、我的歌曲、设置及操作入口，调用上述边界 |
 | 公共界面 | `shared/` | 无工具箱私有数据依赖的小型视图和 XML 文字读取工具 |
@@ -29,7 +30,7 @@
 - 公开模块入口：`org.daidai.prototype.music.MainActivity`，保留 `org.daidai.toolbox.action.OPEN_MODULE` 与模块 category。
 - 外部应用适配 API：`daidai-android-app/1`；目标未来宿主为 `org.simpleweather.app` / `daidai-toolbox/3.0.0`。
 - 载荷容器：`.ddapp`，真实音乐 APK 位于 `payload/music.apk`，声明 `standaloneInstallable: true`。
-- 当前版本：0.6.0 / versionCode 6；构建和校验从启动壳 manifest 读取版本，不根据聊天记录或输出目录名推断。
+- 当前版本：0.7.0 / versionCode 7；构建和校验从启动壳 manifest 读取版本，不根据聊天记录或输出目录名推断。
 
 未来宿主先验证容器、APK、可信证书指纹和权限，再交由 Android 系统安装。宿主从可信模块目录获得证书指纹，不能信任包内自行声明的签名。实际安装、打开、升级和卸载须按用户确认与系统结果处理。
 
@@ -39,7 +40,7 @@
 
 歌曲身份由已授权文件的稳定访问地址及文件提供方身份确定，显示歌名不作为唯一键。同名歌曲可以共存；导入复制产生的文件名后缀与歌曲显示名是不同概念，重命名显示资料不应误合并歌曲。
 
-歌曲音频复制到用户指定文件夹，已经位于同一文件夹的文件不重复复制。曲库记录、播放列表、歌单、喜欢、歌词、曲绘和设置由音乐应用管理；从播放列表移除不删除音频，删除文件必须从“我的歌曲”明确确认。
+歌曲音频及新导入的 LRC 复制到用户指定文件夹，已经位于同一文件夹的文件不重复复制。曲库记录、播放列表、歌单、喜欢、歌词、曲绘和设置由音乐应用管理；从播放列表移除不删除音频，删除文件必须从“我的歌曲”明确确认。
 
 文件夹 URI 授权、应用私有目录和私有曲绘路径不能跨包自动转移。安装模块包不附带用户资料，也不向宿主公开私有数据。相同包名与签名升级保留原应用边界；换包名或同进程合并需要用户重新授权，并实现独立的导入、校验和回滚流程。
 
@@ -51,7 +52,9 @@
 
 音乐只声明唤醒锁、媒体播放前台服务和通知权限；通过系统文件选择器取得指定文件访问权限，不申请网络、录音或广泛存储权限。未来宿主的安装来源权限独立于音乐的文件夹、通知授权。
 
-播放状态集中在 `PlaybackService`，页面绑定并观察服务，页面切换不重新创建播放引擎。“回到开头并暂停”保留当前曲目和音源，与释放播放器或停止服务分开；应用内音量只影响本播放器，不更改系统媒体音量。
+播放状态集中在 `PlaybackService`，页面绑定并观察服务，页面切换不重新创建播放引擎。定时停止由服务持有单调时钟截止点；页面仅显示倒计时。到期可等待当前曲目自然结束，但不进入下一曲或重复；等待时手动暂停或切曲会停止。取消、重新计时和结束播放清理旧回调；不会因页面切换创建多个计时器。
+
+“回到开头并暂停”保留当前曲目和音源，与释放播放器或停止服务分开；应用内音量只影响本播放器，不更改系统媒体音量。
 
 音频分析组件按歌曲与播放位置读取本地 PCM，取消过期解码任务，不改变播放器状态，也不通过麦克风采集其他应用声音。图表量值属于解码样本的相对幅度与频率分析，不能表述为设备实测声压级。
 

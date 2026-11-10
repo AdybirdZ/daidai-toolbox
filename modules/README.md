@@ -5,7 +5,7 @@
 | 类型 | 位置 | 内容与当前能力 |
 | --- | --- | --- |
 | 既有栏目的配置与身份资产包 | [`packages/3.0.0/`](packages/3.0.0/) | 清单、配置契约、权限说明及版本要求，不含独立可执行代码，`standaloneInstallable` 为 `false` |
-| 外置 Android 应用模块 | [`packages/external-android-apps/music/0.6.0/`](packages/external-android-apps/music/0.6.0/) | 呆呆音乐 0.6.0 的 `.ddapp` 容器，包含真实音乐 APK，`standaloneInstallable` 为 `true`；APK 能由 Android 单独安装，接入工具箱仍需要未来宿主 |
+| 外置 Android 应用模块 | [`packages/external-android-apps/music/0.7.0/`](packages/external-android-apps/music/0.7.0/) | 呆呆音乐 0.7.0 的 `.ddapp` 容器，包含真实音乐 APK，`standaloneInstallable` 为 `true`；APK 能由 Android 单独安装，接入工具箱仍需要未来宿主 |
 
 既有栏目沿用 `modules.json` 中的稳定 ID，包含天气、天气地图、状态、课程表、天文、地震、随机抽取和待办事项，全局设置另有宿主基础包。默认衔接模块为天气、状态和待办事项。这些资产包用于明确边界与配置迁移，不应当被称为已经拆分完成、能够独立运行的应用。
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music070_timer_title">Sleep timer</string>
+    <string name="music070_timer_inactive">No sleep timer set</string>
+    <string name="music070_timer_duration">Time until playback stops: %1$d minutes</string>
+    <string name="music070_timer_finish_track">Finish the current song when time expires (default)</string>
+    <string name="music070_timer_remaining">Sleep timer · %1$s remaining</string>
+    <string name="music070_timer_waiting">Playback stops after the current song</string>
+    <string name="music070_timer_apply">Set or restart timer</string>
+    <string name="music070_timer_cancel">Cancel sleep timer</string>
+    <string name="music070_timer_select_track">Play a song first. You can also set the timer while a song is paused.</string>
+    <string name="music070_timer_note">Pausing playback does not pause the countdown. If playback is paused or still loading when time expires, it stops immediately. Pausing or changing songs while waiting for the current song to finish also stops playback. The timer stops playback without closing the app, and is cancelled if the app process ends.</string>
+</resources>

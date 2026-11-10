@@ -29,7 +29,7 @@
   <string name="music_export_failed">Cannot write the destination file</string>
   <string name="music_exported">Audio segment exported</string>
   <string name="music_title">Daidai Music</string>
-  <string name="music_subtitle">Standalone test version 0.6.0 · Local music player</string>
+  <string name="music_subtitle">Standalone test version 0.7.0 · Local music player</string>
   <string name="music_now_playing">Now playing</string>
   <string name="music_no_track">No track selected</string>
   <string name="music_previous">Previous</string>

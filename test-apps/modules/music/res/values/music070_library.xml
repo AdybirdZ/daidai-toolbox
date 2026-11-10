@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music070_add_tag">添加风格标签</string>
+    <string name="music070_remove_tag">移除风格标签</string>
+    <string name="music070_lyrics_storage_note">歌词文件不得超过 2 MiB，须包含 LRC 时间标签才能同步显示。导入的歌词保存在歌曲存储文件夹中。同名文件不会被覆盖，新副本会添加序号。</string>
+    <string name="music070_lyrics_copy_failed">无法导入歌词。请选择不超过 2 MiB 的文本文件，并检查歌曲存储文件夹的访问权限及可用空间。</string>
+</resources>

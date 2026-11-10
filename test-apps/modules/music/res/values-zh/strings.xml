@@ -29,7 +29,7 @@
   <string name="music_export_failed">无法写入目标文件</string>
   <string name="music_exported">音频片段已导出</string>
   <string name="music_title">呆呆音乐</string>
-  <string name="music_subtitle">独立测试版 0.6.0 · 本地音乐播放器</string>
+  <string name="music_subtitle">独立测试版 0.7.0 · 本地音乐播放器</string>
   <string name="music_now_playing">正在播放</string>
   <string name="music_no_track">还没有选择歌曲</string>
   <string name="music_previous">上一首</string>

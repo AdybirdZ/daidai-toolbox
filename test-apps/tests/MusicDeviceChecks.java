@@ -28,6 +28,9 @@ public class MusicDeviceChecks extends Instrumentation {
   count+=MusicAnalysis060DeviceChecks.run(this,activity,service);
   runOnMainSync(()->c.startForegroundService(new Intent(c,PlaybackService.class).setAction(PlaybackService.PLAY).putExtra("index",0)));waitFor(()->service.isPlaying());
   count+=MusicPlayback050Checks.run(this,activity,service);
+  count+=MusicLyrics070DeviceChecks.run(this,activity);
+  count+=MusicLibrary070DeviceChecks.run(this,activity);
+  count+=MusicSleepTimerDeviceChecks.run(this,activity,service);
   VolumeProbe probe=new VolumeProbe();Field slot=PlaybackService.class.getDeclaredField("player");slot.setAccessible(true);runOnMainSync(()->{service.pause();try{((MediaPlayer)slot.get(service)).release();slot.set(service,probe);}catch(Exception e){throw new RuntimeException(e);}service.setMuted(true);service.resume();});check(probe.left==0&&probe.right==0&&probe.startVolume==0,"mute reaches player before start");
   Method focusChange=PlaybackService.class.getDeclaredMethod("handleAudioFocus",int.class);focusChange.setAccessible(true);runOnMainSync(()->{try{focusChange.invoke(service,AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK);focusChange.invoke(service,AudioManager.AUDIOFOCUS_GAIN);}catch(Exception e){throw new RuntimeException(e);}});check(probe.left==0,"focus duck and gain cannot unmute");runOnMainSync(()->{service.pause();service.setSpeed(.5f);});check(probe.left==0&&!probe.playing&&probe.startVolume==0,"speed path stays silent and paused");runOnMainSync(()->service.setMuted(false));check(probe.left==1,"explicit unmute reaches player");runOnMainSync(()->{service.setMuted(true);service.stopPlayback();activity.finish();});
   result.putString("stream","PASS: "+count+" music device checks (PCM/AAC, speed, pause, preview, mute, cancellation)\n");finish(-1,result);

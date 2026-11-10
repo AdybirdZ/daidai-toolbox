@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music070_timer_title">定时停止播放</string>
+    <string name="music070_timer_inactive">未设置定时停止</string>
+    <string name="music070_timer_duration">停止播放前的时长：%1$d 分钟</string>
+    <string name="music070_timer_finish_track">时间到后播放完当前歌曲再停止（默认）</string>
+    <string name="music070_timer_remaining">定时停止 · 剩余 %1$s</string>
+    <string name="music070_timer_waiting">当前歌曲播放完毕后停止</string>
+    <string name="music070_timer_apply">设置或重新计时</string>
+    <string name="music070_timer_cancel">取消定时停止</string>
+    <string name="music070_timer_select_track">请先播放一首歌曲；歌曲暂停后也可设置定时停止。</string>
+    <string name="music070_timer_note">暂停播放不会暂停倒计时。时间到时，若歌曲已暂停或仍在载入，将直接停止；等待当前歌曲结束期间，暂停或切换歌曲也会停止。此功能仅停止播放，不退出应用；应用进程结束后定时取消。</string>
+</resources>

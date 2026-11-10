@@ -1,0 +1,71 @@
+package org.daidai.prototype.qa;
+
+import android.app.*;
+import android.content.*;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.net.Uri;
+import android.os.SystemClock;
+import android.provider.DocumentsContract;
+import android.view.*;
+import android.view.inspector.WindowInspector;
+import android.widget.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.Callable;
+import org.daidai.modules.music.*;
+import org.daidai.modules.shared.Texts;
+
+/** Optional visual-only pass. Captures real screens using generated media, then restores user data. */
+public final class Music070VisualChecks {
+    private static Instrumentation runner;
+    private static Activity activity;
+    private static int checks;
+    private static void check(boolean ok,String why){checks++;if(!ok)throw new AssertionError("Music 0.7.0 visual: "+why);}
+    private static String t(String key,Object...args){return Texts.get(activity,key,args);}
+    private static void main(Runnable action){Throwable[] error={null};runner.runOnMainSync(()->{try{action.run();}catch(Throwable e){error[0]=e;}});runner.waitForIdleSync();if(error[0]!=null)throw new AssertionError("Visual UI action failed",error[0]);}
+    private static Field declared(Object owner,String name)throws Exception{Class<?> type=owner.getClass();while(type!=null){try{Field field=type.getDeclaredField(name);field.setAccessible(true);return field;}catch(NoSuchFieldException absent){type=type.getSuperclass();}}throw new NoSuchFieldException(name);}
+    private static Object field(Object owner,String name){try{return declared(owner,name).get(owner);}catch(Exception e){throw new RuntimeException(e);}}
+    private static void set(Object owner,String name,Object value){try{declared(owner,name).set(owner,value);}catch(Exception e){throw new RuntimeException(e);}}
+    private static void call(Object owner,String name){Class<?> type=owner.getClass();while(type!=null){try{Method method=type.getDeclaredMethod(name);method.setAccessible(true);method.invoke(owner);return;}catch(NoSuchMethodException absent){type=type.getSuperclass();}catch(Exception e){throw new RuntimeException(e);}}throw new AssertionError("Missing method "+name);}
+    private static View top(){List<View> roots=WindowInspector.getGlobalWindowViews();if(roots.isEmpty())throw new AssertionError("No visual-check window");return roots.get(roots.size()-1);}
+    private static <T extends View> ArrayList<T> views(View root,Class<T> type){ArrayList<T> found=new ArrayList<>();if(type.isInstance(root))found.add(type.cast(root));if(root instanceof ViewGroup){ViewGroup parent=(ViewGroup)root;for(int i=0;i<parent.getChildCount();i++)found.addAll(views(parent.getChildAt(i),type));}return found;}
+    private static Button button(View root,String label){for(Button button:views(root,Button.class))if(label.contentEquals(button.getText()))return button;throw new AssertionError("Missing button: "+label);}
+    private static boolean hasText(View root,String label){for(TextView row:views(root,TextView.class))if(label.contentEquals(row.getText()))return true;return false;}
+    private static void waitFor(Callable<Boolean> condition,String why)throws Exception{long end=SystemClock.uptimeMillis()+12000;while(SystemClock.uptimeMillis()<end){boolean[] ready={false};main(()->{try{ready[0]=condition.call();}catch(Exception e){throw new RuntimeException(e);}});if(ready[0])return;SystemClock.sleep(40);}throw new AssertionError("Visual check timed out: "+why);}
+    private static void capture(String name)throws Exception{runner.waitForIdleSync();SystemClock.sleep(250);Bitmap image=runner.getUiAutomation().takeScreenshot();if(image==null)throw new IOException("Screenshot unavailable");File directory=new File(activity.getFilesDir(),"ui-checks");if(!directory.isDirectory()&&!directory.mkdirs())throw new IOException("Screenshot directory unavailable");try(OutputStream output=new FileOutputStream(new File(directory,"070-"+name+".png"))){if(!image.compress(Bitmap.CompressFormat.PNG,100,output))throw new IOException("Screenshot encoding failed");}finally{image.recycle();}}
+    private static boolean exists(Context context,Uri uri){try(Cursor row=context.getContentResolver().query(uri,new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID},null,null,null)){return row!=null&&row.moveToFirst();}catch(Exception absent){return false;}}
+    private static Uri create(Context context,Uri parent,String mime,String name)throws Exception{Uri uri=DocumentsContract.createDocument(context.getContentResolver(),parent,mime,name);if(uri==null)throw new IOException("Could not create visual fixture");return uri;}
+    private static void restore(SharedPreferences prefs,Map<String,?> values){SharedPreferences.Editor edit=prefs.edit().clear();for(Map.Entry<String,?> entry:values.entrySet()){String key=entry.getKey();Object value=entry.getValue();if(value instanceof String)edit.putString(key,(String)value);else if(value instanceof Boolean)edit.putBoolean(key,(Boolean)value);else if(value instanceof Integer)edit.putInt(key,(Integer)value);else if(value instanceof Long)edit.putLong(key,(Long)value);else if(value instanceof Float)edit.putFloat(key,(Float)value);else if(value instanceof Set)edit.putStringSet(key,new HashSet<>((Set<String>)value));}edit.commit();}
+    private static void reveal(View view){view.requestRectangleOnScreen(new Rect(0,0,Math.max(1,view.getWidth()),Math.max(1,view.getHeight())),true);}
+    public static int run(Instrumentation instrumentation,Activity screen,PlaybackService service)throws Exception{
+        runner=instrumentation;activity=screen;checks=0;Context context=runner.getTargetContext(),test=runner.getContext();SharedPreferences prefs=context.getSharedPreferences("music_module",0);Map<String,?> before=new HashMap<>(prefs.getAll());ArrayList<MusicLibrary.Track> original=MusicLibrary.load(context);
+        int originalTab=(Integer)field(activity,"tab"),originalIndex=service.index(),originalPosition=service.position(),originalVolume=service.volume(),originalDuration=service.duration();float originalSpeed=service.speed();boolean originalPlaying=service.isPlaying();
+        Object timer=field(service,"sleepTimer");Map<Field,Object> timerState=new LinkedHashMap<>();for(Field entry:timer.getClass().getDeclaredFields())if(!Modifier.isStatic(entry.getModifiers())){entry.setAccessible(true);timerState.put(entry,entry.get(timer));}
+        ArrayList<Uri> created=new ArrayList<>();File wave=File.createTempFile("visual070-",".wav",activity.getCacheDir());View[] timerWindow={null};
+        try{
+            main(()->MusicLibraryScreen.destroy(activity));
+            Uri root=DocumentsContract.buildDocumentUri(MusicMetadataDocuments.AUTHORITY,"root");main(()->activity.startActivity(new Intent().setComponent(new ComponentName(test.getPackageName(),"org.daidai.prototype.qa.MusicMetadataGrantActivity")).putExtra("targetPackage",context.getPackageName())));waitFor(()->exists(context,root)&&activity.getWindow().getDecorView().hasWindowFocus(),"SAF fixture grant");
+            Uri directory=create(context,root,DocumentsContract.Document.MIME_TYPE_DIR,"visual070-"+System.nanoTime());created.add(directory);Uri audio=create(context,directory,"audio/wav","visual.wav"),lyric=create(context,directory,"text/plain","visual.lrc");created.add(audio);created.add(lyric);
+            try(WaveWriter writer=new WaveWriter(wave,48000,2)){for(int sample=0;sample<48000*8;sample++){writer.sample((short)(1200*Math.sin(2*Math.PI*440*sample/48000)));writer.sample((short)(1000*Math.sin(2*Math.PI*660*sample/48000)));}}
+            try(InputStream input=new FileInputStream(wave);OutputStream output=context.getContentResolver().openOutputStream(audio,"wt")){if(output==null)throw new IOException();byte[] bytes=new byte[8192];int count;while((count=input.read(bytes))!=-1)output.write(bytes,0,count);}
+            boolean chinese=context.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("zh");String songTitle=chinese?"在漫长的星光下聆听远方的旋律":"Listening to distant melodies under a long trail of starlight";String[] lines=chinese?new String[]{"上一句：风穿过安静的树林","当前句：我们在星光下继续前行","下一句：远方的旋律仍在回响","后一句：把温柔的时光留在心中"}:new String[]{"Previous: the wind passes through quiet trees","Current: we continue walking under the starlight","Next: a distant melody is still echoing","After next: keep this gentle moment in your heart"};
+            try(OutputStream output=context.getContentResolver().openOutputStream(lyric,"wt")){if(output==null)throw new IOException();String text="[00:00.00]"+lines[0]+"\n[00:01.00]"+lines[1]+"\n[00:03.00]"+lines[2]+"\n[00:05.00]"+lines[3]+"\n";output.write(text.getBytes("UTF-8"));}
+            Uri tree=DocumentsContract.buildTreeDocumentUri(MusicMetadataDocuments.AUTHORITY,DocumentsContract.getDocumentId(directory));MusicLibrary.Track song=new MusicLibrary.Track(audio.toString(),songTitle,MusicPeople.join(Collections.singletonList(chinese?"示例演唱者":"Example vocalist")),MusicPeople.join(Arrays.asList(chinese?"示例作曲者甲":"First composer with a long name",chinese?"示例作曲者乙与合作团队":"Second composer and collaborators")),MusicPeople.join(Collections.singletonList(chinese?"示例编曲者与室内乐团":"Example arranger and chamber ensemble")),"",MusicTags.join(Arrays.asList("Ambient","Instrumental")),lyric.toString(),"120.5",8,false,8000,"");
+            main(()->{prefs.edit().remove("catalogue").remove("queue").remove("collections").remove("metadata_manually_edited").putString("storage_tree_uri",tree.toString()).putBoolean("analysis_show",false).putBoolean("cover_show",true).putInt(MusicLyricsView.FONT_PREFERENCE,22).putInt("sleep_timer_minutes",30).putBoolean("sleep_timer_finish_track",true).commit();MusicCredits.save(context,MusicCredits.DEFAULT_ORDER,new HashSet<>(MusicCredits.DEFAULT_ORDER));MusicLibrary.save(context,Collections.singletonList(song));MusicLibrary.markMetadataEdited(context,song.uri);service.cancelSleepTimer();service.setVolume(0);service.reload();service.setSpeed(1);context.startForegroundService(new Intent(context,PlaybackService.class).setAction(PlaybackService.PLAY).putExtra("index",0));set(activity,"tab",0);call(activity,"render");});
+            waitFor(()->service.duration()>=7900&&service.isPlaying(),"silent visual fixture playback");main(()->{service.pause();service.seek(1500);});waitFor(()->Math.abs(service.position()-1500)<150,"visual lyric seek");waitFor(()->{MusicLyricsView view=(MusicLyricsView)field(activity,"lyrics");return view!=null&&hasText(view,lines[0])&&hasText(view,lines[1])&&hasText(view,lines[2])&&hasText(view,lines[3]);},"four actual lyric rows");
+            main(()->{MusicLyricsView view=(MusicLyricsView)field(activity,"lyrics");check(view.getChildCount()==4,"actual playback page has four lyric rows");reveal(view);});capture("playback-lyrics");
+            main(()->{Button row=null;for(Button candidate:views(activity.getWindow().getDecorView(),Button.class))if(candidate.getText().toString().contains(songTitle)){row=candidate;break;}check(row!=null&&row.getContentDescription()!=null&&row.getContentDescription().toString().contains(chinese?"示例作曲者甲":"First composer"),"actual queue exposes long personnel within its song button");reveal(row);});capture("playback-credits");
+            main(()->button(activity.getWindow().getDecorView(),t("library_my_songs")).performClick());waitFor(()->top()==activity.getWindow().getDecorView()&&hasText(activity.getWindow().getDecorView(),songTitle),"folder-backed My songs");main(()->{View rootView=activity.getWindow().getDecorView();Button first=button(rootView,t("music060_selected_to_playlist")),second=button(rootView,t("library_add_selected")),third=button(rootView,t("music060_delete_selected"));ViewGroup parent=(ViewGroup)first.getParent();CheckBox all=null;for(CheckBox item:views(rootView,CheckBox.class))if(t("music060_select_all").contentEquals(item.getText()))all=item;check(second.getParent()==parent&&third.getParent()==parent&&all!=null&&all.getParent()==parent&&parent.indexOfChild(first)<parent.indexOfChild(second)&&parent.indexOfChild(second)<parent.indexOfChild(third)&&parent.indexOfChild(third)<parent.indexOfChild(all),"My songs shows three complete action rows above select-all");for(ScrollView scroll:views(rootView,ScrollView.class))scroll.scrollTo(0,0);});capture("library");
+            main(()->{button(activity.getWindow().getDecorView(),t("music_tab_playback")).performClick();((Button)field(activity,"sleepTimerButton")).performClick();timerWindow[0]=top();});waitFor(()->timerWindow[0]!=null&&timerWindow[0].isLaidOut(),"timer dialog layout");main(()->check(hasText(timerWindow[0],t("music070_timer_duration",30)),"timer dialog displays its default duration"));capture("sleep-timer");
+            return checks;
+        }finally{
+            main(()->{if(timerWindow[0]!=null&&timerWindow[0].isAttachedToWindow()){Button close=timerWindow[0].findViewById(android.R.id.button1);if(close!=null)close.performClick();}MusicLibraryScreen.destroy(activity);service.cancelSleepTimer();service.pause();restore(prefs,before);service.reload();service.setSpeed(originalSpeed);service.setVolume(originalVolume);if(!original.isEmpty()&&originalIndex>=0&&originalDuration>0)context.startForegroundService(new Intent(context,PlaybackService.class).setAction(PlaybackService.PLAY).putExtra("index",Math.min(original.size()-1,originalIndex)));else set(service,"index",originalIndex);set(activity,"tab",originalTab);call(activity,"render");});
+            if(!original.isEmpty()&&originalIndex>=0&&originalDuration>0){waitFor(()->!service.loading()&&service.duration()>0,"restore original playback");main(()->{service.seek(originalPosition);if(originalPlaying)service.resume();else service.pause();});}
+            main(()->{for(Map.Entry<Field,Object> saved:timerState.entrySet())try{saved.getKey().set(timer,saved.getValue());}catch(Exception error){throw new RuntimeException(error);}call(service,"scheduleSleepDeadline");restore(prefs,before);});
+            for(int i=created.size()-1;i>=0;i--)try{DocumentsContract.deleteDocument(context.getContentResolver(),created.get(i));}catch(Exception ignored){}wave.delete();
+        }
+    }
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music070_lyrics_settings">Lyrics display</string>
+    <string name="music070_lyrics_font_size">Current line size: %1$d sp</string>
+    <string name="music070_lyrics_font_note">The current line defaults to 22 sp and supports 14–36 sp. The surrounding lines scale with it.</string>
+    <string name="music070_lyrics_none">No lyrics</string>
+    <string name="music070_lyrics_loading">Loading lyrics…</string>
+    <string name="music070_lyrics_unavailable">Cannot read lyrics. Import them again.</string>
+    <string name="music070_lyrics_untimed">No timestamped lyrics found</string>
+    <string name="music070_lyrics_waiting">Waiting for lyrics to begin</string>
+</resources>

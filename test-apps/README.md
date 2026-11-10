@@ -4,13 +4,13 @@
 
 | 应用 | 版本 | 包名 | 说明 |
 | --- | --- | --- | --- |
-| 呆呆音乐 | 0.6.0 | `org.daidai.prototype.music` | [音乐功能与限制](MUSIC-0.6.0.md) |
+| 呆呆音乐 | 0.7.0 | `org.daidai.prototype.music` | [音乐功能与限制](MUSIC-0.7.0.md) |
 | 呆呆传话 | 0.2.0 | `org.daidai.prototype.messaging` | [传话功能与限制](MESSENGER-0.2.0.md) |
 | 呆呆色觉模拟 | 0.2.0 | `org.daidai.prototype.colorvision` | [色觉模拟功能与限制](COLORVISION-0.2.0.md) |
 
 三个应用要求 Android 8.0 及以上，可与正式工具箱同时安装。测试 APK 位于仓库根目录的 [`test-apk/`](../test-apk/)，与主程序分开。本快照包含应用所需的模块、启动入口、共享代码和资源，不依赖正式工具箱源码。它们尚未合并为工具箱内的软件安装功能。
 
-音乐 0.6.0 完善人员信息显示与排序、逐人编辑、曲库与歌单批量管理，以及按音频位置推进的频谱历史。播放、曲库、分析等内部类随同一个音乐应用交付，不是独立安装模块。未来安装契约见 [音乐模块架构](docs/MUSIC-ARCHITECTURE.md)；正式 3.0.0 宿主尚未发布。
+音乐 0.7.0 增加四句同步歌词与字号、LRC 文件夹复制、定时停止、多项标签，并调整人员信息及曲库操作布局。播放、曲库、分析等内部类随同一个音乐应用交付，不是独立安装模块。未来安装契约见 [音乐模块架构](docs/MUSIC-ARCHITECTURE.md)；正式 3.0.0 宿主尚未发布。
 
 ## 本地构建
 
@@ -44,3 +44,5 @@ python test.py --out-dir C:\Temp\daidai-test-apps-tests
 ## 许可与资料
 
 新写应用代码和文档使用 [MIT 许可](LICENSE)。色觉模型所参考实现的 MIT 声明随源码与 APK 保留；音乐默认曲绘单独说明授权范围，不能将其视为采用 MIT 的通用素材。详见 [来源声明](NOTICE.md)、[隐私与许可](PRIVACY-LICENSE.md) 和 [技术边界](TECHNICAL-NOTES.md)。
+
+[音乐更新记录](MUSIC-CHANGELOG.md)

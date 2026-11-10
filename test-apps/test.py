@@ -12,11 +12,11 @@ MODULE_SOURCES = (
     'music/WaveWriter.java', 'music/AudioEditPlan.java', 'music/WavSpeedProcessor.java',
     'music/StereoPcmReader.java', 'colorvision/ComparisonLayout.java',
     'colorvision/PreviewGeometry.java', 'music/AudioFileTags.java', 'music/MusicSpectrum.java',
-    'music/MusicSpectrumHistory.java', 'music/MusicPeople.java',
+    'music/MusicSpectrumHistory.java', 'music/MusicPeople.java', 'music/MusicTags.java', 'music/MusicLyrics.java', 'music/SleepTimer.java',
 )
 SUITES = ('CoreChecks', 'StreamSessionChecks', 'ColorMusicChecks', 'ColorLayoutChecks',
           'MusicEditingChecks', 'WavSpeedChecks', 'AudioFileTagsChecks', 'MusicAnalysisChecks',
-          'MusicPeopleChecks')
+          'MusicPeopleChecks', 'MusicTagsChecks', 'MusicLyricsChecks', 'MusicSleepTimerChecks')
 
 
 def main():
