@@ -11,6 +11,13 @@ import java.util.Locale;
 
 /** Small reusable view helpers; no standalone package or generated R dependency. */
 public final class Ui {
+    /** Short transient notices omit a terminal full stop; diagnostic paragraphs stay intact. */
+    public static Toast toast(android.content.Context context,String message,int duration) {
+        String value=message==null?"":message.trim();
+        if(value.length()<160&&value.indexOf('\n')<0&&!value.endsWith("..."))
+            while(value.endsWith("。")||value.endsWith("."))value=value.substring(0,value.length()-1);
+        return Toast.makeText(context,value,duration);
+    }
     public static final int INK = Color.rgb(30, 46, 70), BLUE = Color.rgb(36, 107, 206);
     public static String t(String zh, String en) { return Locale.getDefault().getLanguage().equals("zh") ? zh : en; }
     public static int dp(android.content.Context c, float v) { return Math.round(v*c.getResources().getDisplayMetrics().density); }

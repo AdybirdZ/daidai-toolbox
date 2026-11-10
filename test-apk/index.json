@@ -4,11 +4,11 @@
   "apps": [
     {
       "name": "呆呆音乐",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "packageName": "org.daidai.prototype.music",
-      "apk": "DaidaiMusic-0.5.0.apk",
-      "size": 1278516,
-      "sha256": "7509f181699e2cb2b9f8b4ee9cb04eedc343399010169d436db7e1455e208477",
+      "apk": "DaidaiMusic-0.6.0.apk",
+      "size": 1290804,
+      "sha256": "846dac36d0d751e1fecf26abfeff3a20cf96eecae44f6000c165dd57227da565",
       "standalone": true,
       "requiresToolbox": false
     },

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music060_role_composer">作曲</string>
+    <string name="music060_role_arranger">编曲</string>
+    <string name="music060_role_vocalist">演唱者</string>
+    <string name="music060_person_separator">、</string>
+    <string name="music060_role_separator">；</string>
+    <string name="music060_credit">%1$s：%2$s</string>
+    <string name="music060_credits_settings">人员信息显示与排序</string>
+    <string name="music060_move_up">上移%1$s</string>
+    <string name="music060_move_down">下移%1$s</string>
+    <string name="music060_credits_default">默认显示作曲和编曲。默认排序为：作曲、编曲、演唱者。</string>
+    <string name="music060_remove_selected_queue">移除所选歌曲</string>
+    <string name="music060_select_song">选择歌曲“%1$s”</string>
+    <string name="music060_all_songs">全部歌曲</string>
+    <string name="music060_manage_playlist">管理歌单“%1$s”</string>
+    <string name="music060_select_all">全选</string>
+    <string name="music060_selected_to_playlist">将所选歌曲加入歌单</string>
+    <string name="music060_delete_selected">删除所选歌曲</string>
+    <string name="music060_delete_selected_confirm">确定从歌曲存储文件夹删除所选的 %1$d 个音频文件吗？删除后也会移除播放列表、歌单和“我喜欢”中的对应记录。此操作无法撤销。</string>
+    <string name="music060_delete_partial">已删除 %1$d 个音频文件，另有 %2$d 个删除失败。未删除的文件及其记录予以保留；请检查文件访问权限后重试。</string>
+    <string name="music060_add_person">添加%1$s姓名</string>
+    <string name="music060_remove_person">移除%1$s姓名</string>
+</resources>

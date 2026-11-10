@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_221_title" formatted="false">2.2.1 · 界面保留与权限设置</string>
+    <string name="update_221_detail" formatted="false">修复通过桌面快捷方式重新进入时重建主界面、丢失设置层级和未保存输入的问题。统一权限与系统限制入口，将禁止系统休眠归入其中，并增加桌面快捷方式设置入口。统一短暂提示的末尾标点。配置导入后重新加载界面，保留既有资料转移规则。</string>
+</resources>

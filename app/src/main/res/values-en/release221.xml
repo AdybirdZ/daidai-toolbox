@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_221_title" formatted="false">2.2.1 · Navigation retention and permission settings</string>
+    <string name="update_221_detail" formatted="false">Fixed home-screen shortcut re-entry recreating the main screen and discarding open settings and unsaved input. Standardized the permissions and system restrictions hub, moved Keep screen awake into it, and added home-screen shortcut settings. Standardized trailing punctuation in short notices. Configuration import reloads the interface while retaining the existing data-transfer rules.</string>
+</resources>

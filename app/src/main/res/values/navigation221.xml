@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permissions_app_settings">应用权限设置</string>
+    <string name="permissions_notification_settings">通知设置</string>
+    <string name="permissions_alarm_settings">准时提醒设置</string>
+    <string name="permissions_location_settings">系统定位设置</string>
+    <string name="permissions_shortcut_settings">桌面快捷方式设置</string>
+    <string name="permissions_battery_settings">电池优化设置</string>
+    <string name="permissions_open_app_settings">打开应用设置</string>
+    <string name="permissions_open_home_settings">打开桌面设置</string>
+    <string name="permissions_shortcut_note">Android 没有适用于所有设备的“创建桌面快捷方式”权限页面。若设备提供此权限，可在应用设置或桌面设置中查找；部分设备仅在添加快捷方式时询问。无法打开桌面设置时，将转到本应用的信息页面。此处不代替系统授权，也不表示快捷方式已添加。</string>
+</resources>

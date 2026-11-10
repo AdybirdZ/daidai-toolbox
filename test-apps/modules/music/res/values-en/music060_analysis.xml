@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music060_history_duration">Spectrum history span: %1$.1f s</string>
+  <string name="music060_history_note">The history axis shows source-audio time relative to the current playback position: 0 ms at the top and the selected duration at the bottom. Source audio is analyzed every 10 ms. Pausing freezes the history; seeking or changing tracks starts a new history. The span is adjustable from 0.5 to 5.0 seconds, with a default of 1.0 second.</string>
+  <string name="music060_history_axis">Spectrum history · age from playback position (ms)</string>
+  <string name="music060_analysis_note">The time-domain waveform shows normalized digital amplitudes of both channels. X-Y display plots the left channel horizontally and the right channel vertically. The spectrum uses dBFS and marks the strongest spectral peaks, with spectrum history below. Pinch horizontally to zoom the frequency axis; drag horizontally to pan. Analysis uses source audio before playback speed, pitch, and volume processing. It does not measure sound pressure level.</string>
+</resources>

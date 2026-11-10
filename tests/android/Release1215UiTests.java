@@ -59,10 +59,10 @@ public final class Release1215UiTests extends Instrumentation {
     void permissions(){
         Object settings=create("SettingsScreen",new Class[]{a.getClass()},a);
         final View[] parents=new View[2];
-        ui(()->{call(settings,"show",new Class[]{});parents[0]=dialog("设置");tap(parents[0],"全局设置");parents[1]=dialog("全局设置");tap(parents[1],"权限与系统限制");permissionHub=dialog("权限与系统限制");check(text(permissionHub,"打开应用权限设置")!=null&&text(permissionHub,"打开系统定位设置")!=null&&text(permissionHub,"关闭电池优化")!=null,"All three existing entries grouped under Global settings");});
+        ui(()->{call(settings,"show",new Class[]{});parents[0]=dialog("设置");tap(parents[0],"全局设置");parents[1]=dialog("全局设置");tap(parents[1],"权限与系统限制");permissionHub=dialog("权限与系统限制");check(text(permissionHub,"应用权限设置")!=null&&text(permissionHub,"系统定位设置")!=null&&text(permissionHub,"电池优化设置")!=null,"All three existing entries grouped under Global settings");});
         waitForIdleSync();
-        systemEntry("打开应用权限设置");systemEntry("打开系统定位设置");
-        ui(()->{tap(permissionHub,"关闭电池优化");View opt=dialog("关闭电池优化");check(prefix(opt,"当前")!=null&&prefix(opt,"当前").getText().toString().contains("电池优化"),"System optimization state shown");check(text(opt,"前往系统设置")!=null,"Explicit user action to system settings");tap(opt,"返回");check(dialog("权限与系统限制")==permissionHub,"Optimization Back returns to permissions");tap(permissionHub,"关闭电池优化");tap(dialog("关闭电池优化"),"前往系统设置");});
+        systemEntry("应用权限设置");systemEntry("系统定位设置");
+        ui(()->{tap(permissionHub,"电池优化设置");View opt=dialog("关闭电池优化");check(prefix(opt,"当前")!=null&&prefix(opt,"当前").getText().toString().contains("电池优化"),"System optimization state shown");check(text(opt,"前往系统设置")!=null,"Explicit user action to system settings");tap(opt,"返回");check(dialog("权限与系统限制")==permissionHub,"Optimization Back returns to permissions");tap(permissionHub,"电池优化设置");tap(dialog("关闭电池优化"),"前往系统设置");});
         activePackage("com.android.settings");systemBack();
         ui(()->{check(dialog("权限与系统限制")==permissionHub,"System optimization Back returns to permissions");tap(permissionHub,"返回");check(dialog("全局设置")==parents[1],"Permissions Back returns to Global settings");tap(parents[1],"返回");check(dialog("设置")==parents[0],"Global Back returns to Settings");tap(parents[0],"关闭");});
     }

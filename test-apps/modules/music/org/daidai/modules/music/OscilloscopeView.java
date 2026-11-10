@@ -14,21 +14,33 @@ public final class OscilloscopeView extends View {
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path path=new Path();
     private float[] left=new float[0],right=new float[0];
-    private int mode,rate=48000;private float range=1f;
+    private int mode,rate=48000,normalHeight;private float range=1f;
     public OscilloscopeView(Context c){super(c);setFocusable(false);}
-    public void setMode(int value){mode=value==XY?XY:WAVEFORM;invalidate();}
+    public void setMode(int value){int previous=mode;mode=value==XY?XY:WAVEFORM;if(previous!=mode){android.view.ViewGroup.LayoutParams params=getLayoutParams();if(params!=null){if(mode==XY){normalHeight=params.height;params.height=android.view.ViewGroup.LayoutParams.WRAP_CONTENT;}else params.height=normalHeight;setLayoutParams(params);}requestLayout();}invalidate();}
     /** Visible range is -range to +range; every vertical division is range/2. */
     public void setAmplitudeRange(float value){range=Math.max(.02f,Math.min(2,value));invalidate();}
     public float amplitudeRange(){return range;}
     public void setSampleRate(int value){rate=Math.max(1,value);}
     public void samples(float[][] data){left=data==null?new float[0]:data[0];right=data==null?new float[0]:data[1];invalidate();}
     private float dp(float n){return n*getResources().getDisplayMetrics().density;}
+    @Override protected void onMeasure(int widthSpec,int heightSpec){
+        if(mode!=XY){super.onMeasure(widthSpec,heightSpec);return;}
+        int width=MeasureSpec.getSize(widthSpec);if(width<1){super.onMeasure(widthSpec,heightSpec);return;}
+        // Match the plot's width and height, leaving the same margins for axes as waveform mode.
+        int height=width+Math.round(dp(3));setMeasuredDimension(resolveSize(width,widthSpec),resolveSize(height,heightSpec));
+    }
+    private android.graphics.RectF plotBounds(){
+        float x0=dp(45),y0=dp(23),x1=getWidth()-dp(12),y1=getHeight()-dp(37);
+        if(mode==XY){float side=Math.max(0,Math.min(x1-x0,y1-y0));float extra=(x1-x0-side)/2;x0+=extra;x1=x0+side;y1=y0+side;}
+        return new android.graphics.RectF(x0,y0,x1,y1);
+    }
     @Override protected void onDraw(Canvas c){
-        super.onDraw(c);float x0=dp(45),y0=dp(23),x1=getWidth()-dp(12),y1=getHeight()-dp(37);if(x1<=x0||y1<=y0)return;
+        super.onDraw(c);android.graphics.RectF plot=plotBounds();float x0=plot.left,y0=plot.top,x1=plot.right,y1=plot.bottom;if(x1<=x0||y1<=y0)return;
         paint.setTextSize(dp(10));paint.setStrokeWidth(dp(1));paint.setStyle(Paint.Style.FILL);paint.setColor(0xff536170);
         c.drawText(Texts.get(getContext(),mode==XY?"music050_scope_xy_axes":"music050_scope_axes"),x0,dp(13),paint);
         float shownRange=mode==XY?1:range;
         for(int i=0;i<=4;i++){float y=y0+(y1-y0)*i/4;paint.setColor(0xffd3dbe5);c.drawLine(x0,y,x1,y,paint);c.drawLine(x0+(x1-x0)*i/4,y0,x0+(x1-x0)*i/4,y1,paint);paint.setColor(0xff536170);String label=String.format(Locale.getDefault(),"%.2f",shownRange*(1-i/2f));c.drawText(label,dp(2),y+dp(4),paint);}
+        paint.setColor(0xff899bad);paint.setStyle(Paint.Style.STROKE);c.drawRect(x0,y0,x1,y1,paint);paint.setStyle(Paint.Style.FILL);
         for(int i=0;i<=4;i++){float x=x0+(x1-x0)*i/4;String label=mode==XY?String.format(Locale.getDefault(),"%.1f",-1+i*.5):String.format(Locale.getDefault(),"%.1f",1000.*Math.max(0,left.length-1)*i/(4*rate));float tw=paint.measureText(label);c.drawText(label,Math.max(x0,Math.min(x1-tw,x-tw/2)),y1+dp(15),paint);}
         c.drawText(Texts.get(getContext(),mode==XY?"music050_scope_xy_bottom":"music050_scope_time_bottom"),x0,y1+dp(31),paint);
         c.save();c.clipRect(x0,y0,x1,y1);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(dp(1.3f));

@@ -79,7 +79,7 @@ public final class ArtworkPreviewActivity extends Activity {
                 try(InputStream input=openSource()){bitmap=BitmapFactory.decodeStream(input,null,options);}
                 if(bitmap==null)throw new IOException("Unable to decode image");
                 Bitmap ready=bitmap;main.post(()->{if(destroyed){ready.recycle();return;}artwork.setBitmap(ready);save.setEnabled(true);});
-            }catch(Exception e){if(bitmap!=null)bitmap.recycle();main.post(()->{if(!destroyed)Toast.makeText(this,Texts.get(this,"music_artwork_open_failed"),Toast.LENGTH_LONG).show();});}
+            }catch(Exception e){if(bitmap!=null)bitmap.recycle();main.post(()->{if(!destroyed)Ui.toast(this,Texts.get(this,"music_artwork_open_failed"),Toast.LENGTH_LONG).show();});}
         });
     }
     private InputStream openSource()throws IOException{
@@ -92,7 +92,7 @@ public final class ArtworkPreviewActivity extends Activity {
     private void requestSave(){
         if(Build.VERSION.SDK_INT>=29){save.setEnabled(false);io.execute(this::saveToAlbum);}
         else {Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(mime).putExtra(Intent.EXTRA_TITLE,fileName());
-            try{startActivityForResult(intent,CREATE_IMAGE);}catch(Exception e){Toast.makeText(this,Texts.get(this,"music_artwork_save_failed"),Toast.LENGTH_LONG).show();}}
+            try{startActivityForResult(intent,CREATE_IMAGE);}catch(Exception e){Ui.toast(this,Texts.get(this,"music_artwork_save_failed"),Toast.LENGTH_LONG).show();}}
     }
     private void saveToAlbum(){
         Uri created=null;boolean complete=false;
@@ -115,7 +115,7 @@ public final class ArtworkPreviewActivity extends Activity {
     @Override protected void onActivityResult(int request,int result,Intent data){super.onActivityResult(request,result,data);
         if(request==CREATE_IMAGE&&result==RESULT_OK&&data!=null&&data.getData()!=null){Uri destination=data.getData();save.setEnabled(false);io.execute(()->{boolean success=false;try{writeSource(destination);success=true;}catch(Exception ignored){}boolean finished=success;main.post(()->finishSave(finished));});}
     }
-    private void finishSave(boolean success){if(destroyed)return;save.setEnabled(true);Toast.makeText(this,Texts.get(this,success?"music_artwork_saved":"music_artwork_save_failed"),Toast.LENGTH_LONG).show();}
+    private void finishSave(boolean success){if(destroyed)return;save.setEnabled(true);Ui.toast(this,Texts.get(this,success?"music_artwork_saved":"music_artwork_save_failed"),Toast.LENGTH_LONG).show();}
     @Override protected void onDestroy(){destroyed=true;io.shutdownNow();main.removeCallbacksAndMessages(null);if(artwork!=null)artwork.release();super.onDestroy();}
 
     /** Fits artwork initially; pinch zoom keeps its focal point stable and drag is bounded. */

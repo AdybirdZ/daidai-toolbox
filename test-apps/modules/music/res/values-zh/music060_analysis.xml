@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music060_history_duration">频谱历史范围：%1$.1f 秒</string>
+  <string name="music060_history_note">历史时间轴表示相对于当前播放位置的音频时间：顶部为 0 ms，底部为所选时长。按原音频位置每 10 ms 分析一次；暂停时历史停止推进，跳转或切换歌曲后重新记录。历史范围可设为 0.5～5.0 秒，默认 1.0 秒。</string>
+  <string name="music060_history_axis">频谱历史 · 距当前播放位置（ms）</string>
+  <string name="music060_analysis_note">时域波形显示左右声道的归一化数字幅度；X-Y 显示以左声道为横轴、右声道为纵轴。频谱采用 dBFS 数字电平，标记幅度最大的频谱峰值，下方为频谱历史。频谱可横向双指缩放，单指左右移动。分析基于原音频，不包含播放倍速、音调及音量处理，不代表声压级。</string>
+</resources>

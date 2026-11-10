@@ -68,7 +68,7 @@ final class AppIconStore {
     }
     private static ShortcutInfo shortcut(Context context,Bitmap image){
         Intent launch=new Intent(context,MainActivity.class).setAction(Intent.ACTION_MAIN)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return new ShortcutInfo.Builder(context,SHORTCUT_ID).setShortLabel(context.getString(R.string.app_name))
             .setLongLabel(context.getString(R.string.app_name)).setIcon(Icon.createWithAdaptiveBitmap(image)).setIntent(launch).build();
     }

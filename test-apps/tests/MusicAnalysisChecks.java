@@ -1,4 +1,5 @@
 import org.daidai.modules.music.MusicSpectrum;
+import org.daidai.modules.music.MusicSpectrumHistory;
 import org.daidai.modules.music.StereoPcmReader;
 import org.daidai.modules.music.WaveWriter;
 import java.io.File;
@@ -33,6 +34,15 @@ public final class MusicAnalysisChecks {
         boolean rejected=false;try{MusicSpectrum.analyze(null,rate,123);}catch(IllegalArgumentException expected){rejected=true;}check(rejected,"non-power-of-two FFT rejected");
         float[][] nonfinite=tone(size,rate,frequency,.5);nonfinite[0][0]=Float.NaN;nonfinite[1][1]=Float.POSITIVE_INFINITY;
         MusicSpectrum.Frame clean=MusicSpectrum.analyze(nonfinite,rate,size);check(Float.isFinite(clean.db[bin]),"invalid sample cannot poison all FFT bins");
+        MusicSpectrumHistory history=new MusicSpectrumHistory();check(history.durationMillis()==1000,"history defaults to one source-audio second");history.append(1000,full);history.append(1010,half);history.append(1500,offBin);
+        check(history.frameAtAge(0)==offBin&&history.frameAtAge(490)==half&&history.frameAtAge(500)==full,"history maps positions to actual millisecond ages");
+        check(history.frameAtAge(250)==null,"unsampled time is not stretched from a previous UI frame");
+        int count=history.size();history.append(1500,clean);check(history.size()==count&&history.frameAtAge(0)==clean,"paused duplicate timestamps replace without advancing history");
+        MusicSpectrum.Frame[] rows=history.rows(101);check(rows[0]==clean&&rows[49]==half&&rows[50]==full&&rows[25]==null,"bitmap rows obey elapsed audio time rather than frame count");
+        history.setDurationMillis(100);check(history.durationMillis()==500,"history lower bound");history.setDurationMillis(9000);check(history.durationMillis()==5000,"history upper bound");
+        history.append(900,full);check(history.size()==1&&history.positionMillis()==900,"backward seek clears obsolete history");
+        for(int i=0;i<1100;i++)history.append(1000+i*10,half);check(history.size()<=504&&history.frameAtAge(5000)==half,"history remains bounded while keeping five source-audio seconds");
+        history.clear();check(history.size()==0&&history.frameAtAge(0)==null,"switching source can clear the timeline");
         File directory=new File(args.length==0?System.getProperty("java.io.tmpdir"):args[0]);directory.mkdirs();File a=File.createTempFile("analysis-a-",".wav",directory),b=File.createTempFile("analysis-b-",".wav",directory);
         try{
             // Simulate two contiguous decoded 8 s windows with a 200 ms prefetch overlap.

@@ -35,7 +35,7 @@ public final class ConfigurationUiTests extends Instrumentation {
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;File image=new File(getTargetContext().getFilesDir(),"background.jpg");
         try{
             for(String group:GROUPS)original.put(group,new HashMap<>(prefs(group).getAll()));if(image.exists())background=Files.readAllBytes(image.toPath());
-            prefs("toolbox").edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putLong("quake_interval",0).putBoolean("outline",true).putInt("background_brightness",41).putLong("location_interval",10000).putFloat("quake_ref_lon",120.75f).commit();
+            prefs("toolbox").edit().putString("app_language","zh-CN").putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putLong("quake_interval",0).putBoolean("outline",true).putInt("background_brightness",41).putLong("location_interval",10000).putFloat("quake_ref_lon",120.75f).commit();
             prefs("weather").edit().putInt("quota_count_0",7).commit();
             prefs("status_places").edit().putString("places","[{\"id\":\"config-place\",\"name\":\"配置地点\",\"lon\":120.6,\"lat\":31.3,\"created\":1000,\"color\":-16711936,\"visible\":false}]").putString("selected","config-place").commit();
             prefs("status_routes").edit().putString("routes","[{\"id\":\"config-route\",\"name\":\"配置路线\",\"points\":[{\"lon\":120.6,\"lat\":31.3,\"time\":1000},{\"lon\":120.7,\"lat\":31.4,\"time\":2000}]}]").commit();

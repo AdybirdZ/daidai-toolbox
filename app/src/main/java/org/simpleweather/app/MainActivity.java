@@ -361,7 +361,9 @@ public class MainActivity extends Activity {
     void prepareConfigurationImport(){todo.pause();TodoScheduler.suspend(this);randomChoice.stopForImport();searchVersion++;cacheGeneration++;gps.stopForImport();earthquakes.destroy();}
     void configurationImportFinished(boolean success,boolean restored){
         toast(getString(success?R.string.config_imported:restored?R.string.config_import_failed:R.string.config_restore_failed));
-        Intent next=new Intent(this,MainActivity.class).putExtra("configuration_applied",true);startActivity(next);finish();
+        // A singleTop launcher must keep ordinary re-entry intact; configuration import
+        // deliberately rebuilds the current owner after all imported models are committed.
+        getIntent().putExtra("configuration_applied",true);recreate();
     }
     String versionName(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(Exception e){return "—";}}
     private int versionCode(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionCode;}catch(Exception e){return 0;}}
@@ -381,6 +383,7 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_221_title),getString(R.string.update_221_detail));
         updateEntry(c,getString(R.string.update_220_title),getString(R.string.update_220_detail));
         updateEntry(c,getString(R.string.update_215_title),getString(R.string.update_215_detail));
         updateEntry(c,getString(R.string.update_214_title),getString(R.string.update_214_detail));
@@ -459,7 +462,7 @@ public class MainActivity extends Activity {
     void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);markLink(t);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
     void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast(UiText.get("main_077"));}}
     void hideKeyboard() {View focused=getCurrentFocus();if(focused!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focused.getWindowToken(),0);focused.clearFocus();}}
-    void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(message,16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
+    void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(TransientText.notice(message),16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
     @Override public void onConfigurationChanged(android.content.res.Configuration config){
         super.onConfigurationChanged(config);
         // Keep the existing screen, session and open dialogs; only remeasure the viewport.

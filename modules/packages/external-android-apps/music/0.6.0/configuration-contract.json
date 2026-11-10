@@ -1,0 +1,13 @@
+{
+  "format": "daidai-toolbox-module-configuration-contract",
+  "schemaVersion": 1,
+  "module": "music",
+  "hostAdapterApi": "daidai-android-app/1",
+  "ownerPackage": "org.daidai.prototype.music",
+  "storage": "android-private-application-data",
+  "migration": "same-package-same-signer-update",
+  "hostCanReadPrivateData": false,
+  "userDataIncluded": false,
+  "crossPackageUriGrantsTransferable": false,
+  "exportImportBridgeImplemented": false
+}

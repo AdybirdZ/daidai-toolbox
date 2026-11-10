@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permissions_app_settings">App permission settings</string>
+    <string name="permissions_notification_settings">Notification settings</string>
+    <string name="permissions_alarm_settings">Exact alarm settings</string>
+    <string name="permissions_location_settings">System location settings</string>
+    <string name="permissions_shortcut_settings">Home-screen shortcut settings</string>
+    <string name="permissions_battery_settings">Battery optimization settings</string>
+    <string name="permissions_open_app_settings">Open app settings</string>
+    <string name="permissions_open_home_settings">Open home-screen settings</string>
+    <string name="permissions_shortcut_note">Android has no shortcut-creation permission page that works on every device. If your device provides this permission, look in app or home-screen settings; some devices ask only when you add a shortcut. If home-screen settings are unavailable, the app info page opens instead. These links do not grant permission or confirm that a shortcut has been added.</string>
+</resources>

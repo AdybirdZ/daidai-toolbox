@@ -9,22 +9,21 @@ import android.graphics.Path;
 import android.view.MotionEvent;
 import android.view.View;
 import org.daidai.modules.shared.Texts;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /** Original spectrum and time-frequency history; all levels refer to decoded digital samples. */
 public final class SpectrumView extends View {
-    private static final int HISTORY=80,COLUMNS=192;
+    private static final int HISTORY=240,COLUMNS=192;
     private static final int[] COLORS=palette();
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path trace=new Path();
-    private final ArrayDeque<MusicSpectrum.Frame> history=new ArrayDeque<>();
+    private final MusicSpectrumHistory history=new MusicSpectrumHistory();
     private final Bitmap image=Bitmap.createBitmap(COLUMNS,HISTORY,Bitmap.Config.ARGB_8888);
     private final int[] pixels=new int[COLUMNS*HISTORY];
     private MusicSpectrum.Frame frame;
-    private boolean logarithmic=true;private int peakCount=3;
+    private boolean logarithmic=true;private int peakCount=5;
     private Runnable rangeChanged;
     private double low=20,high=24000;private float lastX,spanX;private boolean pinching;
     public SpectrumView(Context c){super(c);setFocusable(false);}
@@ -33,14 +32,18 @@ public final class SpectrumView extends View {
     public boolean isLogarithmic(){return logarithmic;}
     public void setPeakCount(int value){peakCount=Math.max(0,Math.min(10,value));invalidate();}
     public int peakCount(){return peakCount;}
+    public void setHistoryDurationMillis(int value){history.setDurationMillis(value);rebuildHistory();invalidate();}
+    public int historyDurationMillis(){return history.durationMillis();}
     public void setOnFrequencyRangeChanged(Runnable listener){rangeChanged=listener;}
     /** Text fallback keeps every requested frequency available when on-chart labels overlap. */
     public String peakSummary(){if(frame==null||peakCount==0)return "";StringBuilder result=new StringBuilder();for(MusicSpectrum.Peak peak:MusicSpectrum.peaks(frame,peakCount,low,high)){if(result.length()>0)result.append(" · ");result.append(String.format(Locale.getDefault(),"%.0f Hz (%.1f dBFS)",peak.frequency,peak.db));}return result.toString();}
     public void clear(){frame=null;history.clear();rebuildHistory();invalidate();}
-    public void samples(MusicSpectrum.Frame value,boolean append){
-        if(value==null)return;boolean changed=frame==null||frame.sampleRate!=value.sampleRate;frame=value;
-        if(changed){history.clear();low=logarithmic?20:0;high=value.sampleRate/2.;}
-        if(append){history.addFirst(value);while(history.size()>HISTORY)history.removeLast();rebuildHistory();}invalidate();
+    public void samples(MusicSpectrum.Frame value,long sourcePositionMillis){
+        samples(new MusicSpectrum.Frame[]{value},new long[]{sourcePositionMillis});
+    }
+    public void samples(MusicSpectrum.Frame[] values,long[] sourcePositionsMillis){
+        if(values==null||sourcePositionsMillis==null||values.length!=sourcePositionsMillis.length)return;
+        for(int i=0;i<values.length;i++){MusicSpectrum.Frame value=values[i];if(value==null)continue;boolean changed=frame==null||frame.sampleRate!=value.sampleRate;frame=value;if(changed){history.clear();low=logarithmic?20:0;high=value.sampleRate/2.;}history.append(sourcePositionsMillis[i],value);}rebuildHistory();invalidate();
     }
     public void resetFrequencyRange(){low=logarithmic?20:0;high=frame==null?24000:frame.sampleRate/2.;rebuildHistory();invalidate();}
     private double scale(double hz){return logarithmic?Math.log(Math.max(1,hz)):hz;}
@@ -49,14 +52,14 @@ public final class SpectrumView extends View {
     private float x(double hz,float left,float right){return left+(float)((scale(hz)-scale(low))/(scale(high)-scale(low)))*(right-left);}
     private float level(MusicSpectrum.Frame value,double hz){double index=hz*value.fftSize/value.sampleRate;int at=(int)Math.max(0,Math.min(value.db.length-1,index));int next=Math.min(at+1,value.db.length-1);return (float)(value.db[at]+(value.db[next]-value.db[at])*(index-at));}
     private void rebuildHistory(){
-        java.util.Arrays.fill(pixels,0xff091724);int row=0;double[] frequencies=new double[COLUMNS];for(int i=0;i<COLUMNS;i++)frequencies[i]=frequency(i/(double)(COLUMNS-1));
-        for(MusicSpectrum.Frame value:history){if(row>=HISTORY)break;for(int col=0;col<COLUMNS;col++)pixels[row*COLUMNS+col]=COLORS[Math.max(0,Math.min(96,Math.round(level(value,frequencies[col])+96)))];row++;}
+        java.util.Arrays.fill(pixels,0xff091724);double[] frequencies=new double[COLUMNS];for(int i=0;i<COLUMNS;i++)frequencies[i]=frequency(i/(double)(COLUMNS-1));MusicSpectrum.Frame[] rows=history.rows(HISTORY);
+        for(int row=0;row<HISTORY;row++){MusicSpectrum.Frame value=rows[row];if(value==null)continue;for(int col=0;col<COLUMNS;col++)pixels[row*COLUMNS+col]=COLORS[Math.max(0,Math.min(96,Math.round(level(value,frequencies[col])+96)))];}
         image.setPixels(pixels,0,COLUMNS,0,0,COLUMNS,HISTORY);
     }
     private static int[] palette(){int[] colors=new int[97];for(int i=0;i<colors.length;i++){float t=i/96f;colors[i]=Color.HSVToColor(new float[]{230-230*t,.88f,.12f+.88f*t});}return colors;}
     @Override protected void onDraw(Canvas c){
         super.onDraw(c);float left=dp(44),right=getWidth()-dp(12),top=dp(24),bottom=getHeight()-dp(29),height=bottom-top;if(right<=left||height<=0)return;
-        float curveBottom=top+height*.57f,historyTop=curveBottom+dp(27);paint.setTextSize(dp(10));paint.setStyle(Paint.Style.FILL);paint.setStrokeWidth(dp(1));paint.setColor(0xff536170);
+        float curveBottom=top+Math.min(dp(180),height*.45f),historyTop=curveBottom+dp(27);paint.setTextSize(dp(10));paint.setStyle(Paint.Style.FILL);paint.setStrokeWidth(dp(1));paint.setColor(0xff536170);
         c.drawText(Texts.get(getContext(),"music050_spectrum_axes"),left,dp(13),paint);
         for(int i=0;i<=4;i++){float y=top+(curveBottom-top)*i/4;paint.setColor(0xffd3dbe5);c.drawLine(left,y,right,y,paint);paint.setColor(0xff536170);c.drawText(Integer.toString(-24*i),dp(4),y+dp(3),paint);}
         if(frame!=null){
@@ -72,7 +75,7 @@ public final class SpectrumView extends View {
             }
         }
         paint.setColor(0xff536170);for(int i=0;i<=4;i++){float xx=left+(right-left)*i/4;String label=frequencyLabel(frequency(i/4.));float w=paint.measureText(label);c.drawText(label,Math.max(left,Math.min(right-w,xx-w/2)),curveBottom+dp(15),paint);}
-        if(historyTop<bottom){c.drawBitmap(image,null,new android.graphics.RectF(left,historyTop,right,bottom),paint);paint.setColor(0xff536170);c.drawText(Texts.get(getContext(),"music050_spectrum_newest"),left,bottom+dp(15),paint);}
+        if(historyTop<bottom){c.drawBitmap(image,null,new android.graphics.RectF(left,historyTop,right,bottom),paint);paint.setColor(0xff536170);for(int i=0;i<=4;i++){float y=historyTop+(bottom-historyTop)*i/4;String label=Integer.toString(history.durationMillis()*i/4);c.drawText(label,dp(2),y+dp(3),paint);c.drawLine(left-dp(3),y,left,y,paint);}c.drawText(Texts.get(getContext(),"music060_history_axis"),left,bottom+dp(15),paint);}
     }
     private static String frequencyLabel(double hz){return hz>=1000?String.format(Locale.getDefault(),"%.1f kHz",hz/1000):String.format(Locale.getDefault(),"%.0f Hz",hz);}
     @Override public boolean onTouchEvent(MotionEvent e){

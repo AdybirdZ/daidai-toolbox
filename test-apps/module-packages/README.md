@@ -1,40 +1,56 @@
-# 呆呆音乐应用模块契约
+# 音乐应用模块与未来宿主契约
 
-本目录公开音乐模块的打包器 `module_tools.py`、异常容器测试 `test_module_package.py` 和契约说明，不包含测试宿主、模块安装器或适配器界面。正式工具箱 2.2.0 没有模块安装功能，正式 3.0.0 宿主尚未发布。
+本目录提供呆呆音乐 0.6.0 的可执行模块包构建器与校验器。完整本地工作区另含 Android 应用适配器和测试宿主；公开源码快照不包含本地测试宿主。正式工具箱为 2.2.1，尚未提供模块安装界面，正式 3.0.0 宿主尚未实现。发布与上传状态以实际交付记录及 GitHub 资产为准，离线校验结果不推断是否已经上传。
 
-## 可执行模块与独立 APK
+`music-0.6.0.ddapp` 是包含独立音乐 APK 的 ZIP 应用包。它与仅含清单、配置说明的模块资产包不同：载荷是音乐应用本身，能由 Android 单独安装运行，不包含完整工具箱。未来宿主采用 `daidai-android-app/1` 契约时，可负责校验、安装、显示入口、打开和卸载；打开音乐时由系统切换到其独立应用界面，返回可回到宿主。
 
-[音乐 0.5.0 模块目录](../../modules/packages/external-android-apps/music/0.5.0/)提供 `music-0.5.0.ddapp`、清单、配置契约、索引和校验结果。`.ddapp` 是 ZIP 容器，包含四项：`module.json`、`configuration-contract.json`、`README.md`、`payload/music.apk`。载荷是音乐应用本身，不是完整工具箱 APK。
+此契约使用独立 Android 进程与数据目录，不是向工具箱进程动态加载 DEX，也没有把音乐界面嵌入宿主。现有测试宿主只验证适配流程，不代表正式 3.0.0 已完成。
 
-音乐模块 ID 固定为 `music`，包名为 `org.daidai.prototype.music`，公开入口为 `org.daidai.prototype.music.MainActivity`，当前版本为 0.5.0 / versionCode 5，最低 Android 版本为 8.0（API 26）。`standaloneInstallable: true` 表示其中的 APK 可以由 Android 单独安装，不表示当前工具箱可以安装 `.ddapp`。当前单独使用请安装[音乐测试 APK](../../test-apk/DaidaiMusic-0.5.0.apk)。
+## 包内容与校验
 
-未来宿主采用 `daidai-android-app/1` 后，可负责校验、请求系统安装、展示入口、打开和卸载。音乐在独立 Android 包与进程中运行，由系统切换到音乐界面；本契约没有实现向工具箱进程动态加载代码或嵌入音乐界面。
+- 容器后缀为 `.ddapp`，只包含 `module.json`、`configuration-contract.json`、`README.md`、`payload/music.apk` 四项。
+- 稳定 `moduleId` 为 `music`，`packageType` 为 `external-android-application`，`standaloneInstallable` 为 `true`，宿主适配 API 为 `daidai-android-app/1`。
+- 音乐包名为 `org.daidai.prototype.music`，入口为 `org.daidai.prototype.music.MainActivity`，当前版本为 0.6.0 / versionCode 6，最低 Android 版本为 8.0（API 26）。
+- 构建器与 Python 校验器从当前音乐启动壳 manifest 读取版本基准，拒绝用旧 APK 生成新版本模块。测试宿主将容器声明与 APK 实际版本逐项比较，不再固定为旧版本。
+- 清单列出载荷大小、SHA-256、签名证书 SHA-256、权限、目标宿主及配置契约。宿主必须用自身可信目录中的证书指纹核验载荷，不能把包内自报指纹当成信任来源。
+- 校验拒绝非预期路径、重复条目、符号链接、超大内容、错误载荷及不符的应用身份；安装前继续核对 APK 签名、权限、版本与公开入口。
+- 安装、升级、卸载均交给 Android 系统，经用户确认；安装来源权限由用户在系统中允许。取消安装不等于成功，安装后须复核实际状态。
 
-## 功能与资料边界
+## 音乐功能与模块边界
 
-0.5.0 支持播放、我的歌曲和设置三个栏目，以及曲库、歌单、收藏、分类搜索、歌词、BPM、多段剪辑、倍速与音调、应用内音量上限、时域波形、X-Y 示波图和频谱分析。曲绘可预览、缩放和保存。详情见[音乐架构说明](../docs/MUSIC-ARCHITECTURE.md)。
+当前界面分为“播放”“我的歌曲”“设置”，支持曲库、歌单、收藏、分类搜索、歌词、BPM、小数 BPM 编辑、多段剪辑、倍速与音调设置、应用内音量限制、时域波形、X-Y 显示及频谱分析。曲绘可在黑色背景中缩放、拖动，并保存到相册。Android 10 及以上保存到 `Pictures/呆呆音乐`；Android 8～9 使用系统文件选择器保存，不额外申请广泛存储权限。
 
-歌曲导入只复制到用户选择的存储文件夹；文件已经在该文件夹内时不重复复制。音频文件内实际存在的曲绘、BPM、作曲、编曲和艺术家信息会被读取，常见艺术家字段映射到“演唱者”。电脑播放器私有数据库中的字段不会随单独复制音频自动迁移。
+功能源代码在 `modules/music/`，独立启动壳在 `launchers/music/`，公共小型界面工具在 `shared/`。播放服务、曲库与文件访问、搜索与歌单、音频编辑、分析图表、曲绘预览和页面编排按职责分开，均不读取正式工具箱的私有资料。详细边界与未来接入要求见 `../docs/MUSIC-ARCHITECTURE.md`。
 
-音乐自行管理设置、曲库记录、播放列表、歌单、收藏、歌词和曲绘。模块包不包含用户资料，完整音乐资料导入导出桥接尚未实现。Android 文件夹 URI 授权和私有文件路径不能通过复制字符串跨包转移；未来换包名或合并进宿主时，需要用户重新授权或另外实现经校验的资料转移流程。
+这些内部类全部随同一个 `music` 应用交付，不是需要用户分别安装的模块；本目录不生成独立分析应用。0.6.0 新增人员信息显隐与排序、逐人编辑、曲库批量操作，并将频谱历史改为以音频位置推进的时间轴，暂停不继续滚动。完整功能及限制见 `../MUSIC-0.6.0.md`。
 
-相同包名和签名升级通常保留应用资料；撤销授权、文件提供方变化或系统清理仍可能导致文件不可访问。卸载音乐清除其私有资料与授权，宿主不应随隐藏入口或卸载主动删除用户存储文件夹中的歌曲。
+音乐只将导入文件复制到用户选定的歌曲存储文件夹；若原文件已经位于该文件夹，则直接加入曲库，不重复复制。导入或扫描时读取音频文件中实际存在的曲绘、BPM、演唱者、作曲与编曲信息；常见艺术家字段映射到“演唱者”。电脑播放器私有数据库中的资料不会随单独复制音频迁移。
 
-音乐仅声明唤醒锁、媒体播放前台服务和通知权限，通过系统文件选择器获得指定文件访问权，无网络、录音或全盘存储权限。Android 10 及以上通过 MediaStore 将曲绘保存到 `Pictures/呆呆音乐`；Android 8～9 通过系统文件选择器选定保存位置。
+## 数据、权限与迁移边界
 
-## 校验与打包
+音乐自行管理设置、歌曲资料、播放列表、歌单、收藏、歌词与曲绘；音频文件位于用户授权的存储文件夹。模块包不包含这些用户资料，也没有完整音乐资料导出、导入桥接协议。当前不能声称安装模块即可把另一包名下的曲库与授权自动迁移。
 
-需要 Python 3、JDK，以及含 Build Tools 35.0.0 的 Windows Android SDK。以下命令从仓库根目录运行，SDK 使用自己的安装位置：
+Android 文件夹 URI 授权属于获得授权的应用包，不能通过复制字符串或工具箱配置跨包转移。未来宿主需要访问歌曲时，应由用户重新选择文件夹，或另行实现经过校验、由用户确认的资料转移流程。歌词和曲绘的私有文件路径也不能直接交给另一应用读取。
+
+保持相同包名和签名升级通常保留本应用资料及已获授权；用户撤销授权、文件提供方变化或系统清理仍可能令文件不可访问。卸载音乐会清除私有资料并使本应用授权失效；用户选定文件夹中的音频按文件提供方规则保留，不应当随“隐藏模块入口”或卸载操作由宿主主动删除。
+
+音乐 APK 的权限仅包含播放所需的唤醒锁、媒体播放前台服务及通知权限，无网络、录音或全盘存储权限。宿主只负责自己的安装权限，不能代替音乐取得通知和文件夹授权。麦克风输入、跨应用静默读写及无确认安装均不属于本契约。
+
+## 生成与验证
+
+在工作区根目录执行以下命令。先完成音乐 APK 的构建与功能验证，再生成模块包：
 
 ```powershell
-$env:ANDROID_SDK_ROOT = 'C:\Android\Sdk'
-python test-apps/module-packages/module_tools.py verify modules/packages/external-android-apps/music/0.5.0/music-0.5.0.ddapp
-python test-apps/module-packages/test_module_package.py
-python test-apps/module-packages/module_tools.py pack --apk test-apk/DaidaiMusic-0.5.0.apk --output C:\Temp\music-0.5.0.ddapp
+python prototypes/module-packages/module_tools.py pack --apk work/prototypes/0.6.0/DaidaiMusic-0.6.0.apk
+python prototypes/module-packages/module_tools.py verify work/prototypes/music-0.6.0/music-0.6.0.ddapp
+python prototypes/module-packages/test_module_package.py
+python prototypes/module-packages/build_test_host.py
 ```
 
-工具从相邻 `launchers/music/AndroidManifest.xml` 读取版本，优先使用本地构建，找不到时使用仓库 `test-apk/` 的音乐 APK。公开模块包位于 `modules/packages/external-android-apps/music/0.5.0/`，无需原开发工作区的私有资料或 SDK 目录。`pack` 未指定 `--output` 时写入仓库下的 `work/prototypes/music-0.5.0/`，不会覆盖公开模块目录。
+默认模块输出为 `work/prototypes/music-0.6.0/music-0.6.0.ddapp`，相邻 JSON 为载荷、签名和容器校验结果。测试会使用当前 manifest 对应的 APK，检查真实签名、字节完整性、配置边界和异常容器。上述命令列出可执行的验证方法，实际通过情况以本次验证记录为准。
 
-校验核对容器路径、条目、大小、清单、配置边界、APK 身份、实际权限、SHA-256 和签名。证书指纹固定为已发布音乐测试应用的证书，自行更换签名的 APK 不属于该信任链；未来宿主也必须从自身可信目录取得指纹，不能信任包内自报值。
+APK 的实际构建输出位于 `work/prototypes/0.6.0/`，整理交付时将其副本与模块包集中到 `work/prototypes/music-0.6.0/`。上面的打包命令使用构建输出；交付副本与容器载荷须保持字节一致。
 
-离线校验结果不表示 GitHub 上传成功，也不能代替尚未发布的正式 3.0.0 宿主安装验收。包名、签名、载荷、校验结果与实际资产应在发布时继续复核。
+在公开源码快照中使用打包器时，可显式指定 `--apk` 和 `--output`；启动壳按脚本相邻目录查找。测试优先使用本地构建，没有本地构建时可使用仓库 `test-apk/` 的音乐 APK 和 `modules/packages/external-android-apps/music/0.6.0/` 的模块包。原工作区优先使用自带 SDK，其他目录通过 `ANDROID_SDK_ROOT` 或 `ANDROID_HOME` 指向含 Build Tools 35.0.0 的 Android SDK。签名信任仍固定为已发布测试应用的证书，自行更换签名的 APK 不属于该官方模块信任链。
+
+本地安装测试将 `.ddapp` 导入 `ModuleHostTest-0.1.0.apk`，校验成功后经 Android 确认安装或更新。测试宿主仅声明安装应用权限及音乐包查询，不联网，也不读取用户歌曲。其适配器可供未来宿主复用；发布时应区分音乐模块、独立测试 APK 与测试宿主。

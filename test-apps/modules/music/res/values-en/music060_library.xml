@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music060_role_composer">Composer</string>
+    <string name="music060_role_arranger">Arranger</string>
+    <string name="music060_role_vocalist">Vocalist</string>
+    <string name="music060_person_separator">", "</string>
+    <string name="music060_role_separator">"; "</string>
+    <string name="music060_credit">%1$s: %2$s</string>
+    <string name="music060_credits_settings">Credits display and order</string>
+    <string name="music060_move_up">Move %1$s up</string>
+    <string name="music060_move_down">Move %1$s down</string>
+    <string name="music060_credits_default">Composers and arrangers are shown by default. Default order: composer, arranger, vocalist.</string>
+    <string name="music060_remove_selected_queue">Remove selected songs</string>
+    <string name="music060_select_song">Select “%1$s”</string>
+    <string name="music060_all_songs">All songs</string>
+    <string name="music060_manage_playlist">Manage playlist “%1$s”</string>
+    <string name="music060_select_all">Select all</string>
+    <string name="music060_selected_to_playlist">Add selected songs to playlist</string>
+    <string name="music060_delete_selected">Delete selected songs</string>
+    <string name="music060_delete_selected_confirm">Delete the %1$d selected audio files from the song storage folder? Their entries will also be removed from the playback queue, playlists and favorites. This cannot be undone.</string>
+    <string name="music060_delete_partial">Deleted %1$d audio files; %2$d could not be deleted. Files that could not be deleted and their entries have been kept. Check file access permission and try again.</string>
+    <string name="music060_add_person">Add %1$s name</string>
+    <string name="music060_remove_person">Remove %1$s name</string>
+</resources>

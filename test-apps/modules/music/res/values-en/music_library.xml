@@ -12,7 +12,7 @@
   <string name="library_delete_playlist_confirm">Delete playlist “%1$s”? Audio files and track information will be kept.</string>
   <string name="library_delete">Delete</string>
   <string name="library_playlist_name">Playlist name</string>
-  <string name="library_bad_playlist_name">Enter a unique playlist name.</string>
+  <string name="library_bad_playlist_name">Enter a nonempty name that does not match an existing or built-in playlist.</string>
   <string name="library_add_selected">Add selected to queue</string>
   <string name="library_add_all">Add all to queue</string>
   <string name="library_added_to_queue">Added to playback queue</string>

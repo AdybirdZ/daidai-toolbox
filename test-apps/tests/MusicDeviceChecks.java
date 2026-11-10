@@ -1,0 +1,50 @@
+package org.daidai.prototype.qa;
+import android.app.*;import android.os.*;import android.content.*;import android.media.*;import android.net.Uri;import java.io.*;import java.nio.*;import java.lang.reflect.*;import java.util.*;
+import org.daidai.modules.music.*;
+public class MusicDeviceChecks extends Instrumentation {
+ @Override public void onCreate(Bundle args){super.onCreate(args);start();}
+ private Activity activity;private PlaybackService service;private int count;
+ private void check(boolean b,String message){count++;if(!b)throw new AssertionError(message);}
+ private Object field(Object value,String key)throws Exception {Class<?> c=value.getClass();while(c!=null){try{Field f=c.getDeclaredField(key);f.setAccessible(true);return f.get(value);}catch(NoSuchFieldException e){c=c.getSuperclass();}}throw new NoSuchFieldException(key);}
+ private void waitFor(java.util.concurrent.Callable<Boolean> predicate)throws Exception {long end=System.currentTimeMillis()+12000;while(System.currentTimeMillis()<end){final boolean[] done={false};runOnMainSync(()->{try{done[0]=predicate.call();}catch(Exception e){throw new RuntimeException(e);}});if(done[0])return;Thread.sleep(40);}throw new AssertionError("Timed out");}
+ @Override public void onStart(){Bundle result=new Bundle();try{Context c=getTargetContext();count+=MusicSearchDeviceChecks.run();count+=MusicLibraryChecks.run(c);File wav=new File(c.getFilesDir(),"trim-fixture.wav");try(WaveWriter w=new WaveWriter(wav,48000,2)){for(int i=0;i<192000;i++){w.sample((short)(i%30000-15000));w.sample((short)(15000-i%30000));}}
+  c.getSharedPreferences("music_module",0).edit().putInt("volume_percent",0).putInt("max_volume_percent",100).putBoolean("bpm_keep_decimal",false).putBoolean("analysis_show",false).putBoolean("pitch_follow_speed",false).putFloat("speed",1).commit();ArrayList<MusicLibrary.Track> tracks=new ArrayList<>();tracks.add(new MusicLibrary.Track(Uri.fromFile(wav).toString(),"Trim fixture"));MusicLibrary.save(c,tracks);
+  activity=startActivitySync(new Intent().setClassName(c.getPackageName(),c.getPackageName()+".MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitFor(()->{service=(PlaybackService)field(activity,"service");return service!=null;});count+=MusicSearchDeviceChecks.runUi(this,activity);
+  runOnMainSync(()->c.startForegroundService(new Intent(c,PlaybackService.class).setAction(PlaybackService.PLAY).putExtra("index",0)));waitFor(()->service.isPlaying());check(service.muted(),"mute enabled before playback");check(service.duration()>=3990,"duration detected");
+  runOnMainSync(()->{service.pause();service.setSpeed(1.5f);});Thread.sleep(250);check(!service.isPlaying(),"changing speed keeps pause");MediaPlayer player=(MediaPlayer)field(service,"player");check(service.muted(),"speed retains mute");
+  runOnMainSync(()->service.resume());check(Math.abs(player.getPlaybackParams().getSpeed()-1.5)<.01,"speed applied after resume");int first=service.position();Thread.sleep(700);int delta=service.position()-first;check(delta>700&&delta<1500,"1.5x advances playback: "+delta);runOnMainSync(()->service.pause());
+  count+=MusicUiChecks.run(this,activity);
+  count+=MusicMetadataDeviceChecks.run(this,activity);
+  count+=MusicLibrary050DeviceChecks.run(this,activity);
+  runOnMainSync(()->service.preview(150,650));Thread.sleep(1100);check(!service.isPlaying(),"segment preview pauses at end");check(service.position()<950,"segment preview stops near endpoint");
+  File trimmed=new File(c.getCacheDir(),"device-trim.wav");long frames=AudioTrimmer.export(c,Uri.fromFile(wav),125000,625000,trimmed,t->{});check(frames==24000,"PCM interval frame count: "+frames);try(RandomAccessFile f=new RandomAccessFile(trimmed,"r")){f.seek(44);short left=Short.reverseBytes(f.readShort()),right=Short.reverseBytes(f.readShort());check(left==-9000&&right==9000,"sample accurate PCM cut: "+left+","+right);check(f.length()==96044,"PCM WAV output length");}
+  File joined=new File(c.getCacheDir(),"joined-trim.wav");long joinedFrames=AudioTrimmer.exportRanges(c,Uri.fromFile(wav),new long[][]{{125000,250000},{625000,750000}},joined,t->{});check(joinedFrames==12000,"joined ranges frame count");try(RandomAccessFile f=new RandomAccessFile(joined,"r")){f.seek(44+6000*4);short l=Short.reverseBytes(f.readShort()),r=Short.reverseBytes(f.readShort());check(l==-15000&&r==15000,"joined range exact second segment start");check(f.length()==48044,"joined WAV length");}
+  check(!service.pitchFollowsSpeed(),"pitch unchanged by default");runOnMainSync(()->service.setPitchFollowsSpeed(true));check(service.pitchFollowsSpeed(),"pitch follows setting saved");check(Math.abs(player.getPlaybackParams().getPitch()-1.5f)<.01,"pitch follows speed applied");runOnMainSync(()->service.setPitchFollowsSpeed(false));check(Math.abs(player.getPlaybackParams().getPitch()-1)<.01,"pitch preservation applied");
+  File aac=new File(c.getFilesDir(),"trim-fixture.m4a");encodeAac(aac);File aacCut=new File(c.getCacheDir(),"aac-cut.wav");long aacFrames=AudioTrimmer.export(c,Uri.fromFile(aac),500000,1500000,aacCut,t->{});check(Math.abs(aacFrames-48000)<10,"AAC interval decoded: "+aacFrames);check(aacCut.length()>90000,"AAC generated PCM");
+  boolean invalid=false;try{AudioTrimmer.export(c,Uri.fromFile(wav),900,1,trimmed,t->{});}catch(IllegalArgumentException e){invalid=true;}check(invalid,"invalid interval rejected");
+  File cancelled=new File(c.getCacheDir(),"cancelled.wav");Thread.currentThread().interrupt();boolean cancelledOk=false;try{AudioTrimmer.export(c,Uri.fromFile(wav),0,3000000,cancelled,t->{});}catch(InterruptedException e){cancelledOk=true;}finally{Thread.interrupted();}check(cancelledOk&&!cancelled.exists(),"cancel cleans output");
+  runOnMainSync(()->{service.setMuted(false);service.setMuted(true);service.play(0);});waitFor(()->service.isPlaying());check(service.muted(),"new track remains muted");
+  count+=MusicAnalysis050DeviceChecks.run(this,activity,service);
+  count+=MusicAnalysis060DeviceChecks.run(this,activity,service);
+  runOnMainSync(()->c.startForegroundService(new Intent(c,PlaybackService.class).setAction(PlaybackService.PLAY).putExtra("index",0)));waitFor(()->service.isPlaying());
+  count+=MusicPlayback050Checks.run(this,activity,service);
+  VolumeProbe probe=new VolumeProbe();Field slot=PlaybackService.class.getDeclaredField("player");slot.setAccessible(true);runOnMainSync(()->{service.pause();try{((MediaPlayer)slot.get(service)).release();slot.set(service,probe);}catch(Exception e){throw new RuntimeException(e);}service.setMuted(true);service.resume();});check(probe.left==0&&probe.right==0&&probe.startVolume==0,"mute reaches player before start");
+  Method focusChange=PlaybackService.class.getDeclaredMethod("handleAudioFocus",int.class);focusChange.setAccessible(true);runOnMainSync(()->{try{focusChange.invoke(service,AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK);focusChange.invoke(service,AudioManager.AUDIOFOCUS_GAIN);}catch(Exception e){throw new RuntimeException(e);}});check(probe.left==0,"focus duck and gain cannot unmute");runOnMainSync(()->{service.pause();service.setSpeed(.5f);});check(probe.left==0&&!probe.playing&&probe.startVolume==0,"speed path stays silent and paused");runOnMainSync(()->service.setMuted(false));check(probe.left==1,"explicit unmute reaches player");runOnMainSync(()->{service.setMuted(true);service.stopPlayback();activity.finish();});
+  result.putString("stream","PASS: "+count+" music device checks (PCM/AAC, speed, pause, preview, mute, cancellation)\n");finish(-1,result);
+ }catch(Throwable e){result.putString("stream","FAIL: "+android.util.Log.getStackTraceString(e));finish(0,result);}}
+ public static final class VolumeProbe extends MediaPlayer {
+  float left=-1,right=-1,startVolume=-1;boolean playing;
+  @Override public void setVolume(float a,float b){left=a;right=b;}
+  @Override public void start(){startVolume=left;playing=true;}
+  @Override public void pause(){playing=false;}
+  @Override public boolean isPlaying(){return playing;}
+  @Override public void setPlaybackParams(PlaybackParams p){start();}
+  @Override public int getCurrentPosition(){return 0;}
+  @Override public int getDuration(){return 4000;}
+ }
+ private void encodeAac(File output)throws Exception {MediaCodec encoder=MediaCodec.createEncoderByType("audio/mp4a-latm");MediaMuxer mux=null;try{MediaFormat format=MediaFormat.createAudioFormat("audio/mp4a-latm",48000,1);format.setInteger(MediaFormat.KEY_AAC_PROFILE,MediaCodecInfo.CodecProfileLevel.AACObjectLC);format.setInteger(MediaFormat.KEY_BIT_RATE,128000);format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE,16384);encoder.configure(format,null,null,MediaCodec.CONFIGURE_FLAG_ENCODE);encoder.start();mux=new MediaMuxer(output.toString(),MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);int frame=0,track=-1;boolean inputDone=false,done=false;MediaCodec.BufferInfo info=new MediaCodec.BufferInfo();long deadline=System.currentTimeMillis()+15000;
+  while(!done&&System.currentTimeMillis()<deadline){if(!inputDone){int index=encoder.dequeueInputBuffer(10000);if(index>=0){ByteBuffer b=encoder.getInputBuffer(index).order(ByteOrder.LITTLE_ENDIAN);b.clear();int n=Math.min(b.remaining()/2,144000-frame);for(int i=0;i<n;i++)b.putShort((short)(12000*Math.sin((frame+i)*2*Math.PI*440/48000)));encoder.queueInputBuffer(index,0,n*2,(long)frame*1000000/48000,n==0?MediaCodec.BUFFER_FLAG_END_OF_STREAM:0);frame+=n;if(n==0)inputDone=true;}}
+   int index=encoder.dequeueOutputBuffer(info,10000);if(index==MediaCodec.INFO_OUTPUT_FORMAT_CHANGED){track=mux.addTrack(encoder.getOutputFormat());mux.start();}else if(index>=0){ByteBuffer b=encoder.getOutputBuffer(index);if(info.size>0&&(info.flags&MediaCodec.BUFFER_FLAG_CODEC_CONFIG)==0){b.position(info.offset);b.limit(info.offset+info.size);mux.writeSampleData(track,b,info);}done=(info.flags&MediaCodec.BUFFER_FLAG_END_OF_STREAM)!=0;encoder.releaseOutputBuffer(index,false);}}
+  if(!done)throw new IOException("AAC encoder timeout");mux.stop();
+ }finally{encoder.release();if(mux!=null)mux.release();}}
+}

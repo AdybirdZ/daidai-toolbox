@@ -12,7 +12,7 @@
   <string name="library_delete_playlist_confirm">确定删除歌单“%1$s”吗？歌曲文件和歌曲资料将保留。</string>
   <string name="library_delete">删除</string>
   <string name="library_playlist_name">歌单名称</string>
-  <string name="library_bad_playlist_name">请输入不重复的歌单名称。</string>
+  <string name="library_bad_playlist_name">歌单名称不能为空，且不能与已有歌单或内置歌单重名。</string>
   <string name="library_add_selected">将所选歌曲加入播放列表</string>
   <string name="library_add_all">全部加入播放列表</string>
   <string name="library_added_to_queue">已加入播放列表</string>

@@ -22,7 +22,7 @@ final class SettingsScreen {
     private TextView action(LinearLayout c,String label,Runnable click){TextView b=a.button(label,false,click);c.addView(b);a.gap(c,10);return b;}
     void show(){LinearLayout c=form();String[] names={UiText.get("settings_014"),UiText.get("tab_weather"),UiText.get("tab_weather_map"),UiText.get("tab_astronomy"),UiText.get("tab_status"),UiText.get("tab_earthquake"),UiText.get("tab_schedule"),a.getString(R.string.tab_random),a.getString(R.string.tab_todo),UiText.get("settings_015")};Runnable[] actions={this::global,this::weather,this::maps,this::astronomy,this::location,a::earthquakeSettings,a::scheduleSettings,a::randomChoiceSettings,a::todoSettings,this::about};for(int n=0;n<names.length;n++)action(c,names[n],actions[n]);new ToolDialog(a).setTitle(UiText.get("action_settings")).setView(scroll(c)).setNegativeButton(UiText.get("action_close"),null).show();}
     private void resetDefaults(){new ToolDialog(a).setTitle(a.getString(R.string.settings_reset)).setMessage(a.getString(R.string.settings_reset_description)).setPositiveButton(a.getString(R.string.action_restore),(d,n)->{boolean iconRestored=a.restoreDefaults();ToolDialog.refresh(a);a.toast(a.getString(iconRestored?R.string.settings_reset_done:R.string.app_icon_reset_partial));}).setNegativeButton(a.getString(R.string.action_cancel),null).show();}
-    private void global(){LinearLayout c=form();action(c,UiText.get("settings_016"),this::background);action(c,a.getString(R.string.app_icon_title),a::appIconSettings);action(c,UiText.get("settings_017"),this::outline);action(c,a.getString(R.string.theme_color_title),this::textColors);action(c,UiText.get("settings_018"),this::timeDisplay);action(c,a.getString(R.string.keep_screen_awake_title),this::keepScreenAwake);action(c,UiText.get("language_title"),this::language);action(c,a.getString(R.string.settings_permissions),this::permissions);action(c,a.getString(R.string.settings_bottom_tabs),()->order(false));action(c,a.getString(R.string.settings_cache),this::cache);action(c,a.getString(R.string.settings_reset),this::resetDefaults);action(c,a.getString(R.string.config_export_title),a::exportConfiguration);action(c,a.getString(R.string.config_import_title),a::importConfiguration);action(c,a.getString(R.string.module_transfer_title),this::moduleTransfer);dialog(UiText.get("settings_014"),c);}
+    private void global(){LinearLayout c=form();action(c,UiText.get("settings_016"),this::background);action(c,a.getString(R.string.app_icon_title),a::appIconSettings);action(c,UiText.get("settings_017"),this::outline);action(c,a.getString(R.string.theme_color_title),this::textColors);action(c,UiText.get("settings_018"),this::timeDisplay);action(c,UiText.get("language_title"),this::language);action(c,a.getString(R.string.settings_permissions),this::permissions);action(c,a.getString(R.string.settings_bottom_tabs),()->order(false));action(c,a.getString(R.string.settings_cache),this::cache);action(c,a.getString(R.string.settings_reset),this::resetDefaults);action(c,a.getString(R.string.config_export_title),a::exportConfiguration);action(c,a.getString(R.string.config_import_title),a::importConfiguration);action(c,a.getString(R.string.module_transfer_title),this::moduleTransfer);dialog(UiText.get("settings_014"),c);}
     private void moduleTransfer(){LinearLayout c=form();for(ModuleRegistry.Module m:ModuleRegistry.ALL){String title=a.getString(a.getResources().getIdentifier(m.title,"string",a.getPackageName()));LinearLayout row=a.row();TextView name=a.text(title,15,a.INK,true);row.addView(name,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(row,8);row.addView(a.button(a.getString(R.string.module_export_short),false,()->a.exportModule(m.id)),a.lp(74,48));a.gapHorizontal(row,8);row.addView(a.button(a.getString(R.string.module_import_short),false,()->a.importModule(m.id)),a.lp(74,48));c.addView(row);a.gap(c,8);}note(c,a.getString(R.string.module_transfer_note));dialog(a.getString(R.string.module_transfer_title),c);}
     private void keepScreenAwake(){LinearLayout c=form();Switch toggle=new Switch(a);toggle.setText(a.getString(R.string.keep_screen_awake_title));toggle.setTextSize(15);toggle.setChecked(prefs.getBoolean("keep_screen_awake",false));toggle.setOnCheckedChangeListener((v,on)->{prefs.edit().putBoolean("keep_screen_awake",on).apply();a.applyKeepScreenAwake();});c.addView(toggle,a.lp(-1,58));note(c,a.getString(R.string.keep_screen_awake_note));dialog(a.getString(R.string.keep_screen_awake_title),c);}
     void settingsPath(boolean language){show();global();if(language)language();}
@@ -101,12 +101,27 @@ final class SettingsScreen {
     }
     private void permissions(){
         LinearLayout c=form();
-        action(c,UiText.get("gps_135"),()->openSystemSettings(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName()))));
-        action(c,a.getString(R.string.todo_permissions_notifications),()->TodoScheduler.notificationSettings(a));
-        if(android.os.Build.VERSION.SDK_INT>=31)action(c,a.getString(R.string.todo_permissions_exact),()->TodoScheduler.exactSettings(a));
-        action(c,UiText.get("gps_134"),()->openSystemSettings(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
-        action(c,a.getString(R.string.battery_optimization_title),this::batteryOptimization);
+        action(c,a.getString(R.string.permissions_app_settings),()->openSystemSettings(appDetails()));
+        action(c,a.getString(R.string.permissions_notification_settings),()->TodoScheduler.notificationSettings(a));
+        if(android.os.Build.VERSION.SDK_INT>=31)action(c,a.getString(R.string.permissions_alarm_settings),()->TodoScheduler.exactSettings(a));
+        action(c,a.getString(R.string.permissions_location_settings),()->openSystemSettings(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
+        action(c,a.getString(R.string.permissions_shortcut_settings),this::shortcutSettings);
+        action(c,a.getString(R.string.permissions_battery_settings),this::batteryOptimization);
+        action(c,a.getString(R.string.keep_screen_awake_title),this::keepScreenAwake);
         dialog(a.getString(R.string.settings_permissions),c);
+    }
+    private Intent appDetails(){return new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName()));}
+    private void shortcutSettings(){
+        LinearLayout c=form();
+        action(c,a.getString(R.string.permissions_open_app_settings),()->openSystemSettings(appDetails()));
+        action(c,a.getString(R.string.permissions_open_home_settings),()->{
+            Intent home=new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+            // Launchers may expose shortcut controls here. This is not a portable permission API.
+            try{if(home.resolveActivity(a.getPackageManager())!=null)a.startActivity(home);else openSystemSettings(appDetails());}
+            catch(Exception unavailable){openSystemSettings(appDetails());}
+        });
+        note(c,a.getString(R.string.permissions_shortcut_note));
+        dialog(a.getString(R.string.permissions_shortcut_settings),c);
     }
     private void openSystemSettings(Intent intent){
         try{a.startActivity(intent);}catch(Exception e){a.toast(a.getString(R.string.system_settings_unavailable));}

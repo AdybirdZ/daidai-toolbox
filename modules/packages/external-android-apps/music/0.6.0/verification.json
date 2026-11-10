@@ -1,0 +1,11 @@
+{
+  "moduleId": "music",
+  "version": "0.6.0",
+  "versionCode": 6,
+  "containerSha256": "3e5ee8f4445ac31ef8d9f807abb90e23af81142e23d50e28e67400dd719ebfb6",
+  "apkSha256": "846dac36d0d751e1fecf26abfeff3a20cf96eecae44f6000c165dd57227da565",
+  "signatureVerified": true,
+  "executablePayload": true,
+  "hostAdapterApi": "daidai-android-app/1",
+  "formalHostAvailable": false
+}

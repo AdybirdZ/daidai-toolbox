@@ -4,11 +4,13 @@
 
 | 应用 | 版本 | 包名 | 说明 |
 | --- | --- | --- | --- |
-| 呆呆音乐 | 0.5.0 | `org.daidai.prototype.music` | [音乐功能与限制](MUSIC-0.5.0.md) |
+| 呆呆音乐 | 0.6.0 | `org.daidai.prototype.music` | [音乐功能与限制](MUSIC-0.6.0.md) |
 | 呆呆传话 | 0.2.0 | `org.daidai.prototype.messaging` | [传话功能与限制](MESSENGER-0.2.0.md) |
 | 呆呆色觉模拟 | 0.2.0 | `org.daidai.prototype.colorvision` | [色觉模拟功能与限制](COLORVISION-0.2.0.md) |
 
 三个应用要求 Android 8.0 及以上，可与正式工具箱同时安装。测试 APK 位于仓库根目录的 [`test-apk/`](../test-apk/)，与主程序分开。本快照包含应用所需的模块、启动入口、共享代码和资源，不依赖正式工具箱源码。它们尚未合并为工具箱内的软件安装功能。
+
+音乐 0.6.0 完善人员信息显示与排序、逐人编辑、曲库与歌单批量管理，以及按音频位置推进的频谱历史。播放、曲库、分析等内部类随同一个音乐应用交付，不是独立安装模块。未来安装契约见 [音乐模块架构](docs/MUSIC-ARCHITECTURE.md)；正式 3.0.0 宿主尚未发布。
 
 ## 本地构建
 
@@ -37,7 +39,7 @@ python build.py all --sdk C:\Android\Sdk --out-dir C:\Temp\daidai-test-apps --ke
 python test.py --out-dir C:\Temp\daidai-test-apps-tests
 ```
 
-核心测试只需 JDK，不使用 Android SDK、模拟器或手机。覆盖播放队列、消息加密和本机 TCP 通信、色彩变换、分屏几何、音频剪辑、WAV 倍速及内嵌标签解析。这些检查不能替代真实设备上的相机、蓝牙、文件授权、系统解码器和后台播放验证。
+核心测试只需 JDK，不使用 Android SDK、模拟器或手机。覆盖播放队列、消息加密和本机 TCP 通信、色彩变换、分屏几何、音频剪辑、WAV 倍速、内嵌标签解析、频谱历史时间轴及人员信息解析。这些检查不能替代真实设备上的相机、蓝牙、文件授权、系统解码器和后台播放验证。
 
 ## 许可与资料
 

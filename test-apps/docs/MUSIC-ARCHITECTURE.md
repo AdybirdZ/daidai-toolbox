@@ -1,4 +1,4 @@
-# 呆呆音乐 0.5.0 模块边界
+# 呆呆音乐 0.6.0 模块边界
 
 音乐是独立 Android 应用，也保留供未来工具箱宿主接入的模块契约。正式工具箱当前没有音乐安装器，3.0.0 宿主尚未实现。本版本不把音乐提前合并到正式工具箱，不以独立 APK 已可安装代替正式宿主验收。
 
@@ -9,14 +9,16 @@
 | 独立启动壳 | `launchers/music/` | 应用包名、版本、系统权限、公开入口和组件注册 |
 | 播放 | `PlaybackService`、`QueuePlanner` | 当前曲目、队列推进、媒体会话、通知、音频焦点、倍速、音调、应用内音量和上限 |
 | 曲库与文件 | `MusicLibrary`、`MusicFolder`、`MusicImporter`、`AudioFileTags` | 用户授权文件夹、音频复制、元数据读取与保存、BPM 精度和文件身份 |
-| 歌单与检索 | `MusicCollections`、`MusicSearch`、`MusicSearchScreen` | 歌单、喜欢、分类与多字段搜索 |
+| 歌单与检索 | `MusicCollections`、`MusicSearch`、`MusicSearchScreen`、`MusicPeople`、`MusicCredits` | 歌单、喜欢、分类与多字段搜索，人员信息解析与统一显示 |
 | 音频编辑 | `AudioEditPlan`、`AudioTrimmer`、`WaveWriter`、`WavSpeedProcessor` | 保留或移除区间、拼接、WAV 导出和可选速度效果 |
-| 音频分析 | `StereoPcmReader`、`MusicAnalysisPanel`、`OscilloscopeView`、`MusicSpectrum`、`SpectrumView` | 本地 PCM 解码、时域与 X-Y 绘制、幅度刻度、频谱与谱峰标注 |
+| 音频分析 | `StereoPcmReader`、`MusicAnalysisPanel`、`OscilloscopeView`、`MusicSpectrum`、`MusicSpectrumHistory`、`SpectrumView` | 本地 PCM 解码、时域与 X-Y 绘制、幅度刻度、频谱、谱峰标注及音频时间轴历史 |
 | 曲绘预览 | `ArtworkPreviewActivity` | 黑底预览、缩放拖动、用户主动保存曲绘 |
 | 页面编排 | `MusicActivity`、`MusicLibraryScreen`、`MusicSettingsScreen` | 播放、我的歌曲、设置及操作入口，调用上述边界 |
 | 公共界面 | `shared/` | 无工具箱私有数据依赖的小型视图和 XML 文字读取工具 |
 
 `MusicActivity` 仍集中编排播放页面和部分对话框；当前是按职责拆分类与资源，尚不是可任意替换的动态插件框架。新增功能继续放入相应边界，避免由入口 Activity 直接实现文件复制、解码或媒体状态管理。
+
+这里的边界是同一个 `music` 应用内部的代码职责。用户只安装一个音乐应用；播放服务、曲库、分析图表等内部类不是独立安装单元，不生成“分析模块”等额外应用包，也不因不直接呈现入口而删除必要类。
 
 纯 Java 的队列、搜索、音频区间和 PCM 算法可在本机运行核心测试；Android 文件提供方、播放状态、曲绘保存与交互使用独立原型设备测试。构建通过与交互通过分别记录。
 
@@ -27,7 +29,7 @@
 - 公开模块入口：`org.daidai.prototype.music.MainActivity`，保留 `org.daidai.toolbox.action.OPEN_MODULE` 与模块 category。
 - 外部应用适配 API：`daidai-android-app/1`；目标未来宿主为 `org.simpleweather.app` / `daidai-toolbox/3.0.0`。
 - 载荷容器：`.ddapp`，真实音乐 APK 位于 `payload/music.apk`，声明 `standaloneInstallable: true`。
-- 当前版本：0.5.0 / versionCode 5；构建和校验从启动壳 manifest 读取版本，不根据聊天记录或输出目录名推断。
+- 当前版本：0.6.0 / versionCode 6；构建和校验从启动壳 manifest 读取版本，不根据聊天记录或输出目录名推断。
 
 未来宿主先验证容器、APK、可信证书指纹和权限，再交由 Android 系统安装。宿主从可信模块目录获得证书指纹，不能信任包内自行声明的签名。实际安装、打开、升级和卸载须按用户确认与系统结果处理。
 
@@ -51,7 +53,9 @@
 
 播放状态集中在 `PlaybackService`，页面绑定并观察服务，页面切换不重新创建播放引擎。“回到开头并暂停”保留当前曲目和音源，与释放播放器或停止服务分开；应用内音量只影响本播放器，不更改系统媒体音量。
 
-分析模块按歌曲与播放位置读取本地 PCM，取消过期解码任务，不改变播放器状态，也不通过麦克风采集其他应用声音。图表量值属于解码样本的相对幅度与频率分析，不能表述为设备实测声压级。
+音频分析组件按歌曲与播放位置读取本地 PCM，取消过期解码任务，不改变播放器状态，也不通过麦克风采集其他应用声音。图表量值属于解码样本的相对幅度与频率分析，不能表述为设备实测声压级。
+
+频谱历史由纯 Java `MusicSpectrumHistory` 维护带原音频位置的帧；历史范围 0.5～5.0 秒，默认 1.0 秒，以 10 ms 音频位置间隔分析，暂停不按墙钟推进，跳转或切歌清空旧时间轴。绘图只展示真实已有采样，解码缺失处不补造谱线。
 
 曲绘预览为未导出的模块 Activity，按宿主包查找资源。Android 10 及以上通过 MediaStore 保存到 `Pictures/呆呆音乐`，失败时只清理本次创建的未完成媒体行；Android 8～9 通过系统文件选择器保存。退出预览取消未完成任务并释放预览位图，不删除原曲绘或原音频。
 
