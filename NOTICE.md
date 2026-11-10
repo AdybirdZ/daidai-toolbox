@@ -6,7 +6,7 @@ Location data: GeoNames, https://www.geonames.org/ , supplied through the Open-M
 
 License: https://creativecommons.org/licenses/by/4.0/
 
-The app translates weather descriptions, rounds numerical values for display, rearranges forecasts, normalizes selected location display labels, and uses Beijing time for Chinese locations. This does not imply endorsement by Open-Meteo, GeoNames or any national weather service.
+The app translates weather descriptions, rounds numerical values for display, rearranges forecasts, normalizes selected location display labels, and formats timestamps according to the selected display setting while retaining each location’s calendar semantics. This does not imply endorsement by Open-Meteo, GeoNames or any national weather service.
 
 `app/src/main/assets/cities.json` contains location data retrieved on 2026-10-24. Selected ambiguous presets were resolved using the official `/v1/get?id=...` endpoint and GeoNames identifiers. `tests/fixtures/beijing.json` is a weather API response retained solely as an attributed regression fixture, not bundled as live weather in the APK.
 
@@ -130,3 +130,6 @@ The remaining-items view only reports the current local candidate pool and does 
 新增 RECEIVE_BOOT_COMPLETED 用于解锁后重启恢复提醒；SCHEDULE_EXACT_ALARM 是用户可选择的特殊访问权限，未授权时采用非准时闹钟。POST_NOTIFICATIONS 沿用已有权限。不开启全屏提醒、不申请自动关闭电池优化、不通过常驻轮询服务保活。
 
 系统行为参考：[通知权限](https://developer.android.com/develop/ui/views/notifications/notification-permission)、[通知渠道](https://developer.android.com/develop/ui/views/notifications/channels)、[闹钟调度](https://developer.android.com/develop/background-work/services/alarms/schedule)。系统授权不等于各厂商设备的投递保证。
+
+
+Independent test applications are distributed separately in `test-apk/`, with corresponding source in `test-apps/`. Their source, simulation-model and artwork notices are in `test-apps/NOTICE.md`; the main application does not bundle these applications.

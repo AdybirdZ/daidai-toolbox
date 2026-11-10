@@ -6,12 +6,12 @@ import java.util.*;
 /** Validated, versioned configuration interchange. No Android or persistence side effects. */
 final class ConfigurationData {
     static final String FORMAT="daidai-toolbox-configuration";
-    static final int MAX_BYTES=40*1024*1024, MAX_BACKGROUND=8*1024*1024;
+    static final int MAX_BYTES=40*1024*1024, MAX_BACKGROUND=8*1024*1024, MAX_APP_ICON=2*1024*1024;
     static final String[] GROUPS={"toolbox","weather","status_places","status_routes","timetable","random_choice","todos"};
     static final class Document {
         final Map<String,Map<String,Object>> groups=new LinkedHashMap<>();
-        boolean backgroundSpecified,randomSpecified,todoSpecified;
-        byte[] background;
+        boolean backgroundSpecified,randomSpecified,todoSpecified,appIconSpecified;
+        byte[] background,appIcon;
         int places,routes,courses,regions,lists,todos;
     }
     private static final Set<String> BOOLEAN=new HashSet<>(Arrays.asList(
@@ -37,6 +37,9 @@ final class ConfigurationData {
         return null; // Runtime state, permissions, acknowledgements and quotas are never restored.
     }
     static JSONObject encode(Map<String,Map<String,?>> source,byte[] background)throws Exception {
+        return encode(source,background,null);
+    }
+    static JSONObject encode(Map<String,Map<String,?>> source,byte[] background,byte[] appIcon)throws Exception {
         JSONObject root=new JSONObject().put("format",FORMAT).put("version",2).put("coordinateSystem","WGS84");
         for(String group:GROUPS){JSONObject values=new JSONObject();Map<String,?> data=source.get(group);
             if(data!=null)for(Map.Entry<String,?> e:data.entrySet()){String kind=type(group,e.getKey());if(kind!=null)values.put(e.getKey(),new JSONObject().put("type",kind).put("value",e.getValue()));}
@@ -44,6 +47,8 @@ final class ConfigurationData {
         }
         if(background!=null&&background.length>MAX_BACKGROUND)throw invalid();
         root.put("background",background==null?JSONObject.NULL:Base64.getEncoder().encodeToString(background));
+        if(appIcon!=null&&(appIcon.length==0||appIcon.length>MAX_APP_ICON))throw invalid();
+        root.put("appIcon",appIcon==null?JSONObject.NULL:Base64.getEncoder().encodeToString(appIcon));
         parse(root.toString());return root;
     }
     static Document parse(String text)throws Exception {
@@ -67,6 +72,10 @@ final class ConfigurationData {
         Map<String,Object> toolbox=doc.groups.get("toolbox");toolbox.put("location_continuous",false);toolbox.put("status_camera_background",false);toolbox.put("quake_source_Wolfx",false);
         if(version==2){if(!root.has("background"))throw invalid();doc.backgroundSpecified=true;
             if(!root.isNull("background")){Object b=root.get("background");if(!(b instanceof String)||((String)b).length()>((MAX_BACKGROUND+2)/3)*4)throw invalid();try{doc.background=Base64.getDecoder().decode((String)b);}catch(IllegalArgumentException e){throw invalid();}if(doc.background.length==0||doc.background.length>MAX_BACKGROUND)throw invalid();}
+        }
+        if(version==2&&root.has("appIcon")){
+            doc.appIconSpecified=true;
+            if(!root.isNull("appIcon")){Object image=root.get("appIcon");if(!(image instanceof String)||((String)image).length()>((MAX_APP_ICON+2)/3)*4)throw invalid();try{doc.appIcon=Base64.getDecoder().decode((String)image);}catch(IllegalArgumentException error){throw invalid();}if(doc.appIcon.length==0||doc.appIcon.length>MAX_APP_ICON)throw invalid();}
         }
         return doc;
     }

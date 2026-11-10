@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_icon_title">应用图标</string>
+    <string name="app_icon_preview">桌面图标预览</string>
+    <string name="app_icon_custom">已选择自定义图片</string>
+    <string name="app_icon_default">默认图标</string>
+    <string name="app_icon_choose">选择图片</string>
+    <string name="app_icon_add">添加到桌面</string>
+    <string name="app_icon_update">更新桌面图标</string>
+    <string name="app_icon_restore">恢复默认图标</string>
+    <string name="app_icon_pinned">已创建桌面快捷方式</string>
+    <string name="app_icon_not_pinned">尚未创建桌面快捷方式</string>
+    <string name="app_icon_unsupported">当前桌面不支持添加自定义快捷方式</string>
+    <string name="app_icon_requested">已提交请求，请在桌面提示中确认；尚不表示添加成功</string>
+    <string name="app_icon_updated">已提交桌面图标更新</string>
+    <string name="app_icon_apply_failed">无法更新桌面图标，请稍后重试或检查桌面设置</string>
+    <string name="app_icon_restored">已恢复默认图标</string>
+    <string name="app_icon_restore_failed">未能完成图标恢复，请重试；若仅桌面未更新，可点击“更新桌面图标”</string>
+    <string name="app_icon_reset_partial">其他设置已恢复，但应用图标未能完全恢复，请在应用图标设置中重试</string>
+    <string name="app_icon_picker_failed">无法打开图片选择器</string>
+    <string name="app_icon_image_saved">图片已保存，请点击下方按钮应用到桌面</string>
+    <string name="app_icon_explanation">自定义图标通过系统桌面快捷方式实现，需要桌面支持，并可能需要您确认。应用列表和系统设置中的原应用图标保持不变。选择图片后，请添加或更新桌面图标；恢复默认图标会同时尝试更新已创建的快捷方式，不会新建快捷方式。\n\n图片仅保存在本机，并随完整配置导出。导入配置只恢复图片，不自动更改桌面，请在本页手动应用。</string>
+    <string name="app_icon_loading">正在读取图片…</string>
+    <string name="app_icon_load_failed">无法读取图片，请选择其他图片</string>
+    <string name="app_icon_crop_title">裁剪应用图标</string>
+    <string name="app_icon_zoom">图片缩放</string>
+    <string name="app_icon_crop_reset">重置</string>
+    <string name="app_icon_crop_use">使用图片</string>
+    <string name="app_icon_crop_note">拖动图片调整位置，双指或滑动滑块缩放。正方形内的区域将保存为图标；实际外形由桌面决定。</string>
+    <string name="app_icon_crop_accessibility">正方形图标裁剪区域</string>
+    <string name="app_icon_saving">正在保存图片…</string>
+    <string name="app_icon_save_failed">图片保存失败，请重试</string>
+    <string name="config_app_icon_replace">\n\n应用图标图片也将按文件内容恢复，但不会自动更改桌面图标。</string>
+</resources>

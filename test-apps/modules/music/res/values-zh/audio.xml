@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_scope_title">示波器</string>
+    <string name="music_scope_normal">普通波形</string>
+    <string name="music_scope_xy">X-Y 模式</string>
+    <string name="music_scope_loading">正在准备歌曲波形…</string>
+    <string name="music_scope_select">请先选择歌曲并等待读取完成。</string>
+    <string name="music_scope_failed">无法读取这首歌曲的波形。</string>
+    <string name="music_scope_track">当前歌曲：%1$s</string>
+    <string name="music_scope_note">波形从当前歌曲文件在本机解码，按播放位置显示，静音时也可查看。普通模式以蓝色、橙色分别表示左右声道；X-Y 模式以左声道为横轴、右声道为纵轴，单声道显示为对角线。每次只缓存播放位置附近 8 秒内的 PCM 数据，关闭后删除；图形反映源音频，不包含倍速、音调与设备音效处理。</string>
+</resources>

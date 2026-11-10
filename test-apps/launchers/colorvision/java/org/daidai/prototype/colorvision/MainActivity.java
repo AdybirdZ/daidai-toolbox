@@ -1,0 +1,1 @@
+package org.daidai.prototype.colorvision; public final class MainActivity extends org.daidai.modules.colorvision.ColorVisionActivity {}

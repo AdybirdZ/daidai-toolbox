@@ -26,7 +26,7 @@ final class ConfigurationTransfer {
             Map<String,Map<String,?>> values=new LinkedHashMap<>();for(String group:ConfigurationData.GROUPS)values.put(group,a.getSharedPreferences(group,0).getAll());
             File image=new File(a.getFilesDir(),"background.jpg");byte[] background=null;
             if(image.exists()){if(image.length()>ConfigurationData.MAX_BACKGROUND)throw new IOException();background=Files.readAllBytes(image.toPath());}
-            byte[] bytes=ConfigurationData.encode(values,background).toString().getBytes(StandardCharsets.UTF_8);if(bytes.length>ConfigurationData.MAX_BYTES)throw new IOException();
+            byte[] bytes=ConfigurationData.encode(values,background,AppIconStore.read(a)).toString().getBytes(StandardCharsets.UTF_8);if(bytes.length>ConfigurationData.MAX_BYTES)throw new IOException();
             main.post(()->{if(!alive()){busy=false;return;}pending=bytes;try{a.startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/json").addCategory(Intent.CATEGORY_OPENABLE).putExtra(Intent.EXTRA_TITLE,"DaidaiToolbox-configuration.json"),EXPORT);}catch(Exception e){finish(R.string.config_picker_failed);}});
         }catch(Exception e){main.post(()->finish(R.string.config_export_failed));}},"configuration-export").start();
     }
@@ -37,7 +37,7 @@ final class ConfigurationTransfer {
         if(request==EXPORT){byte[] bytes=pending;pending=null;if(bytes==null){finish(R.string.config_interrupted);return;}
             new Thread(()->{try(OutputStream out=a.getContentResolver().openOutputStream(uri,"wt")){if(out==null)throw new IOException();out.write(bytes);out.flush();main.post(()->finish(R.string.config_exported));}catch(Exception e){main.post(()->finish(R.string.config_export_failed));}},"configuration-export").start();
         }else new Thread(()->{try{
-            byte[] bytes=read(uri);String text=StandardCharsets.UTF_8.newDecoder().decode(java.nio.ByteBuffer.wrap(bytes)).toString();ConfigurationData.Document doc=ConfigurationData.parse(text);validateImage(doc.background);main.post(()->confirm(doc));
+            byte[] bytes=read(uri);String text=StandardCharsets.UTF_8.newDecoder().decode(java.nio.ByteBuffer.wrap(bytes)).toString();ConfigurationData.Document doc=ConfigurationData.parse(text);validateImage(doc.background);AppIconStore.validate(doc.appIcon);main.post(()->confirm(doc));
         }catch(Exception|OutOfMemoryError e){main.post(()->finish(R.string.config_import_invalid));}},"configuration-validate").start();
     }
     private byte[] read(Uri uri)throws IOException{try(InputStream in=a.getContentResolver().openInputStream(uri);ByteArrayOutputStream out=new ByteArrayOutputStream()){
@@ -50,7 +50,7 @@ final class ConfigurationTransfer {
     }
     private void confirm(ConfigurationData.Document doc){
         if(!alive()){busy=false;return;}
-        new ToolDialog(a).setTitle(a.getString(R.string.config_import_title)).setMessage(a.getString(R.string.config_import_summary,doc.regions,doc.places,doc.routes,doc.courses,doc.lists)+(doc.todoSpecified?a.getString(R.string.todo_config_count,doc.todos):"")+(doc.backgroundSpecified?a.getString(R.string.config_background_replace):a.getString(R.string.config_background_legacy))+a.getString(R.string.config_import_warning)+(doc.todoSpecified?a.getString(R.string.todo_import_expiry):""))
+        new ToolDialog(a).setTitle(a.getString(R.string.config_import_title)).setMessage(a.getString(R.string.config_import_summary,doc.regions,doc.places,doc.routes,doc.courses,doc.lists)+(doc.todoSpecified?a.getString(R.string.todo_config_count,doc.todos):"")+(doc.backgroundSpecified?a.getString(R.string.config_background_replace):a.getString(R.string.config_background_legacy))+(doc.appIconSpecified?a.getString(R.string.config_app_icon_replace):"")+a.getString(R.string.config_import_warning)+(doc.todoSpecified?a.getString(R.string.todo_import_expiry):""))
             .setNegativeButton(a.getString(R.string.action_cancel),null).setPositiveButton(a.getString(R.string.config_confirm),(d,n)->apply(doc)).setOnDismissListener(d->{if(!applying)busy=false;}).show();
     }
     private void apply(ConfigurationData.Document doc){
@@ -58,11 +58,13 @@ final class ConfigurationTransfer {
         applying=true;a.prepareConfigurationImport();
         AlertDialog progress=new ToolDialog(a).setTitle(a.getString(R.string.config_import_title)).setMessage(a.getString(R.string.config_working)).setCancelable(false).show();
         new Thread(()->{
-            Map<String,Map<String,?>> before=new LinkedHashMap<>();File image=new File(a.getFilesDir(),"background.jpg"),temp=new File(a.getFilesDir(),"configuration-background.tmp");byte[] oldImage=null;boolean success=false,restored=true,changed=false;
+            Map<String,Map<String,?>> before=new LinkedHashMap<>();File image=new File(a.getFilesDir(),"background.jpg"),temp=new File(a.getFilesDir(),"configuration-background.tmp"),icon=AppIconStore.file(a),iconTemp=new File(a.getFilesDir(),"configuration-icon.tmp");byte[] oldImage=null,oldIcon=null;boolean success=false,restored=true,changed=false;
             try{
                 if(image.exists())oldImage=Files.readAllBytes(image.toPath());
+                oldIcon=AppIconStore.read(a);
                 for(String group:ConfigurationData.GROUPS)before.put(group,new HashMap<>(a.getSharedPreferences(group,0).getAll()));
                 if(doc.backgroundSpecified&&doc.background!=null)Files.write(temp.toPath(),doc.background);
+                if(doc.appIconSpecified&&doc.appIcon!=null)Files.write(iconTemp.toPath(),doc.appIcon);
                 changed=true;
                 for(String group:ConfigurationData.GROUPS){if(group.equals("random_choice")&&!doc.randomSpecified||group.equals("todos")&&!doc.todoSpecified)continue;SharedPreferences prefs=a.getSharedPreferences(group,0);Map<String,Object> next=new HashMap<>(before.get(group));
                     next.keySet().removeIf(k->ConfigurationData.type(group,k)!=null);next.putAll(doc.groups.get(group));
@@ -70,11 +72,13 @@ final class ConfigurationTransfer {
                     if(!write(prefs,next))throw new IOException();
                 }
                 if(doc.backgroundSpecified){if(doc.background==null)Files.deleteIfExists(image.toPath());else Files.move(temp.toPath(),image.toPath(),StandardCopyOption.REPLACE_EXISTING);}
+                if(doc.appIconSpecified){if(doc.appIcon==null)Files.deleteIfExists(icon.toPath());else Files.move(iconTemp.toPath(),icon.toPath(),StandardCopyOption.REPLACE_EXISTING);}
                 success=true;
             }catch(Exception e){
                 if(changed)for(Map.Entry<String,Map<String,?>> entry:before.entrySet())if(!write(a.getSharedPreferences(entry.getKey(),0),entry.getValue()))restored=false;
                 try{if(changed){if(oldImage==null)Files.deleteIfExists(image.toPath());else Files.write(image.toPath(),oldImage);}}catch(Exception restore){restored=false;}
-            }finally{temp.delete();}
+                try{if(changed){if(oldIcon==null)Files.deleteIfExists(icon.toPath());else Files.write(icon.toPath(),oldIcon);}}catch(Exception restore){restored=false;}
+            }finally{temp.delete();iconTemp.delete();}
             TodoScheduler.afterImport(a);
             final boolean okay=success,rollback=restored;
             main.post(()->{busy=applying=false;if(!alive())return;progress.dismiss();a.configurationImportFinished(okay,rollback);});

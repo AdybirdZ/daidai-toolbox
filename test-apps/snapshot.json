@@ -1,0 +1,351 @@
+{
+  "formatVersion": 1,
+  "developmentSource": "prototypes/",
+  "apps": {
+    "music": "0.4.0",
+    "messaging": "0.2.0",
+    "colorvision": "0.2.0"
+  },
+  "files": [
+    {
+      "file": "modules/colorvision/assets/licenses/DaltonLens-MIT.txt",
+      "developmentSource": "prototypes/modules/colorvision/assets/licenses/DaltonLens-MIT.txt",
+      "sha256": "aaef9255b6f8684950d56c1db08906f1f16d8dfc3d7c43197f6ef7789a843cc2"
+    },
+    {
+      "file": "modules/colorvision/org/daidai/modules/colorvision/CameraPreview.java",
+      "developmentSource": "prototypes/modules/colorvision/org/daidai/modules/colorvision/CameraPreview.java",
+      "sha256": "408d1439f66c50c489c5299f19e2bce3f027f050aacd417a69c6bec7a6cf9d0f"
+    },
+    {
+      "file": "modules/colorvision/org/daidai/modules/colorvision/ColorVision.java",
+      "developmentSource": "prototypes/modules/colorvision/org/daidai/modules/colorvision/ColorVision.java",
+      "sha256": "c9254e012f3c5bac2c75d14633660aa92f0900ebb10f159d3a21d3d03dbeb6b7"
+    },
+    {
+      "file": "modules/colorvision/org/daidai/modules/colorvision/ColorVisionActivity.java",
+      "developmentSource": "prototypes/modules/colorvision/org/daidai/modules/colorvision/ColorVisionActivity.java",
+      "sha256": "4ae374b67d7abd2fa378dcda77f1e54eeac5f30d1a4c995c02c8de80f58d410b"
+    },
+    {
+      "file": "modules/colorvision/org/daidai/modules/colorvision/ComparisonLayout.java",
+      "developmentSource": "prototypes/modules/colorvision/org/daidai/modules/colorvision/ComparisonLayout.java",
+      "sha256": "126a9e0f2627450dbe48555e70c4fccb56ec97a3de0931396d9d75b47fbcdc8b"
+    },
+    {
+      "file": "modules/colorvision/org/daidai/modules/colorvision/ComparisonView.java",
+      "developmentSource": "prototypes/modules/colorvision/org/daidai/modules/colorvision/ComparisonView.java",
+      "sha256": "b2670cc49621fadb6a33783194d7a46c51d009fcdd54138c9d04993c00072481"
+    },
+    {
+      "file": "modules/colorvision/org/daidai/modules/colorvision/PreviewGeometry.java",
+      "developmentSource": "prototypes/modules/colorvision/org/daidai/modules/colorvision/PreviewGeometry.java",
+      "sha256": "8aa09d6c588f7429b6fa16e208c26ea9ccfd658dd73283dad1088d24d37d6fb6"
+    },
+    {
+      "file": "modules/colorvision/res/values/strings.xml",
+      "developmentSource": "prototypes/modules/colorvision/res/values/strings.xml",
+      "sha256": "14aa1b9898988151c0901ad045ed09ce2f87e9c4611b01fd59bb7236a93de2e7"
+    },
+    {
+      "file": "modules/colorvision/res/values-en/strings.xml",
+      "developmentSource": "prototypes/modules/colorvision/res/values-en/strings.xml",
+      "sha256": "8e17d9b885cf472104bed144efffd2af63d3876292235a715061b6b9263ab621"
+    },
+    {
+      "file": "modules/colorvision/res/values-zh/strings.xml",
+      "developmentSource": "prototypes/modules/colorvision/res/values-zh/strings.xml",
+      "sha256": "14aa1b9898988151c0901ad045ed09ce2f87e9c4611b01fd59bb7236a93de2e7"
+    },
+    {
+      "file": "modules/messaging/org/daidai/modules/messaging/BluetoothPeer.java",
+      "developmentSource": "prototypes/modules/messaging/org/daidai/modules/messaging/BluetoothPeer.java",
+      "sha256": "a9c50faaf337e3265cc0be43d64a5466e1ba903ccd17bd3c1cb9667ba174a803"
+    },
+    {
+      "file": "modules/messaging/org/daidai/modules/messaging/LanPeer.java",
+      "developmentSource": "prototypes/modules/messaging/org/daidai/modules/messaging/LanPeer.java",
+      "sha256": "e05b781a6129ddb7bba08c2bce6c8c5be97254b97990cdbb124e772eb45eaef4"
+    },
+    {
+      "file": "modules/messaging/org/daidai/modules/messaging/MessagePeer.java",
+      "developmentSource": "prototypes/modules/messaging/org/daidai/modules/messaging/MessagePeer.java",
+      "sha256": "80e44fa24029bf7edb268e7788e8c22b7e658f46fa07a989113deb9ab6257d2d"
+    },
+    {
+      "file": "modules/messaging/org/daidai/modules/messaging/MessagingActivity.java",
+      "developmentSource": "prototypes/modules/messaging/org/daidai/modules/messaging/MessagingActivity.java",
+      "sha256": "b1bad5c6abea0d2022f6109c7a79879dcca46664147bad85ef751f6f13b93b09"
+    },
+    {
+      "file": "modules/messaging/org/daidai/modules/messaging/SecureChannel.java",
+      "developmentSource": "prototypes/modules/messaging/org/daidai/modules/messaging/SecureChannel.java",
+      "sha256": "b0c44cf6d82d9a8938cc2389527e4eb1dd9f63ebb1dd1977750639b8cac84764"
+    },
+    {
+      "file": "modules/messaging/org/daidai/modules/messaging/StreamSession.java",
+      "developmentSource": "prototypes/modules/messaging/org/daidai/modules/messaging/StreamSession.java",
+      "sha256": "0743315197beeac0132c4d16cb2cc70171d6b42e6b6efafc07aceb42363c63db"
+    },
+    {
+      "file": "modules/music/ASSETS.md",
+      "developmentSource": "prototypes/modules/music/ASSETS.md",
+      "sha256": "1237cf6e955fec2cc899f172826f78119ee75a4b431130a325501fd28b7a79c4"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/AudioEditPlan.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/AudioEditPlan.java",
+      "sha256": "311f61a2a27a8261ab7b1e4efd5a3eddd76f181c3626167971fd7c1830cb16d7"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/AudioFileTags.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/AudioFileTags.java",
+      "sha256": "41791808c2e8008573f14d8d2728ec3bce07b673988a2b39cf03fb8ccc103ea5"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/AudioTrimmer.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/AudioTrimmer.java",
+      "sha256": "cda46e1d518952d4f72757ed5fc0cddf8c7c3cb5f3e48a59cfa4f20d7d6df507"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicActivity.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicActivity.java",
+      "sha256": "dfdf73a1895c74a9988ddf31dde39cb26b618591b7ea3eaba8e444d034053a70"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicCollections.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicCollections.java",
+      "sha256": "81f05233136e8602e4c09877f796ad1634878eaf327f6fbf3d613c7e642a453a"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicFolder.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicFolder.java",
+      "sha256": "f43e8ad9561a12396b6d05ef946201460cecd20e0ac2c176512c0720e50f4da7"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicLibrary.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicLibrary.java",
+      "sha256": "14866c400c40f69cde0cf1bbfab2e5741ba10c22f7d8facdd5bbd872265a1bf4"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicLibraryScreen.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicLibraryScreen.java",
+      "sha256": "821be8c8b6471d81a1ceffb179589b48d255c5a33064172605867a260da22884"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicScopeDialog.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicScopeDialog.java",
+      "sha256": "804ec34a81bbc14055bc1bcafce079742f1c1cd2d7a9b84134dc8d07c5f668ec"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicSearch.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicSearch.java",
+      "sha256": "5252572126b6a4d1e1e2f4657ea29375352f7c0133732bc801ae43322cb4fb90"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicSearchScreen.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicSearchScreen.java",
+      "sha256": "ccb76fa855949c35c9667caddcefee7d6aa862c43b2c459822f4d241a0efd521"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicTrimDialog.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicTrimDialog.java",
+      "sha256": "38f5c04a878938e223f466fa502f1ac13148a0bc2962f8ed6ad1a3ccdec2f947"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/OscilloscopeView.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/OscilloscopeView.java",
+      "sha256": "a76eb632d8e3a1c1761e7a8811a1f4c60b896f182636a36e485b468253839246"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/PlaybackService.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/PlaybackService.java",
+      "sha256": "6a3634e360787ea88365bbe4ec390a4d339d2454606edb837b0a98cf3edf0294"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/QueuePlanner.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/QueuePlanner.java",
+      "sha256": "e2271b6f7a05a4949bfa0b47dcdde5b41c72a9280f0b904e2a680acf164271fe"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/StereoPcmReader.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/StereoPcmReader.java",
+      "sha256": "71aa8bc1e8509fb861b55b67879a6cb6745347677946e626a8b373d32ddca17d"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/WaveWriter.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/WaveWriter.java",
+      "sha256": "f137ca8f0cf49785908a276e8e8aa7e466edc852dfaa3a0210374935b192629c"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/WavSpeedProcessor.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/WavSpeedProcessor.java",
+      "sha256": "07cbdec3e7a1696c55c1509e97ac03ad6cbc93a02e9f75e19b3b704381867500"
+    },
+    {
+      "file": "modules/music/res/drawable-nodpi/music_default_cover.png",
+      "developmentSource": "prototypes/modules/music/res/drawable-nodpi/music_default_cover.png",
+      "sha256": "e2984aafbcddc7fa6fa43e8758baefaed7f63fa9d031c2cd418bea613c29d764"
+    },
+    {
+      "file": "modules/music/res/values/audio.xml",
+      "developmentSource": "prototypes/modules/music/res/values/audio.xml",
+      "sha256": "027c401fb436046cd10ba0fcc6655f7b57b5e39a4e79de2ccfb909b7afeab7d7"
+    },
+    {
+      "file": "modules/music/res/values/music_editing.xml",
+      "developmentSource": "prototypes/modules/music/res/values/music_editing.xml",
+      "sha256": "780e86ccc04a9e538f772fdeaa0d9c9f2300aa921f82cfb1f6bb9a550df30129"
+    },
+    {
+      "file": "modules/music/res/values/music_library.xml",
+      "developmentSource": "prototypes/modules/music/res/values/music_library.xml",
+      "sha256": "42d1fba891b4291325aa85f1be6e05ee33c1dbeccbdc4dfaf57d0c5174b4d216"
+    },
+    {
+      "file": "modules/music/res/values/music_search.xml",
+      "developmentSource": "prototypes/modules/music/res/values/music_search.xml",
+      "sha256": "3d8d381e0f62c9650927f0bc4d5e114a581c49357e0c2198dec389c722d8538e"
+    },
+    {
+      "file": "modules/music/res/values/strings.xml",
+      "developmentSource": "prototypes/modules/music/res/values/strings.xml",
+      "sha256": "3ccfb985d707653102a69992af435a996e3a94246ae32c145ee21795ddf01d7a"
+    },
+    {
+      "file": "modules/music/res/values-en/audio.xml",
+      "developmentSource": "prototypes/modules/music/res/values-en/audio.xml",
+      "sha256": "f10b644b20b112aa847556c5d51ea26b4aa21c98589921a83d152aca7e2a890e"
+    },
+    {
+      "file": "modules/music/res/values-en/music_editing.xml",
+      "developmentSource": "prototypes/modules/music/res/values-en/music_editing.xml",
+      "sha256": "48455671b1ce9ee3673188ad1b33897f67a64bb17f44f5c19ab6bccb78c599a6"
+    },
+    {
+      "file": "modules/music/res/values-en/music_library.xml",
+      "developmentSource": "prototypes/modules/music/res/values-en/music_library.xml",
+      "sha256": "a7b477addf13a5f13b21ae6cc47709251e6f85e121caa613dea8017a85c2e744"
+    },
+    {
+      "file": "modules/music/res/values-en/music_search.xml",
+      "developmentSource": "prototypes/modules/music/res/values-en/music_search.xml",
+      "sha256": "df3c3ccaefc88b4feccf2a0eb22d118980fa0db4666d06848b76c74220be8cff"
+    },
+    {
+      "file": "modules/music/res/values-en/strings.xml",
+      "developmentSource": "prototypes/modules/music/res/values-en/strings.xml",
+      "sha256": "2258363061e64cebdb3bae6ab8466c69b38080854c1fc6be816ec598f5ca79a4"
+    },
+    {
+      "file": "modules/music/res/values-zh/audio.xml",
+      "developmentSource": "prototypes/modules/music/res/values-zh/audio.xml",
+      "sha256": "027c401fb436046cd10ba0fcc6655f7b57b5e39a4e79de2ccfb909b7afeab7d7"
+    },
+    {
+      "file": "modules/music/res/values-zh/music_editing.xml",
+      "developmentSource": "prototypes/modules/music/res/values-zh/music_editing.xml",
+      "sha256": "780e86ccc04a9e538f772fdeaa0d9c9f2300aa921f82cfb1f6bb9a550df30129"
+    },
+    {
+      "file": "modules/music/res/values-zh/music_library.xml",
+      "developmentSource": "prototypes/modules/music/res/values-zh/music_library.xml",
+      "sha256": "42d1fba891b4291325aa85f1be6e05ee33c1dbeccbdc4dfaf57d0c5174b4d216"
+    },
+    {
+      "file": "modules/music/res/values-zh/music_search.xml",
+      "developmentSource": "prototypes/modules/music/res/values-zh/music_search.xml",
+      "sha256": "3d8d381e0f62c9650927f0bc4d5e114a581c49357e0c2198dec389c722d8538e"
+    },
+    {
+      "file": "modules/music/res/values-zh/strings.xml",
+      "developmentSource": "prototypes/modules/music/res/values-zh/strings.xml",
+      "sha256": "3ccfb985d707653102a69992af435a996e3a94246ae32c145ee21795ddf01d7a"
+    },
+    {
+      "file": "launchers/colorvision/AndroidManifest.xml",
+      "developmentSource": "prototypes/launchers/colorvision/AndroidManifest.xml",
+      "sha256": "246f61e956c37c4e25419e6cf34c0bf01db44444052def6975c45b79d89de293"
+    },
+    {
+      "file": "launchers/colorvision/java/org/daidai/prototype/colorvision/MainActivity.java",
+      "developmentSource": "prototypes/launchers/colorvision/java/org/daidai/prototype/colorvision/MainActivity.java",
+      "sha256": "2bb1786ae1ddf5d959c5bc3b53e3c6336aa54f828efb028598222c622ff5b70f"
+    },
+    {
+      "file": "launchers/messaging/AndroidManifest.xml",
+      "developmentSource": "prototypes/launchers/messaging/AndroidManifest.xml",
+      "sha256": "acc7a3f5c9e4b521d68f910380149e838efa89f89f4c6c99693bccf294bf6f50"
+    },
+    {
+      "file": "launchers/messaging/java/org/daidai/prototype/messaging/MainActivity.java",
+      "developmentSource": "prototypes/launchers/messaging/java/org/daidai/prototype/messaging/MainActivity.java",
+      "sha256": "25b1ed560e050e7e5bb4ace37a013857d5a19c628d6782e2f07f79f29eeaaead"
+    },
+    {
+      "file": "launchers/music/AndroidManifest.xml",
+      "developmentSource": "prototypes/launchers/music/AndroidManifest.xml",
+      "sha256": "9bf79dc3ec345116cb46bcb516d72f28d0f52b36006ec9a023a850e880d7606d"
+    },
+    {
+      "file": "launchers/music/java/org/daidai/prototype/music/MainActivity.java",
+      "developmentSource": "prototypes/launchers/music/java/org/daidai/prototype/music/MainActivity.java",
+      "sha256": "bdab3bce248e8283486811d7460dbd0f2e9561efce8d01ca67c4952592deb42b"
+    },
+    {
+      "file": "shared/java/org/daidai/modules/shared/Texts.java",
+      "developmentSource": "prototypes/shared/java/org/daidai/modules/shared/Texts.java",
+      "sha256": "d1645a486b2460bd9ddd6f4c6a5afef19044c42cf1674e5ae46ab79fb34963db"
+    },
+    {
+      "file": "shared/java/org/daidai/modules/shared/Ui.java",
+      "developmentSource": "prototypes/shared/java/org/daidai/modules/shared/Ui.java",
+      "sha256": "47cdf3e08860177d8fb842e4b889a4f1350e619130f7958fb6a7fd44676d48a0"
+    },
+    {
+      "file": "shared/res/drawable/ic_tool.xml",
+      "developmentSource": "prototypes/shared/res/drawable/ic_tool.xml",
+      "sha256": "215d88fedcb146cdaf7cca6a036dae0e39766f89d14a4e24a0c35f0552952bce"
+    },
+    {
+      "file": "shared/res/values/styles.xml",
+      "developmentSource": "prototypes/shared/res/values/styles.xml",
+      "sha256": "cff0a32a44ba5dd49c759ff659b0e77cdd104bcee258a1d04271000ea5f2786c"
+    },
+    {
+      "file": "tests/AudioFileTagsChecks.java",
+      "developmentSource": "prototypes/tests/AudioFileTagsChecks.java",
+      "sha256": "297bf3dbf77cacc8293de9880a9aefd67ac5f8dda0c8c4d62a8c800a9889f418"
+    },
+    {
+      "file": "tests/ColorLayoutChecks.java",
+      "developmentSource": "prototypes/tests/ColorLayoutChecks.java",
+      "sha256": "4c84d035eeffe68c7934882f008cd9c864109dd2becdf5bcd9affb0d669d47a0"
+    },
+    {
+      "file": "tests/ColorMusicChecks.java",
+      "developmentSource": "prototypes/tests/ColorMusicChecks.java",
+      "sha256": "7365bac8df23f24bda3155d5ebcf030f6a316f5d97d34b8ffbf0462ca0035f6a"
+    },
+    {
+      "file": "tests/CoreChecks.java",
+      "developmentSource": "prototypes/tests/CoreChecks.java",
+      "sha256": "b7063303441a19d21c36359859138e89176a6a4cbe46eef1f6d50df9a18f0153"
+    },
+    {
+      "file": "tests/MusicEditingChecks.java",
+      "developmentSource": "prototypes/tests/MusicEditingChecks.java",
+      "sha256": "896c2ab04664da8df48435afa9eb1ee18759c8bdd2056e6fdde7996baccb61f3"
+    },
+    {
+      "file": "tests/StreamSessionChecks.java",
+      "developmentSource": "prototypes/tests/StreamSessionChecks.java",
+      "sha256": "211d3ab72a5336eaeea4ef912075b07af4b869361b2a08636485c34954ff3ac2"
+    },
+    {
+      "file": "tests/WavSpeedChecks.java",
+      "developmentSource": "prototypes/tests/WavSpeedChecks.java",
+      "sha256": "cf8907fea50098ae916d4a8e58115fad2913c658d16035b73e9303764af7b608"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_220_title" formatted="false">2.2.0 · 自定义桌面图标</string>
+    <string name="update_220_detail" formatted="false">新增应用图标设置，可选择图片、裁剪后创建或更新桌面快捷方式，并恢复默认图标。完整配置导入导出保留自定义图片。应用列表和系统设置中的图标仍使用安装包原图标，桌面操作需启动器支持。</string>
+    <string name="update_215_title" formatted="false">2.1.5 · 模块配置转移</string>
+    <string name="update_215_detail" formatted="false">新增按模块导入与导出，保留全部配置转移。配置导入不恢复权限、缓存或正在运行的任务。提供面向未来 3.0.0 宿主的模块清单与配置契约，当前尚不支持动态安装或卸载模块。修复导入暂停待办调度时通知摘要残留的问题。</string>
+</resources>

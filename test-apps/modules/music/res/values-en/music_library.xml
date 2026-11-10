@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="library_my_songs">My songs</string>
+  <string name="library_scanning">Reading the music folder…</string>
+  <string name="library_create_playlist">New playlist</string>
+  <string name="library_favorites">Liked music</string>
+  <string name="library_no_playlists">No custom playlists yet.</string>
+  <string name="library_playlists">Playlists</string>
+  <string name="library_open_playlist">View songs</string>
+  <string name="library_rename_playlist">Rename playlist</string>
+  <string name="library_delete_playlist">Delete playlist</string>
+  <string name="library_delete_playlist_confirm">Delete playlist “%1$s”? Audio files and track information will be kept.</string>
+  <string name="library_delete">Delete</string>
+  <string name="library_playlist_name">Playlist name</string>
+  <string name="library_bad_playlist_name">Enter a unique playlist name.</string>
+  <string name="library_add_selected">Add selected to queue</string>
+  <string name="library_add_all">Add all to queue</string>
+  <string name="library_added_to_queue">Added to playback queue</string>
+  <string name="library_add_to_playlist">Add to playlist</string>
+  <string name="library_no_songs">No songs yet. Import audio or choose a music storage folder.</string>
+  <string name="library_add_to_queue">Add to playback queue</string>
+  <string name="library_unfavorite">Unlike</string>
+  <string name="library_favorite">Like</string>
+  <string name="library_remove_from_playlist">Remove from this playlist</string>
+  <string name="library_remove_confirm">Remove this song from the playlist? Audio files and track information will be kept.</string>
+  <string name="library_remove">Remove</string>
+  <string name="library_select_songs">Select songs first.</string>
+  <string name="library_added_to_playlist">Added to playlist</string>
+  <string name="library_title_required">Enter a song title.</string>
+  <string name="library_number_range">Enter a whole number from %1$d to %2$d, or leave blank.</string>
+  <string name="library_file_imported">File imported</string>
+  <string name="library_stop_note">Stop playback ends the background playback service. Playing again starts the song from the beginning.</string>
+  <string name="library_pitch_change">Change pitch with playback speed</string>
+  <string name="library_pitch_note">Pitch stays unchanged by default. When enabled, pitch rises or falls with playback speed.</string>
+  <string name="library_queue_empty_keep">Only clears the playback queue. Track information, playlists, likes, lyrics, covers and file access remain.</string>
+  <string name="library_folder_failed">The music folder could not be read. Check file access or select the folder again. Previously saved track information is kept.</string>
+  <string name="library_instrumental_lyrics">Instrumental</string>
+</resources>

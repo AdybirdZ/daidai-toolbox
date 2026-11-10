@@ -1,0 +1,36 @@
+{
+  "format": "daidai-test-apks/1",
+  "updated": "2026-11-10",
+  "apps": [
+    {
+      "name": "呆呆音乐",
+      "version": "0.4.0",
+      "packageName": "org.daidai.prototype.music",
+      "apk": "DaidaiMusic-0.4.0.apk",
+      "size": 1241652,
+      "sha256": "a2391b68ebeee5cf52c18f97daf5e02389e41e3dad1b0c6be0d1ae9fe6b885e3",
+      "standalone": true,
+      "requiresToolbox": false
+    },
+    {
+      "name": "呆呆传话",
+      "version": "0.2.0",
+      "packageName": "org.daidai.prototype.messaging",
+      "apk": "DaidaiMessenger-0.2.0.apk",
+      "size": 37337,
+      "sha256": "094386c79e6ef6d53177a8f81ad61f0593b09482c5c74518ff6c48288422a000",
+      "standalone": true,
+      "requiresToolbox": false
+    },
+    {
+      "name": "呆呆色觉模拟",
+      "version": "0.2.0",
+      "packageName": "org.daidai.prototype.colorvision",
+      "apk": "DaidaiColorVision-0.2.0.apk",
+      "size": 41513,
+      "sha256": "6245a7864169fa78be8228f9ebe15c1df8d7ab0a55b4a2c4d82cd002d02bca4c",
+      "standalone": true,
+      "requiresToolbox": false
+    }
+  ]
+}

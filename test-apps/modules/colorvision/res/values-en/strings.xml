@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="cv_title">Daidai Color Vision</string>
+  <string name="cv_subtitle">Standalone test version %1$s · On-device processing</string>
+  <string name="cv_camera">Live camera</string>
+  <string name="cv_photo">Choose image</string>
+  <string name="cv_protan">Protanopia</string>
+  <string name="cv_deutan">Deuteranopia</string>
+  <string name="cv_tritan">Tritanopia</string>
+  <string name="cv_switch_camera">Switch camera</string>
+  <string name="cv_export">Export comparison</string>
+  <string name="cv_choose">Choose an image or start the camera.</string>
+  <string name="cv_live">Live simulation · Camera stops when you leave</string>
+  <string name="cv_processing">Processing image…</string>
+  <string name="cv_size">Processing size: %1$d × %2$d pixels</string>
+  <string name="cv_image_failed">Cannot process this image. Try another file.</string>
+  <string name="cv_export_first">Choose an image and wait for processing. Live frames are not saved.</string>
+  <string name="cv_saved">Image exported</string>
+  <string name="cv_permission">Camera permission denied. Image processing remains available.</string>
+  <string name="cv_no_camera">The selected camera is unavailable</string>
+  <string name="cv_camera_error">Camera unavailable. Retry or switch cameras.</string>
+  <string name="cv_camera_failed">Camera unavailable: %1$s</string>
+  <string name="cv_guide_title">Guide and sources</string>
+  <string name="cv_guide">Select any combination of original, protanopia, deuteranopia and tritanopia. One view fills the area; multiple views appear side by side in a grid, for both live camera and imported images.\n\nUses the Machado, Oliveira and Fernandes (2009) approximation at full severity in linear sRGB. It cannot reproduce every individual’s vision or provide a diagnosis.\n\nImages and camera frames stay on the device. Imported images are sampled to a maximum edge of 2048 pixels. PNG export includes the selected views in the current layout, with a maximum edge of 2048 pixels, without overwriting the source. Leaving the app closes the camera. Cloud file providers may use their own network access.\n\nMatrices reference the MIT-licensed DaltonLens implementation; its license is bundled. Paper: A Physiologically-based Model for Simulation of Color Vision Deficiency, IEEE TVCG 15(6), 2009. DOI: 10.1109/TVCG.2009.113. Implementation: https://github.com/DaltonLens/DaltonLens-Python</string>
+  <string name="cv_views">Comparison views (select multiple)</string>
+  <string name="cv_reference">Original</string>
+  <string name="cv_one_view">Keep at least one view selected</string>
+  <string name="cv_export_failed">Cannot export the image. Check storage space and file access.</string>
+</resources>

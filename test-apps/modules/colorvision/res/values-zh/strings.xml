@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="cv_title">呆呆色觉模拟</string>
+  <string name="cv_subtitle">独立测试版 %1$s · 本机处理</string>
+  <string name="cv_camera">实时相机</string>
+  <string name="cv_photo">选择图片</string>
+  <string name="cv_protan">红色盲</string>
+  <string name="cv_deutan">绿色盲</string>
+  <string name="cv_tritan">蓝色盲</string>
+  <string name="cv_switch_camera">切换前后相机</string>
+  <string name="cv_export">导出对照图片</string>
+  <string name="cv_choose">选择本地图片或开启实时相机。</string>
+  <string name="cv_live">相机实时模拟 · 离开应用后停止</string>
+  <string name="cv_processing">正在处理图片…</string>
+  <string name="cv_size">处理尺寸：%1$d × %2$d 像素</string>
+  <string name="cv_image_failed">无法读取或处理图片，请尝试其他文件。</string>
+  <string name="cv_export_first">请先选择图片并等待处理完成；相机画面不保存。</string>
+  <string name="cv_saved">图片已导出</string>
+  <string name="cv_permission">未获得相机权限；仍可处理本地图片。</string>
+  <string name="cv_no_camera">设备未提供所选方向的相机</string>
+  <string name="cv_camera_error">相机无法启动，请重试或选择另一侧相机</string>
+  <string name="cv_camera_failed">相机未启动：%1$s</string>
+  <string name="cv_guide_title">使用说明与来源</string>
+  <string name="cv_guide">勾选需要显示的视图，可同时对照原图、红色盲、绿色盲和蓝色盲。一个视图单独显示，多个视图分屏显示；实时相机和本地图片均适用。\n\n使用 Machado、Oliveira 与 Fernandes（2009）的色觉缺陷近似模型，按线性 sRGB 计算完整缺陷模拟。模型不代表每个人的实际视觉，也不能用于诊断。\n\n图片和相机画面均在本机处理，不上传。导入图片按采样缩至长边不超过 2048 像素；按当前所选视图及布局导出 PNG 对照图，长边不超过 2048 像素，不覆盖原文件。相机离开应用即关闭。系统文件选择器中的云盘可能自行联网。\n\n矩阵参考 DaltonLens 的 MIT 许可实现，许可随安装包附带。论文：A Physiologically-based Model for Simulation of Color Vision Deficiency，IEEE TVCG 15(6)，2009，DOI: 10.1109/TVCG.2009.113。实现来源：https://github.com/DaltonLens/DaltonLens-Python</string>
+  <string name="cv_views">对照视图（可多选）</string>
+  <string name="cv_reference">原图</string>
+  <string name="cv_one_view">请至少保留一个视图</string>
+  <string name="cv_export_failed">无法导出图片，请检查可用存储空间和文件访问权限。</string>
+</resources>

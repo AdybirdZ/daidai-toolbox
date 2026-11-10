@@ -34,6 +34,16 @@ public final class ConfigurationTests {
         check(!new JSONArray((String)d.groups.get("status_places").get("places")).getJSONObject(0).getBoolean("visible"),"Place color and visibility preserved");
         check(ConfigurationData.parse(fixture().toString()).backgroundSpecified==false,"Legacy exports preserve existing background");
         check(ConfigurationData.parse(ConfigurationData.encode(source,null).toString()).backgroundSpecified,"Explicit empty background restores default");
+        byte[] icon={9,8,7,6};ConfigurationData.Document iconRoundTrip=ConfigurationData.parse(ConfigurationData.encode(source,background,icon).toString());
+        check(iconRoundTrip.appIconSpecified&&Arrays.equals(icon,iconRoundTrip.appIcon),"Icon artwork bytes survive a complete configuration round trip");
+        check(ConfigurationData.parse(ConfigurationData.encode(source,null,null).toString()).appIconSpecified,"An explicit empty icon restores default artwork");
+        JSONObject oldConfiguration=ConfigurationData.encode(source,null);oldConfiguration.remove("appIcon");
+        check(!ConfigurationData.parse(oldConfiguration.toString()).appIconSpecified,"Older version 2 files keep current icon artwork");
+        check(!ConfigurationData.parse(fixture().toString()).appIconSpecified,"Version 1 files keep current icon artwork");
+        bad(ConfigurationData.encode(source,null).put("appIcon",123),"Icon artwork requires base64 text or null");
+        bad(ConfigurationData.encode(source,null).put("appIcon","invalid%%%"),"Reject malformed icon encoding");
+        bad(ConfigurationData.encode(source,null).put("appIcon",""),"Reject empty encoded icon bytes");
+        boolean hugeIconRejected=false;try{ConfigurationData.encode(source,null,new byte[ConfigurationData.MAX_APP_ICON+1]);}catch(Exception e){hugeIconRejected=true;}check(hugeIconRejected,"Reject oversized icon artwork before export");
         JSONObject j=fixture();j.getJSONObject("toolbox").put("seen_version",999).put("location_notice_asked",true).put("status_camera_lux_sample",23);j.getJSONObject("weather").put("quota_count_0",0).put("network_blocked_until",0);
         d=ConfigurationData.parse(j.toString());check(!d.groups.get("toolbox").containsKey("seen_version")&&d.groups.get("weather").isEmpty(),"Runtime state and network limits excluded");
         bad(fixture().put("version",3),"Reject future version");bad(fixture().put("version",4294967297L),"Do not truncate overflowing version");bad(fixture().put("version",1.1),"Reject fractional version");bad(fixture().put("format","other"),"Reject wrong format");bad(fixture().put("weather",new JSONArray()),"Require expected preference groups");

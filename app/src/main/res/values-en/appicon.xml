@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_icon_title">App icon</string>
+    <string name="app_icon_preview">Home screen icon preview</string>
+    <string name="app_icon_custom">Custom image selected</string>
+    <string name="app_icon_default">Default icon</string>
+    <string name="app_icon_choose">Choose image</string>
+    <string name="app_icon_add">Add to home screen</string>
+    <string name="app_icon_update">Update home screen icon</string>
+    <string name="app_icon_restore">Restore default icon</string>
+    <string name="app_icon_pinned">Home screen shortcut created</string>
+    <string name="app_icon_not_pinned">No home screen shortcut created</string>
+    <string name="app_icon_unsupported">This launcher does not support adding a custom shortcut</string>
+    <string name="app_icon_requested">Request submitted. Confirm the launcher prompt; the shortcut has not yet been confirmed.</string>
+    <string name="app_icon_updated">Home screen icon update submitted</string>
+    <string name="app_icon_apply_failed">Unable to update the home screen icon. Try again later or check launcher settings.</string>
+    <string name="app_icon_restored">Default icon restored</string>
+    <string name="app_icon_restore_failed">Unable to finish restoring the icon. Try again; if only the launcher image is unchanged, tap “Update home screen icon”.</string>
+    <string name="app_icon_reset_partial">Other settings were restored, but the app icon could not be fully restored. Try again in App icon settings.</string>
+    <string name="app_icon_picker_failed">Unable to open the image picker</string>
+    <string name="app_icon_image_saved">Image saved. Use the button below to apply it to the home screen.</string>
+    <string name="app_icon_explanation">Custom icons use a system home screen shortcut. Launcher support and your confirmation may be required. The original icon in the app list and system settings remains unchanged. After choosing an image, add or update the home screen icon. Restoring the default also attempts to update an existing shortcut; it does not create a new one.\n\nThe image stays on this device and is included in a full configuration export. Importing restores the image without changing the home screen. Apply it manually on this page.</string>
+    <string name="app_icon_loading">Loading image…</string>
+    <string name="app_icon_load_failed">Unable to read this image. Choose another image.</string>
+    <string name="app_icon_crop_title">Crop app icon</string>
+    <string name="app_icon_zoom">Image zoom</string>
+    <string name="app_icon_crop_reset">Reset</string>
+    <string name="app_icon_crop_use">Use image</string>
+    <string name="app_icon_crop_note">Drag to position the image. Pinch or use the slider to zoom. The square area is saved as the icon; the launcher determines its final shape.</string>
+    <string name="app_icon_crop_accessibility">Square icon crop area</string>
+    <string name="app_icon_saving">Saving image…</string>
+    <string name="app_icon_save_failed">Unable to save the image. Try again.</string>
+    <string name="config_app_icon_replace">\n\nThe app icon image will also be restored from the file, without changing the home screen icon automatically.</string>
+</resources>

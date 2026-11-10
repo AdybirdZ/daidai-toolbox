@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
     private WeatherStore store;
     private ConfigurationTransfer configuration;
     private ModuleTransfer moduleTransfer;
+    private AppIconSettings appIcons;
     private List<City> catalog;
     private City city;
     private WeatherData data;
@@ -61,7 +62,7 @@ public class MainActivity extends Activity {
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         if(state!=null)reopenSettings=state.getInt("toolbox_language_settings",0);
-        configuration=new ConfigurationTransfer(this);moduleTransfer=new ModuleTransfer(this);
+        configuration=new ConfigurationTransfer(this);moduleTransfer=new ModuleTransfer(this);appIcons=new AppIconSettings(this);
         getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         if(Build.VERSION.SDK_INT>=29)getWindow().setNavigationBarContrastEnforced(false);
@@ -365,11 +366,12 @@ public class MainActivity extends Activity {
     String versionName(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(Exception e){return "—";}}
     private int versionCode(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionCode;}catch(Exception e){return 0;}}
     void scheduleSettings(){schedule.menu();}
-    void restoreDefaults(){boolean languageChanged=!AppLanguage.choice(this).equals("system");gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",versionCode()).apply();schedule.resetSettings();TodoScheduler.changed(this);navigationOffset=0;tab=0;resetBackground();if(languageChanged){reopenSettings=1;ToolDialog.closeAll();LocationService.languageChanged();TodoScheduler.refresh(this,false);recreate();}}
+    boolean restoreDefaults(){boolean languageChanged=!AppLanguage.choice(this).equals("system");gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",versionCode()).apply();schedule.resetSettings();TodoScheduler.changed(this);navigationOffset=0;tab=0;boolean iconRestored=AppIconStore.reset(this);resetBackground();if(languageChanged){reopenSettings=1;ToolDialog.closeAll();LocationService.languageChanged();TodoScheduler.refresh(this,false);recreate();}return iconRestored;}
     void locationIntervalChanged(){gps.intervalChanged();}
     void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
     void earthquakeSettings(){earthquakes.settings();}
     void locationModeChanged(){gps.modeChanged();if(tab==2)switchTab(2);}
+    void appIconSettings(){appIcons.show();}
     void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast(UiText.get("main_055"));}}
     void resetBackground(){new java.io.File(getFilesDir(),"background.jpg").delete();background=null;refreshScreen();}
     void reloadBackground(){background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());refreshScreen();}
@@ -379,6 +381,8 @@ public class MainActivity extends Activity {
     }
     void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_220_title),getString(R.string.update_220_detail));
+        updateEntry(c,getString(R.string.update_215_title),getString(R.string.update_215_detail));
         updateEntry(c,getString(R.string.update_214_title),getString(R.string.update_214_detail));
         updateEntry(c,getString(R.string.update_213_title),getString(R.string.update_213_detail));
         updateEntry(c,getString(R.string.update_212_title),getString(R.string.update_212_detail));
@@ -470,9 +474,9 @@ public class MainActivity extends Activity {
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(intent.getBooleanExtra("open_todo",false)){preferences.edit().putBoolean("tab_show_7",true).apply();switchTab(7);}if(intent.getBooleanExtra("open_location",false)){preferences.edit().putBoolean("tab_show_2",true).apply();switchTab(2);}}
     @Override public void onBackPressed() {if(picking){hideKeyboard();switchTab(tab);}else if(tab!=visibleTabs().get(0))switchTab(visibleTabs().get(0));else super.onBackPressed();}
     @Override protected void onPause(){if(todo!=null)todo.pause();if(randomChoice!=null)randomChoice.pause();if(earthquakes!=null)earthquakes.pause();if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
-    @Override protected void onResume(){super.onResume();TodoScheduler.refresh(this,true);ScheduleNotifier.refresh(this,true);if(todo!=null&&tab==7)todo.resume();if(randomChoice!=null&&tab==6)randomChoice.resume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
+    @Override protected void onResume(){super.onResume();if(appIcons!=null)appIcons.refresh();TodoScheduler.refresh(this,true);ScheduleNotifier.refresh(this,true);if(todo!=null&&tab==7)todo.resume();if(randomChoice!=null&&tab==6)randomChoice.resume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();else if(request==44)gps.notificationPermissionResult();else if(request==45)earthquakes.locationPermissionResult();else if(request==46)gps.satellitePermissionResult();else if(request==47)gps.placesPermissionResult();else if(request==48&&tab==2)refreshScreen();else if(request==49)TodoScheduler.refresh(this,true);}
-    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){gps.fileResult(request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==ModuleTransfer.EXPORT||request==ModuleTransfer.IMPORT){moduleTransfer.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
+    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==AppIconSettings.PICK||request==AppIconSettings.CROP){appIcons.result(request,result,intent);return;}if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){gps.fileResult(request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==ModuleTransfer.EXPORT||request==ModuleTransfer.IMPORT){moduleTransfer.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
     @Override protected void onDestroy(){dead=true;if(todo!=null)todo.destroy();if(randomChoice!=null)randomChoice.pause();if(gps!=null)gps.prepareNextLaunch();if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.destroy();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }
 

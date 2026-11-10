@@ -1,4 +1,4 @@
-> 当前版本为 1.2.7。早期版本说明按当时状态保留；当前显示、MMI 与坐标以文末章节及 [1.1.5 说明](EARTHQUAKE-1.1.5.md) 为准。地区目录扩充和名称规范化见 [1.2.7 地区目录](CITY-CATALOG-1.2.7.md)。
+> 本文按版本保留许可核查记录，早期章节描述当时行为，不代表当前默认值。当前功能见 [README](../README.md)，城市目录现状见 [CITY-CATALOG.md](CITY-CATALOG.md)。本次 2.2.0 未新增在线数据源，也未重新核验全部历史服务条款。
 
 # 1.1.1 数据补充
 
@@ -267,3 +267,8 @@ Wolfx 仍只接入 cenc_eqlist，非全球目录，无预警流。默认关闭�
 新增 RECEIVE_BOOT_COMPLETED 用于解锁后重启恢复提醒；SCHEDULE_EXACT_ALARM 是用户可选择的特殊访问权限，未授权时采用非准时闹钟。POST_NOTIFICATIONS 沿用已有权限。不开启全屏提醒、不申请自动关闭电池优化、不通过常驻轮询服务保活。
 
 系统行为参考：[通知权限](https://developer.android.com/develop/ui/views/notifications/notification-permission)、[通知渠道](https://developer.android.com/develop/ui/views/notifications/channels)、[闹钟调度](https://developer.android.com/develop/background-work/services/alarms/schedule)。系统授权不等于各厂商设备的投递保证。
+
+
+## 2.2.0 自定义桌面图标
+
+图标图片通过系统文件选择器读取、在本机裁剪和保存，可随完整配置导出。创建或更新桌面快捷方式使用 Android 系统接口，受桌面支持和用户确认控制；应用列表与系统设置仍使用安装包图标。导入配置不会自动更改桌面。没有新增网络服务、运行时依赖或权限。

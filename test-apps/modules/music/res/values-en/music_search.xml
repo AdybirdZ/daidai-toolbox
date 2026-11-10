@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_search_title">Song search</string>
+    <string name="music_search_back">Back</string>
+    <string name="music_search_input">Search title, duration, composer, arranger, vocalist, notes or tags</string>
+    <string name="music_search_apply">Search</string>
+    <string name="music_search_reset">Clear search filters</string>
+    <string name="music_search_category">Category</string>
+    <string name="music_search_by_title">Title</string>
+    <string name="music_search_by_composer">Composer</string>
+    <string name="music_search_by_arranger">Arranger</string>
+    <string name="music_search_by_vocalist">Vocalist</string>
+    <string name="music_search_by_rating">Rating</string>
+    <string name="music_search_by_bpm">BPM</string>
+    <string name="music_search_total">%1$d songs</string>
+    <string name="music_search_matches">%1$d matches in %2$d songs</string>
+    <string name="music_search_empty">No songs yet</string>
+    <string name="music_search_group_count"> · %1$d songs</string>
+    <string name="music_search_group_matches"> · %1$d of %2$d match</string>
+    <string name="music_search_group_no_match">No songs in this category match the current search</string>
+    <string name="music_search_unset">Not entered</string>
+    <string name="music_search_rating_value">%1$d / 10</string>
+    <string name="music_search_bpm_under100">Below 100 BPM</string>
+    <string name="music_search_bpm_100_130">100–130 BPM</string>
+    <string name="music_search_bpm_130_160">Above 130 and up to 160 BPM</string>
+    <string name="music_search_bpm_over160">Above 160 BPM</string>
+    <string name="music_search_lang_zh">Chinese</string>
+    <string name="music_search_lang_en">English</string>
+    <string name="music_search_lang_other">Other languages</string>
+    <string name="music_search_language_initial">%1$s · %2$s</string>
+</resources>

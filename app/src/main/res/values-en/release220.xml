@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_220_title" formatted="false">2.2.0 · Custom home-screen icon</string>
+    <string name="update_220_detail" formatted="false">Choose and crop an image to create or update a home-screen shortcut, or restore the default icon. Full configuration transfers include the custom image. The app drawer and system settings retain the APK icon; shortcut changes require launcher support.</string>
+    <string name="update_215_title" formatted="false">2.1.5 · Module configuration transfer</string>
+    <string name="update_215_detail" formatted="false">Added per-module import and export alongside full configuration transfer. Imports do not restore permissions, caches or running tasks. Module manifests and configuration contracts prepare for a future 3.0.0 host; dynamic installation and removal are not yet available. Fixed a lingering to-do summary notification when import suspends scheduling.</string>
+</resources>
