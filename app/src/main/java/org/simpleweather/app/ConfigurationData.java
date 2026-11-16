@@ -15,13 +15,13 @@ final class ConfigurationData {
         int places,routes,courses,regions,lists,todos;
     }
     private static final Set<String> BOOLEAN=new HashSet<>(Arrays.asList(
-        "todo_notify","todo_summary","todo_private","todo_show_notes","todo_show_parts","todo_default_all_day","random_remove_drawn","random_animation","keep_screen_awake","astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
+        "course_notify","todo_notify","todo_summary","todo_private","todo_show_notes","todo_show_parts","todo_default_all_day","random_remove_drawn","random_animation","keep_screen_awake","astro_align_sky","outline","quake_manual_location","quake_field_depth","quake_field_distance","quake_field_intensity","quake_field_source","quake_field_review",
         "location_continuous","status_true_north","status_battery_reverse_current","course_name_prefix","course_teacher_prefix","status_satellite_rotate","status_receive_pause","status_camera_background","quake_source_Wolfx"));
     private static final Set<String> INTEGER=new HashSet<>(Arrays.asList(
-        "todo_sort","todo_summary_scope","todo_summary_count","todo_day_minute","todo_default_advance","status_camera_iso","status_camera_exposure_ms","status_camera_outdoor_iso","status_camera_outdoor_exposure_ms","ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color","theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
+        "course_notify_lead","course_notify_remove","todo_sort","todo_summary_scope","todo_summary_count","todo_day_minute","todo_default_advance","status_camera_iso","status_camera_exposure_ms","status_camera_outdoor_iso","status_camera_outdoor_exposure_ms","ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color","theme_color","global_time_mode","astro_coordinates","astro_visibility_mode","outline_color","quake_days","quake_radius","quake_area","quake_sort","route_interval","radar_region","map_product","background_brightness","course_room_prefix",
         "text_primary_color","text_secondary_color","text_accent_color","button_primary_color","button_primary_text_color","button_secondary_color","button_secondary_text_color"));
     private static final Set<String> STRING=new HashSet<>(Arrays.asList(
-        "app_language","status_battery_current_unit","status_battery_charge_unit","astro_order","astro_selected","astro_orientation_reference","status_light_camera","location_provider","quake_order","status_order","status_sensor_order","status_light_source","status_battery_order","status_device_order","tab_order","weather_order","status_sat_company_order","status_sat_sort"));
+        "app_language","launcher_order","status_battery_current_unit","status_battery_charge_unit","astro_order","astro_selected","astro_orientation_reference","status_light_camera","location_provider","quake_order","status_order","status_sensor_order","status_light_source","status_battery_order","status_device_order","tab_order","weather_order","status_sat_company_order","status_sat_sort"));
     private static final Set<String> FLOAT=new HashSet<>(Arrays.asList("astro_magnitude_limit","quake_global_min","quake_regional_min","quake_ref_lat","quake_ref_lon"));
     static String type(String group,String key) {
         if(group.equals("toolbox")){
@@ -91,7 +91,8 @@ final class ConfigurationData {
             if(!group.equals("toolbox")&&!s.isEmpty()&&(!group.equals("status_places")||key.equals("places")))checkNesting(s);
             if(group.equals("toolbox")){
                 if(key.equals(LanguagePolicy.KEY)&&!LanguagePolicy.valid(s))throw invalid();
-                if(key.endsWith("_order")&&!s.matches("[0-9,]*"))throw invalid();
+                  if(key.equals("launcher_order")&&!s.matches("(?:weather|schedule|status|weather-map|astronomy|earthquake|random|todo|music|messaging|colorvision)(?:,(?:weather|schedule|status|weather-map|astronomy|earthquake|random|todo|music|messaging|colorvision))*|"))throw invalid();
+                  if(!key.equals("launcher_order")&&key.endsWith("_order")&&!s.matches("[0-9,]*"))throw invalid();
                 if(key.equals("status_battery_current_unit")&&!Arrays.asList("uA","mA").contains(s))throw invalid();
                 if(key.equals("status_battery_charge_unit")&&!Arrays.asList("uAh","mAh").contains(s))throw invalid();
                 if(key.equals("location_provider")&&!Arrays.asList("gps","network").contains(s))throw invalid();
@@ -113,6 +114,8 @@ final class ConfigurationData {
         if(key.endsWith("_color")) {if((x&0xff000000L)!=0xff000000L)throw invalid();}
         else if((key.equals("status_camera_iso")||key.equals("status_camera_outdoor_iso")))range(n,1,204800);
         else if((key.equals("status_camera_exposure_ms")||key.equals("status_camera_outdoor_exposure_ms")))range(n,1,1000);
+        else if(key.equals("course_notify_lead"))range(n,0,1440);
+        else if(key.equals("course_notify_remove"))range(n,1,1440);
         else if(key.equals("todo_day_minute"))range(n,0,1439);
         else if(key.equals("todo_summary_count"))range(n,1,5);
         else if(key.equals("todo_default_advance")){if(!Arrays.asList(-1L,0L,5L,10L,15L,30L,60L,1440L).contains(x))throw invalid();}

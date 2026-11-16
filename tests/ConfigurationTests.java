@@ -12,6 +12,13 @@ public final class ConfigurationTests {
     }
     private static void bad(JSONObject j,String why)throws Exception{boolean rejected=false;try{ConfigurationData.parse(j.toString());}catch(Exception e){rejected=true;}check(rejected,why);}
     public static void main(String[] args)throws Exception{
+        JSONObject moduleOrder=fixture();moduleOrder.getJSONObject("toolbox").put("launcher_order","status,weather,random");
+        check(ConfigurationData.parse(moduleOrder.toString()).groups.get("toolbox").get("launcher_order").equals("status,weather,random"),"App IDs survive home order transfer");
+        moduleOrder.getJSONObject("toolbox").put("launcher_order","status,../outside");bad(moduleOrder,"Reject unknown app order IDs");
+        JSONObject courses=fixture();courses.getJSONObject("toolbox").put("course_notify",false).put("course_notify_lead",75).put("course_notify_remove",15);
+        check(ConfigurationData.parse(courses.toString()).groups.get("toolbox").get("course_notify").equals(false),"Course notification setting transfers");
+        check(ConfigurationData.parse(courses.toString()).groups.get("toolbox").get("course_notify_lead").equals(75),"Course reminder lead transfers");
+        courses.getJSONObject("toolbox").put("course_notify_remove",0);bad(courses,"Reject invalid course notification retention");
         Map<String,Map<String,?>> source=new HashMap<>();Map<String,Object> toolbox=new HashMap<>();
         for(String role:new String[]{"ui_button_color","ui_link_color","ui_body_color","ui_title_color","ui_choice_color","ui_note_color"})toolbox.put(role,0xff7852a8);toolbox.put("theme_color",0xffB83232);toolbox.put("outline",true);toolbox.put("outline_color",0xff246bce);toolbox.put("location_interval",600000L);toolbox.put("quake_interval",0L);toolbox.put("quake_ref_lat",-33.5f);toolbox.put("quake_ref_lon",151.2f);toolbox.put("weather_order","1,2,0,3,4,5");
         toolbox.put("status_battery_current_unit","mA");toolbox.put("status_battery_charge_unit","mAh");toolbox.put("status_camera_outdoor_iso",50);toolbox.put("status_camera_outdoor_exposure_ms",5);toolbox.put("status_camera_paused",true);toolbox.put("status_camera_iso",300);toolbox.put("status_camera_exposure_ms",50);toolbox.put("quake_source_USGS",false);toolbox.put("quake_wolfx_ack_112",true);toolbox.put("quake_source_Wolfx",true);toolbox.put("location_continuous",true);toolbox.put("status_camera_background",true);source.put("toolbox",toolbox);

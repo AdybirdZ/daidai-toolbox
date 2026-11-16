@@ -11,22 +11,22 @@ import java.security.SecureRandom;
 import java.util.*;
 
 /** One screen owns the draw UI; the model and its saved lists have no Activity dependency. */
-final class RandomChoiceScreen {
+public final class RandomChoiceScreen {
     private final MainActivity a;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final SecureRandom random=new SecureRandom();
-    RandomChoiceModel model=new RandomChoiceModel();
+    public RandomChoiceModel model=new RandomChoiceModel();
     private TextView result,status,start,skip;
     private boolean animating,rendered,importing;
     private int frame;
     private final Runnable persist=this::flush;
     private final Runnable animate=this::nextFrame;
-    RandomChoiceScreen(MainActivity a){this.a=a;try{String s=a.getSharedPreferences("random_choice",0).getString("data","");if(!s.isEmpty())model=RandomChoiceModel.parse(s);}catch(Exception e){a.toast(a.getString(R.string.random_restore_failed));}}
+    public RandomChoiceScreen(MainActivity a){this.a=a;try{String s=a.getSharedPreferences("random_choice",0).getString("data","");if(!s.isEmpty())model=RandomChoiceModel.parse(s);}catch(Exception e){a.toast(a.getString(R.string.random_restore_failed));}}
     private boolean exclude(){return a.preferences.getBoolean("random_remove_drawn",false);}
-    void flush(){handler.removeCallbacks(persist);if(importing)return;try{a.getSharedPreferences("random_choice",0).edit().putString("data",model.json().toString()).apply();}catch(Exception e){a.toast(a.getString(R.string.random_save_failed));}}
-    void pause(){handler.removeCallbacks(animate);if(animating)finishAnimation();flush();rendered=false;}
-    void stopForImport(){pause();importing=true;}
-    void resume(){rendered=true;updateStatus();}
+    public void flush(){handler.removeCallbacks(persist);if(importing)return;try{a.getSharedPreferences("random_choice",0).edit().putString("data",model.json().toString()).apply();}catch(Exception e){a.toast(a.getString(R.string.random_save_failed));}}
+    public void pause(){handler.removeCallbacks(animate);if(animating)finishAnimation();flush();rendered=false;}
+    public void stopForImport(){pause();importing=true;}
+    public void resume(){rendered=true;updateStatus();}
     private void changed(){handler.removeCallbacks(persist);handler.postDelayed(persist,350);updateStatus();}
     private void note(LinearLayout c,int id){a.gap(c,12);c.addView(a.text(a.getString(id),13,a.MUTED,false));}
     private EditText input(LinearLayout c,int label,String value,boolean multiline){
@@ -35,7 +35,7 @@ final class RandomChoiceScreen {
         c.addView(e,a.lp(-1,-2));return e;
     }
     private void watch(EditText e,boolean draft){e.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int st,int count,int after){}public void onTextChanged(CharSequence s,int st,int before,int count){if(draft)model.draft=s.toString();else model.quantity=s.toString();changed();}public void afterTextChanged(Editable s){}});}
-    void render(){
+    public void render(){
         rendered=true;LinearLayout c=a.card();watch(input(c,R.string.random_candidates,model.draft,true),true);a.gap(c,16);watch(input(c,R.string.random_quantity,model.quantity,false),false);a.gap(c,12);
         status=a.text("",14,a.MUTED,false);c.addView(status);a.gap(c,12);
         LinearLayout actions=a.row();start=a.button(a.getString(R.string.random_start),true,this::draw);actions.addView(start,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(actions,8);actions.addView(a.button(a.getString(R.string.random_remaining),false,this::remaining),new LinearLayout.LayoutParams(0,-2,1));c.addView(actions);a.gap(c,10);
@@ -95,6 +95,6 @@ final class RandomChoiceScreen {
         TextView remove=a.button(a.getString(R.string.random_delete),false,()->new ToolDialog(a).setTitle(a.getString(R.string.random_delete)).setMessage(a.getString(R.string.random_delete_confirm,list.name)).setNegativeButton(a.getString(R.string.action_cancel),null).setPositiveButton(a.getString(R.string.random_confirm),(x,k)->{model.lists.remove(list);flush();if(actionDialog[0]!=null)actionDialog[0].dismiss();refresh.run();}).show());c.addView(remove);
         actionDialog[0]=new ToolDialog(a).setTitle(list.name).setView(c).setNegativeButton(a.getString(R.string.action_back),null).create();actionDialog[0].show();
     }
-    void settings(){LinearLayout c=a.column();c.setPadding(a.dp(18),a.dp(8),a.dp(18),a.dp(18));toggle(c,R.string.random_remove,"random_remove_drawn",false);toggle(c,R.string.random_animation,"random_animation",true);note(c,R.string.random_settings_note);new ToolDialog(a).setTitle(a.getString(R.string.tab_random)).setView(c).setNegativeButton(a.getString(R.string.action_back),null).show();}
+    public void settings(){LinearLayout c=a.column();c.setPadding(a.dp(18),a.dp(8),a.dp(18),a.dp(18));toggle(c,R.string.random_remove,"random_remove_drawn",false);toggle(c,R.string.random_animation,"random_animation",true);note(c,R.string.random_settings_note);new ToolDialog(a).setTitle(a.getString(R.string.tab_random)).setView(c).setNegativeButton(a.getString(R.string.action_back),null).show();}
     private void toggle(LinearLayout c,int title,String key,boolean fallback){Switch s=new Switch(a);s.setText(a.getString(title));s.setTextSize(15);s.setChecked(a.preferences.getBoolean(key,fallback));c.addView(s,a.lp(-1,60));s.setOnCheckedChangeListener((v,on)->{a.preferences.edit().putBoolean(key,on).apply();if(key.equals("random_animation")&&!on)finishAnimation();updateStatus();});}
 }

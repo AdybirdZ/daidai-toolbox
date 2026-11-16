@@ -9,14 +9,14 @@ import android.view.*;
 import android.widget.*;
 
 /** Six explicit text roles; semantic diagram and warning colors are preserved. */
-final class UiColors {
-    static final String BUTTON="ui_button_color",LINK="ui_link_color",BODY="ui_body_color",TITLE="ui_title_color",CHOICE="ui_choice_color",NOTE="ui_note_color";
+public final class UiColors {
+    public static final String BUTTON="ui_button_color",LINK="ui_link_color",BODY="ui_body_color",TITLE="ui_title_color",CHOICE="ui_choice_color",NOTE="ui_note_color";
     private static int stored(SharedPreferences p,String key,int fallback){try{return ThemeColors.opaque(p.getInt(key,fallback));}catch(ClassCastException e){return fallback;}}
-    static int seed(Context c,String role){SharedPreferences p=c.getSharedPreferences("toolbox",0);int fallback=ThemeColors.roleDefault(role);if(BUTTON.equals(role))fallback=stored(p,"theme_color",fallback);return stored(p,role,fallback);}
-    static int ink(Context c,String role){return ThemeColors.dark(seed(c,role));}
-    static int pale(Context c,String role){return ThemeColors.pale(seed(c,role));}
-    static void mark(TextView v,String role){v.setTag(role);v.setTextColor(ink(v.getContext(),role));}
-    static void decorate(Context c,View root){decorate(c,root,false);}
+    public static int seed(Context c,String role){SharedPreferences p=c.getSharedPreferences("toolbox",0);int fallback=ThemeColors.roleDefault(role);if(BUTTON.equals(role))fallback=stored(p,"theme_color",fallback);return stored(p,role,fallback);}
+    public static int ink(Context c,String role){return ThemeColors.dark(seed(c,role));}
+    public static int pale(Context c,String role){return ThemeColors.pale(seed(c,role));}
+    public static void mark(TextView v,String role){v.setTag(role);v.setTextColor(ink(v.getContext(),role));}
+    public static void decorate(Context c,View root){decorate(c,root,false);}
     private static void decorate(Context c,View v,boolean choices){
         String tag=v.getTag() instanceof String?(String)v.getTag():"";
         boolean primary="theme-primary".equals(tag),secondary="theme-secondary".equals(tag),link=LINK.equals(tag)||"theme-link-button".equals(tag);

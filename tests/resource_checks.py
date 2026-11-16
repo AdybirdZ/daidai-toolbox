@@ -12,7 +12,7 @@ for path in values.glob('*.xml'):
    assert k not in strings,('Duplicate text key',k)
    strings[k]=e
   elif e.tag=='string-array':arrays[k]=[i.text for i in e]
-for path in java.glob('*.java'):
+for path in list(java.glob('*.java'))+list((root/'modules/apps').rglob('*.java')):
  text=path.read_text(encoding='utf8')
  for method,key in re.findall(r'UiText\.(get|raw)\("([a-z_0-9]+)"\)',text):
   assert key in strings,(path.name,'Missing XML string',key)

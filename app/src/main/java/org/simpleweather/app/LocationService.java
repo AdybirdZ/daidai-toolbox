@@ -11,36 +11,37 @@ import java.util.*;
 
 /** Started by a visible Activity, never by a boot receiver or earthquake polling. */
 public final class LocationService extends Service implements LocationListener {
-    static volatile boolean running;
+    static volatile public boolean running;
     private static volatile String statusKey="location_service_001";
     private static volatile LocationService active;
-    static String status(){String mode="network".equals(active==null?"":active.provider)?UiText.get("earthquake_location_005"):UiText.get("earthquake_location_006");
+    public static String status(){String mode="network".equals(active==null?"":active.provider)?UiText.get("earthquake_location_005"):UiText.get("earthquake_location_006");
         if(statusKey.equals("location_service_005"))return UiText.get(statusKey)+mode+UiText.get("location_service_006");
         if(statusKey.equals("location_service_014"))return UiText.get(statusKey)+mode;
         if(statusKey.equals("location_service_015"))return mode+UiText.get(statusKey);
         return UiText.get(statusKey);
     }
-    static void status(String key){statusKey=key;}
-    static void languageChanged(){LocationService service=active;if(service!=null&&service.foreground)service.promote();}
+    public static void status(String key){statusKey=key;}
+    public static void languageChanged(){LocationService service=active;if(service!=null&&service.foreground)service.promote();}
     private static volatile Location latest;
-    static final String STOP="org.simpleweather.app.STOP_LOCATION";
+    public static final String STOP="org.simpleweather.app.STOP_LOCATION";
     private static final String CHANNEL="location",STATE="location_state";
     private static final int NOTICE=110;
     private LocationManager manager;
     private String provider;
     private boolean foreground;
-    static boolean continuous(Context c){return c.getSharedPreferences("toolbox",0).getBoolean("location_continuous",false);}
-    static Location last(Context c){
+    public static boolean continuous(Context c){return c.getSharedPreferences("toolbox",0).getBoolean("location_continuous",false);}
+    public static Location last(Context c){
         Location l=latest;if(l!=null)return new Location(l);
         SharedPreferences p=c.getSharedPreferences(STATE,0);if(!p.contains("lat"))return null;
         try{l=new Location(p.getString("provider","gps"));l.setLatitude(Double.longBitsToDouble(p.getLong("lat",0)));l.setLongitude(Double.longBitsToDouble(p.getLong("lon",0)));l.setTime(p.getLong("time",0));if(p.contains("accuracy"))l.setAccuracy(p.getFloat("accuracy",0));if(p.contains("altitude"))l.setAltitude(Double.longBitsToDouble(p.getLong("altitude",0)));if(p.contains("speed"))l.setSpeed(p.getFloat("speed",0));if(p.contains("bearing"))l.setBearing(p.getFloat("bearing",0));if(p.contains("verticalAccuracy"))l.setVerticalAccuracyMeters(p.getFloat("verticalAccuracy",0));return l;}catch(Exception e){return null;}
     }
-    static long ageSeconds(Location l){if(l==null)return 0;long elapsed=l.getElapsedRealtimeNanos();return Math.max(0,elapsed>0&&elapsed<=SystemClock.elapsedRealtimeNanos()?(SystemClock.elapsedRealtimeNanos()-elapsed)/1_000_000_000L:(System.currentTimeMillis()-l.getTime())/1000);}
-    static void stop(Context c){c.stopService(new Intent(c,LocationService.class));running=false;status("location_service_002");}
+    public static long ageSeconds(Location l){if(l==null)return 0;long elapsed=l.getElapsedRealtimeNanos();return Math.max(0,elapsed>0&&elapsed<=SystemClock.elapsedRealtimeNanos()?(SystemClock.elapsedRealtimeNanos()-elapsed)/1_000_000_000L:(System.currentTimeMillis()-l.getTime())/1000);}
+    public static void stop(Context c){c.stopService(new Intent(c,LocationService.class));running=false;status("location_service_002");}
     @Override public void onCreate(){super.onCreate();active=this;manager=(LocationManager)getSystemService(LOCATION_SERVICE);}
     @Override public void onConfigurationChanged(android.content.res.Configuration config){super.onConfigurationChanged(config);if(foreground)promote();}
     @Override public IBinder onBind(Intent intent){return null;}
     @Override public int onStartCommand(Intent intent,int flags,int startId){
+        if(!AppModules.present(this,"status")){stopSelf();return START_NOT_STICKY;}
         if(intent!=null&&STOP.equals(intent.getAction())){status("location_service_002");stopSelf();return START_NOT_STICKY;}
         SharedPreferences p=getSharedPreferences("toolbox",0);provider=p.getString("location_provider","gps").equals("network")?LocationManager.NETWORK_PROVIDER:LocationManager.GPS_PROVIDER;
         try{
@@ -67,7 +68,7 @@ public final class LocationService extends Service implements LocationListener {
         if(Build.VERSION.SDK_INT>=29)startForeground(NOTICE,n,ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);else startForeground(NOTICE,n);foreground=true;
     }
     private void save(Location l){record(this,l);}
-    static void record(Context context,Location l){
+    public static void record(Context context,Location l){
         latest=new Location(l);RouteRecorder.onLocation(l);SharedPreferences.Editor e=context.getSharedPreferences(STATE,0).edit().putLong("lat",Double.doubleToLongBits(l.getLatitude())).putLong("lon",Double.doubleToLongBits(l.getLongitude())).putLong("time",l.getTime()).putString("provider",l.getProvider());
         if(l.hasAccuracy())e.putFloat("accuracy",l.getAccuracy());else e.remove("accuracy");if(l.hasAltitude())e.putLong("altitude",Double.doubleToLongBits(l.getAltitude()));else e.remove("altitude");if(l.hasSpeed())e.putFloat("speed",l.getSpeed());else e.remove("speed");if(l.hasBearing())e.putFloat("bearing",l.getBearing());else e.remove("bearing");if(l.hasVerticalAccuracy())e.putFloat("verticalAccuracy",l.getVerticalAccuracyMeters());else e.remove("verticalAccuracy");e.apply();
     }

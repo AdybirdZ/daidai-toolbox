@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="launcher_home">Home</string>
+  <string name="launcher_store">App store</string>
+  <string name="launcher_order">App order</string>
+  <string name="launcher_order_note">Default order: Weather, Timetable, Status, Weather maps, Astronomy, Earthquakes, Random draw, To-do, Music, Messenger, Color vision. Only installed apps appear; App store and Settings remain at the end.</string>
+  <string name="module_music">Daidai Music</string>
+  <string name="module_messaging">Daidai Messenger</string>
+  <string name="module_colorvision">Daidai Color Vision</string>
+  <string name="module_install">Install</string>
+  <string name="module_open">Open</string>
+  <string name="module_uninstall">Uninstall</string>
+  <string name="module_import_package">Install from file</string>
+  <string name="module_catalog_refresh">Refresh catalog</string>
+  <string name="module_catalog_local">Bundled catalog loaded</string>
+  <string name="module_catalog_online">GitHub app catalog updated</string>
+  <string name="module_catalog_loading">Updating app catalog…</string>
+  <string name="module_catalog_failed">Cannot update the catalog; bundled app information remains available</string>
+  <string name="module_open_failed">Cannot open app; reinstall a package compatible with this host</string>
+  <string name="module_install_failed">Installation incomplete; check the connection, package signature and host version</string>
+  <string name="module_download_failed">Download or verification failed; check the connection and retry</string>
+  <string name="module_installed">App installed</string>
+  <string name="module_downloading">Downloading and verifying app…</string>
+  <string name="module_busy">Wait for the current installation to finish</string>
+  <string name="module_trust_note">This app runs inside the toolbox and can use permissions granted to the host. Only developer-signed packages compatible with this host version are accepted.</string>
+  <string name="module_external_note">Android installs this as a separate app with its own data and permissions. Its icon appears on the toolbox home screen after installation.</string>
+  <string name="module_remove_note">Uninstalling stops the app and removes its executable code. Local data and settings are retained for reinstallation. Uninstall this app?</string>
+  <string name="module_remove_external_note">Android manages this app separately. System uninstallation normally deletes its private data. Export any data you want to keep from the app first.</string>
+  <string name="module_store_note">Apps are downloaded from GitHub; installation requires a connection. In-host apps retain data when uninstalled. Android manages installation, permissions and removal of separate apps. Weather and Status are installed by default and can be removed; Settings and App store are permanent.</string>
+  <string name="update_pre3001_title">pre-3.0.0-1 · App home and module installation</string>
+  <string name="update_pre3001_detail">Adds an icon-based home screen and a GitHub app store. Weather and Status are installed by default. Apps can be installed, opened and uninstalled; in-host app data is retained. Includes coordinated icons and installation-aware settings and permissions. This is a 3.0.0 test host; shared resources and base services remain in the host.</string>
+</resources>

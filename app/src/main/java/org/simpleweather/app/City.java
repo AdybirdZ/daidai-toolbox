@@ -21,10 +21,10 @@ public final class City {
     public String detail(){if(admin.isEmpty()||admin.equals(name))return country;return admin+(country.isEmpty()?"":" · "+country);}
     public String key(){return String.format(Locale.ROOT,"%.5f_%.5f",latitude,longitude);}
     private static String normalized(String s){return s.toLowerCase(Locale.ROOT).replaceAll("[\\s,，、·.。\\-’']","");}
-    static String nameKey(String s){return normalized(s).replaceAll("市$","");}
+    public static String nameKey(String s){return normalized(s).replaceAll("市$","");}
     private String region(){return normalized(admin).replaceAll("(?:壮族自治区|回族自治区|维吾尔自治区|自治区|特别行政区|省|市)$","");}
     private String nation(){if(isChina())return "CN";if(!countryCode.isEmpty())return countryCode.toUpperCase(Locale.ROOT);String[] names={"美国","日本","英国","法国","澳大利亚","德国","俄罗斯","加拿大","韩国","意大利","新加坡","印度"},codes={"US","JP","GB","FR","AU","DE","RU","CA","KR","IT","SG","IN"};for(int i=0;i<names.length;i++)if(country.equals(names[i]))return codes[i];return normalized(country);}
-    boolean isChina(){return Arrays.asList("中国","台湾","香港","澳门").contains(country)||Arrays.asList("CN","TW","HK","MO").contains(countryCode);}
+    public boolean isChina(){return Arrays.asList("中国","台湾","香港","澳门").contains(country)||Arrays.asList("CN","TW","HK","MO").contains(countryCode);}
     public String placeKey(){return placeId.isEmpty()?nation()+":"+region()+":"+normalized(label()):placeId;}
     private double distance2(City c){double y=latitude-c.latitude,x=(longitude-c.longitude)*Math.cos(Math.toRadians((latitude+c.latitude)/2));return x*x+y*y;}
     public boolean samePlace(City c){
@@ -34,7 +34,7 @@ public final class City {
         return region().equals(c.region())&&nameKey(label()).equals(nameKey(c.label()))&&distance2(c)<.05*.05;
     }
     /** Resolve bundled, online and previously stored spellings to the very same record. */
-    static City resolve(List<City> catalog,City incoming){
+    public static City resolve(List<City> catalog,City incoming){
         if(incoming==null)return null;
         for(City c:catalog)if(!c.placeId.isEmpty()&&c.placeId.equals(incoming.placeId))return c;
         for(City c:catalog)if(c.nation().equals(incoming.nation())&&!Collections.disjoint(c.geonamesIds,incoming.geonamesIds))return c;
@@ -47,7 +47,7 @@ public final class City {
         }
         return incoming;
     }
-    boolean excludedAdministrativeArea(){if(!isChina())return false;String n=label();return placeId.isEmpty()&&(feature.equals("ADM1")||feature.equals("ADM2"))||n.matches(".*(?:自治州|地区|盟)$")||n.equals("甘孜藏族市")||n.equals("甘孜藏族自治区");}
+    public boolean excludedAdministrativeArea(){if(!isChina())return false;String n=label();return placeId.isEmpty()&&(feature.equals("ADM1")||feature.equals("ADM2"))||n.matches(".*(?:自治州|地区|盟)$")||n.equals("甘孜藏族市")||n.equals("甘孜藏族自治区");}
     public boolean matches(String query){String q=normalized(query.trim());return normalized(name+" "+alias+" "+admin+" "+country+" "+searchAliases).contains(q);}
     public JSONObject json(){JSONObject j=new JSONObject();try{
         j.put("name",name).put("latitude",latitude).put("longitude",longitude).put("country",country).put("admin1",admin).put("timezone",timezone).put("alias",alias).put("placeId",placeId).put("feature_code",feature).put("country_code",countryCode).put("searchAliases",searchAliases).put("geonamesIds",new JSONArray(geonamesIds));

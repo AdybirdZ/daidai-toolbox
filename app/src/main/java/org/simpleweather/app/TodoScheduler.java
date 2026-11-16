@@ -10,24 +10,24 @@ import java.time.*;
 import java.util.*;
 
 /** One durable next alarm; no polling service. Delivery history is local runtime state. */
-final class TodoScheduler {
-    static final String REMIND="todo_reminders_v1",SUMMARY="todo_summary_v1";
+public final class TodoScheduler {
+    public static final String REMIND="todo_reminders_v1",SUMMARY="todo_summary_v1";
     private static final int SUMMARY_ID=210000;
     private static boolean suspended;
     private static Context local(Context c){return AppLanguage.wrap(c.getApplicationContext());}
-    static boolean allowed(Context c){return (Build.VERSION.SDK_INT<33||c.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)==PackageManager.PERMISSION_GRANTED)&&c.getSystemService(NotificationManager.class).areNotificationsEnabled();}
-    static boolean exact(Context c){return Build.VERSION.SDK_INT<31||c.getSystemService(AlarmManager.class).canScheduleExactAlarms();}
-    static void notificationSettings(Context c){try{c.startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,c.getPackageName()));}catch(Exception ignored){}}
-    static void exactSettings(Context c){try{if(Build.VERSION.SDK_INT>=31)c.startActivity(new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,Uri.parse("package:"+c.getPackageName())));}catch(Exception ignored){}}
+    public static boolean allowed(Context c){return (Build.VERSION.SDK_INT<33||c.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)==PackageManager.PERMISSION_GRANTED)&&c.getSystemService(NotificationManager.class).areNotificationsEnabled();}
+    public static boolean exact(Context c){return Build.VERSION.SDK_INT<31||c.getSystemService(AlarmManager.class).canScheduleExactAlarms();}
+    public static void notificationSettings(Context c){try{c.startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,c.getPackageName()));}catch(Exception ignored){}}
+    public static void exactSettings(Context c){try{if(Build.VERSION.SDK_INT>=31)c.startActivity(new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,Uri.parse("package:"+c.getPackageName())));}catch(Exception ignored){}}
     private static SharedPreferences prefs(Context c){return c.getSharedPreferences("toolbox",0);}
     private static SharedPreferences runtime(Context c){return c.getSharedPreferences("todo_runtime",0);}
     private static PendingIntent alarm(Context c){return PendingIntent.getBroadcast(c,0,new Intent(c,TodoReceiver.class).setAction("todo.tick"),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);}
     private static int id(String id){return 220001;}
-    static synchronized void suspend(Context c){suspended=true;c.getSystemService(AlarmManager.class).cancel(alarm(c));NotificationManager nm=c.getSystemService(NotificationManager.class);try{nm.cancelAll();}catch(Exception ignored){}try{for(android.service.notification.StatusBarNotification n:nm.getActiveNotifications()){String tag=n.getTag();if(tag!=null&&tag.startsWith("todo"))nm.cancel(tag,n.getId());}}catch(Exception ignored){}try{for(TodoModel.Item i:TodoStore.load(c).items)nm.cancel("todo:"+i.id,id(i.id));}catch(Exception ignored){}}
-    static synchronized void afterImport(Context c){suspended=false;runtime(c).edit().clear().putLong("not_before",System.currentTimeMillis()).commit();refresh(c,false);}
-    static synchronized void changed(Context c){NotificationManager nm=c.getSystemService(NotificationManager.class);for(android.service.notification.StatusBarNotification n:nm.getActiveNotifications())if(n.getTag()!=null&&n.getTag().startsWith("todo"))nm.cancel(n.getTag(),n.getId());refresh(c,false);}
-    static synchronized void receive(Context c,Intent intent){
-        if(suspended)return;
+    public static synchronized void suspend(Context c){suspended=true;c.getSystemService(AlarmManager.class).cancel(alarm(c));NotificationManager nm=c.getSystemService(NotificationManager.class);try{for(android.service.notification.StatusBarNotification n:nm.getActiveNotifications()){String tag=n.getTag();if(tag!=null&&tag.startsWith("todo"))nm.cancel(tag,n.getId());}}catch(Exception ignored){}try{for(TodoModel.Item i:TodoStore.load(c).items)nm.cancel("todo:"+i.id,id(i.id));}catch(Exception ignored){}}
+    public static synchronized void afterImport(Context c){suspended=false;runtime(c).edit().clear().putLong("not_before",System.currentTimeMillis()).commit();refresh(c,false);}
+    public static synchronized void changed(Context c){NotificationManager nm=c.getSystemService(NotificationManager.class);for(android.service.notification.StatusBarNotification n:nm.getActiveNotifications())if(n.getTag()!=null&&n.getTag().startsWith("todo"))nm.cancel(n.getTag(),n.getId());refresh(c,false);}
+    public static synchronized void receive(Context c,Intent intent){
+        if(suspended||!AppModules.present(c,"todo"))return;
         String action=intent.getAction();
         if("todo.complete".equals(action)||"todo.snooze".equals(action))try{
             TodoModel m=TodoStore.load(c);TodoModel.Item i=m.find(intent.getStringExtra("id"));
@@ -55,8 +55,8 @@ final class TodoScheduler {
             .addAction(new Notification.Action.Builder(null,c.getString(R.string.todo_snooze),action(c,"todo.snooze",i,event.day)).build()).build();
         try{c.getSystemService(NotificationManager.class).notify("todo:"+i.id,id(i.id),n);}catch(SecurityException ignored){}
     }
-    static synchronized void refresh(Context original,boolean dispatch){
-        Context c=local(original);SharedPreferences rt=runtime(c),p=prefs(c);if(suspended)return;
+    public static synchronized void refresh(Context original,boolean dispatch){
+        Context c=local(original);SharedPreferences rt=runtime(c),p=prefs(c);if(suspended||!AppModules.present(c,"todo"))return;
         try{
             channels(c);TodoModel model=TodoStore.load(c);long now=System.currentTimeMillis();ZoneId zone=ZoneId.systemDefault();
             List<TodoModel.Item> expired=new ArrayList<>();for(TodoModel.Item i:model.items)if(now>=TodoModel.deleteAt(i))expired.add(i);

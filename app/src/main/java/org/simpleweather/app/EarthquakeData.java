@@ -9,27 +9,27 @@ import java.time.*;
 import java.util.*;
 
 /** Parametric facts only. Different agencies' solutions are preserved, never averaged. */
-final class EarthquakeData {
-    static final int LIMIT=3000;
-    static final String[] SOURCES={"GEOFON","EMSC","USGS","Wolfx"};
-    static String sourceName(String source){return source.equals("Wolfx")?UiText.get("earthquake_data_001"):source.equals("GEOFON")?UiText.get("earthquake_agencies_011"):source.equals("EMSC")?UiText.get("earthquake_agencies_009"):source.equals("USGS")?UiText.get("earthquake_agencies_031"):source;}
-    static final class Report {
-        String source="",id="",region="",magnitudeType="M",agency="",review=UiText.raw("identity_earthquake_data_001"),depthNote="";
-        long time,updated;
-        double latitude,longitude,magnitude,depth=Double.NaN,reportedMmi=Double.NaN,modelMmi=Double.NaN;
-        int felt;
-        String magnitudeLabel(){return magnitudeType+" "+String.format(Locale.ROOT,"%.1f",magnitude);}
-        String url(){String encoded;try{encoded=java.net.URLEncoder.encode(id,"UTF-8");}catch(Exception e){encoded="";}return source.equals("Wolfx")?"https://www.cenc.ac.cn/":source.equals("GEOFON")?"https://geofon.gfz.de/eqinfo/event.php?id="+encoded:source.equals("USGS")?"https://earthquake.usgs.gov/earthquakes/eventpage/"+encoded:"https://www.seismicportal.eu/eventdetails.html?unid="+encoded;}
+public final class EarthquakeData {
+    public static final int LIMIT=3000;
+    public static final String[] SOURCES={"GEOFON","EMSC","USGS","Wolfx"};
+    public static String sourceName(String source){return source.equals("Wolfx")?UiText.get("earthquake_data_001"):source.equals("GEOFON")?UiText.get("earthquake_agencies_011"):source.equals("EMSC")?UiText.get("earthquake_agencies_009"):source.equals("USGS")?UiText.get("earthquake_agencies_031"):source;}
+    public static final class Report {
+        public String source="",id="",region="",magnitudeType="M",agency="",review=UiText.raw("identity_earthquake_data_001"),depthNote="";
+        public long time,updated;
+        public double latitude,longitude,magnitude,depth=Double.NaN,reportedMmi=Double.NaN,modelMmi=Double.NaN;
+        public int felt;
+        public String magnitudeLabel(){return magnitudeType+" "+String.format(Locale.ROOT,"%.1f",magnitude);}
+        public String url(){String encoded;try{encoded=java.net.URLEncoder.encode(id,"UTF-8");}catch(Exception e){encoded="";}return source.equals("Wolfx")?"https://www.cenc.ac.cn/":source.equals("GEOFON")?"https://geofon.gfz.de/eqinfo/event.php?id="+encoded:source.equals("USGS")?"https://earthquake.usgs.gov/earthquakes/eventpage/"+encoded:"https://www.seismicportal.eu/eventdetails.html?unid="+encoded;}
     }
-    static final class Event {
-        final List<Report> reports=new ArrayList<>();
-        Report main(){
+    public static final class Event {
+        public final List<Report> reports=new ArrayList<>();
+        public Report main(){
             Report best=reports.get(0);
             for(Report r:reports)if(priority(r)>priority(best)||(priority(r)==priority(best)&&r.updated>best.updated))best=r;
             return best;
         }
-        String sources(){StringJoiner s=new StringJoiner(UiText.get("earthquake_data_003"));for(Report r:reports)s.add(sourceName(r.source));return s.toString();}
-        double maxMagnitude(){double m=-99;for(Report r:reports)m=Math.max(m,r.magnitude);return m;}
+        public String sources(){StringJoiner s=new StringJoiner(UiText.get("earthquake_data_003"));for(Report r:reports)s.add(sourceName(r.source));return s.toString();}
+        public double maxMagnitude(){double m=-99;for(Report r:reports)m=Math.max(m,r.magnitude);return m;}
     }
     private static int priority(Report r){
         // Prefer reviewed domestic reports, then all other reviewed reports equally.
@@ -37,13 +37,13 @@ final class EarthquakeData {
         if(!EarthquakeDisplay.reviewed(r))return 0;
         return r.source.equals("Wolfx")||r.agency.trim().equalsIgnoreCase("CENC")||r.agency.startsWith(UiText.raw("identity_earthquake_data_003"))?2:1;
     }
-    static long instant(String value){
+    public static long instant(String value){
         if(value==null||value.isEmpty())return 0;
         try{return Instant.parse(value.endsWith("Z")?value:value+"Z").toEpochMilli();}catch(Exception ignored){}
         try{return OffsetDateTime.parse(value).toInstant().toEpochMilli();}catch(Exception ignored){return 0;}
     }
     private static boolean valid(Report r){return r.time>0&&!r.id.isEmpty()&&Double.isFinite(r.latitude)&&Math.abs(r.latitude)<=90&&Double.isFinite(r.longitude)&&Math.abs(r.longitude)<=180&&Double.isFinite(r.magnitude)&&r.magnitude>=-2&&r.magnitude<=10.5;}
-    static List<Report> emsc(String raw)throws Exception{
+    public static List<Report> emsc(String raw)throws Exception{
         JSONObject root=new JSONObject(raw);if(!root.optString("type").equals("FeatureCollection"))throw new IOException(UiText.get("earthquake_data_005"));
         JSONArray features=root.getJSONArray("features");List<Report> result=new ArrayList<>();int eligible=0;
         for(int i=0;i<features.length();i++)try{
@@ -59,7 +59,7 @@ final class EarthquakeData {
         return result;
     }
     private static double number(JSONObject p,String key){Object v=p.opt(key);if(v==null||v==JSONObject.NULL||v instanceof Boolean)return Double.NaN;try{return Double.parseDouble(v.toString());}catch(Exception e){return Double.NaN;}}
-    static List<Report> usgs(String raw)throws Exception{
+    public static List<Report> usgs(String raw)throws Exception{
         JSONObject root=new JSONObject(raw);if(!root.optString("type").equals("FeatureCollection"))throw new IOException(UiText.get("earthquake_data_008"));
         JSONArray rows=root.getJSONArray("features");List<Report> out=new ArrayList<>();int eligible=0;
         for(int i=0;i<rows.length();i++)try{
@@ -79,8 +79,8 @@ final class EarthquakeData {
     private static long epoch(JSONObject p,String key){double n=number(p,key);return Double.isFinite(n)&&n>0&&n<253402300800000L?(long)n:0;}
     private static double intensityNumber(double n){return Double.isFinite(n)&&n>=1&&n<=12?n:Double.NaN;}
     /** Wolfx documents catalogue times as UTC+8. Row numbers are not event IDs. */
-    static long wolfxTime(String value){try{return LocalDateTime.parse(value,java.time.format.DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss").withResolverStyle(java.time.format.ResolverStyle.STRICT)).toInstant(ZoneOffset.ofHours(8)).toEpochMilli();}catch(Exception e){return 0;}}
-    static List<Report> wolfx(String raw)throws Exception{
+    public static long wolfxTime(String value){try{return LocalDateTime.parse(value,java.time.format.DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss").withResolverStyle(java.time.format.ResolverStyle.STRICT)).toInstant(ZoneOffset.ofHours(8)).toEpochMilli();}catch(Exception e){return 0;}}
+    public static List<Report> wolfx(String raw)throws Exception{
         JSONObject root=new JSONObject(raw);List<Report> result=new ArrayList<>();int rows=0;
         for(Iterator<String> it=root.keys();it.hasNext();){String key=it.next();if(!key.matches("No[1-9][0-9]*"))continue;rows++;JSONObject p=root.optJSONObject(key);if(p==null)continue;
             Report r=new Report();r.source="Wolfx";r.time=wolfxTime(p.optString("time"));r.updated=wolfxTime(p.optString("ReportTime"));r.latitude=number(p,"latitude");r.longitude=number(p,"longitude");r.magnitude=number(p,"magnitude");r.depth=number(p,"depth");
@@ -93,7 +93,7 @@ final class EarthquakeData {
         if(rows==0||result.isEmpty())throw new IOException(UiText.get("earthquake_data_013"));
         return result;
     }
-    static List<Report> geofon(String raw)throws Exception{
+    public static List<Report> geofon(String raw)throws Exception{
         if(raw.toUpperCase(Locale.ROOT).contains("<!DOCTYPE")||raw.toUpperCase(Locale.ROOT).contains("<!ENTITY"))throw new IOException(UiText.get("earthquake_data_014"));
         DocumentBuilderFactory f=DocumentBuilderFactory.newInstance();f.setNamespaceAware(true);f.setExpandEntityReferences(false);
         for(String feature:new String[]{"http://xml.org/sax/features/external-general-entities","http://xml.org/sax/features/external-parameter-entities","http://apache.org/xml/features/nonvalidating/load-external-dtd"})try{f.setFeature(feature,false);}catch(Exception ignored){}
@@ -125,10 +125,10 @@ final class EarthquakeData {
     private static String quantity(Element e,String name){return value(child(e,name),"value");}
     private static double parse(String s){try{return Double.parseDouble(s);}catch(Exception e){return Double.NaN;}}
     private static Element preferred(Element e,String name,String id){Element first=null;for(Node n=e.getFirstChild();n!=null;n=n.getNextSibling())if(n instanceof Element&&name.equals(n.getLocalName())){Element c=(Element)n;if(first==null)first=c;if(c.getAttribute("publicID").equals(id))return c;}return first;}
-    static double distance(double a,double b,double c,double d){double lat=Math.toRadians(c-a),lon=Math.toRadians(d-b);double h=Math.pow(Math.sin(lat/2),2)+Math.cos(Math.toRadians(a))*Math.cos(Math.toRadians(c))*Math.pow(Math.sin(lon/2),2);return 6371.0088*2*Math.asin(Math.sqrt(Math.max(0,Math.min(1,h))));}
+    public static double distance(double a,double b,double c,double d){double lat=Math.toRadians(c-a),lon=Math.toRadians(d-b);double h=Math.pow(Math.sin(lat/2),2)+Math.cos(Math.toRadians(a))*Math.cos(Math.toRadians(c))*Math.pow(Math.sin(lon/2),2);return 6371.0088*2*Math.asin(Math.sqrt(Math.max(0,Math.min(1,h))));}
     /** Broad geographic filter only, not an administrative boundary. */
-    static boolean nearbyChina(double lat,double lon){return lat>=15&&lat<=55&&lon>=70&&lon<=140;}
-    static List<Event> merge(Collection<Report> input){
+    public static boolean nearbyChina(double lat,double lon){return lat>=15&&lat<=55&&lon>=70&&lon<=140;}
+    public static List<Event> merge(Collection<Report> input){
         Map<String,Report> unique=new LinkedHashMap<>();
         for(Report r:input){String key=r.source+":"+r.id;Report old=unique.get(key);if(old==null||r.updated>=old.updated)unique.put(key,r);}
         List<Report> list=new ArrayList<>(unique.values());list.sort(Comparator.comparingLong(r->r.time));List<Event> result=new ArrayList<>();
@@ -150,7 +150,7 @@ final class EarthquakeData {
         }
         return result;
     }
-    static List<Event> filter(List<Event> all,long since,long now,int area,double globalMin,double regionalMin,double[] reference,double radius,int sort){
+    public static List<Event> filter(List<Event> all,long since,long now,int area,double globalMin,double regionalMin,double[] reference,double radius,int sort){
         List<Event> out=new ArrayList<>();for(Event e:all){Report r=e.main();if(r.time<since||r.time>now+600_000)continue;
             boolean region=nearbyChina(r.latitude,r.longitude);double min=region?Math.min(globalMin,regionalMin):globalMin;
             if(e.maxMagnitude()<min||(area==1&&!region))continue;if(area==2&&(reference==null||distance(reference[0],reference[1],r.latitude,r.longitude)>radius))continue;out.add(e);

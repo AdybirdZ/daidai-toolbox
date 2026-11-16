@@ -6,13 +6,14 @@ import java.util.*;
 final class ModuleRegistry {
     static final class Module { final String id, title; final String[] groups; Module(String id,String title,String...groups){this.id=id;this.title=title;this.groups=groups;} }
     static final List<Module> ALL=Collections.unmodifiableList(Arrays.asList(
-        new Module("weather","tab_weather","weather"),
-        new Module("status","tab_status","status_places","status_routes"),
-        new Module("todo","tab_todo","todos"),
-        new Module("schedule","tab_schedule","timetable"),
+        new Module("weather","tab_weather","weather","toolbox"),
+        new Module("weather-map","tab_weather_map","toolbox"),
+        new Module("status","tab_status","status_places","status_routes","toolbox"),
+        new Module("todo","tab_todo","todos","toolbox"),
+        new Module("schedule","tab_schedule","timetable","toolbox"),
         new Module("astronomy","tab_astronomy","toolbox"),
         new Module("earthquake","tab_earthquake","toolbox"),
-        new Module("random","tab_random","random_choice"),
+        new Module("random","tab_random","random_choice","toolbox"),
         new Module("global","settings_014","toolbox")));
     static Module find(String id){for(Module m:ALL)if(m.id.equals(id))return m;return null;}
     static boolean allowed(Module m,String group,String key){
@@ -21,6 +22,12 @@ final class ModuleRegistry {
         if(m.id.equals("global"))return true;
         if(m.id.equals("astronomy"))return key.startsWith("astro_");
         if(m.id.equals("earthquake"))return key.startsWith("quake_");
+        if(m.id.equals("weather"))return key.startsWith("weather_");
+        if(m.id.equals("weather-map"))return key.equals("radar_region")||key.equals("map_product");
+        if(m.id.equals("status"))return key.startsWith("status_")||key.startsWith("location_")||key.equals("route_interval");
+        if(m.id.equals("todo"))return key.startsWith("todo_");
+        if(m.id.equals("schedule"))return key.startsWith("course_");
+        if(m.id.equals("random"))return key.startsWith("random_");
         return false;
     }
 }

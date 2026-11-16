@@ -8,7 +8,7 @@ public final class SkyLabels {
     public static final class Box {
         public final float left,top,right,bottom;
         public Box(float l,float t,float r,float b){left=l;top=t;right=r;bottom=b;}
-        boolean intersects(Box b){return left<b.right&&right>b.left&&top<b.bottom&&bottom>b.top;}
+        public boolean intersects(Box b){return left<b.right&&right>b.left&&top<b.bottom&&bottom>b.top;}
     }
     public static final class Candidate {
         public final String id;public final float x,y,width,ascent,descent;
@@ -16,7 +16,7 @@ public final class SkyLabels {
     }
     public static final class Placed {
         public final Candidate candidate;public final float baseline;public final Box box;
-        Placed(Candidate c,float y,Box b){candidate=c;baseline=y;box=b;}
+        public Placed(Candidate c,float y,Box b){candidate=c;baseline=y;box=b;}
     }
     public static List<Placed> place(List<Candidate> candidates,List<Box> reserved,float width,float height,float gap,float padX,float padY){
         List<Candidate> sorted=new ArrayList<>(candidates);sorted.sort(Comparator.comparingDouble((Candidate c)->c.y).thenComparing(c->c.id));

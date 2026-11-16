@@ -4,8 +4,8 @@ import java.util.*;
 import org.json.*;
 
 /** Small task-state metadata; catalogue bytes remain in the existing independent cache. */
-final class EarthquakeRestore {
-    static String snapshot(Map<String,EarthquakeCache.Entry> data,Set<String> cached,Map<String,String> failures){
+public final class EarthquakeRestore {
+    public static String snapshot(Map<String,EarthquakeCache.Entry> data,Set<String> cached,Map<String,String> failures){
         JSONObject root=new JSONObject();
         for(String source:EarthquakeData.SOURCES)try{
             EarthquakeCache.Entry entry=data.get(source);
@@ -15,7 +15,7 @@ final class EarthquakeRestore {
         }catch(JSONException ignored){}
         return root.toString();
     }
-    static void apply(String saved,Map<String,EarthquakeCache.Entry> loaded,Set<String> cached,Map<String,String> failures){
+    public static void apply(String saved,Map<String,EarthquakeCache.Entry> loaded,Set<String> cached,Map<String,String> failures){
         if(saved==null||saved.length()>16384)return;
         try{
             JSONObject root=new JSONObject(saved);

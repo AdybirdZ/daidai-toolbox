@@ -1,3 +1,5 @@
+> 历史审查草稿：以下记录描述 2.2.1 的审查时点。pre-3.0.0-1 的已实现内容及仍存边界以 [MODULE-HOST.md](MODULE-HOST.md) 为准。
+
 # 3.0.0 模块边界检查建议（草稿）
 
 本记录仅为只读审查建议，不表示正式 3.0.0 宿主已实现。审查对象是当前 `source/` 单体程序、`modules/` 的资产清单，以及 `prototypes/module-packages/host-adapter/` 的独立 Android 应用安装验证壳。后者用于音乐等外置 APK 的安装、校验和启动，不是工具箱各栏目可卸载的完整宿主。

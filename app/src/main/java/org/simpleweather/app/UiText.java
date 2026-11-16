@@ -4,7 +4,7 @@ package org.simpleweather.app;
  * Install before constructing any models. Stable data identifiers use raw(), never a translation.
  */
 public final class UiText {
-    public interface Provider {String get(String key);String label(String identity);}
+    public interface Provider {public String get(String key);public String label(String identity);}
     private static volatile Provider provider;
     private UiText(){}
     public static void install(Provider value){if(value==null)throw new IllegalArgumentException();provider=value;}

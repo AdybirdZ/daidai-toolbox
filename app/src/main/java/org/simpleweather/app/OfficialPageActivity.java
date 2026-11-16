@@ -16,7 +16,7 @@ public final class OfficialPageActivity extends Activity {
     private void buttonColor(Button b){b.setTextColor(ThemeColors.dark(theme()));b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ThemeColors.pale(theme())));}
     private WebView web;
     private TextView progress;
-    static boolean trusted(String url){try{Uri u=Uri.parse(url);String h=u.getHost();return "https".equalsIgnoreCase(u.getScheme())&&h!=null&&(h.equals("nmc.cn")||h.endsWith(".nmc.cn")||h.equals("weather.com.cn")||h.endsWith(".weather.com.cn"));}catch(Exception e){return false;}}
+    public static boolean trusted(String url){try{Uri u=Uri.parse(url);String h=u.getHost();return "https".equalsIgnoreCase(u.getScheme())&&h!=null&&(h.equals("nmc.cn")||h.endsWith(".nmc.cn")||h.equals("weather.com.cn")||h.endsWith(".weather.com.cn"));}catch(Exception e){return false;}}
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);String url=getIntent().getStringExtra("url");if(!trusted(url)){finish();return;}
         LinearLayout root=new LinearLayout(this);root.setOrientation(1);root.setBackgroundColor(0xFFF5F7FB);root.setFitsSystemWindows(true);setContentView(root);

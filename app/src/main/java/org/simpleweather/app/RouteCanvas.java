@@ -1,0 +1,99 @@
+package org.simpleweather.app;
+
+import android.content.*;
+import android.graphics.*;
+import android.location.Location;
+import android.view.*;
+import org.json.*;
+import java.util.*;
+
+public final class RouteCanvas extends View {
+    private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final MainActivity a;
+    private ArrayList<RoutePoint> points=new ArrayList<>();
+    private int visibleCount;
+    private double originLon,originLat,cosLat=1,span=.002;
+    private double viewLon,viewLat;
+    private boolean followSelf,playback,dragged,multiTouch;
+    public Runnable changed=()->{};
+    private final RouteViewport viewport=new RouteViewport();
+    private float lastX,lastY,downX,downY;
+    public RouteCanvas(MainActivity a){super(a);this.a=a;setMinimumHeight(a.dp(300));setBackgroundColor(0xFFF9FBFF);setFocusable(false);setContentDescription(UiText.get("route_drawing_001"));}
+    @Override protected void onMeasure(int width,int height){int size=MeasureSpec.getSize(width);setMeasuredDimension(size,size);}
+    public void setRoute(List<RoutePoint> route,int count,boolean fit){
+        points=new ArrayList<>(route);visibleCount=Math.max(0,Math.min(points.size(),count));
+        if(!points.isEmpty()){
+            originLon=points.get(0).lon;originLat=points.get(0).lat;cosLat=Math.max(.01,Math.cos(Math.toRadians(originLat)));
+            double minX=0,maxX=0,minY=0,maxY=0;
+            for(RoutePoint p:points){double x=longitudeDelta(p.lon-originLon)*cosLat,y=p.lat-originLat;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
+            span=Math.max(maxX-minX,maxY-minY);if(span<.00001)span=.002;
+            if(fit){viewLon=originLon+(minX+maxX)/2/cosLat;viewLat=originLat+(minY+maxY)/2;viewport.center();viewport.sideMeters(Math.max(30,span*RouteViewport.METERS_PER_DEGREE/.78));followSelf=false;}
+        }
+        changed.run();invalidate();
+    }
+    public int pointCount(){return points.size();}
+    public void showThrough(int index){visibleCount=Math.max(0,Math.min(points.size(),index+1));updateFollow();invalidate();}
+    public void playback(boolean value){playback=value;}
+    public boolean following(){return followSelf;}
+    private boolean updateFollow(){if(!followSelf)return false;if(playback){if(visibleCount==0)return false;RoutePoint q=points.get(visibleCount-1);viewLon=q.lon;viewLat=q.lat;}else{Location fix=LocationService.last(a);if(fix==null)return false;viewLon=fix.getLongitude();viewLat=fix.getLatitude();}viewport.center();return true;}
+    public void centerOn(int index){if(index<0||index>=points.size())return;RoutePoint q=points.get(index);viewLon=q.lon;viewLat=q.lat;followSelf=false;viewport.center();invalidate();}
+    public void stopFollowing(){followSelf=false;changed.run();invalidate();}
+    public void centerSelf(){followSelf=true;if(!updateFollow()){followSelf=false;a.toast(playback?UiText.get("route_drawing_002"):UiText.get("route_drawing_003"));return;}changed.run();invalidate();}
+    public void zoom(float value){viewport.zoomTo(value);changed.run();invalidate();}
+    public double sideMeters(){return viewport.sideMeters();}
+    public void sideMeters(double value){viewport.sideMeters(value);changed.run();invalidate();}
+    public static double longitudeDelta(double value){return ((value+540)%360+360)%360-180;}
+    private void intercept(boolean disallow){ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(disallow);}
+    private float scale(){return (float)(Math.min(getWidth(),getHeight())*RouteViewport.METERS_PER_DEGREE/viewport.sideMeters());}
+    private float[] xy(RoutePoint q){return new float[]{getWidth()/2f+(float)(longitudeDelta(q.lon-viewLon)*cosLat)*scale()+viewport.panX,getHeight()/2f-(float)(q.lat-viewLat)*scale()+viewport.panY};}
+    protected void onDraw(Canvas c){
+        super.onDraw(c);updateFollow();
+        int clip=c.save();c.clipRect(a.dp(1),a.dp(1),getWidth()-a.dp(1),getHeight()-a.dp(1));
+        paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(a.dp(2));paint.setColor(0xFF246BCE);
+        for(int i=1;i<visibleCount;i++){float[] q=xy(points.get(i-1)),r=xy(points.get(i));c.drawLine(q[0],q[1],r[0],r[1],paint);}
+        paint.setStyle(Paint.Style.FILL);
+        for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));paint.setColor(i==visibleCount-1?0xFFE58323:0xFF246BCE);c.drawCircle(q[0],q[1],a.dp(i==visibleCount-1?5:3),paint);}
+        if(visibleCount==0){paint.setColor(a.secondaryTextColor());paint.setTextSize(a.dp(14));paint.setTextAlign(Paint.Align.LEFT);c.drawText(UiText.get("route_drawing_004"),a.dp(16),a.dp(45),paint);}
+        c.restoreToCount(clip);drawRuler(c);
+    }
+    private String distance(double meters){return meters>=1000?String.format(Locale.ROOT,"%.2f km",meters/1000):String.format(Locale.ROOT,"%.0f m",meters);}
+    private void drawRuler(Canvas c){
+        float w=getWidth(),h=getHeight(),tick=a.dp(5);double side=sideMeters(),rough=side/4,base=Math.pow(10,Math.floor(Math.log10(rough))),step=base;
+        for(double multiple:new double[]{1,2,5,10})if(base*multiple<=rough)step=base*multiple;
+        paint.setColor(a.secondaryTextColor());paint.setStrokeWidth(a.dp(1));paint.setStyle(Paint.Style.STROKE);c.drawRect(.5f,.5f,w-.5f,h-.5f,paint);paint.setStyle(Paint.Style.FILL);paint.setTextSize(a.dp(10));
+        for(double m=0;m<=side+.0001;m+=step){float x=(float)(m/side*w),y=h-(float)(m/side*h);c.drawLine(x,0,x,tick,paint);c.drawLine(x,h,x,h-tick,paint);c.drawLine(0,y,tick,y,paint);c.drawLine(w,y,w-tick,y,paint);
+            if(m>0&&x<w-a.dp(30)){paint.setTextAlign(Paint.Align.CENTER);c.drawText(distance(m),x,h-a.dp(8),paint);}
+            if(m>0&&y>a.dp(30)){paint.setTextAlign(Paint.Align.LEFT);c.drawText(distance(m),a.dp(8),y+a.dp(3),paint);}
+        }
+        paint.setTextAlign(Paint.Align.RIGHT);paint.setTextSize(a.dp(11));c.drawText(UiText.get("route_drawing_005")+distance(side),w-a.dp(10),a.dp(19),paint);paint.setTextAlign(Paint.Align.LEFT);
+    }
+    @Override public boolean onTouchEvent(MotionEvent e){
+        int action=e.getActionMasked();
+        if(action==MotionEvent.ACTION_DOWN){intercept(true);downX=lastX=e.getX();downY=lastY=e.getY();dragged=false;multiTouch=false;return true;}
+        if(action==MotionEvent.ACTION_CANCEL){intercept(false);return true;}
+        if(action==MotionEvent.ACTION_POINTER_DOWN){multiTouch=true;return true;}
+        if(action==MotionEvent.ACTION_POINTER_UP){int remaining=e.getActionIndex()==0?1:0;lastX=e.getX(remaining);lastY=e.getY(remaining);return true;}
+        if(action==MotionEvent.ACTION_MOVE){
+            intercept(true);if(e.getPointerCount()!=1)return true;
+            if(Math.hypot(e.getX()-downX,e.getY()-downY)>android.view.ViewConfiguration.get(a).getScaledTouchSlop())dragged=true;
+            if(dragged){if(followSelf){followSelf=false;changed.run();}viewport.pan(e.getX()-lastX,e.getY()-lastY);invalidate();}
+            lastX=e.getX();lastY=e.getY();return true;
+        }
+        if(action==MotionEvent.ACTION_UP){intercept(false);if(!dragged&&!multiTouch){performClick();select(e.getX(),e.getY());}return true;}
+        return true;
+    }
+    @Override public boolean performClick(){super.performClick();return true;}
+    private void select(float x,float y){
+        ArrayList<Integer> hits=new ArrayList<>();double limit=a.dp(20)*a.dp(20);
+        for(int i=0;i<visibleCount;i++){float[] q=xy(points.get(i));double d=(q[0]-x)*(q[0]-x)+(q[1]-y)*(q[1]-y);if(d<=limit)hits.add(i);}
+        if(hits.isEmpty())return;
+        if(hits.size()==1){showPoint(hits.get(0));return;}
+        String[] labels=new String[hits.size()];for(int i=0;i<hits.size();i++)labels[i]=UiText.get("route_drawing_006")+(hits.get(i)+1)+" / "+points.size();
+        android.app.AlertDialog choices=new ToolDialog(a).setTitle(UiText.get("route_drawing_007")).setItems(labels,null).setNegativeButton(UiText.get("action_back"),null).show();
+        choices.getListView().setOnItemClickListener((parent,view,n,id)->showPoint(hits.get(n)));
+    }
+    private void showPoint(int index){
+        RoutePoint q=points.get(index);java.text.SimpleDateFormat format=new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone(a.displayZone(java.time.ZoneId.systemDefault())));
+        new ToolDialog(a).setTitle(UiText.get("route_drawing_006")+(index+1)+" / "+points.size()).setMessage(UiText.get("route_drawing_008")+CoordinateFormat.pair(q.lon,q.lat,6)+UiText.get("route_drawing_009")+format.format(new Date(q.time))+" · "+EarthquakeOptions.offset(a.displayZone(java.time.ZoneId.systemDefault()),q.time)+(Float.isFinite(q.accuracy)?UiText.get("route_drawing_010")+String.format(Locale.ROOT,UiText.get("gps_141"),q.accuracy):"")).setNegativeButton(UiText.get("action_back"),null).show();
+    }
+}

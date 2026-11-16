@@ -133,3 +133,7 @@ The remaining-items view only reports the current local candidate pool and does 
 
 
 Independent test applications are distributed separately in `test-apk/`, with corresponding source in `test-apps/`. Their source, simulation-model and artwork notices are in `test-apps/NOTICE.md`; the main application does not bundle these applications.
+
+## 应用图标
+
+`modules/icons/` 的 13 个 SVG 及对应 Android VectorDrawable 为本项目原创几何图形，按项目许可证发布，未复制第三方应用商标或图标。

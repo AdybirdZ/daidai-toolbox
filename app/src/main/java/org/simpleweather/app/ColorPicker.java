@@ -6,10 +6,10 @@ import java.util.*;
 import java.util.function.IntConsumer;
 
 /** Named presets and a validated hexadecimal color; selection retains its parent. */
-final class ColorPicker {
-    static String name(MainActivity a,int color){int n=ThemeColors.presetIndex(color);if(n>=0)return a.getResources().getStringArray(R.array.color_names_seven)[n];if(color==0xFF000000)return a.getString(R.string.color_black);if(color==ThemeColors.GRAY)return a.getString(R.string.color_gray);return ThemeColors.hex(color);}
-    static void show(MainActivity a,String title,int selected,IntConsumer save){show(a,title,selected,ThemeColors.BLUE,false,false,save);}
-    static void show(MainActivity a,String title,int selected,int defaultColor,boolean black,boolean gray,IntConsumer save){
+public final class ColorPicker {
+    public static String name(MainActivity a,int color){int n=ThemeColors.presetIndex(color);if(n>=0)return a.getResources().getStringArray(R.array.color_names_seven)[n];if(color==0xFF000000)return a.getString(R.string.color_black);if(color==ThemeColors.GRAY)return a.getString(R.string.color_gray);return ThemeColors.hex(color);}
+    public static void show(MainActivity a,String title,int selected,IntConsumer save){show(a,title,selected,ThemeColors.BLUE,false,false,save);}
+    public static void show(MainActivity a,String title,int selected,int defaultColor,boolean black,boolean gray,IntConsumer save){
         final int[] chosen={selected};List<Integer> colors=new ArrayList<>();for(int c:ThemeColors.PRESETS)colors.add(c);if(black)colors.add(0xFF000000);if(gray)colors.add(ThemeColors.GRAY);
         String[] labels=new String[colors.size()+1];int current=colors.size();for(int i=0;i<colors.size();i++){int c=colors.get(i);labels[i]=name(a,c)+(c==defaultColor?a.getString(R.string.color_default_suffix):"");if(selected==c)current=i;}labels[colors.size()]=a.getString(R.string.color_custom);
         new ToolDialog(a).setTitle(title).setSingleChoiceItems(labels,current,(d,n)->{if(n<colors.size()){chosen[0]=colors.get(n);save.accept(chosen[0]);}else custom(a,chosen[0],value->{chosen[0]=value;save.accept(value);int index=colors.indexOf(value);((AlertDialog)d).getListView().setItemChecked(index<0?colors.size():index,true);});}).setNegativeButton(a.getString(R.string.action_back),null).show();

@@ -5,32 +5,32 @@ import java.time.*;
 import java.util.*;
 
 /** Local civil-date tasks. Notification delivery state is deliberately separate. */
-final class TodoModel {
-    static final int MAX_ITEMS=2000;
-    static final long DAY_MS=86400000L,UNDO_MS=3*DAY_MS;
-    final List<Item> items=new ArrayList<>();
-    static final class Slot {int from,to;Slot(int from,int to){this.from=from;this.to=to;}}
-    static final class Part {String text;boolean done;Part(String text,boolean done){this.text=text;this.done=done;}}
-    static final class Completion {String day;long at;Completion(String day,long at){this.day=day;this.at=at;}}
-    static final class Item {
-        String id=UUID.randomUUID().toString(),title="",note="",category="",completedThrough="",completedDay="",previousThrough="";
-        LocalDate date=LocalDate.now(),until=date;
-        boolean allDay,someday,done,pin,remindEnd;
-        int priority=1,color=0xff246bce,repeat,weekMask,advance=0,deleteAfterDays=0;
-        long created=System.currentTimeMillis(),updated=created,completedAt=0;
-        final List<Slot> slots=new ArrayList<>();final List<Part> parts=new ArrayList<>();final List<Completion> completions=new ArrayList<>();
+public final class TodoModel {
+    public static final int MAX_ITEMS=2000;
+    public static final long DAY_MS=86400000L,UNDO_MS=3*DAY_MS;
+    public final List<Item> items=new ArrayList<>();
+    public static final class Slot {public int from,to;public Slot(int from,int to){this.from=from;this.to=to;}}
+    public static final class Part {public String text;public boolean done;public Part(String text,boolean done){this.text=text;this.done=done;}}
+    public static final class Completion {public String day;public long at;public Completion(String day,long at){this.day=day;this.at=at;}}
+    public static final class Item {
+        public String id=UUID.randomUUID().toString(),title="",note="",category="",completedThrough="",completedDay="",previousThrough="";
+        public LocalDate date=LocalDate.now(),until=date;
+        public boolean allDay,someday,done,pin,remindEnd;
+        public int priority=1,color=0xff246bce,repeat,weekMask,advance=0,deleteAfterDays=0;
+        public long created=System.currentTimeMillis(),updated=created,completedAt=0;
+        public final List<Slot> slots=new ArrayList<>();public final List<Part> parts=new ArrayList<>();public final List<Completion> completions=new ArrayList<>();
     }
-    static final class Occurrence {
-        final Item item;final LocalDate day;final long start,end;
-        Occurrence(Item item,LocalDate day,ZoneId zone){this.item=item;this.day=day;start=at(day,item.someday?0:item.allDay?0:item.slots.get(0).from,zone);end=item.someday?start:item.allDay?at(item.repeat==0?item.until.plusDays(1):day.plusDays(1),0,zone):at(day,item.slots.get(item.slots.size()-1).to,zone);}
+    public static final class Occurrence {
+        public final Item item;public final LocalDate day;public final long start,end;
+        public Occurrence(Item item,LocalDate day,ZoneId zone){this.item=item;this.day=day;start=at(day,item.someday?0:item.allDay?0:item.slots.get(0).from,zone);end=item.someday?start:item.allDay?at(item.repeat==0?item.until.plusDays(1):day.plusDays(1),0,zone):at(day,item.slots.get(item.slots.size()-1).to,zone);}
     }
-    static final class Event {
-        final Item item;final LocalDate day;final long when;final boolean end;final String key;
-        Event(Item item,LocalDate day,int slot,long when,boolean end){this.item=item;this.day=day;this.when=when;this.end=end;key=item.id+":"+item.updated+":"+day+":"+slot+":"+end;}
+    public static final class Event {
+        public final Item item;public final LocalDate day;public final long when;public final boolean end;public final String key;
+        public Event(Item item,LocalDate day,int slot,long when,boolean end){this.item=item;this.day=day;this.when=when;this.end=end;key=item.id+":"+item.updated+":"+day+":"+slot+":"+end;}
     }
-    Item find(String id){for(Item item:items)if(item.id.equals(id))return item;return null;}
-    static long at(LocalDate day,int minute,ZoneId zone){return day.atStartOfDay().plusMinutes(minute).atZone(zone).toInstant().toEpochMilli();}
-    static boolean scheduled(Item i,LocalDate day){
+    public Item find(String id){for(Item item:items)if(item.id.equals(id))return item;return null;}
+    public static long at(LocalDate day,int minute,ZoneId zone){return day.atStartOfDay().plusMinutes(minute).atZone(zone).toInstant().toEpochMilli();}
+    public static boolean scheduled(Item i,LocalDate day){
         if(i.someday)return i.repeat==4&&(i.weekMask&(1<<(day.getDayOfWeek().getValue()-1)))!=0;
         if(day.isBefore(i.date))return false;
         if(i.allDay&&i.repeat!=0&&day.isAfter(i.until))return false;
@@ -40,13 +40,13 @@ final class TodoModel {
         if(i.repeat==3)return day.getDayOfWeek().getValue()<=5;
         return (i.weekMask&(1<<(day.getDayOfWeek().getValue()-1)))!=0;
     }
-    static boolean completedOn(Item i,LocalDate day){return i.done||!i.completedThrough.isEmpty()&&!day.isAfter(LocalDate.parse(i.completedThrough));}
-    static boolean occurs(Item i,LocalDate day){return scheduled(i,day)&&!completedOn(i,day)&&(i.someday||i.repeat!=0||day.equals(i.date));}
-    static boolean inToday(Item i,long now,ZoneId zone){return scheduled(i,Instant.ofEpochMilli(now).atZone(zone).toLocalDate());}
-    static boolean canUndo(Item i,long now){return i.completedAt>0&&now>=i.completedAt&&now-i.completedAt<UNDO_MS&&(i.done||!i.completedThrough.isEmpty());}
-    static long deleteAt(Item i){return i.completedAt>0&&i.deleteAfterDays>0?i.completedAt+i.deleteAfterDays*DAY_MS:Long.MAX_VALUE;}
-    boolean prune(long now){return items.removeIf(i->now>=deleteAt(i));}
-    static void undo(Item i,long now){
+    public static boolean completedOn(Item i,LocalDate day){return i.done||!i.completedThrough.isEmpty()&&!day.isAfter(LocalDate.parse(i.completedThrough));}
+    public static boolean occurs(Item i,LocalDate day){return scheduled(i,day)&&!completedOn(i,day)&&(i.someday||i.repeat!=0||day.equals(i.date));}
+    public static boolean inToday(Item i,long now,ZoneId zone){return scheduled(i,Instant.ofEpochMilli(now).atZone(zone).toLocalDate());}
+    public static boolean canUndo(Item i,long now){return i.completedAt>0&&now>=i.completedAt&&now-i.completedAt<UNDO_MS&&(i.done||!i.completedThrough.isEmpty());}
+    public static long deleteAt(Item i){return i.completedAt>0&&i.deleteAfterDays>0?i.completedAt+i.deleteAfterDays*DAY_MS:Long.MAX_VALUE;}
+    public boolean prune(long now){return items.removeIf(i->now>=deleteAt(i));}
+    public static void undo(Item i,long now){
         if(!canUndo(i,now))return;
         if(!i.completions.isEmpty())i.completions.remove(i.completions.size()-1);
         i.done=false;i.completedThrough="";i.previousThrough="";i.completedDay="";i.completedAt=0;
@@ -54,7 +54,7 @@ final class TodoModel {
         else if(!i.previousThrough.isEmpty()){i.completedThrough=i.previousThrough;i.previousThrough="";}
         i.updated=now;
     }
-    static Occurrence next(Item item,long now,ZoneId zone){
+    public static Occurrence next(Item item,long now,ZoneId zone){
         if(item.done)return null;
         if(item.someday&&item.repeat!=4)return null;
         if(item.repeat==0)return new Occurrence(item,item.date,zone);
@@ -63,14 +63,14 @@ final class TodoModel {
         for(int n=0;n<8;n++,day=day.plusDays(1))if(occurs(item,day))return new Occurrence(item,day,zone);
         return null;
     }
-    static void complete(Item item,LocalDate day){complete(item,day,System.currentTimeMillis());}
-    static void complete(Item item,LocalDate day,long now){
+    public static void complete(Item item,LocalDate day){complete(item,day,System.currentTimeMillis());}
+    public static void complete(Item item,LocalDate day,long now){
         if(item.someday&&item.repeat!=4){if(item.done)return;item.previousThrough=item.completedThrough;item.completedDay=day.toString();item.completedAt=now;item.updated=Math.max(item.created,now);item.done=true;item.completions.add(new Completion(day.toString(),now));return;}
         if(!occurs(item,day))return;
         item.previousThrough=item.completedThrough;item.completedDay=day.toString();item.completedAt=now;item.updated=Math.max(item.created,now);item.completions.add(new Completion(day.toString(),now));
         if(item.repeat==0)item.done=true;else{item.completedThrough=day.toString();for(Part p:item.parts)p.done=false;}
     }
-    static List<Event> events(Item i,long now,ZoneId zone,int allDayMinute,long notBefore){
+    public static List<Event> events(Item i,long now,ZoneId zone,int allDayMinute,long notBefore){
         List<Event> result=new ArrayList<>();if(i.done||i.advance<0)return result;
         LocalDate first=Instant.ofEpochMilli(now).atZone(zone).toLocalDate().minusDays(1);
         if(i.repeat==0)first=i.date;
@@ -87,9 +87,9 @@ final class TodoModel {
         }
         return result;
     }
-    static int minute(String text){if(text==null||!text.trim().matches("[0-9]{1,2}:[0-9]{2}"))throw new IllegalArgumentException();String[] p=text.trim().split(":");int h=Integer.parseInt(p[0]),m=Integer.parseInt(p[1]);if(h>23||m>59)throw new IllegalArgumentException();return h*60+m;}
-    static String clock(int minute){return String.format(Locale.ROOT,"%02d:%02d",minute/60,minute%60);}
-    static void validate(Item i){
+    public static int minute(String text){if(text==null||!text.trim().matches("[0-9]{1,2}:[0-9]{2}"))throw new IllegalArgumentException();String[] p=text.trim().split(":");int h=Integer.parseInt(p[0]),m=Integer.parseInt(p[1]);if(h>23||m>59)throw new IllegalArgumentException();return h*60+m;}
+    public static String clock(int minute){return String.format(Locale.ROOT,"%02d:%02d",minute/60,minute%60);}
+    public static void validate(Item i){
         if(i.id.isEmpty()||i.id.length()>80||i.title.trim().isEmpty()||i.title.length()>160||i.note.length()>4000||i.category.length()>40||i.priority<0||i.priority>2||(i.color>>>24)!=255||i.repeat<0||i.repeat>4||i.weekMask<0||i.weekMask>127||i.created<0||i.updated<i.created)throw new IllegalArgumentException();
         if(i.someday){if((i.repeat!=0&&i.repeat!=4)||i.allDay||!i.slots.isEmpty()||i.remindEnd||i.advance!=-1)throw new IllegalArgumentException();if(i.repeat==4&&i.weekMask==0)throw new IllegalArgumentException();}
         if(i.deleteAfterDays<0||i.deleteAfterDays>3650||i.completedAt<0||i.completedAt>7289654400000L)throw new IllegalArgumentException();
@@ -104,14 +104,14 @@ final class TodoModel {
         if(!i.allDay&&!i.someday)validateSlots(i.slots);
         if(i.parts.size()>50)throw new IllegalArgumentException();for(Part p:i.parts)if(p.text.trim().isEmpty()||p.text.length()>200)throw new IllegalArgumentException();
     }
-    static void validateSlots(List<Slot> slots){if(slots.isEmpty()||slots.size()>12)throw new IllegalArgumentException();slots.sort(Comparator.comparingInt(s->s.from));int previous=-1;for(Slot s:slots){if(s.from<0||s.to>1440||s.to<=s.from||s.from<previous)throw new IllegalArgumentException();previous=s.to;}}
-    JSONObject json()throws JSONException{JSONArray rows=new JSONArray();for(Item i:items)rows.put(encode(i));return new JSONObject().put("version",4).put("items",rows);}
-    static JSONObject encode(Item i)throws JSONException{
+    public static void validateSlots(List<Slot> slots){if(slots.isEmpty()||slots.size()>12)throw new IllegalArgumentException();slots.sort(Comparator.comparingInt(s->s.from));int previous=-1;for(Slot s:slots){if(s.from<0||s.to>1440||s.to<=s.from||s.from<previous)throw new IllegalArgumentException();previous=s.to;}}
+    public JSONObject json()throws JSONException{JSONArray rows=new JSONArray();for(Item i:items)rows.put(encode(i));return new JSONObject().put("version",4).put("items",rows);}
+    public static JSONObject encode(Item i)throws JSONException{
         JSONArray slots=new JSONArray(),parts=new JSONArray();for(Slot s:i.slots)slots.put(new JSONArray().put(s.from).put(s.to));for(Part p:i.parts)parts.put(new JSONObject().put("text",p.text).put("done",p.done));
         JSONArray history=new JSONArray();for(Completion c:i.completions)history.put(new JSONObject().put("day",c.day).put("at",c.at));
         return new JSONObject().put("id",i.id).put("title",i.title).put("note",i.note).put("category",i.category).put("date",i.date.toString()).put("until",i.until.toString()).put("allDay",i.allDay).put("someday",i.someday).put("done",i.done).put("pin",i.pin).put("remindEnd",i.remindEnd).put("priority",i.priority).put("color",i.color).put("repeat",i.repeat).put("weekMask",i.weekMask).put("advance",i.advance).put("created",i.created).put("updated",i.updated).put("completedThrough",i.completedThrough).put("completedAt",i.completedAt).put("completedDay",i.completedDay).put("previousThrough",i.previousThrough).put("deleteAfterDays",i.deleteAfterDays).put("slots",slots).put("parts",parts).put("completions",history);
     }
-    static TodoModel parse(String raw)throws JSONException{
+    public static TodoModel parse(String raw)throws JSONException{
         try{if(raw==null||raw.length()>16*1024*1024)throw new IllegalArgumentException();
             boolean quote=false,escape=false;int depth=0;for(int n=0;n<raw.length();n++){char c=raw.charAt(n);if(quote){if(escape)escape=false;else if(c=='\\')escape=true;else if(c=='"')quote=false;}else if(c=='"')quote=true;else if(c=='{'||c=='['){if(++depth>8)throw new IllegalArgumentException();}else if(c=='}'||c==']'){if(--depth<0)throw new IllegalArgumentException();}}if(depth!=0||quote)throw new IllegalArgumentException();
             JSONTokener tokener=new JSONTokener(raw);Object value=tokener.nextValue();if(!(value instanceof JSONObject)||tokener.nextClean()!=0)throw new IllegalArgumentException();JSONObject root=(JSONObject)value;

@@ -7,17 +7,17 @@ import android.view.*;
 import java.util.*;
 
 /** Native canvas illustrations, independently drawn; no map tiles or third-party artwork. */
-final class StatusViews {
-    static abstract class Square extends View {
-        final MainActivity a;final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
-        Square(MainActivity a){super(a);this.a=a;}
+public final class StatusViews {
+    public static abstract class Square extends View {
+        public final MainActivity a;public final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
+        public Square(MainActivity a){super(a);this.a=a;}
         @Override protected void onMeasure(int w,int h){int size=MeasureSpec.getSize(w);setMeasuredDimension(size,size);}
-        void text(Canvas c,String t,float x,float y,int size,int color){p.setStyle(Paint.Style.FILL);p.setColor(color==a.INK?a.primaryTextColor():color==a.MUTED?a.secondaryTextColor():color);p.setTextSize(a.dp(size));p.setTextAlign(Paint.Align.CENTER);c.drawText(t,x,y,p);}
-        void circle(Canvas c,float x,float y,float r,int color,float width){p.setColor(color);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(width));c.drawCircle(x,y,r,p);p.setStyle(Paint.Style.FILL);}
-        float[] point(float x,float y,float r,double degrees){double t=Math.toRadians(degrees);return new float[]{x+r*(float)Math.sin(t),y-r*(float)Math.cos(t)};}
+        public void text(Canvas c,String t,float x,float y,int size,int color){p.setStyle(Paint.Style.FILL);p.setColor(color==a.INK?a.primaryTextColor():color==a.MUTED?a.secondaryTextColor():color);p.setTextSize(a.dp(size));p.setTextAlign(Paint.Align.CENTER);c.drawText(t,x,y,p);}
+        public void circle(Canvas c,float x,float y,float r,int color,float width){p.setColor(color);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(width));c.drawCircle(x,y,r,p);p.setStyle(Paint.Style.FILL);}
+        public float[] point(float x,float y,float r,double degrees){double t=Math.toRadians(degrees);return new float[]{x+r*(float)Math.sin(t),y-r*(float)Math.cos(t)};}
     }
-    static final class Compass extends Square {
-        final StatusHardware hw;Compass(MainActivity a,StatusHardware hw){super(a);this.hw=hw;setContentDescription(UiText.get("status_views_001"));}
+    public static final class Compass extends Square {
+        public final StatusHardware hw;public Compass(MainActivity a,StatusHardware hw){super(a);this.hw=hw;setContentDescription(UiText.get("status_views_001"));}
         @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.37f;circle(c,x,y,r,0xFFDCE5F1,2);
             boolean available=hw.headingAvailable();Location fix=LocationService.last(a);boolean wantTrue=a.preferences.getBoolean("status_true_north",true);double heading=wantTrue?hw.trueHeading(fix):hw.magneticHeading;
             if(!available||!Double.isFinite(heading)){text(c,UiText.get("status_views_002"),x,y,19,a.MUTED);text(c,UiText.get("status_views_003"),x,y+a.dp(27),12,a.MUTED);return;}
@@ -28,9 +28,9 @@ final class StatusViews {
             text(c,wantTrue?UiText.get("status_views_004"):UiText.get("settings_079"),x,y+r-a.dp(29),13,a.MUTED);
         }
     }
-    static final class Treasure extends Square {
-        final StatusHardware hw;final StatusPlaces places;final Map<String,float[]> hits=new LinkedHashMap<>();
-        Treasure(MainActivity a,StatusHardware hw,StatusPlaces places){super(a);this.hw=hw;this.places=places;setContentDescription(UiText.get("status_views_005"));setClickable(true);}
+    public static final class Treasure extends Square {
+        public final StatusHardware hw;public final StatusPlaces places;public final Map<String,float[]> hits=new LinkedHashMap<>();
+        public Treasure(MainActivity a,StatusHardware hw,StatusPlaces places){super(a);this.hw=hw;this.places=places;setContentDescription(UiText.get("status_views_005"));setClickable(true);}
         @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.37f;hits.clear();circle(c,x,y,r,0xFFDCE5F1,1);circle(c,x,y,r/2,0xFFDCE5F1,1);p.setColor(a.BLUE);c.drawCircle(x,y,a.dp(5),p);
             Location fix=LocationService.last(a);StatusPlace target=places.selected();double heading=hw.trueHeading(fix);boolean relative=Double.isFinite(heading);if(!relative)text(c,UiText.get("status_views_006"),x,a.dp(20),13,a.MUTED);
             if(fix==null){text(c,UiText.get("route_drawing_003"),x,y+a.dp(30),14,a.MUTED);return;}
@@ -52,10 +52,10 @@ final class StatusViews {
         @Override public boolean onTouchEvent(MotionEvent e){if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getX();downY=e.getY();return true;}if(e.getActionMasked()==MotionEvent.ACTION_UP){if(Math.hypot(e.getX()-downX,e.getY()-downY)>a.dp(12))return true;List<StatusPlace> nearby=new ArrayList<>();for(StatusPlace place:places.shown()){float[] q=hits.get(place.id);if(q!=null&&Math.hypot(e.getX()-q[0],e.getY()-q[1])<=a.dp(22))nearby.add(place);}if(nearby.size()==1)places.select(nearby.get(0).id);else if(nearby.size()>1){String[] names=new String[nearby.size()];for(int i=0;i<names.length;i++)names[i]=nearby.get(i).name;new ToolDialog(a).setTitle(UiText.get("status_views_009")).setItems(names,(d,n)->places.select(nearby.get(n).id)).setNegativeButton(UiText.get("action_back"),null).show();}performClick();return true;}return true;}
         @Override public boolean performClick(){super.performClick();return true;}
     }
-    static final class Sky extends Square {
-        final StatusHardware hw;String selected="";final Runnable changed;final Map<String,float[]> hits=new HashMap<>();
-        Sky(MainActivity a,StatusHardware hw,Runnable changed){super(a);this.hw=hw;this.changed=changed;setContentDescription(UiText.get("status_views_010"));setClickable(true);}
-        static int color(int type){switch(type){case 1:return 0xFF246BCE;case 5:return 0xFFB64C37;case 6:return 0xFF337C68;case 3:return 0xFF8051B5;default:return 0xFF8A7021;}}
+    public static final class Sky extends Square {
+        public final StatusHardware hw;public String selected="";public final Runnable changed;public final Map<String,float[]> hits=new HashMap<>();
+        public Sky(MainActivity a,StatusHardware hw,Runnable changed){super(a);this.hw=hw;this.changed=changed;setContentDescription(UiText.get("status_views_010"));setClickable(true);}
+        public static int color(int type){switch(type){case 1:return 0xFF246BCE;case 5:return 0xFFB64C37;case 6:return 0xFF337C68;case 3:return 0xFF8051B5;default:return 0xFF8A7021;}}
         @Override protected void onDraw(Canvas c){float x=getWidth()/2f,y=getHeight()/2f,r=getWidth()*.38f;hits.clear();for(int level=0;level<3;level++)circle(c,x,y,r*(3-level)/3,0xFFDCE5F1,1);
             double heading=0;boolean follow=a.preferences.getBoolean("status_satellite_rotate",true);if(follow){Location fix=LocationService.last(a);boolean trueNorth=a.preferences.getBoolean("status_true_north",true);double h=trueNorth?hw.trueHeading(fix):hw.magneticHeading;if(Double.isFinite(h))heading=h;}
             p.setColor(0xFFDCE5F1);p.setStrokeWidth(a.dp(1));float[] east=point(x,y,r,90-heading),west=point(x,y,r,270-heading),north=point(x,y,r,0-heading),south=point(x,y,r,180-heading);c.drawLine(west[0],west[1],east[0],east[1],p);c.drawLine(north[0],north[1],south[0],south[1],p);

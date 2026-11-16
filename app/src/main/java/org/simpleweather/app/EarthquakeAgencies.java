@@ -6,7 +6,7 @@ import java.util.*;
  * https://www.emsc-csem.org/Earthquake_data/contributors.php
  * Unknown codes are not guessed or presented as institution names.
  */
-final class EarthquakeAgencies {
+public final class EarthquakeAgencies {
     private static final Map<String,String> NAMES=new HashMap<>();
     static {
         String[][] entries={
@@ -79,7 +79,7 @@ final class EarthquakeAgencies {
         };
         for(String[] entry:entries)NAMES.put(entry[0],entry[1]);
     }
-    static String name(String code){
+    public static String name(String code){
         if(code==null||code.trim().isEmpty())return UiText.get("earthquake_agencies_067");
         String value=code.trim();String known=NAMES.get(value.toUpperCase(Locale.ROOT));
         if(known!=null)return UiText.get(known);

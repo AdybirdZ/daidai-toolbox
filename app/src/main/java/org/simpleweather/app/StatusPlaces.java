@@ -12,28 +12,28 @@ import android.text.InputType;
 import android.widget.*;
 import java.util.*;
 
-final class StatusPlaces {
+public final class StatusPlaces {
     private final MainActivity a;private final SharedPreferences store;private final Runnable changed;
     private android.app.AlertDialog manager;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private LocationManager locationManager;
     private LocationListener pendingLocation;
     private Runnable pendingPermission;
-    StatusPlaces(MainActivity a,Runnable changed){this.a=a;this.changed=changed;store=a.getSharedPreferences("status_places",0);}
+    public StatusPlaces(MainActivity a,Runnable changed){this.a=a;this.changed=changed;store=a.getSharedPreferences("status_places",0);}
     private String encoded;private List<StatusPlace> cached=Collections.emptyList();
     private List<StatusPlace> read(){String raw=store.getString("places","[]");if(!Objects.equals(raw,encoded)){cached=StatusPlace.decode(raw);encoded=raw;}return cached;}
-    List<StatusPlace> all(){return new ArrayList<>(read());}
-    List<StatusPlace> shown(){List<StatusPlace> rows=new ArrayList<>();for(StatusPlace p:read())if(p.visible)rows.add(p);return rows;}
-    org.json.JSONArray exportRows()throws org.json.JSONException{return new org.json.JSONArray(StatusPlace.encode(StatusPlace.decode(store.getString("places","[]"))));}
-    boolean importRows(org.json.JSONArray rows){boolean saved=store.edit().putString("places",rows.toString()).commit();if(saved){changed.run();if(manager!=null&&manager.isShowing()){manager.dismiss();manage();}}return saved;}
-    void select(String id){store.edit().putString("selected",id).apply();changed.run();}
+    public List<StatusPlace> all(){return new ArrayList<>(read());}
+    public List<StatusPlace> shown(){List<StatusPlace> rows=new ArrayList<>();for(StatusPlace p:read())if(p.visible)rows.add(p);return rows;}
+    public org.json.JSONArray exportRows()throws org.json.JSONException{return new org.json.JSONArray(StatusPlace.encode(StatusPlace.decode(store.getString("places","[]"))));}
+    public boolean importRows(org.json.JSONArray rows){boolean saved=store.edit().putString("places",rows.toString()).commit();if(saved){changed.run();if(manager!=null&&manager.isShowing()){manager.dismiss();manage();}}return saved;}
+    public void select(String id){store.edit().putString("selected",id).apply();changed.run();}
     private void visibility(String id,boolean shown){List<StatusPlace> rows=all();for(int i=0;i<rows.size();i++)if(rows.get(i).id.equals(id))rows.set(i,rows.get(i).withVisibility(shown));store.edit().putString("places",StatusPlace.encode(rows)).apply();changed.run();}
     private void move(String id,int delta){List<StatusPlace> rows=all();int at=-1;for(int i=0;i<rows.size();i++)if(rows.get(i).id.equals(id)){at=i;break;}int to=at+delta;if(at<0||to<0||to>=rows.size())return;Collections.swap(rows,at,to);save(rows);}
-    StatusPlace selected(){String id=store.getString("selected","");for(StatusPlace p:read())if(p.id.equals(id))return p;return null;}
+    public StatusPlace selected(){String id=store.getString("selected","");for(StatusPlace p:read())if(p.id.equals(id))return p;return null;}
     private void save(List<StatusPlace> rows){store.edit().putString("places",StatusPlace.encode(rows)).apply();changed.run();if(manager!=null&&manager.isShowing()){manager.dismiss();manage();}}
     private EditText input(LinearLayout c,String title,String value,boolean number){c.addView(a.text(title,14,a.INK,true));EditText e=new EditText(a);e.setSingleLine(true);e.setText(value);e.setContentDescription(title);e.setInputType(number?InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL|InputType.TYPE_NUMBER_FLAG_SIGNED:InputType.TYPE_CLASS_TEXT);c.addView(e,a.lp(-1,52));a.gap(c,12);return e;}
-    void addCurrent(){Location fix=LocationService.last(a);if(fix==null){a.toast(UiText.get("status_places_001"));return;}edit(null,fix);}
-    void edit(StatusPlace old,Location fix){
+    public void addCurrent(){Location fix=LocationService.last(a);if(fix==null){a.toast(UiText.get("status_places_001"));return;}edit(null,fix);}
+    public void edit(StatusPlace old,Location fix){
         LinearLayout c=a.column();c.setPadding(a.dp(20),a.dp(8),a.dp(20),a.dp(12));
         EditText name=input(c,UiText.get("status_places_002"),old!=null?old.name:"",false);
         EditText lon=input(c,UiText.get("status_places_003"),old!=null?Double.toString(old.longitude):fix!=null?Double.toString(fix.getLongitude()):"",true);
@@ -52,8 +52,8 @@ final class StatusPlaces {
     private boolean permitted(){return a.checkSelfPermission(network()?Manifest.permission.ACCESS_COARSE_LOCATION:Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED;}
     private void requestLocation(EditText lon,EditText lat,TextView note){if(!permitted()){pendingPermission=()->requestLocation(lon,lat,note);a.requestPermissions(network()?new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}:new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},47);return;}stopRequest();locationManager=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);String provider=network()?LocationManager.NETWORK_PROVIDER:LocationManager.GPS_PROVIDER;try{if(locationManager==null||!locationManager.getAllProviders().contains(provider)||!locationManager.isProviderEnabled(provider)){note.setText(UiText.get("status_places_023"));return;}note.setText(UiText.get("status_places_024"));pendingLocation=new LocationListener(){public void onLocationChanged(Location l){LocationService.record(a,l);lon.setText(Double.toString(l.getLongitude()));lat.setText(Double.toString(l.getLatitude()));note.setText(UiText.get("status_places_025")+(l.hasAccuracy()?String.format(Locale.ROOT,UiText.get("status_places_014"),l.getAccuracy()):UiText.get("status_places_015"))+UiText.get("status_places_016"));stopRequest();}public void onProviderEnabled(String p){}public void onProviderDisabled(String p){}public void onStatusChanged(String p,int s,android.os.Bundle b){}};locationManager.requestLocationUpdates(provider,0,0,pendingLocation,Looper.getMainLooper());handler.postDelayed(()->{if(pendingLocation!=null){stopRequest();note.setText(UiText.get("status_places_026"));}},15000);}catch(SecurityException e){stopRequest();note.setText(UiText.get("status_places_027") );}catch(Exception e){stopRequest();note.setText(UiText.get("status_places_028") );}}
     private void stopRequest(){if(locationManager!=null&&pendingLocation!=null)try{locationManager.removeUpdates(pendingLocation);}catch(Exception ignored){}pendingLocation=null;}
-    void permissionResult(){Runnable r=pendingPermission;pendingPermission=null;if(r!=null){if(permitted())r.run();else a.toast(UiText.get("status_places_029"));}}
-    void manage(){
+    public void permissionResult(){Runnable r=pendingPermission;pendingPermission=null;if(r!=null){if(permitted())r.run();else a.toast(UiText.get("status_places_029"));}}
+    public void manage(){
         LinearLayout c=a.column();c.setPadding(a.dp(18),a.dp(8),a.dp(18),a.dp(18));
         List<StatusPlace> rows=all();c.addView(a.text(UiText.get("status_places_030")+rows.size()+UiText.get("status_places_031"),13,a.MUTED,false));a.gap(c,12);
         if(rows.isEmpty())c.addView(a.text(UiText.get("status_places_032"),15,a.INK,false));

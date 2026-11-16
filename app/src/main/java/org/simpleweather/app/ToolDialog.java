@@ -7,12 +7,12 @@ import android.view.*;
 import android.widget.*;
 
 /** Apply the optional outline to platform dialog buttons and input regions too. */
-final class ToolDialog extends AlertDialog.Builder {
+public final class ToolDialog extends AlertDialog.Builder {
     private static final java.util.WeakHashMap<AlertDialog,Boolean> OPEN=new java.util.WeakHashMap<>();
-    ToolDialog(Context context){super(context);}
+    public ToolDialog(Context context){super(context);}
     @Override public AlertDialog create(){return prepare(super.create());}
     /** Inflate and style before the first measurement; keep caller OnShow validation intact. */
-    static <T extends AlertDialog> T prepare(T dialog){
+    public static <T extends AlertDialog> T prepare(T dialog){
         dialog.create();OPEN.put(dialog,true);
         Window window=dialog.getWindow();
         if(window!=null)window.setWindowAnimations(0);
@@ -34,7 +34,7 @@ final class ToolDialog extends AlertDialog.Builder {
         return dialog;
     }
     @Override public AlertDialog show(){AlertDialog dialog=create();dialog.show();return dialog;}
-    static void closeAll(){for(AlertDialog d:new java.util.ArrayList<>(OPEN.keySet()))if(d!=null&&d.isShowing())d.dismiss();}
-    static void refresh(Context context){for(AlertDialog d:new java.util.ArrayList<>(OPEN.keySet()))if(d!=null&&d.isShowing()&&d.getWindow()!=null)decorate(d.getContext(),d.getWindow().getDecorView());}
+    public static void closeAll(){for(AlertDialog d:new java.util.ArrayList<>(OPEN.keySet()))if(d!=null&&d.isShowing())d.dismiss();}
+    public static void refresh(Context context){for(AlertDialog d:new java.util.ArrayList<>(OPEN.keySet()))if(d!=null&&d.isShowing()&&d.getWindow()!=null)decorate(d.getContext(),d.getWindow().getDecorView());}
     private static void decorate(Context context,View v){UiColors.decorate(context,v);}
 }

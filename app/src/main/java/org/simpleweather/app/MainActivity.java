@@ -20,41 +20,44 @@ import java.util.concurrent.*;
 
 public class MainActivity extends Activity {
     @Override protected void attachBaseContext(android.content.Context base){super.attachBaseContext(AppLanguage.wrap(base));}
-    static final int TITLE=0xFF010102;
-    static final int BG=0xFFF5F7FB, WHITE=Color.WHITE, INK=0xFF20324C, MUTED=0xFF718097, BLUE=0xFF246BCE, PALE=0xFFEAF2FF;
+    public static final int TITLE=0xFF010102;
+    public static final int BG=0xFFF5F7FB, WHITE=Color.WHITE, INK=0xFF20324C, MUTED=0xFF718097, BLUE=0xFF246BCE, PALE=0xFFEAF2FF;
     private final ExecutorService workers=Executors.newFixedThreadPool(2);
     private final Handler main=new Handler(Looper.getMainLooper());
     private WeatherApi api;
     private final Set<String> inFlight=new HashSet<>();
     private final Map<String,Long> attempts=new HashMap<>();
-    private WeatherStore store;
+    public WeatherStore store;
     private ConfigurationTransfer configuration;
     private ModuleTransfer moduleTransfer;
     private AppIconSettings appIcons;
     private List<City> catalog;
-    private City city;
-    private WeatherData data;
+    public City city;
+    public WeatherData data;
     private LinearLayout host, results;
-    LinearLayout body;
-    private int tab=0;
+    public LinearLayout body;
+    public int tab=-1;
+    public AppModules apps;
+    private Bundle initialScreenState;
+    private final Map<Integer,ScreenHandle> screens=new HashMap<>();
     private ScrollView pageScroll;
     private LinearLayout navigation;
     private int navigationOffset;
     private Instant astronomyTime=Instant.now();
     private int pendingScrollY=-1;
-    private MapScreen maps;
-    private ScheduleScreen schedule;
-    private GpsScreen gps;
-    private EarthquakeScreen earthquakes;
-    private RandomChoiceScreen randomChoice;
-    private TodoScreen todo;
+    private ScreenHandle maps;
+    private ScreenHandle schedule;
+    private ScreenHandle gps;
+    private ScreenHandle earthquakes;
+    private ScreenHandle randomChoice;
+    private ScreenHandle todo;
     private android.graphics.Bitmap background;
-    android.content.SharedPreferences preferences;
+    public android.content.SharedPreferences preferences;
     private EditText search;
     private TextView searchStatus;
-    private boolean picking, loading, dead;
-    private String notice="";
-    private int searchVersion;
+    public boolean picking, loading, dead;
+    public String notice="";
+    public int searchVersion;
     private int reopenSettings;
     private int cacheGeneration;
     private boolean deferMapReload;
@@ -79,37 +82,44 @@ public class MainActivity extends Activity {
             String[][] renamed={{UiText.raw("identity_main_005"),UiText.raw("identity_astronomy_017")},{UiText.raw("identity_main_006"),UiText.raw("identity_astronomy_018")},{UiText.raw("identity_main_007"),UiText.raw("identity_astronomy_019")},{UiText.raw("identity_main_008"),UiText.raw("identity_astronomy_020")},{UiText.raw("identity_main_009"),UiText.raw("identity_astronomy_021")},{UiText.raw("identity_main_010"),UiText.raw("identity_astronomy_030")},{UiText.raw("identity_main_011"),UiText.raw("identity_astronomy_031")}};
             SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_deep_"+pair[0],newKey="astro_deep_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);e.remove(oldKey);}e.putInt("deep_names_schema",1).apply();
         }
-        schedule=new ScheduleScreen(this);gps=new GpsScreen(this);earthquakes=new EarthquakeScreen(this);earthquakes.restoreState(state);randomChoice=new RandomChoiceScreen(this);todo=new TodoScreen(this);
+        initialScreenState=state;apps=new AppModules(this);apps.initialize();
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_todo",false))preferences.edit().putInt("last_tab",7).putBoolean("tab_show_7",true).apply();
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
-        tab=state==null?preferences.getInt("last_tab",0):state.getInt("toolbox_tab",preferences.getInt("last_tab",0));if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));navigationOffset=state.getInt("toolbox_navigation",0);pendingScrollY=state.getInt("toolbox_scroll",0);}if(!visibleTabs().contains(tab))tab=visibleTabs().get(0);if(getIntent().getBooleanExtra("configuration_applied",false)){tab=0;getIntent().removeExtra("configuration_applied");}switchTab(tab);load(false);
+        tab=state==null?-1:state.getInt("toolbox_tab",-1);
+        if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));pendingScrollY=state.getInt("toolbox_scroll",0);}
+        if(state==null&&getIntent().getBooleanExtra("open_location",false))tab=2;
+        if(state==null&&getIntent().getBooleanExtra("open_todo",false))tab=7;
+        if(getIntent().getBooleanExtra("configuration_applied",false)){tab=-1;getIntent().removeExtra("configuration_applied");}
+        switchTab(tab);if(tab==0)load(false);
+
+
         if(reopenSettings>0){int level=reopenSettings;reopenSettings=0;new SettingsScreen(this).settingsPath(level==2);}
         if(preferences.getInt("seen_version",0)<versionCode())main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",versionCode()).apply();}},700);
     }
-    int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
-    LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
-    LinearLayout row() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.HORIZONTAL);l.setGravity(Gravity.CENTER_VERTICAL);return l;}
-    LinearLayout.LayoutParams lp(int w,int h) {return new LinearLayout.LayoutParams(w<0?w:dp(w),h<0?h:dp(h));}
-    TextView text(String value,int size,int color,boolean bold) {
+    public int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
+    public LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
+    public LinearLayout row() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.HORIZONTAL);l.setGravity(Gravity.CENTER_VERTICAL);return l;}
+    public LinearLayout.LayoutParams lp(int w,int h) {return new LinearLayout.LayoutParams(w<0?w:dp(w),h<0?h:dp(h));}
+    public TextView text(String value,int size,int color,boolean bold) {
         TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(resolveTextColor(color));t.setTag(color==TITLE?UiColors.TITLE:color==INK||color==BLUE?UiColors.BODY:color==MUTED?UiColors.NOTE:"text-fixed");
         t.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));t.setIncludeFontPadding(false);
         t.setLineSpacing(dp(3),1);t.setTextIsSelectable(false);t.setLongClickable(false);return t;
     }
-    GradientDrawable shape(int color,int radius) {GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));if(outlined())d.setStroke(dp(1),outlineColor());return d;}
-    void tap(View v,int color,int radius,Runnable action) {
+    public GradientDrawable shape(int color,int radius) {GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));if(outlined())d.setStroke(dp(1),outlineColor());return d;}
+    public void tap(View v,int color,int radius,Runnable action) {
         v.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x223577CC),shape(color,radius),shape(WHITE,radius)));
         v.setOnClickListener(view->action.run());v.setClickable(true);v.setFocusable(true);
     }
-    TextView button(String title, boolean primary, Runnable click) {
+    public TextView button(String title, boolean primary, Runnable click) {
         TextView t=text(title,14,primary?buttonPrimaryText():buttonSecondaryText(),true);t.setGravity(Gravity.CENTER);
         t.setTextColor(primary?buttonPrimaryText():buttonSecondaryText());t.setMinHeight(dp(48));t.setPadding(dp(16),dp(10),dp(16),dp(10));tap(t,primary?buttonPrimaryColor():buttonSecondaryColor(),16,click);t.setTag(primary?"theme-primary":"theme-secondary");return t;
     }
-    void gap(LinearLayout parent,int h) {View v=new View(this);parent.addView(v,lp(1,h));}
-    void spacer(LinearLayout parent) {parent.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));}
-    void line(LinearLayout parent) {View v=new View(this);v.setBackgroundColor(0xFFF0F3F8);parent.addView(v,new LinearLayout.LayoutParams(-1,dp(1)));}
-    private void startScreen() {
-        if(maps!=null){maps.destroy();maps=null;}
+    public void gap(LinearLayout parent,int h) {View v=new View(this);parent.addView(v,lp(1,h));}
+    public void spacer(LinearLayout parent) {parent.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));}
+    public void line(LinearLayout parent) {View v=new View(this);v.setBackgroundColor(0xFFF0F3F8);parent.addView(v,new LinearLayout.LayoutParams(-1,dp(1)));}
+    public void startScreen() {
+        if(maps!=null){maps.call("destroy");maps=null;screens.remove(3);}
         android.widget.FrameLayout base=new android.widget.FrameLayout(this);
         if(background!=null){ImageView image=new ImageView(this);image.setScaleType(ImageView.ScaleType.CENTER_CROP);image.setImageBitmap(background);base.addView(image,new FrameLayout.LayoutParams(-1,-1));View shade=new View(this);shade.setBackgroundColor(android.graphics.Color.argb((100-Math.max(0,Math.min(100,preferences.getInt("background_brightness",20))))*255/100,245,247,251));base.addView(shade,new FrameLayout.LayoutParams(-1,-1));}else base.setBackgroundColor(BG);
         host=column();base.addView(host,new FrameLayout.LayoutParams(-1,-1));setContentView(base);
@@ -125,154 +135,52 @@ public class MainActivity extends Activity {
         pageHeader();
         navigation=row();navigation.setPadding(dp(8),dp(6),dp(8),dp(6));navigation.setBackground(shape(0xF2FFFFFF,0));host.addView(navigation,lp(-1,-2));renderNavigation();
     }
-    static final int[] TAB_NAME_IDS={R.string.tab_weather,R.string.tab_schedule,R.string.tab_status,R.string.tab_weather_map,R.string.tab_astronomy,R.string.tab_earthquake,R.string.tab_random,R.string.tab_todo};
-    static final int[] WEATHER_NAME_IDS={R.string.weather_area,R.string.weather_current,R.string.weather_hourly,R.string.weather_daily,R.string.weather_details,R.string.weather_sources};
-    String tabName(int id){return getString(TAB_NAME_IDS[id]);}
-    String weatherName(int id){return getString(WEATHER_NAME_IDS[id]);}
-    String[] tabNames(){String[] out=new String[TAB_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=tabName(i);return out;}
-    String[] weatherNames(){String[] out=new String[WEATHER_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=weatherName(i);return out;}
-    boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",false);}
-    int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
-    int themeColor(){return UiColors.seed(this,UiColors.BUTTON);}
-    int primaryTextColor(){return UiColors.ink(this,UiColors.BODY);}
-    int secondaryTextColor(){return UiColors.ink(this,UiColors.NOTE);}
-    int accentColor(){return primaryTextColor();}
-    int titleTextColor(){return UiColors.ink(this,UiColors.TITLE);}
-    int linkTextColor(){return UiColors.ink(this,UiColors.LINK);}
-    int buttonPrimaryColor(){return UiColors.ink(this,UiColors.BUTTON);}
-    int buttonPrimaryText(){return Color.WHITE;}
-    int buttonSecondaryColor(){return UiColors.pale(this,UiColors.BUTTON);}
-    int buttonSecondaryText(){return buttonPrimaryColor();}
-    void applyTheme(){ToolDialog.refresh(this);refreshScreen();}
-    void applyKeepScreenAwake(){if(preferences!=null&&preferences.getBoolean("keep_screen_awake",false))getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);}
-    void markLink(TextView view){boolean button="theme-secondary".equals(view.getTag())||"theme-primary".equals(view.getTag());UiColors.mark(view,UiColors.LINK);if(button){view.setTag("theme-link-button");view.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x22000000),shape(UiColors.pale(this,UiColors.LINK),16),null));}}
-    int resolveTextColor(int color){if(color==TITLE)return titleTextColor();if(color==INK)return primaryTextColor();if(color==MUTED)return secondaryTextColor();if(color==BLUE)return accentColor();if(color==WHITE)return buttonPrimaryText();return color;}
-    ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
-    List<Integer> visibleTabs(){List<Integer> all=DisplayOrder.parse(preferences.getString("tab_order",""),TAB_NAME_IDS.length);List<Integer> result=new ArrayList<>();for(int id:all)if(preferences.getBoolean("tab_show_"+id,id<3||id==5||id==6||id==7))result.add(id);if(result.isEmpty())result.add(0);return result;}
-    void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
-    void refreshScreen(){List<Integer> visible=visibleTabs();if(!visible.contains(tab))tab=visible.get(0);switchTab(tab);}
+    public static final int[] TAB_NAME_IDS={R.string.tab_weather,R.string.tab_schedule,R.string.tab_status,R.string.tab_weather_map,R.string.tab_astronomy,R.string.tab_earthquake,R.string.tab_random,R.string.tab_todo};
+    public static final int[] WEATHER_NAME_IDS={R.string.weather_area,R.string.weather_current,R.string.weather_hourly,R.string.weather_daily,R.string.weather_details,R.string.weather_sources};
+    public String tabName(int id){return getString(TAB_NAME_IDS[id]);}
+    public String weatherName(int id){return getString(WEATHER_NAME_IDS[id]);}
+    public String[] tabNames(){String[] out=new String[TAB_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=tabName(i);return out;}
+    public String[] weatherNames(){String[] out=new String[WEATHER_NAME_IDS.length];for(int i=0;i<out.length;i++)out[i]=weatherName(i);return out;}
+    public boolean outlined(){return preferences!=null&&preferences.getBoolean("outline",false);}
+    public int outlineColor(){return preferences.getInt("outline_color",Color.BLACK);}
+    public int themeColor(){return UiColors.seed(this,UiColors.BUTTON);}
+    public int primaryTextColor(){return UiColors.ink(this,UiColors.BODY);}
+    public int secondaryTextColor(){return UiColors.ink(this,UiColors.NOTE);}
+    public int accentColor(){return primaryTextColor();}
+    public int titleTextColor(){return UiColors.ink(this,UiColors.TITLE);}
+    public int linkTextColor(){return UiColors.ink(this,UiColors.LINK);}
+    public int buttonPrimaryColor(){return UiColors.ink(this,UiColors.BUTTON);}
+    public int buttonPrimaryText(){return Color.WHITE;}
+    public int buttonSecondaryColor(){return UiColors.pale(this,UiColors.BUTTON);}
+    public int buttonSecondaryText(){return buttonPrimaryColor();}
+    public void applyTheme(){ToolDialog.refresh(this);refreshScreen();}
+    public void applyKeepScreenAwake(){if(preferences!=null&&preferences.getBoolean("keep_screen_awake",false))getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);}
+    public void markLink(TextView view){boolean button="theme-secondary".equals(view.getTag())||"theme-primary".equals(view.getTag());UiColors.mark(view,UiColors.LINK);if(button){view.setTag("theme-link-button");view.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(0x22000000),shape(UiColors.pale(this,UiColors.LINK),16),null));}}
+    public int resolveTextColor(int color){if(color==TITLE)return titleTextColor();if(color==INK)return primaryTextColor();if(color==MUTED)return secondaryTextColor();if(color==BLUE)return accentColor();if(color==WHITE)return buttonPrimaryText();return color;}
+    public ZoneId displayZone(ZoneId fallback){int mode=preferences.getInt("global_time_mode",0);return mode==1?ZoneId.of("Asia/Shanghai"):mode==2?ZoneOffset.UTC:fallback;}
+    public List<Integer> visibleTabs(){List<Integer> out=new ArrayList<>();for(int id:DisplayOrder.parse(preferences.getString("tab_order",""),8))if(apps!=null&&apps.installed(AppModules.IDS[id]))out.add(id);return out;}
+
+    public void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
+    public void refreshScreen(){switchTab(tab);}
     private void pageHeader(){
-        TextView title=text(getString(R.string.app_name)+" · "+tabName(tab),25,TITLE,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
-        LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->schedule.addCourse()));}body.addView(actions);gap(body,16);
+        TextView title=text(tab<0?getString(R.string.app_name):getString(R.string.app_name)+" · "+tabName(tab),25,TITLE,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
+        if(tab<0)return;LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->{ScreenHandle s=screen(1);if(s!=null)s.call("addCourse");}));}body.addView(actions);gap(body,16);
     }
-    void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
-    private void renderNavigation(){
-        navigation.removeAllViews();List<Integer> visible=visibleTabs();navigation.setVisibility(visible.size()<2?View.GONE:View.VISIBLE);if(visible.size()<2)return;
-        navigationOffset=Math.max(0,Math.min(navigationOffset,Math.max(0,visible.size()-3)));
-        if(visible.size()>=5){TextView left=button("‹",false,()->{navigationOffset=Math.max(0,navigationOffset-1);renderNavigation();});left.setContentDescription(UiText.get("main_001"));left.setEnabled(navigationOffset>0);left.setAlpha(navigationOffset>0?1:.35f);left.setPadding(0,0,0,0);navigation.addView(left,lp(40,50));}
-        for(int id:DisplayOrder.window(visible,navigationOffset)){TextView item=button(tabName(id),false,()->switchTab(id));item.setContentDescription(UiText.get("main_002")+tabName(id));item.setMaxLines(1);item.setHorizontallyScrolling(false);item.setAutoSizeTextTypeUniformWithConfiguration(10,visible.size()==4?12:14,1,android.util.TypedValue.COMPLEX_UNIT_SP);item.setPadding(dp(3),dp(8),dp(3),dp(8));item.setGravity(Gravity.CENTER);if(tab!=id){item.setTextColor(buttonSecondaryText());tap(item,Color.TRANSPARENT,16,()->switchTab(id));}if(navigation.getChildCount()>0)gapHorizontal(navigation,6);navigation.addView(item,new LinearLayout.LayoutParams(0,dp(50),1));}
-        if(visible.size()>=5){TextView right=button("›",false,()->{navigationOffset=Math.min(visible.size()-3,navigationOffset+1);renderNavigation();});right.setContentDescription(UiText.get("main_003"));right.setEnabled(navigationOffset<visible.size()-3);right.setAlpha(navigationOffset<visible.size()-3?1:.35f);right.setPadding(0,0,0,0);gapHorizontal(navigation,6);navigation.addView(right,lp(40,50));}
+    public void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
+    private void renderNavigation(){navigation.removeAllViews();navigation.setVisibility(tab==-1?View.GONE:View.VISIBLE);if(tab!=-1){navigation.addView(button(getString(R.string.launcher_home),false,()->switchTab(-1)),new LinearLayout.LayoutParams(0,dp(48),1));gapHorizontal(navigation,8);navigation.addView(button(getString(R.string.launcher_store),false,()->switchTab(-2)),new LinearLayout.LayoutParams(0,dp(48),1));}}
+    private ScreenHandle screen(int id){
+        if(id<0||id>=8||!apps.installed(AppModules.IDS[id]))return null;
+        ScreenHandle value=screens.get(id);if(value!=null)return value;
+        try{value=apps.create(id,this,city,data,astronomyTime,this::showAstronomy);screens.put(id,value);if(id==1)schedule=value;if(id==2)gps=value;if(id==3)maps=value;if(id==5){earthquakes=value;if(initialScreenState!=null){value.call("restoreState",initialScreenState);initialScreenState=null;}}if(id==6)randomChoice=value;if(id==7)todo=value;return value;}catch(Exception e){android.util.Log.e("AppModules","Cannot create "+AppModules.IDS[id],e);toast(getString(R.string.module_open_failed));return null;}
     }
+    public void releaseModule(String id){int n=Arrays.asList(AppModules.IDS).indexOf(id);ScreenHandle s=screens.remove(n);if(s!=null){s.call("flush");s.call("pause");s.call("destroy");}if(n==2){LocationService.stop(this);gps=null;}if(n==1)schedule=null;if(n==3)maps=null;if(n==5)earthquakes=null;if(n==6)randomChoice=null;if(n==7)todo=null;}
+    public void launcher(){switchTab(-1);}
+    private void showLauncher(){startScreen();new LauncherScreen(this).render();}
 
-    LinearLayout card() {LinearLayout c=column();c.setPadding(dp(18),dp(20),dp(18),dp(18));c.setBackground(shape(WHITE,24));body.addView(c,lp(-1,-2));return c;}
-    private void section(LinearLayout parent,String name,String aside) {
-        LinearLayout r=row();r.addView(text(name,17,TITLE,true));spacer(r);
-        TextView source=text(aside,11,MUTED,false);source.setPadding(dp(5),dp(8),0,dp(8));source.setMinHeight(dp(32));
-        markLink(source);tap(source,Color.TRANSPARENT,6,()->open("https://open-meteo.com/"));r.addView(source);parent.addView(r);gap(parent,12);
-    }
-    private void showWeather() {
-        tab=0;picking=false;searchVersion++;startScreen();
-        if(!notice.isEmpty()){TextView n=text(notice,14,0xFF8B6021,false);n.setPadding(dp(14),dp(12),dp(14),dp(12));n.setBackground(shape(0xFFFFF3DD,14));body.addView(n);gap(body,12);}
-        Instant now=Instant.now();int today=data==null?0:data.todayIndex(now);
-        for(int id:DisplayOrder.parse(preferences.getString("weather_order",""),WEATHER_NAME_IDS.length)){
-            if(!preferences.getBoolean("weather_show_"+id,true))continue;
-            if(id==0)weatherLocation();
-            else if(id==5)footer();
-            else if(data==null){if(id==1)emptyWeather();}
-            else if(id==1)currentWeather(now);
-            else if(id==2)hourly(now);
-            else if(id==3)daily(now);
-            else if(id==4)details(today);
-            gap(body,16);
-        }
-    }
-    private void weatherLocation(){
-        LinearLayout cityRow=row();
-        TextView cityTitle=text(city.label(),26,TITLE,true);cityTitle.setMinHeight(dp(48));cityTitle.setGravity(Gravity.CENTER_VERTICAL);cityTitle.setPadding(dp(4),0,dp(4),0);
-        cityRow.addView(cityTitle,new LinearLayout.LayoutParams(0,-2,1));gapHorizontal(cityRow,10);
-        TextView save=button(store.isSaved(city)?"★":"☆",false,()->{boolean saved=store.toggle(city);toast(saved?UiText.get("main_004"):UiText.get("main_005"));showWeather();});
-        save.setTextSize(25);save.setPadding(0,0,0,0);save.setContentDescription(store.isSaved(city)?UiText.get("main_006"):UiText.get("main_007"));cityRow.addView(save,lp(48,48));body.addView(cityRow);
-        TextView detail=text(city.detail(),12,MUTED,false);detail.setPadding(0,dp(5),0,dp(14));body.addView(detail);
-    }
-    private void currentWeather(Instant now){
-        boolean old=data.currentIsOld(now);
-        LinearLayout hero=column();hero.setPadding(dp(22),dp(22),dp(18),dp(20));
-        GradientDrawable gradient=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{PALE,WHITE});gradient.setCornerRadius(dp(28));if(outlined())gradient.setStroke(dp(1),outlineColor());hero.setBackground(gradient);body.addView(hero,lp(-1,-2));
-        LinearLayout heroTop=row();
-        TextView label=text(old?UiText.get("main_008"):UiText.get("main_009"),12,MUTED,false);heroTop.addView(label);spacer(heroTop);
-        TextView refresh=text(loading?UiText.get("main_010"):UiText.get("main_011"),13,BLUE,true);UiColors.mark(refresh,UiColors.BUTTON);refresh.setMinHeight(dp(40));refresh.setGravity(Gravity.CENTER);refresh.setPadding(dp(8),0,dp(5),0);tap(refresh,Color.TRANSPARENT,10,()->load(true));heroTop.addView(refresh);hero.addView(heroTop);
-        LinearLayout currentRow=row();LinearLayout temperature=column();
-        TextView number=text(WeatherData.degrees(WeatherData.value(data.current,"temperature_2m")),54,INK,false);number.setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));temperature.addView(number);
-        int code=WeatherData.code(data.current,"weather_code",-1);
-        temperature.addView(text(WeatherData.condition(code)+UiText.get("main_012")+WeatherData.degrees(WeatherData.value(data.current,"apparent_temperature")),14,MUTED,false));
-        currentRow.addView(temperature,new LinearLayout.LayoutParams(0,-2,1));currentRow.addView(new WeatherIcon(this,code,data.current.optInt("is_day",1)==1),lp(110,110));hero.addView(currentRow);
-        gap(hero,12);
-        int today=data.todayIndex(now);
-        hero.addView(text(UiText.get("main_013")+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",today))+UiText.get("main_014")+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",today)),14,INK,false));gap(hero,13);
-        ZoneId shownZone=displayZone(data.zone);Instant weatherAt=data.currentTime.atZone(data.zone).toInstant();String updated=DateTimeFormatter.ofPattern(UiText.get("main_015")).withZone(shownZone).format(weatherAt);
-        hero.addView(text(UiText.get("main_016")+updated+" · "+EarthquakeOptions.offset(shownZone,weatherAt.toEpochMilli()),11,MUTED,false));
-        gap(hero,8);
-        LinearLayout attribution=row();attribution.setGravity(Gravity.RIGHT);TextView source=text(getString(R.string.source_open_meteo),11,MUTED,false);source.setMinHeight(dp(42));source.setPadding(dp(12),dp(9),dp(12),dp(9));source.setGravity(Gravity.CENTER);markLink(source);tap(source,Color.TRANSPARENT,8,()->open("https://open-meteo.com/"));attribution.addView(source);hero.addView(attribution);
+    public LinearLayout card() {LinearLayout c=column();c.setPadding(dp(18),dp(20),dp(18),dp(18));c.setBackground(shape(WHITE,24));body.addView(c,lp(-1,-2));return c;}
+    private void showWeather(){ScreenHandle w=screen(0);if(w!=null)w.call("render");}
 
-
-    }
-    private void emptyWeather() {
-        LinearLayout c=card();c.setGravity(Gravity.CENTER);gap(c,20);c.addView(new WeatherIcon(this,-1,true),lp(110,110));gap(c,16);
-        c.addView(text(loading?UiText.get("main_018"):UiText.get("main_019"),19,INK,true));gap(c,12);
-        TextView help=text(loading?UiText.get("main_020"):UiText.get("main_021"),13,MUTED,false);help.setGravity(Gravity.CENTER);c.addView(help);gap(c,20);
-        if(!loading)c.addView(button(UiText.get("main_022"),true,()->load(true)));gap(c,18);gap(body,24);
-    }
-    private void hourly(Instant now) {
-        LinearLayout c=card();section(c,UiText.get("weather_hourly"),"Open-Meteo ↗");
-        List<Integer> indices=data.nextHours(now,24);
-        if(indices.isEmpty()){c.addView(text(UiText.get("main_023"),13,MUTED,false));return;}
-        HorizontalScrollView scroll=new HorizontalScrollView(this);scroll.setHorizontalScrollBarEnabled(false);LinearLayout hours=row();hours.setGravity(Gravity.TOP);
-        ZoneId shownZone=displayZone(data.zone);int currentHour=now.atZone(shownZone).getHour();LocalDate today=now.atZone(shownZone).toLocalDate();
-        for(int index:indices) {
-            String time=WeatherData.textAt(data.hourly,"time",index);LinearLayout cell=column();cell.setGravity(Gravity.CENTER);cell.setPadding(dp(4),dp(10),dp(4),dp(10));
-            LocalDateTime date;try{date=LocalDateTime.parse(time).atZone(data.zone).withZoneSameInstant(shownZone).toLocalDateTime();}catch(Exception e){continue;}
-            boolean current=date.toLocalDate().equals(today)&&date.getHour()==currentHour;
-            if(current)cell.setBackground(shape(buttonSecondaryColor(),16));
-            cell.addView(text(current?UiText.get("main_024"):String.format(Locale.ROOT,UiText.get("main_025"),date.getHour()),12,current?BLUE:MUTED,current));gap(cell,7);
-            cell.addView(new WeatherIcon(this,WeatherData.code(data.hourly,"weather_code",index),WeatherData.at(data.hourly,"is_day",index)!=0),lp(48,48));gap(cell,9);
-            cell.addView(text(WeatherData.degrees(WeatherData.at(data.hourly,"temperature_2m",index)),18,INK,true));gap(cell,10);
-            cell.addView(text(WeatherData.number(WeatherData.at(data.hourly,"precipitation_probability",index))+"%",11,BLUE,false));for(int j=0;j<cell.getChildCount();j++)if(cell.getChildAt(j) instanceof TextView)((TextView)cell.getChildAt(j)).setGravity(Gravity.CENTER);hours.addView(cell,lp(76,-2));
-        }
-        scroll.addView(hours);c.addView(scroll);gap(c,10);c.addView(text(UiText.get("main_026"),11,MUTED,false));
-    }
-    private void daily(Instant now) {
-        LinearLayout c=card();section(c,UiText.get("weather_daily"),"Open-Meteo ↗");JSONArray times=data.daily.optJSONArray("time");LocalDate today=now.atZone(data.zone).toLocalDate();int count=0;
-        for(int i=0;i<times.length();i++) {
-            String iso=times.optString(i);try{if(LocalDate.parse(iso).isBefore(today))continue;}catch(Exception e){continue;}
-            if(count++>0)line(c);
-            LinearLayout r=row();r.setPadding(0,dp(12),0,dp(12));
-            LinearLayout day=column();day.addView(text(WeatherData.day(iso,today),14,INK,true));gap(day,5);day.addView(text(iso.length()>=10?iso.substring(5).replace('-','/') : "—",11,MUTED,false));r.addView(day,lp(48,-2));
-            int code=WeatherData.code(data.daily,"weather_code",i);r.addView(new WeatherIcon(this,code,true),lp(33,36));
-            LinearLayout desc=column();desc.setPadding(dp(6),0,0,0);LinearLayout values=row();values.addView(text(WeatherData.condition(code),12,INK,false),new LinearLayout.LayoutParams(0,-2,1));TextView range=text(WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_min",i))+" / "+WeatherData.degrees(WeatherData.at(data.daily,"temperature_2m_max",i)),13,INK,true);values.addView(range);desc.addView(values);gap(desc,7);desc.addView(text(WeatherData.number(WeatherData.at(data.daily,"precipitation_probability_max",i))+UiText.get("main_027"),11,MUTED,false));r.addView(desc,new LinearLayout.LayoutParams(0,-2,1));c.addView(r);
-
-        }
-        if(count==0)c.addView(text(UiText.get("main_023"),13,MUTED,false));
-    }
-    private void details(int today) {
-        LinearLayout c=card();section(c,UiText.get("weather_details"),"Open-Meteo ↗");
-        metricRow(c,UiText.get("gps_122"),WeatherData.number(WeatherData.value(data.current,"relative_humidity_2m"))+"%",UiText.get("main_028"),WeatherData.number(WeatherData.value(data.current,"wind_speed_10m"))+" km/h");
-        gap(c,19);line(c);gap(c,19);
-        double uv=WeatherData.at(data.daily,"uv_index_max",today);
-        metricRow(c,UiText.get("main_029"),WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")).isEmpty()?"—":WeatherData.wind(WeatherData.value(data.current,"wind_direction_10m")),UiText.get("main_030"),Double.isFinite(uv)?String.format(Locale.ROOT,"%.1f",uv):"—");
-        gap(c,19);line(c);gap(c,19);
-        metricRow(c,UiText.get("main_031"),WeatherData.clock(WeatherData.textAt(data.daily,"sunrise",today)),UiText.get("main_032"),WeatherData.clock(WeatherData.textAt(data.daily,"sunset",today)));
-        gap(c,19);line(c);gap(c,14);
-        TextParagraphs.append(this,c,getString(R.string.uv_guidance),13,MUTED);link(c,getString(R.string.uv_guidance_source),"https://www.epa.gov/sites/default/files/documents/uviguide.pdf");link(c,getString(R.string.uv_safety_source),"https://www.cdc.gov/skin-cancer/sun-safety/index.html");
-    }
-    private void metricRow(LinearLayout parent,String a,String av,String b,String bv) {
-        LinearLayout r=row();String[] labels={a,b},values={av,bv};
-        for(int i=0;i<2;i++){LinearLayout col=column();col.addView(text(labels[i],12,MUTED,false));gap(col,8);col.addView(text(values[i],19,INK,true));r.addView(col,new LinearLayout.LayoutParams(0,-2,1));}parent.addView(r);
-    }
-    private void footer() {
-        TextView about=text(getString(R.string.about_title)+" · "+versionName(),12,BLUE,false);markLink(about);about.setGravity(Gravity.CENTER);about.setMinHeight(dp(48));tap(about,Color.TRANSPARENT,10,this::about);body.addView(about);
-    }
-
-    private void load(boolean force) {
+    public void load(boolean force) {
         if(dead)return;
         String key=city.key();WeatherData cache=store.cached(city);
         if(inFlight.contains(key)){toast(UiText.get("earthquake_082"));return;}
@@ -295,7 +203,7 @@ public class MainActivity extends Activity {
     private void choose(City selected) {
         hideKeyboard();city=selected;store.select(city);data=store.cached(city);notice="";loading=inFlight.contains(city.key());switchTab(tab);if(!loading)load(false);
     }
-    private void showPicker() {
+    public void showPicker() {
         picking=true;searchVersion++;startScreen();
         LinearLayout heading=row();heading.addView(text(UiText.get("main_039"),25,TITLE,true));spacer(heading);heading.addView(button(UiText.get("main_040"),false,()->{hideKeyboard();switchTab(tab);}));body.addView(heading);gap(body,10);
         body.addView(text(UiText.get("main_041"),13,MUTED,false));gap(body,18);
@@ -341,48 +249,50 @@ public class MainActivity extends Activity {
         });
     }
     private void addUniquePlace(List<City> list,City candidate){candidate=City.resolve(catalog,candidate);if(candidate.excludedAdministrativeArea())return;for(City existing:list)if(existing.samePlace(candidate))return;list.add(candidate);}
-    private boolean weatherVisible(){return tab==0&&!picking;}
-    void switchTab(int next){hideKeyboard();if(todo!=null)todo.pause();if(randomChoice!=null)randomChoice.pause();if(next!=2)gps.stopForNavigation();if(earthquakes!=null)earthquakes.pause();tab=next;List<Integer> items=visibleTabs();if(items.size()>=5){int pos=items.indexOf(tab);if(pos<navigationOffset)navigationOffset=pos;else if(pos>=navigationOffset+3)navigationOffset=pos-2;}picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==0)showWeather();else{startScreen();if(next==1)schedule.render();else if(next==2)gps.render();else if(next==3){maps=new MapScreen(this);maps.render(!deferMapReload);deferMapReload=false;}else if(next==4)new AstronomyScreen(this,city,data,astronomyTime,this::showAstronomy).render();else if(next==5)earthquakes.render();else if(next==6)randomChoice.render();else if(next==7)todo.render();}}
-    void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
+    public boolean weatherVisible(){return tab==0&&!picking;}
+    public void switchTab(int next){hideKeyboard();for(ScreenHandle s:screens.values())s.call("pause");if(next!=2&&gps!=null)gps.call("stopForNavigation");if(next>=0&&!apps.installed(AppModules.IDS[next]))next=-1;tab=next;picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==-1){showLauncher();return;}if(next==-2){startScreen();new AppStoreScreen(this).render();return;}if(next==0){showWeather();load(false);return;}if(next==4){ScreenHandle old=screens.remove(4);if(old!=null)old.call("destroy");}startScreen();ScreenHandle s=screen(next);if(s!=null){if(next==3)s.call("render",!deferMapReload);else s.call("render");}deferMapReload=false;}
+
+    public void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
-    void changeLanguage(String choice){
+    public void changeLanguage(String choice){
         if(AppLanguage.choice(this).equals(choice))return;
-        if(randomChoice!=null)randomChoice.flush();
+        if(randomChoice!=null)randomChoice.call("flush");
         reopenSettings=2;preferences.edit().putString(LanguagePolicy.KEY,choice).apply();
         ToolDialog.closeAll();LocationService.languageChanged();TodoScheduler.refresh(this,false);recreate();
     }
-    void settings(){new SettingsScreen(this).show();}
-    void exportConfiguration(){randomChoice.flush();configuration.exportFile();}
-    void importConfiguration(){configuration.importFile();}
-    void exportModule(String id){moduleTransfer.exportModule(id);}
-    void importModule(String id){moduleTransfer.importModule(id);}
-    void randomChoiceSettings(){randomChoice.settings();}
-    void todoSettings(){todo.settings();}
-    void prepareConfigurationImport(){todo.pause();TodoScheduler.suspend(this);randomChoice.stopForImport();searchVersion++;cacheGeneration++;gps.stopForImport();earthquakes.destroy();}
-    void configurationImportFinished(boolean success,boolean restored){
+    public void settings(){new SettingsScreen(this).show();}
+    public void exportConfiguration(){if(randomChoice!=null)randomChoice.call("flush");configuration.exportFile();}
+    public void importConfiguration(){configuration.importFile();}
+    public void exportModule(String id){moduleTransfer.exportModule(id);}
+    public void importModule(String id){moduleTransfer.importModule(id);}
+    public void randomChoiceSettings(){ScreenHandle s=screen(6);if(s!=null)s.call("settings");}
+    public void todoSettings(){ScreenHandle s=screen(7);if(s!=null)s.call("settings");}
+    public void prepareConfigurationImport(){if(todo!=null)todo.call("pause");TodoScheduler.suspend(this);if(randomChoice!=null)randomChoice.call("stopForImport");searchVersion++;cacheGeneration++;if(gps!=null)gps.call("stopForImport");if(earthquakes!=null)earthquakes.call("destroy");}
+    public void configurationImportFinished(boolean success,boolean restored){
         toast(getString(success?R.string.config_imported:restored?R.string.config_import_failed:R.string.config_restore_failed));
         // A singleTop launcher must keep ordinary re-entry intact; configuration import
         // deliberately rebuilds the current owner after all imported models are committed.
         getIntent().putExtra("configuration_applied",true);recreate();
     }
-    String versionName(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(Exception e){return "—";}}
+    public String versionName(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(Exception e){return "—";}}
     private int versionCode(){try{return getPackageManager().getPackageInfo(getPackageName(),0).versionCode;}catch(Exception e){return 0;}}
-    void scheduleSettings(){schedule.menu();}
-    boolean restoreDefaults(){boolean languageChanged=!AppLanguage.choice(this).equals("system");gps.modeChanged();preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",versionCode()).apply();schedule.resetSettings();TodoScheduler.changed(this);navigationOffset=0;tab=0;boolean iconRestored=AppIconStore.reset(this);resetBackground();if(languageChanged){reopenSettings=1;ToolDialog.closeAll();LocationService.languageChanged();TodoScheduler.refresh(this,false);recreate();}return iconRestored;}
-    void locationIntervalChanged(){gps.intervalChanged();}
-    void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else gps.continuousChanged();}
-    void earthquakeSettings(){earthquakes.settings();}
-    void locationModeChanged(){gps.modeChanged();if(tab==2)switchTab(2);}
-    void appIconSettings(){appIcons.show();}
-    void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast(UiText.get("main_055"));}}
-    void resetBackground(){new java.io.File(getFilesDir(),"background.jpg").delete();background=null;refreshScreen();}
-    void reloadBackground(){background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());refreshScreen();}
+    public void scheduleSettings(){ScreenHandle s=screen(1);if(s!=null)s.call("menu");}
+    public boolean restoreDefaults(){boolean languageChanged=!AppLanguage.choice(this).equals("system");if(gps!=null)gps.call("modeChanged");preferences.edit().clear().putInt("settings_schema",4).putInt("seen_version",versionCode()).apply();if(schedule!=null)schedule.call("resetSettings");TodoScheduler.changed(this);navigationOffset=0;tab=0;boolean iconRestored=AppIconStore.reset(this);resetBackground();if(languageChanged){reopenSettings=1;ToolDialog.closeAll();LocationService.languageChanged();TodoScheduler.refresh(this,false);recreate();}return iconRestored;}
+    public void locationIntervalChanged(){if(gps!=null)gps.call("intervalChanged");}
+    public void locationContinuousChanged(){if(!LocationService.continuous(this)&&tab!=2)LocationService.stop(this);else if(gps!=null)gps.call("continuousChanged");}
+    public void earthquakeSettings(){ScreenHandle s=screen(5);if(s!=null)s.call("settings");}
+    public void locationModeChanged(){if(gps!=null)gps.call("modeChanged");if(tab==2)switchTab(2);}
+    public void appIconSettings(){appIcons.show();}
+    public void selectBackground(){Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT);i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("image/*");try{startActivityForResult(i,42);}catch(ActivityNotFoundException e){toast(UiText.get("main_055"));}}
+    public void resetBackground(){new java.io.File(getFilesDir(),"background.jpg").delete();background=null;refreshScreen();}
+    public void reloadBackground(){background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());refreshScreen();}
     private void updateEntry(LinearLayout c,String title,String details){
         LinearLayout entry=column();TextView detail=text(details,14,INK,false);detail.setPadding(dp(12),dp(12),dp(12),dp(8));detail.setVisibility(View.GONE);
         TextView toggle=button(title+"  ＋",false,()->{});toggle.setGravity(Gravity.CENTER_VERTICAL);toggle.setOnClickListener(v->{boolean open=detail.getVisibility()!=View.VISIBLE;detail.setVisibility(open?View.VISIBLE:View.GONE);toggle.setText(title+(open?"  −":"  ＋"));toggle.setContentDescription(title+(open?UiText.get("main_056"):UiText.get("main_057")));});toggle.setContentDescription(title+UiText.get("main_057"));entry.addView(toggle,lp(-1,-2));entry.addView(detail);c.addView(entry);gap(c,10);
     }
-    void updates(){
+    public void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_pre3001_title),getString(R.string.update_pre3001_detail));
         updateEntry(c,getString(R.string.update_221_title),getString(R.string.update_221_detail));
         updateEntry(c,getString(R.string.update_220_title),getString(R.string.update_220_detail));
         updateEntry(c,getString(R.string.update_215_title),getString(R.string.update_215_detail));
@@ -434,19 +344,19 @@ public class MainActivity extends Activity {
         updateEntry(c,UiText.get("update_010_test_title_001"),UiText.get("main_058"));
         ScrollView scroll=new ScrollView(this);scroll.addView(c);new ToolDialog(this).setTitle(getString(R.string.updates_title)).setView(scroll).setPositiveButton(UiText.get("action_close"),null).show();
     }
-    void clearCache(Runnable done){
+    public void clearCache(Runnable done){
         cacheGeneration++;searchVersion++;data=null;notice="";
         deferMapReload=tab==3;
-        if(maps!=null){maps.destroy();maps=null;}
-        boolean filesCleared=store.clearCache() & earthquakes.clear();
+        if(maps!=null){maps.call("destroy");maps=null;screens.remove(3);}
+        boolean filesCleared=store.clearCache() & (earthquakes==null?new EarthquakeCache(getFilesDir()).clear():Boolean.TRUE.equals(earthquakes.call("clear")));
         android.webkit.WebView web=new android.webkit.WebView(this);web.clearCache(true);web.clearHistory();web.destroy();
         android.webkit.WebStorage.getInstance().deleteAllData();
         android.webkit.CookieManager.getInstance().removeAllCookies(removed->{android.webkit.CookieManager.getInstance().flush();if(!dead){refreshScreen();done.run();toast(filesCleared?UiText.get("main_059"):UiText.get("main_060"));}});
     }
-    long cacheBytes(){long total=directoryBytes(getCacheDir());java.io.File[] files=getFilesDir().listFiles();if(files!=null)for(java.io.File f:files)if(f.getName().startsWith("forecast_")&&f.getName().endsWith(".json"))total+=directoryBytes(f);total+=directoryBytes(new java.io.File(getFilesDir(),"earthquake_cache"));return total;}
+    public long cacheBytes(){long total=directoryBytes(getCacheDir());java.io.File[] files=getFilesDir().listFiles();if(files!=null)for(java.io.File f:files)if(f.getName().startsWith("forecast_")&&f.getName().endsWith(".json"))total+=directoryBytes(f);total+=directoryBytes(new java.io.File(getFilesDir(),"earthquake_cache"));return total;}
     private long directoryBytes(java.io.File file){if(file==null||!file.exists())return 0;if(file.isFile())return file.length();long total=0;java.io.File[] children=file.listFiles();if(children!=null)for(java.io.File child:children)total+=directoryBytes(child);return total;}
-    String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
-    void about() {
+    public String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
+    public void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
         EarthquakeInfo.paragraph(this,content,getString(R.string.about_version,versionName()));
         EarthquakeInfo.paragraph(this,content,UiText.get("main_061"));
@@ -459,28 +369,28 @@ public class MainActivity extends Activity {
         gap(content,10);content.addView(text(UiText.get("main_072"),17,TITLE,true));gap(content,10);content.addView(text(UiText.get("main_073"),14,MUTED,false));gap(content,12);link(content,UiText.get("main_074"),"https://github.com/anyin233/weather-fighter-global");link(content,UiText.get("main_075"),"https://github.com/ShiGuangSchedule/shiguangschedule");link(content,UiText.get("main_076"),"https://github.com/AdybirdZ/daidai-toolbox");
         ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle(getString(R.string.about_title)).setView(scroll).setPositiveButton(UiText.get("action_close"),null).show();
     }
-    void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);markLink(t);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
-    void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast(UiText.get("main_077"));}}
-    void hideKeyboard() {View focused=getCurrentFocus();if(focused!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focused.getWindowToken(),0);focused.clearFocus();}}
-    void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(TransientText.notice(message),16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
+    public void link(LinearLayout parent,String label,String url) {TextView t=text(label+" ↗",13,BLUE,false);markLink(t);t.setMinHeight(dp(44));t.setPadding(dp(12),dp(7),dp(12),dp(7));t.setGravity(Gravity.CENTER_VERTICAL);tap(t,Color.TRANSPARENT,8,()->open(url));parent.addView(t,new LinearLayout.LayoutParams(-2,-2));gap(parent,8);}
+    public void open(String url) {try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));}catch(ActivityNotFoundException e){toast(UiText.get("main_077"));}}
+    public void hideKeyboard() {View focused=getCurrentFocus();if(focused!=null){((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focused.getWindowToken(),0);focused.clearFocus();}}
+    public void toast(String message) {Toast toast=new Toast(this);LinearLayout box=row();box.setPadding(dp(16),dp(12),dp(16),dp(12));box.setBackground(shape(0xFF26364D,20));ImageView icon=new ImageView(this);icon.setImageResource(org.simpleweather.app.R.drawable.ic_launcher);box.addView(icon,lp(28,28));gapHorizontal(box,10);TextView label=text(TransientText.notice(message),16,WHITE,false);label.setMaxWidth(Math.max(dp(120),Math.min(dp(260),getResources().getDisplayMetrics().widthPixels-dp(100))));box.addView(label);toast.setView(box);toast.setDuration(Toast.LENGTH_SHORT);toast.setGravity(Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL,0,dp(100));toast.show();}
     @Override public void onConfigurationChanged(android.content.res.Configuration config){
         super.onConfigurationChanged(config);
         // Keep the existing screen, session and open dialogs; only remeasure the viewport.
         if(pageScroll!=null){android.view.ViewGroup.LayoutParams fit=pageScroll.getLayoutParams();fit.width=Math.min(getResources().getDisplayMetrics().widthPixels,dp(620));pageScroll.setLayoutParams(fit);}
-        if(body!=null)body.requestLayout();if(gps!=null)gps.configurationChanged();
+        if(body!=null)body.requestLayout();if(gps!=null)gps.call("configurationChanged");
     }
     @Override protected void onSaveInstanceState(Bundle state){
-        if(randomChoice!=null)randomChoice.flush();state.putInt("toolbox_language_settings",reopenSettings);state.putInt("toolbox_tab",tab);state.putInt("toolbox_navigation",navigationOffset);
+        if(randomChoice!=null)randomChoice.call("flush");state.putInt("toolbox_language_settings",reopenSettings);state.putInt("toolbox_tab",tab);state.putInt("toolbox_navigation",navigationOffset);
         state.putInt("toolbox_scroll",pageScroll==null?0:pageScroll.getScrollY());state.putLong("toolbox_astro_time",astronomyTime.toEpochMilli());
-        if(earthquakes!=null)earthquakes.saveState(state);super.onSaveInstanceState(state);
+        if(earthquakes!=null)earthquakes.call("saveState",state);super.onSaveInstanceState(state);
     }
-    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(intent.getBooleanExtra("open_todo",false)){preferences.edit().putBoolean("tab_show_7",true).apply();switchTab(7);}if(intent.getBooleanExtra("open_location",false)){preferences.edit().putBoolean("tab_show_2",true).apply();switchTab(2);}}
-    @Override public void onBackPressed() {if(picking){hideKeyboard();switchTab(tab);}else if(tab!=visibleTabs().get(0))switchTab(visibleTabs().get(0));else super.onBackPressed();}
-    @Override protected void onPause(){if(todo!=null)todo.pause();if(randomChoice!=null)randomChoice.pause();if(earthquakes!=null)earthquakes.pause();if(gps!=null)gps.pause();if(maps!=null)maps.pause();super.onPause();}
-    @Override protected void onResume(){super.onResume();if(appIcons!=null)appIcons.refresh();TodoScheduler.refresh(this,true);ScheduleNotifier.refresh(this,true);if(todo!=null&&tab==7)todo.resume();if(randomChoice!=null&&tab==6)randomChoice.resume();if(gps!=null&&tab==2)gps.resume();if(maps!=null)maps.resume();if(earthquakes!=null&&tab==5)earthquakes.resume();}
-    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(request==41)gps.permissionResult();else if(request==44)gps.notificationPermissionResult();else if(request==45)earthquakes.locationPermissionResult();else if(request==46)gps.satellitePermissionResult();else if(request==47)gps.placesPermissionResult();else if(request==48&&tab==2)refreshScreen();else if(request==49)TodoScheduler.refresh(this,true);}
-    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request==AppIconSettings.PICK||request==AppIconSettings.CROP){appIcons.result(request,result,intent);return;}if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){gps.fileResult(request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==ModuleTransfer.EXPORT||request==ModuleTransfer.IMPORT){moduleTransfer.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
-    @Override protected void onDestroy(){dead=true;if(todo!=null)todo.destroy();if(randomChoice!=null)randomChoice.pause();if(gps!=null)gps.prepareNextLaunch();if(earthquakes!=null)earthquakes.destroy();if(maps!=null)maps.destroy();if(gps!=null)gps.destroy();main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
+    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(intent.hasExtra("last_tab")){switchTab(intent.getIntExtra("last_tab",-1));}if(intent.getBooleanExtra("open_todo",false)){preferences.edit().putBoolean("tab_show_7",true).apply();switchTab(7);}if(intent.getBooleanExtra("open_location",false)){preferences.edit().putBoolean("tab_show_2",true).apply();switchTab(2);}}
+    @Override public void onBackPressed() {if(picking){hideKeyboard();switchTab(tab);}else if(tab!=-1)switchTab(-1);else super.onBackPressed();}
+    @Override protected void onPause(){if(todo!=null)todo.call("pause");if(randomChoice!=null)randomChoice.call("pause");if(earthquakes!=null)earthquakes.call("pause");if(gps!=null)gps.call("pause");if(maps!=null)maps.call("pause");super.onPause();}
+    @Override protected void onResume(){super.onResume();if(appIcons!=null)appIcons.refresh();if(apps!=null&&apps.reconcile())refreshScreen();TodoScheduler.refresh(this,true);ScheduleNotifier.refresh(this,true);if(todo!=null&&tab==7)todo.call("resume");if(randomChoice!=null&&tab==6)randomChoice.call("resume");if(gps!=null&&tab==2)gps.call("resume");if(maps!=null)maps.call("resume");if(earthquakes!=null&&tab==5)earthquakes.call("resume");}
+    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(gps==null&&(request==41||request==44||request==46||request==47))return;if(request==41)gps.call("permissionResult");else if(request==44)gps.call("notificationPermissionResult");else if(request==45&&earthquakes!=null)earthquakes.call("locationPermissionResult");else if(request==46)gps.call("satellitePermissionResult");else if(request==47)gps.call("placesPermissionResult");else if(request==48&&tab==2)refreshScreen();else if(request==49)TodoScheduler.refresh(this,true);}
+    @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(apps!=null&&apps.result(request,result,intent))return;if(request==AppIconSettings.PICK||request==AppIconSettings.CROP){appIcons.result(request,result,intent);return;}if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){if(gps==null)gps=screen(2);if(gps!=null)gps.call("fileResult",request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==ModuleTransfer.EXPORT||request==ModuleTransfer.IMPORT){moduleTransfer.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
+    @Override protected void onDestroy(){dead=true;if(todo!=null)todo.call("destroy");if(randomChoice!=null)randomChoice.call("pause");if(gps!=null)gps.call("prepareNextLaunch");if(earthquakes!=null)earthquakes.call("destroy");if(maps!=null)maps.call("destroy");if(gps!=null)gps.call("destroy");main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
 }
 
 

@@ -1,0 +1,6 @@
+{
+  "id": "todo",
+  "entry": "org.simpleweather.app.TodoScreen",
+  "hostApi": "daidai-toolbox/pre-3.0.0-1",
+  "defaultInstalled": false
+}

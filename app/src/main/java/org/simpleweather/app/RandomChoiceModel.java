@@ -6,17 +6,17 @@ import java.security.SecureRandom;
 import java.util.*;
 
 /** Local-only draw state. Each ordered sample is equally likely (partial Fisher–Yates). */
-final class RandomChoiceModel {
-    static final int MAX_INPUT=262144,MAX_ITEMS=2000,MAX_ITEM=200,MAX_LISTS=100,MAX_BYTES=8*1024*1024;
-    String draft="",quantity="1";
-    final List<String> pool=new ArrayList<>(),result=new ArrayList<>();
-    final Set<String> used=new LinkedHashSet<>();
-    final List<Saved> lists=new ArrayList<>();
-    static final class Saved {
-        final String id;String name;final List<String> items;
-        Saved(String id,String name,List<String> items){this.id=id;this.name=name;this.items=new ArrayList<>(items);}
+public final class RandomChoiceModel {
+    public static final int MAX_INPUT=262144,MAX_ITEMS=2000,MAX_ITEM=200,MAX_LISTS=100,MAX_BYTES=8*1024*1024;
+    public String draft="",quantity="1";
+    public final List<String> pool=new ArrayList<>(),result=new ArrayList<>();
+    public final Set<String> used=new LinkedHashSet<>();
+    public final List<Saved> lists=new ArrayList<>();
+    public static final class Saved {
+        public final String id;public String name;public final List<String> items;
+        public Saved(String id,String name,List<String> items){this.id=id;this.name=name;this.items=new ArrayList<>(items);}
     }
-    static List<String> items(String input){
+    public static List<String> items(String input){
         if(input==null||input.length()>MAX_INPUT)throw new IllegalArgumentException("input");
         LinkedHashSet<String> unique=new LinkedHashSet<>();
         for(String raw:input.split("[\\r\\n,，、;；]+")){
@@ -27,8 +27,8 @@ final class RandomChoiceModel {
         }
         return new ArrayList<>(unique);
     }
-    int available(boolean exclude){List<String> current=items(draft);if(!current.equals(pool)||!exclude)return current.size();return pool.size()-used.size();}
-    List<String> draw(int count,boolean exclude,Random random){
+    public int available(boolean exclude){List<String> current=items(draft);if(!current.equals(pool)||!exclude)return current.size();return pool.size()-used.size();}
+    public List<String> draw(int count,boolean exclude,Random random){
         List<String> current=items(draft),eligible=new ArrayList<>(current);
         boolean same=current.equals(pool);if(exclude&&same)eligible.removeAll(used);
         if(count<1||count>eligible.size())throw new IllegalArgumentException("count");
@@ -38,21 +38,21 @@ final class RandomChoiceModel {
         result.clear();result.addAll(eligible.subList(0,count));used.addAll(result);
         return new ArrayList<>(result);
     }
-    List<String> draw(int count,boolean exclude){return draw(count,exclude,new SecureRandom());}
-    void reset(){pool.clear();pool.addAll(items(draft));used.clear();result.clear();}
-    Saved save(String name){name=checkedName(name);List<String> entries=items(draft);if(entries.isEmpty()||lists.size()>=MAX_LISTS)throw new IllegalArgumentException("list");
+    public List<String> draw(int count,boolean exclude){return draw(count,exclude,new SecureRandom());}
+    public void reset(){pool.clear();pool.addAll(items(draft));used.clear();result.clear();}
+    public Saved save(String name){name=checkedName(name);List<String> entries=items(draft);if(entries.isEmpty()||lists.size()>=MAX_LISTS)throw new IllegalArgumentException("list");
         for(Saved list:lists)if(list.name.equals(name))throw new IllegalArgumentException("name");
         int total=0;for(Saved old:lists)for(String item:old.items)total+=item.length();for(String item:entries)total+=item.length();if(total>400000)throw new IllegalArgumentException("storage");
         Saved saved=new Saved(UUID.randomUUID().toString(),name,entries);lists.add(saved);return saved;
     }
-    void rename(Saved list,String name){name=checkedName(name);for(Saved other:lists)if(other!=list&&other.name.equals(name))throw new IllegalArgumentException("name");list.name=name;}
-    void load(Saved list){draft=String.join("\n",list.items);reset();}
+    public void rename(Saved list,String name){name=checkedName(name);for(Saved other:lists)if(other!=list&&other.name.equals(name))throw new IllegalArgumentException("name");list.name=name;}
+    public void load(Saved list){draft=String.join("\n",list.items);reset();}
     private static String checkedName(String name){if(name==null)throw new IllegalArgumentException("name");name=name.trim();if(name.isEmpty()||name.length()>80||name.matches("(?s).*[\\p{Cntrl}].*"))throw new IllegalArgumentException("name");return name;}
-    JSONObject json()throws JSONException{
+    public JSONObject json()throws JSONException{
         JSONArray saved=new JSONArray();for(Saved list:lists)saved.put(new JSONObject().put("id",list.id).put("name",list.name).put("items",new JSONArray(list.items)));
         return new JSONObject().put("version",1).put("draft",draft).put("quantity",quantity).put("pool",new JSONArray(pool)).put("used",new JSONArray(used)).put("result",new JSONArray(result)).put("lists",saved);
     }
-    static RandomChoiceModel parse(String text)throws JSONException{
+    public static RandomChoiceModel parse(String text)throws JSONException{
         try{
             if(text==null||text.length()>MAX_BYTES)throw new IllegalArgumentException();
             boolean quoted=false,escaped=false;int depth=0;for(int i=0;i<text.length();i++){char c=text.charAt(i);if(quoted){if(escaped)escaped=false;else if(c=='\\')escaped=true;else if(c=='"')quoted=false;}else if(c=='"')quoted=true;else if(c=='{'||c=='['){if(++depth>8)throw new IllegalArgumentException();}else if(c=='}'||c==']'){if(--depth<0)throw new IllegalArgumentException();}}if(depth!=0||quoted)throw new IllegalArgumentException();

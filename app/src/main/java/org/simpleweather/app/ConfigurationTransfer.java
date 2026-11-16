@@ -84,6 +84,6 @@ final class ConfigurationTransfer {
             main.post(()->{busy=applying=false;if(!alive())return;progress.dismiss();a.configurationImportFinished(okay,rollback);});
         },"configuration-apply").start();
     }
-    private static boolean write(SharedPreferences p,Map<String,?> values){SharedPreferences.Editor e=p.edit().clear();for(Map.Entry<String,?> item:values.entrySet()){Object v=item.getValue();String k=item.getKey();if(v instanceof Boolean)e.putBoolean(k,(Boolean)v);else if(v instanceof Integer)e.putInt(k,(Integer)v);else if(v instanceof Long)e.putLong(k,(Long)v);else if(v instanceof Float)e.putFloat(k,(Float)v);else if(v instanceof String)e.putString(k,(String)v);else if(v instanceof Set){Set<String> set=new HashSet<>();for(Object s:(Set<?>)v)set.add(String.valueOf(s));e.putStringSet(k,set);}}return e.commit();}
+    static boolean write(SharedPreferences p,Map<String,?> values){SharedPreferences.Editor e=p.edit().clear();for(Map.Entry<String,?> item:values.entrySet()){Object v=item.getValue();String k=item.getKey();if(v instanceof Boolean)e.putBoolean(k,(Boolean)v);else if(v instanceof Integer)e.putInt(k,(Integer)v);else if(v instanceof Long)e.putLong(k,(Long)v);else if(v instanceof Float)e.putFloat(k,(Float)v);else if(v instanceof String)e.putString(k,(String)v);else if(v instanceof Set){Set<String> set=new HashSet<>();for(Object s:(Set<?>)v)set.add(String.valueOf(s));e.putStringSet(k,set);}}return e.commit();}
     private void finish(int message){busy=false;pending=null;if(alive())a.toast(a.getString(message));}
 }

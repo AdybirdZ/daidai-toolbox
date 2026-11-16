@@ -37,15 +37,15 @@ public final class Astronomy {
      * orbital recipe used by this app. They are for observing guidance, not navigation. */
     public static final class Planet {
         public final String name; public final double ra,dec, distance, magnitude;
-        Planet(String n,double r,double d,double dist,double mag){name=n;ra=r;dec=d;distance=dist;magnitude=mag;}
+        public Planet(String n,double r,double d,double dist,double mag){name=n;ra=r;dec=d;distance=dist;magnitude=mag;}
     }
     /** Approximate geocentric positions for the visible planets.
      * This is the same JPL "Approximate Positions of the Major Planets" model
      * used by the reference web implementation (valid approximately 1800-2050).
      */
     private static final class JplElements {
-        final String name,en; final double[] el,rt;
-        JplElements(String n,String e,double[] a,double[] r){name=n;en=e;el=a;rt=r;}
+        public final String name,en; public final double[] el,rt;
+        public JplElements(String n,String e,double[] a,double[] r){name=n;en=e;el=a;rt=r;}
     }
     private static final JplElements EARTH = new JplElements(UiText.raw("identity_astronomy_001"),"Earth",
         new double[]{1.00000261,.01671123,-.00001531,100.46457166,102.93768193,0},
@@ -126,7 +126,7 @@ public final class Astronomy {
     }
     public static String phaseName(double phase){return new String[]{UiText.get("astronomy_018"),UiText.get("astronomy_019"),UiText.get("astronomy_020"),UiText.get("astronomy_021"),UiText.get("astronomy_022"),UiText.get("astronomy_023"),UiText.get("astronomy_024"),UiText.get("astronomy_025")}[(int)Math.floor(phase*8+.5)%8];}
     public static String compass(double az){return new String[]{UiText.get("astronomy_026"),UiText.get("astronomy_027"),UiText.get("astronomy_028"),UiText.get("astronomy_029"),UiText.get("astronomy_030"),UiText.get("astronomy_031"),UiText.get("astronomy_032"),UiText.get("astronomy_033")}[(int)Math.floor((norm(az)+22.5)/45)%8];}
-    public static final class Event {public final Instant at;public final boolean rising;Event(Instant t,boolean r){at=t;rising=r;}}
+    public static final class Event {public final Instant at;public final boolean rising;public Event(Instant t,boolean r){at=t;rising=r;}}
     public static List<Event> crossings(LocalDate date,ZoneId zone,double lat,double lon,boolean lunar,double altitude){
         List<Event> out=new ArrayList<>();Instant start=date.atStartOfDay(zone).toInstant(),end=date.plusDays(1).atStartOfDay(zone).toInstant();Instant prev=start;double last=(lunar?moonPosition(prev,lat,lon):sunPosition(prev,lat,lon))[0]-altitude;
         for(Instant t=start.plusSeconds(600);;t=t.plusSeconds(600)){
@@ -137,14 +137,14 @@ public final class Astronomy {
     }
     public static final class Star {
         public final String name;public final double ra,dec,mag;
-        Star(String n,double r,double d,double m){name=n;ra=r;dec=d;mag=m;}
+        public Star(String n,double r,double d,double m){name=n;ra=r;dec=d;mag=m;}
     }
     public static boolean isDipper(String n){return n.equals(UiText.raw("identity_astronomy_051"))||n.equals(UiText.raw("identity_astronomy_052"))||n.equals(UiText.raw("identity_astronomy_053"))||n.equals(UiText.raw("identity_astronomy_054"))||n.equals(UiText.raw("identity_astronomy_055"))||n.equals(UiText.raw("identity_astronomy_056"))||n.equals(UiText.raw("identity_astronomy_057"));}
     /** Annual reference peaks and fixed approximate radiant coordinates (degrees).
      * A radiant is a direction, not a physical star or a predicted meteor. */
     public static final class Shower {
         public final String name;public final MonthDay peak;public final double ra,dec;
-        Shower(String n,int month,int day,double r,double d){name=n;peak=MonthDay.of(month,day);ra=r;dec=d;}
+        public Shower(String n,int month,int day,double r,double d){name=n;peak=MonthDay.of(month,day);ra=r;dec=d;}
         public boolean activeOn(LocalDate date){
             for(int year=date.getYear()-1;year<=date.getYear()+1;year++)
                 if(Math.abs(java.time.temporal.ChronoUnit.DAYS.between(peak.atYear(year),date))<=3)return true;

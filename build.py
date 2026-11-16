@@ -56,10 +56,20 @@ def main():
          '--manifest', source / 'AndroidManifest.xml', '--java', build / 'generated',
          '-A', source / 'assets', '--min-sdk-version', '26', '--target-sdk-version', '35',
          build / 'resources.zip'])
-    sources = list((source / 'java').rglob('*.java')) + list((build / 'generated').rglob('*.java'))
+    sources = list((source / 'java').rglob('*.java')) + list((ROOT / 'modules/apps').rglob('*.java')) + list((build / 'generated').rglob('*.java'))
     run([javac, '-encoding', 'UTF-8', '--release', '8', '-classpath', platform, '-d', build / 'classes', *sources])
+    # Build executable app packages first; their classes must not also enter host DEX.
+    sys.path.insert(0, str(ROOT / 'modules'))
+    from build_executable import build as build_apps
+    app_classes = build_apps(ROOT, sdk, java, run)
+    # Refresh packaged assets after the default signed apps and catalog are generated.
+    run([tools / ('aapt2' + ext), 'link', '-o', unsigned, '-I', platform,
+         '--manifest', source / 'AndroidManifest.xml', '--java', build / 'generated',
+         '-A', source / 'assets', '--min-sdk-version', '26', '--target-sdk-version', '35',
+         build / 'resources.zip'])
     run([java, '-cp', tools / 'lib/d8.jar', 'com.android.tools.r8.D8', '--lib', platform,
-         '--min-api', '26', '--output', build / 'dex', *list((build / 'classes').rglob('*.class'))])
+         '--classpath', build / 'all-classes.jar', '--min-api', '26', '--output', build / 'dex',
+         *[p for p in (build / 'classes').rglob('*.class') if p not in app_classes]])
     with zipfile.ZipFile(unsigned, 'a', zipfile.ZIP_DEFLATED) as apk:
         for dex in (build / 'dex').glob('*.dex'):
             apk.write(dex, dex.name)
