@@ -87,7 +87,7 @@ public final class AppModules {
     public boolean result(int request,int result,Intent data){
         if(request==INSTALL){
             if(pendingExternal!=null){if(a.getPackageManager().canRequestPackageInstalls())requestExternalInstall();else a.toast(a.getString(R.string.module_install_failed));}
-            else{reconcile();a.refreshScreen();}return true;
+            else{if(result==Activity.RESULT_OK)reconcile();else a.getSharedPreferences("apps_host",0).edit().remove("pending_external").commit();a.refreshScreen();}return true;
         }
         if(request==UNINSTALL){a.refreshScreen();return true;}
         if(request!=PICK)return false;

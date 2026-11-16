@@ -37,6 +37,9 @@ public final class ModuleHostUiTests extends Instrumentation {
         check(!(Boolean)allowed.invoke(null,find.invoke(null,"status"),"toolbox","ui_body_color"),"status cannot overwrite global colors");
         check((Boolean)allowed.invoke(null,find.invoke(null,"status"),"toolbox","location_interval"),"status includes positioning settings");
         try(java.util.zip.ZipFile music=new java.util.zip.ZipFile("/data/local/tmp/module-host-test/music-0.7.0.ddapp")){org.json.JSONObject descriptorJson=new org.json.JSONObject(new String(read(music.getInputStream(music.getEntry("module.json"))),"UTF-8"));invoke(apps,"importExternal",new Class[]{java.util.zip.ZipFile.class,org.json.JSONObject.class,String.class},music,descriptorJson,"music");check(new File(getTargetContext().getFilesDir(),"apk-install/music.apk").isFile(),"existing music container verifies and extracts");}
+        SharedPreferences hostState=getTargetContext().getSharedPreferences("apps_host",0);hostState.edit().putBoolean("external_music",false).putString("pending_external","music").commit();
+        ui(()->{try{invoke(apps,"result",new Class[]{int.class,int.class,Intent.class},92,Activity.RESULT_CANCELED,null);}catch(Exception e){throw new RuntimeException(e);}});
+        check(!hostState.contains("pending_external"),"cancel clears pending installation");check(!present(apps,"music"),"canceled install does not add already-installed independent app");
         tab(0);check(text().size()>8,"weather renders from module");tab(2);check(text().size()>20,"status renders from module");tab(-1);
         // Package integrity and atomic replacement: signed, corrupt and wrong-app payloads.
         File existing=new File(getTargetContext().getFilesDir(),"apps/weather.ddapp");String old=(String)type("AppModules").getMethod("sha",File.class).invoke(null,existing);

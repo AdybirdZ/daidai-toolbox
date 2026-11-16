@@ -12,7 +12,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 16851,
-      "sha256": "17ebb55da73b7fc5355701291eea43800fef06a5f8670d21ddace29d23df6473",
+      "sha256": "f09c13466c525927f769b6f957091eeef5b0f05c536024b3761a7fe413cad476",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/weather.ddapp"
     },
     {
@@ -20,7 +20,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 29139,
-      "sha256": "f3bfe4e22733c458884d1d20cf99fcb313533eec66891db17065b997ecd0fb83",
+      "sha256": "21556a13a44fc0aec1906e75ce360bde627dc815dec82ded9a9b794fbe5bdcee",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/schedule.ddapp"
     },
     {
@@ -28,7 +28,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 33235,
-      "sha256": "9a2d552efe23d84e6f8d1e6ccb77a643c8ecf1fd4c45e84b5450241d7c905ba3",
+      "sha256": "7a054375c9d5ff84fad7e58608d2f0e1f9003294af2845449e5c98b40f315451",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/status.ddapp"
     },
     {
@@ -36,7 +36,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 16851,
-      "sha256": "987e987d2248286cfeae737d9ceeae50d869081d8b661eb48670d19ac4e54dcc",
+      "sha256": "9099ff0bfc003462c7b27a616992724920478595b2df96f0e9129dbde71c6bac",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/weather-map.ddapp"
     },
     {
@@ -44,7 +44,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 29139,
-      "sha256": "46b6c7f5e5f5ccc1a3fb75290a6127f21680bf2dd1d878adeb46996e2199cdde",
+      "sha256": "3bfcd8d244ae4c756cdffd50477dc7f7dcb5b7f0d1392790a57a48adad106ce7",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/astronomy.ddapp"
     },
     {
@@ -52,7 +52,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 33235,
-      "sha256": "f12f4f8ed50c8953be9fb109597ce2d0ac01cc77f9b446db0fc3bdbad245dff9",
+      "sha256": "bb4e653659081c7f1ed5868a2f44196336f394c087b6226c8480a8c6d2b44374",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/earthquake.ddapp"
     },
     {
@@ -60,7 +60,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 20947,
-      "sha256": "226e41b2f5bab8afbb1cb415749f0e871264c4a760b4bdf8b0f7c866cb9f893c",
+      "sha256": "c2e0d5428116df72da0665f51f30e8c1cab042a23e03d9ee1a1d32997e49276a",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/random.ddapp"
     },
     {
@@ -68,7 +68,7 @@
       "type": "signed-dex-app",
       "version": "pre-3.0.0-1",
       "bytes": 33235,
-      "sha256": "83501811e175184f4a19e43795377c56a3eac8e7e86effe8b9a1e93a14f70efc",
+      "sha256": "756ecceff72f6cea7fb0208df8eec984128fb095116f8e0d79ba87f30250b1d5",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/todo.ddapp"
     },
     {
