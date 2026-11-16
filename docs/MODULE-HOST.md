@@ -13,7 +13,7 @@
 
 ## 执行包与构建
 
-工具箱内应用源码在 `modules/apps/<id>/java/`。`modules/build_executable.py` 将各入口及其内部类单独编译为 DEX，用 APK 签名格式封装为 `.ddapp`。每包具有自己的 Android 包标识、`assets/module.json`、执行代码和宿主 ABI 要求；它不是清单 ZIP，也不是完整工具箱 APK 的复制品。该封装仅供工具箱加载，不提供独立 Android 启动 Activity。
+工具箱内应用源码在 `modules/apps/<id>/java/`。`modules/build_executable.py` 将各入口及其内部类单独编译为 DEX，用 APK 签名格式封装为 `.ddapp`。每包具有自己的 Android 包标识、`assets/module.json`、执行代码和宿主 ABI 要求；描述文件列出权限、共享组件桥及配置分组/键规则。它不是清单 ZIP，也不是完整工具箱 APK 的复制品。该封装仅供工具箱加载，不提供独立 Android 启动 Activity。
 
 `build.py` 明确从宿主 DEX 中排除这些应用入口及内部类。天气、状态的执行包随宿主放在 `assets/default-apps/`，仅在第一次初始化时安装。其他应用的执行包不随宿主预装。卸载默认应用后，再次进入或重建页面不会擅自重装。
 
@@ -44,3 +44,7 @@
 核心测试：`scripts/test.ps1`。
 
 模块设备检查先运行 `python tests/android/module_fixtures.py`，再运行 `python tests/android/run.py --suite ModuleHostUiTests --language zh-CN`（英语为 `en`）。仅在隔离模拟器上运行；测试会安装、卸载模块，检查错误签名、损坏文件、错误 ABI、越界路径、校验失败保留原包、宿主不内嵌入口、零应用桌面与资料保留。在线商店下载和独立 APK 安装另在发布验证记录中记载。
+
+## 本次交付状态
+
+2026-11-17 完成本地构建与验证。GitHub 上传连续 3 次连接失败后停止，本版目录和执行包尚未上线，在线安装新模块暂不可用。可从本地交付的应用包安装。稳定正式版仍为 2.2.1；本次未创建标签或 Release。

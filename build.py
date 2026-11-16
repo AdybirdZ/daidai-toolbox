@@ -58,6 +58,14 @@ def main():
          build / 'resources.zip'])
     sources = list((source / 'java').rglob('*.java')) + list((ROOT / 'modules/apps').rglob('*.java')) + list((build / 'generated').rglob('*.java'))
     run([javac, '-encoding', 'UTF-8', '--release', '8', '-classpath', platform, '-d', build / 'classes', *sources])
+    signing = ROOT / '.signing'
+    signing.mkdir(exist_ok=True)
+    keystore = signing / 'development.jks'
+    # Public development password; this key is for private sideloading, not a store release.
+    if not keystore.exists():
+        run([java_bin / ('keytool' + ext), '-genkeypair', '-keystore', keystore, '-alias', 'simpleweather',
+             '-storepass', 'android', '-keypass', 'android', '-keyalg', 'RSA', '-keysize', '3072',
+             '-validity', '10000', '-dname', 'CN=SimpleWeather Local Development', '-noprompt'])
     # Build executable app packages first; their classes must not also enter host DEX.
     sys.path.insert(0, str(ROOT / 'modules'))
     from build_executable import build as build_apps
@@ -75,14 +83,6 @@ def main():
             apk.write(dex, dex.name)
     aligned = build / 'aligned.apk'
     run([tools / ('zipalign' + ext), '-f', '-P', '16', '4', unsigned, aligned])
-    signing = ROOT / '.signing'
-    signing.mkdir(exist_ok=True)
-    keystore = signing / 'development.jks'
-    # Public development password; this key is for private sideloading, not a store release.
-    if not keystore.exists():
-        run([java_bin / ('keytool' + ext), '-genkeypair', '-keystore', keystore, '-alias', 'simpleweather',
-             '-storepass', 'android', '-keypass', 'android', '-keyalg', 'RSA', '-keysize', '3072',
-             '-validity', '10000', '-dname', 'CN=SimpleWeather Local Development', '-noprompt'])
     output = Path(opts.out).resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
     signer = [java, '-jar', tools / 'lib/apksigner.jar']

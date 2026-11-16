@@ -9,6 +9,15 @@ import json,zipfile,hashlib,shutil,subprocess,os
 IDS=['weather','schedule','status','weather-map','astronomy','earthquake','random','todo']
 SCREENS=['WeatherScreen','ScheduleScreen','GpsScreen','MapScreen','AstronomyScreen','EarthquakeScreen','RandomChoiceScreen','TodoScreen']
 API='daidai-toolbox/pre-3.0.0-1'
+GROUPS={'weather':['weather','toolbox'],'status':['toolbox','status_places','status_routes'],'schedule':['toolbox','timetable'],'todo':['toolbox','todos'],'random':['toolbox','random_choice']}
+PERMISSIONS={
+    'weather':['INTERNET'], 'weather-map':['INTERNET'], 'astronomy':[], 'random':[],
+    'status':['ACCESS_COARSE_LOCATION','ACCESS_FINE_LOCATION','CAMERA','FOREGROUND_SERVICE','FOREGROUND_SERVICE_LOCATION','POST_NOTIFICATIONS'],
+    'earthquake':['INTERNET','ACCESS_COARSE_LOCATION','ACCESS_FINE_LOCATION'],
+    'schedule':['POST_NOTIFICATIONS','SCHEDULE_EXACT_ALARM','RECEIVE_BOOT_COMPLETED'],
+    'todo':['POST_NOTIFICATIONS','SCHEDULE_EXACT_ALARM','RECEIVE_BOOT_COMPLETED']}
+KEY_RULES={'weather':['weather_*'],'weather-map':['radar_region','map_product'],'status':['status_*','location_*','route_interval'],'astronomy':['astro_*'],'earthquake':['quake_*'],'schedule':['course_*'],'random':['random_*'],'todo':['todo_*']}
+BRIDGES={'status':['LocationService'],'todo':['TodoReceiver','TodoScheduler'],'schedule':['TodoReceiver','ScheduleNotifier'],'weather-map':['OfficialPageActivity']}
 
 def build(root,sdk,java,run):
     root=Path(root);build=root/'build';tools=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar';ext='.exe' if os.name=='nt' else ''
@@ -27,13 +36,13 @@ def build(root,sdk,java,run):
         manifest=stage/'AndroidManifest.xml'
         manifest.write_text(f'<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.simpleweather.module.{id.replace("-","_")}" android:versionCode="1" android:versionName="pre-3.0.0-1"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/><application android:hasCode="true" android:allowBackup="false"/></manifest>','utf8')
         assets=stage/'assets';assets.mkdir(exist_ok=True)
-        (assets/'module.json').write_text(json.dumps({'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'versionCode':1,'version':'pre-3.0.0-1','standaloneInstallable':False,'resourceProvider':'host','dataRetention':'retain-on-uninstall','configurationGroups':{'weather':['weather'],'status':['toolbox','status_places','status_routes'],'schedule':['toolbox','timetable'],'todo':['toolbox','todos'],'random':['toolbox','random_choice']}.get(id,['toolbox'])},ensure_ascii=False,indent=2),'utf8')
+        (assets/'module.json').write_text(json.dumps({'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'versionCode':1,'version':'pre-3.0.0-1','standaloneInstallable':False,'resourceProvider':'host','dataRetention':'retain-on-uninstall','configurationGroups':GROUPS.get(id,['toolbox']),'configurationContract':{'format':'daidai-toolbox-module-config','version':1,'toolboxKeyRules':KEY_RULES[id]},'permissions':['android.permission.'+v for v in PERMISSIONS[id]],'hostComponentBridges':BRIDGES.get(id,[]),'dependencies':['host-shared-resources','host-shared-models-settings']},ensure_ascii=False,indent=2),'utf8')
         raw=stage/'unsigned.apk';run([tools/('aapt2'+ext),'link','-o',raw,'-I',platform,'--manifest',manifest,'-A',assets,'--min-sdk-version','26','--target-sdk-version','35'])
         with zipfile.ZipFile(raw,'a',zipfile.ZIP_DEFLATED) as z:
             for p in dex.glob('*.dex'):z.write(p,p.name)
         aligned=stage/'aligned.apk';run([tools/('zipalign'+ext),'-f','-P','16','4',raw,aligned])
         package=store/(id+'.ddapp')
-        run([java,'-jar',tools/'lib/apksigner.jar','sign','--ks',root/'.signing/development.jks','--ks-key-alias','simpleweather','--ks-pass','pass:android','--key-pass','pass:android','--out',package,aligned])
+        run([java,'-jar',tools/'lib/apksigner.jar','sign','--v4-signing-enabled','false','--ks',root/'.signing/development.jks','--ks-key-alias','simpleweather','--ks-pass','pass:android','--key-pass','pass:android','--out',package,aligned])
         run([java,'-jar',tools/'lib/apksigner.jar','verify',package])
         if id in ['weather','status']:shutil.copyfile(package,defaults/package.name)
         apps.append({'id':id,'type':'signed-dex-app','version':'pre-3.0.0-1','bytes':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-1/'+package.name})

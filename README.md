@@ -21,7 +21,7 @@
 
 ## 下载与独立测试程序
 
-- [内测宿主 pre-3.0.0-1](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/pre-3.0.0-1)：APK、源码、可执行应用包、更新说明及校验文件。
+- 内测宿主 pre-3.0.0-1：本地交付 APK、源码、可执行应用包、更新说明及校验文件。2026-11-17 上传连续 3 次连接失败后按约定停止，尚未发布 GitHub 标签、Release 或新商店目录；联网安装新模块暂不可用，可从本地 `.ddapp` 文件安装。
 - [稳定正式版 2.2.1](https://github.com/AdybirdZ/daidai-toolbox/releases/tag/v2.2.1)：APK、源码包、更新说明及 SHA-256。
 - [测试 APK](test-apk/)：呆呆音乐 0.7.0、呆呆传话 0.2.0、呆呆色觉模拟 0.2.0，独立安装，与主程序分开。
 - [测试程序源码](test-apps/)：对应的可构建源码与说明。
