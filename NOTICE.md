@@ -132,7 +132,7 @@ The remaining-items view only reports the current local candidate pool and does 
 系统行为参考：[通知权限](https://developer.android.com/develop/ui/views/notifications/notification-permission)、[通知渠道](https://developer.android.com/develop/ui/views/notifications/channels)、[闹钟调度](https://developer.android.com/develop/background-work/services/alarms/schedule)。系统授权不等于各厂商设备的投递保证。
 
 
-Independent test applications are distributed separately in `test-apk/`, with corresponding source in `test-apps/`. Their source, simulation-model and artwork notices are in `test-apps/NOTICE.md`; the main application does not bundle these applications.
+Historical independent APKs and the final music migration helper are retained in `test-apk/`, with buildable source in `test-apps/`. Current Music, Messenger and Color Vision are internal apps under `modules/embedded/`. Source, simulation-model and artwork notices remain applicable; see `test-apps/NOTICE.md` and the internal-app notices below.
 
 ## 应用图标
 
