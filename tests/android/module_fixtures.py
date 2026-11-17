@@ -4,8 +4,8 @@ import shutil,subprocess,zipfile,json
 root=Path(__file__).resolve().parents[2];ws=root.parent;sdk=ws/'tools/android-sdk';tools=sdk/'build-tools/35.0.0';out=ws/'work/qa/module-host-fixtures';out.mkdir(parents=True,exist_ok=True)
 java=Path(shutil.which('java'));keytool=java.parent/'keytool.exe';signer=[java,'-jar',tools/'lib/apksigner.jar'];adb=sdk/'platform-tools/adb.exe'
 def run(args):subprocess.run([str(x) for x in args],check=True)
-base=root/'modules/store/pre-3.0.0-2/weather.ddapp'
-for p in (root/'modules/store/pre-3.0.0-2').glob('*.ddapp'):shutil.copyfile(p,out/p.name)
+base=root/'modules/store/pre-3.0.0-3/weather.ddapp'
+for p in (root/'modules/store/pre-3.0.0-3').glob('*.ddapp'):shutil.copyfile(p,out/p.name)
 content=bytearray(base.read_bytes());content[len(content)//2]^=15;(out/'corrupt.ddapp').write_bytes(content)
 key=out/'test-only.jks'
 if not key.exists():run([keytool,'-genkeypair','-keystore',key,'-alias','test','-storepass','android','-keypass','android','-keyalg','RSA','-keysize','2048','-validity','30','-dname','CN=Untrusted module fixture','-noprompt'])

@@ -1,6 +1,6 @@
 {
   "id": "weather",
   "entry": "org.simpleweather.app.WeatherScreen",
-  "hostApi": "daidai-toolbox/pre-3.0.0-1",
+  "hostApi": "daidai-toolbox/pre-3.0.0-3",
   "defaultInstalled": true
 }

@@ -4,9 +4,9 @@
   <string name="launcher_store">App store</string>
   <string name="launcher_order">App order</string>
   <string name="launcher_order_note">Default order: Weather, Timetable, Status, Weather maps, Astronomy, Earthquakes, Random draw, To-do, Music, Messenger, Color vision. Only installed apps appear; App store and Settings remain at the end.</string>
-  <string name="module_music">Daidai Music</string>
-  <string name="module_messaging">Daidai Messenger</string>
-  <string name="module_colorvision">Daidai Color Vision</string>
+  <string name="module_music">Music</string>
+  <string name="module_messaging">Device Messaging</string>
+  <string name="module_colorvision">Color Vision Simulator</string>
   <string name="module_install">Install</string>
   <string name="module_open">Open</string>
   <string name="module_uninstall">Uninstall</string>

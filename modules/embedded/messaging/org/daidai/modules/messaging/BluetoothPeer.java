@@ -38,7 +38,7 @@ public final class BluetoothPeer implements MessagePeer {
             Future<?> timeout=null;
             try{
                 if(hosting){
-                    BluetoothServerSocket listening=adapter.listenUsingRfcommWithServiceRecord("Daidai Messenger",SERVICE_UUID);
+                    BluetoothServerSocket listening=adapter.listenUsingRfcommWithServiceRecord("Device Messaging",SERVICE_UUID);
                     server=listening;
                     if(closed.get()){listening.close();return;}
                     notifyState("waiting");

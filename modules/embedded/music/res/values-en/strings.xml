@@ -28,7 +28,7 @@
   <string name="music_exporting">Decoding and trimming…</string>
   <string name="music_export_failed">Cannot write the destination file</string>
   <string name="music_exported">Audio segment exported</string>
-  <string name="music_title">Daidai Music</string>
+  <string name="music_title">Music</string>
   <string name="music_subtitle">Toolbox app · Local music player</string>
   <string name="music_now_playing">Now playing</string>
   <string name="music_no_track">No track selected</string>
@@ -60,7 +60,7 @@
   <string name="music_unplayable">Cannot play this audio. The format may be unsupported, or the file/grant is unavailable. Import it again.</string>
   <string name="music_open_failed">Cannot open audio: </string>
   <string name="music_focus_unavailable">Audio focus unavailable. Try again later.</string>
-  <string name="music_notification">Daidai Music · Local playback</string>
+  <string name="music_notification">Music · Local playback</string>
   <string name="music_audio">Audio</string>
   <string name="music_storage_settings">Song storage</string>
   <string name="music_choose_folder">Choose storage folder</string>

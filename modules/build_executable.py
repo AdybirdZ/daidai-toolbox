@@ -8,9 +8,9 @@ import json,zipfile,hashlib,shutil,subprocess,os
 
 IDS=['weather','schedule','status','weather-map','astronomy','earthquake','random','todo','music','messaging','colorvision']
 SCREENS=['WeatherScreen','ScheduleScreen','GpsScreen','MapScreen','AstronomyScreen','EarthquakeScreen','RandomChoiceScreen','TodoScreen','org.daidai.modules.music.MusicActivity','org.daidai.modules.messaging.MessagingActivity','org.daidai.modules.colorvision.ColorVisionActivity']
-API='daidai-toolbox/pre-3.0.0-2'
-VERSION='pre-3.0.0-2'
-VERSION_CODE=2
+API='daidai-toolbox/pre-3.0.0-3'
+VERSION='pre-3.0.0-3'
+VERSION_CODE=3
 EMBEDDED={'music','messaging','colorvision'}
 GROUPS={'weather':['weather','toolbox'],'status':['toolbox','status_places','status_routes'],'schedule':['toolbox','timetable'],'todo':['toolbox','todos'],'random':['toolbox','random_choice']}
 PERMISSIONS={

@@ -10,6 +10,8 @@ import java.util.*;
 /** Reads only the granted SAF tree, including subfolders. Call from a worker thread. */
 public final class MusicFolder {
     private MusicFolder() {}
+    /** Per-screen cache: unchanged files missing optional tags are not reparsed on every visit. */
+    static final class ScanCache {final Map<String,String> stamps=new HashMap<>();}
     /** Provider identities are used, never display titles or coordinate-like path guesses. */
     public static boolean contains(Context context,String treeUri,String songUri){
         if(treeUri==null||treeUri.isEmpty()||songUri==null||songUri.isEmpty())return false;
@@ -27,23 +29,32 @@ public final class MusicFolder {
     }
     public static ArrayList<MusicLibrary.Track> load(Context context,String treeUri){try{return loadChecked(context,treeUri);}catch(Exception ignored){return new ArrayList<>();}}
     public static ArrayList<MusicLibrary.Track> loadChecked(Context context,String treeUri)throws IOException,InterruptedException{
+        return loadChecked(context,treeUri,null,new ScanCache());
+    }
+    static ArrayList<MusicLibrary.Track> loadChecked(Context context,String treeUri,MusicImportProgress progress,ScanCache cache)throws IOException,InterruptedException{
         ArrayList<MusicLibrary.Track> result=new ArrayList<>();if(treeUri==null||treeUri.trim().isEmpty())return result;
         try{
-            Uri tree=Uri.parse(treeUri);ArrayDeque<String> pending=new ArrayDeque<>();pending.add(DocumentsContract.getTreeDocumentId(tree));HashSet<String> seen=new HashSet<>();HashMap<String,MusicLibrary.Track> known=new HashMap<>();for(MusicLibrary.Track t:MusicLibrary.catalogue(context))known.put(t.uri,t);
+            Uri tree=Uri.parse(treeUri);ArrayDeque<String> pending=new ArrayDeque<>();pending.add(DocumentsContract.getTreeDocumentId(tree));HashSet<String> seen=new HashSet<>();HashSet<String> files=new HashSet<>();HashMap<String,MusicLibrary.Track> known=new HashMap<>();for(MusicLibrary.Track t:MusicLibrary.catalogue(context))known.put(MusicLibrary.identity(t.uri),t);
             while(!pending.isEmpty()){
-                if(Thread.currentThread().isInterrupted())throw new InterruptedException();String parent=pending.removeFirst();if(!seen.add(parent))continue;
-                Uri children=DocumentsContract.buildChildDocumentsUriUsingTree(tree,parent);String[] columns={DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_MIME_TYPE,DocumentsContract.Document.COLUMN_DISPLAY_NAME};
+                if(progress!=null)progress.check();if(Thread.currentThread().isInterrupted())throw new InterruptedException();String parent=pending.removeFirst();if(!seen.add(parent))continue;
+                Uri children=DocumentsContract.buildChildDocumentsUriUsingTree(tree,parent);String[] columns={DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_MIME_TYPE,DocumentsContract.Document.COLUMN_DISPLAY_NAME,DocumentsContract.Document.COLUMN_SIZE,DocumentsContract.Document.COLUMN_LAST_MODIFIED};
                 try(Cursor cursor=context.getContentResolver().query(children,columns,null,null,null)){
                     if(cursor==null)throw new IOException("Folder provider returned no result");int id=cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID),mime=cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE),name=cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME);
                     while(cursor.moveToNext()){
                         if(Thread.currentThread().isInterrupted())throw new InterruptedException();String doc=id<0?"":cursor.getString(id),type=mime<0?"":cursor.getString(mime),file=name<0?"":cursor.getString(name);if(doc==null||doc.isEmpty())continue;
                         if(DocumentsContract.Document.MIME_TYPE_DIR.equals(type)){pending.add(doc);continue;}
-                        String lower=file==null?"":file.toLowerCase(Locale.ROOT);if((type==null||!type.startsWith("audio/"))&&!lower.matches(".*\\.(mp3|m4a|aac|wav|flac|ogg|opus|amr|aiff|aif|wma|mid|midi)$"))continue;
-                        Uri uri=DocumentsContract.buildDocumentUriUsingTree(tree,doc);MusicLibrary.Track t=known.get(uri.toString());result.add(t==null||MusicLibrary.needsMetadataRefresh(context,t)?MusicLibrary.readMetadata(context,uri):t);
+                        if(!MusicAudioFiles.accepts(file,type))continue;
+                        Uri uri=DocumentsContract.buildDocumentUriUsingTree(tree,doc);String key=MusicLibrary.identity(uri.toString());if(!files.add(key))continue;
+                        if(progress!=null)progress.file(file==null?doc:file,result.size(),0);
+                        int size=cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE),modified=cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED);
+                        String stamp=(size<0||cursor.isNull(size)?"?":cursor.getString(size))+":"+(modified<0||cursor.isNull(modified)?"?":cursor.getString(modified));
+                        MusicLibrary.Track t=known.get(key);boolean cached=stamp.equals(cache.stamps.get(key));
+                        if(t==null||!cached&&(MusicLibrary.needsMetadataRefresh(context,t)||cache.stamps.containsKey(key)))t=MusicLibrary.readMetadata(context,uri);
+                        if(progress!=null)progress.check();result.add(t);cache.stamps.put(key,stamp);
                     }
                 }
             }
-            result.sort((x,y)->java.text.Collator.getInstance(Locale.getDefault()).compare(x.title,y.title));return result;
-        }catch(InterruptedException e){throw e;}catch(Exception e){throw new IOException(e);}
+            java.text.Collator collator=java.text.Collator.getInstance(Locale.getDefault());result.sort((x,y)->collator.compare(x.title,y.title));return result;
+        }catch(InterruptedException e){throw e;}catch(IOException e){throw e;}catch(Exception e){throw new IOException(e);}
     }
 }

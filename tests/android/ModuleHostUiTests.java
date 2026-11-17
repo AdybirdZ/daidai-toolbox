@@ -25,7 +25,7 @@ public final class ModuleHostUiTests extends Instrumentation {
     private void install(Object apps,String id)throws Exception{File f=new File("/data/local/tmp/module-host-test/"+id+".ddapp");try(InputStream in=new FileInputStream(f)){invoke(apps,"install",new Class[]{InputStream.class,String.class,String.class},in,id,null);}}
     private boolean present(Object apps,String id)throws Exception{return (Boolean)invoke(apps,"installed",new Class[]{String.class},id);}
     @Override public void onStart(){Bundle result=new Bundle();try{
-        loader=getTargetContext().getClassLoader();String language=args==null?"zh-CN":args.getString("language","zh-CN");getTargetContext().getSharedPreferences("toolbox",0).edit().putString("app_language",language).putInt("seen_version",53).commit();
+        loader=getTargetContext().getClassLoader();String language=args==null?"zh-CN":args.getString("language","zh-CN");getTargetContext().getSharedPreferences("toolbox",0).edit().putString("app_language",language).putInt("seen_version",54).commit();
         activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");
         check(present(apps,"weather")&&present(apps,"status"),"two default apps installed");
         for(String name:new String[]{"WeatherScreen","GpsScreen","TodoScreen","ScheduleScreen","AstronomyScreen","EarthquakeScreen","RandomChoiceScreen","MapScreen"}){try{type(name);throw new AssertionError("Screen embedded in host "+name);}catch(ClassNotFoundException expected){checks++;}}

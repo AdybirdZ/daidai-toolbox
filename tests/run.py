@@ -11,6 +11,7 @@ subprocess.run([sys.executable, str(root / 'tests/release_checks.py')], check=Tr
 p = argparse.ArgumentParser()
 p.add_argument('--json-jar', required=True, help='JSON-java 20240303 jar; not included in the APK')
 opts = p.parse_args()
+subprocess.run([sys.executable, str(root / 'tests/music_import_checks.py')], check=True)
 jar = Path(opts.json_jar).resolve()
 output = root / 'build/tests'
 output.mkdir(parents=True, exist_ok=True)

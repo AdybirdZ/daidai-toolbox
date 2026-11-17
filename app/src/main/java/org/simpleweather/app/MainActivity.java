@@ -41,6 +41,7 @@ public class MainActivity extends Activity {
     private Bundle initialScreenState;
     private final Map<Integer,ScreenHandle> screens=new HashMap<>();
     private ScrollView pageScroll;
+    private AppStoreScreen appStoreScreen;
     private LinearLayout navigation;
     private int navigationOffset;
     private Instant astronomyTime=Instant.now();
@@ -163,6 +164,7 @@ public class MainActivity extends Activity {
 
     public void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
     public void refreshScreen(){switchTab(tab);}
+    public void installedAppsChanged(){if(tab==-2&&appStoreScreen!=null)appStoreScreen.installedChanged();else{pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();refreshScreen();}}
     private void pageHeader(){
         TextView title=text(tab<0?getString(R.string.app_name):getString(R.string.app_name)+" · "+tabName(tab),25,TITLE,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
         if(tab<0)return;LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->{ScreenHandle s=screen(1);if(s!=null)s.call("addCourse");}));}body.addView(actions);gap(body,16);
@@ -251,7 +253,7 @@ public class MainActivity extends Activity {
     }
     private void addUniquePlace(List<City> list,City candidate){candidate=City.resolve(catalog,candidate);if(candidate.excludedAdministrativeArea())return;for(City existing:list)if(existing.samePlace(candidate))return;list.add(candidate);}
     public boolean weatherVisible(){return tab==0&&!picking;}
-    public void switchTab(int next){hideKeyboard();for(ScreenHandle s:screens.values())s.call("pause");if(next!=2&&gps!=null)gps.call("stopForNavigation");if(next>=0&&!apps.installed(AppModules.IDS[next]))next=-1;tab=next;picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==-1){showLauncher();return;}if(next==-2){startScreen();new AppStoreScreen(this).render();return;}if(next==0){showWeather();load(false);return;}if(next==4){ScreenHandle old=screens.remove(4);if(old!=null)old.call("destroy");}startScreen();ScreenHandle s=screen(next);if(s!=null){if(next==3)s.call("render",!deferMapReload);else s.call("render");}deferMapReload=false;}
+    public void switchTab(int next){hideKeyboard();for(ScreenHandle s:screens.values())s.call("pause");if(next!=2&&gps!=null)gps.call("stopForNavigation");if(next>=0&&!apps.installed(AppModules.IDS[next]))next=-1;tab=next;picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==-1){showLauncher();return;}if(next==-2){startScreen();appStoreScreen=new AppStoreScreen(this);appStoreScreen.render();return;}if(next==0){showWeather();load(false);return;}if(next==4){ScreenHandle old=screens.remove(4);if(old!=null)old.call("destroy");}startScreen();ScreenHandle s=screen(next);if(s!=null){if(next==3)s.call("render",!deferMapReload);else s.call("render");}deferMapReload=false;}
 
     public void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
@@ -293,6 +295,7 @@ public class MainActivity extends Activity {
     }
     public void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"pre-3.0.0-3",getString(R.string.changes_pre3_3));
         updateEntry(c,"pre-3.0.0-2",getString(R.string.changes_pre3_2));
         updateEntry(c,getString(R.string.update_pre3001_title),getString(R.string.update_pre3001_detail));
         updateEntry(c,getString(R.string.update_221_title),getString(R.string.update_221_detail));

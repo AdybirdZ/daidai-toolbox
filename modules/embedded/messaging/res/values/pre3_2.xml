@@ -1,5 +1,5 @@
 <resources>
-  <string name="msg_title">呆呆传话</string>
+  <string name="msg_title">设备通信</string>
   <string name="msg_subtitle">蓝牙或局域网 · 一对一文字通信</string>
   <string name="msg_transport">通信方式</string>
   <string name="msg_lan">局域网</string>
@@ -45,5 +45,5 @@
   <string name="msg_connection_failed">连接已断开或未能建立，请检查网络、蓝牙和配对码。</string>
   <string name="msg_message_too_long">消息不能超过 4096 个 UTF-8 字节</string>
   <string name="msg_new_message">收到新消息</string>
-  <string name="msg_guide">蓝牙：先在系统设置中配对两台 Android 设备。一台等待连接，另一台选择它并输入本程序的配对码；不支持 iPhone 的普通经典蓝牙通信。\n\n局域网：两台设备连接同一 Wi-Fi 或热点。一台等待连接，另一台输入它的地址和配对码。路由器的客户端隔离可能阻止通信。\n\n连接或等待期间会显示运行通知。切换栏目、返回桌面或锁屏不会主动断开；点击“断开并停止”才结束通信。系统强制停止、网络或蓝牙关闭、省电限制仍可能中断连接；不提供离线消息推送。持续等待和连接会增加耗电。\n\n消息使用配对码和 AES-256-GCM 保护，无云服务器，协议尚未经过独立安全审计。配对码和最近 100 条会话消息仅在内存中保留，服务结束后清除；仅持久保存通信方式、上次局域网地址和通知选项。</string>
+  <string name="msg_guide">蓝牙：先在系统设置中配对两台 Android 设备。一台等待连接，另一台选择它并输入本程序的配对码；不支持 iPhone 的普通经典蓝牙通信。\n\n局域网：两台设备连接同一 Wi-Fi 或热点。一台等待连接，另一台输入它的地址和配对码。路由器的客户端隔离可能阻止通信。\n\n连接或等待期间会显示运行通知。切换应用、返回桌面或锁屏不会主动断开；点击“断开并停止”才结束通信。系统强制停止、网络或蓝牙关闭、省电限制仍可能中断连接；不提供离线消息推送。持续等待和连接会增加耗电。\n\n消息使用配对码和 AES-256-GCM 保护，无云服务器，协议尚未经过独立安全审计。配对码和最近 100 条会话消息仅在内存中保留，服务结束后清除；仅持久保存通信方式、上次局域网地址和通知选项。</string>
 </resources>

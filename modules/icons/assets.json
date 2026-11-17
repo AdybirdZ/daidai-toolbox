@@ -1,0 +1,129 @@
+{
+  "format": "user-supplied-app-icons/1",
+  "targetVersion": "pre-3.0.0-3",
+  "assets": [
+    {
+      "appId": "astronomy",
+      "name": "天文",
+      "file": "astronomy.png",
+      "sourceFile": "codex-clipboard-86542aff-56fe-4b80-af4e-4f49a1d2783b.png",
+      "sha256": "a35077c20e9e0c9a4d324e28f871d694122e954f7706fd307d972aff0e34a2af",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_astronomy.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "5282808e5737fea7f064f4c1fb66e6e8d94b11251612b0aabba5e19231f4d859"
+    },
+    {
+      "appId": "music",
+      "name": "音乐",
+      "file": "music.png",
+      "sourceFile": "codex-clipboard-b1bc73c1-59d3-4ed5-8772-81deb21be747.png",
+      "sha256": "ce30432bba4f3fd9bb60ab70e7a3b40c80bcbbebe6c8dd2683329464a9565314",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_music.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "f8048fa7e8b2e5fa37eed54eb3d8be309fbade66cca8bf997897c9baf3e15d3c"
+    },
+    {
+      "appId": "weather-map",
+      "name": "天气地图",
+      "file": "weather-map.png",
+      "sourceFile": "codex-clipboard-61538703-ed6a-478f-9313-9197a41c99a7.png",
+      "sha256": "f82b8f92e8b8e2e04d7870b41e66459f29a2d54532e1fcb2634cc32d23cd13af",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_weather_map.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "30e43d4146f310bff0ba85ebca69ad1015ca7e58f2c0c75c29fe0b5aee936fb7"
+    },
+    {
+      "appId": "colorvision",
+      "name": "色觉模拟器",
+      "file": "colorvision.png",
+      "sourceFile": "codex-clipboard-13c7393e-4ba0-4a21-a328-43331a2c1300.png",
+      "sha256": "93bc99b8643223fda4f9cc1c896dd957f97621af73bafbdacae96377f9fee76d",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_colorvision.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "c57bd4ea183bfb19e4c8b5814395cf4fe94a0309cb2fceaac88b1706ab1ae1ee"
+    },
+    {
+      "appId": "status",
+      "name": "状态",
+      "file": "status.png",
+      "sourceFile": "codex-clipboard-ffab9ccd-19c4-4484-93e9-23f4c8866e2e.png",
+      "sha256": "f3929a106623e7984017d5752f7dad26beb349c054c34360e6199c5e78ec4fb2",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_status.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "a085a026fd4fe769c1649dc539c79ae80ae9d70b195cdd9ae6a51aaa2398b67a"
+    },
+    {
+      "appId": "settings",
+      "name": "设置",
+      "file": "settings.png",
+      "sourceFile": "codex-clipboard-e200387e-9f33-45e7-a926-ca564d45b4a9.png",
+      "sha256": "ae135c9860426b73a5332ac44aa73812eacf307ef56de6baa149b2cb509a8075",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_settings.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "1584a83a9aa92f021b0221e30be449baaa229c07b1a45a5b0179daa9444e6314"
+    },
+    {
+      "appId": "earthquake",
+      "name": "地震",
+      "file": "earthquake.png",
+      "sourceFile": "codex-clipboard-8fd182b1-f32f-4259-aaba-734fb427bb34.png",
+      "sha256": "5a1f37bdd6e2611c49cd82e973b5de41cab613886f81560fb8a0c15a29b30f60",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_earthquake.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "71c86004e17dab4f0478932ee47bc10afa27989856d569a2553e187b0812afc6"
+    },
+    {
+      "appId": "schedule",
+      "name": "课程表",
+      "file": "schedule.png",
+      "sourceFile": "codex-clipboard-d3ff2e8f-0d88-4389-8cfb-146431a4e137.png",
+      "sha256": "983fef868612df26b5bc0f033c177440ed0d948cdb83b6f094d81eb6339e16d7",
+      "runtimeFile": "app/src/main/res/drawable-nodpi/app_schedule.png",
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "runtimeSha256": "c32840c715aed0462cb56f0d667d9d670ea361d149e502b88caceb91aa0128a1"
+    }
+  ],
+  "runtimeTransform": {
+    "method": "proportional-resize-and-transparent-rounded-mask",
+    "reference": "weather.svg:first-path",
+    "viewport": [
+      96,
+      96
+    ],
+    "contentBounds": [
+      4,
+      4,
+      92,
+      92
+    ],
+    "outlinePathData": "M20,4 H76 Q92,4 92,20 V76 Q92,92 76,92 H20 Q4,92 4,76 V20 Q4,4 20,4",
+    "sizePixels": [
+      512,
+      512
+    ]
+  }
+}

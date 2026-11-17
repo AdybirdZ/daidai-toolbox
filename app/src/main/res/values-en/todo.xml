@@ -99,7 +99,7 @@
     <string name="todo_permissions_notifications">Notification settings</string>
     <string name="todo_permissions_exact">Exact alarm access</string>
     <string name="todo_config_count">\nTasks: %1$d</string>
-    <string name="todo_local_note">Tasks stay on this device and are included in full configuration transfer. Uninstalling deletes data that has not been exported. Notifications may appear on the lock screen; task content can be hidden in reminder settings.</string>
+    <string name="todo_local_note">Tasks stay on this device and are included in full configuration transfer. Uninstalling the internal app retains its data; uninstalling the toolbox deletes its local data. Notifications may appear on the lock screen; task content can be hidden in reminder settings.</string>
     <string name="update_210">Added tasks with multiple same-day ranges, all-day and multi-day tasks, repeat rules, category colors, priorities, checklists, search, filters and sorting.\n\nAdded reminders, notification completion and snooze actions, optional ongoing summary, notification privacy and system permission checks. Tasks are included in full configuration transfer with backward compatibility.</string>
     <string name="todo_last_completed">Last completed: %1$s</string>
     <string name="update_210_title">2.1.0 · To-do</string>

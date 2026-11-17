@@ -1,0 +1,3 @@
+<resources>
+  <string name="changes_pre3_3">Updated the names of Music, Device Messaging and Color Vision Simulator, refreshed app icons, and aligned their rounded corners and margins.\n\nMusic imports show the current file, progress and a cancel action. Improved mixed-folder filtering and large-library performance.\n\nSelect songs or all search matches and edit metadata in Music search; selections remain checked in My songs.\n\nFixed the store scrolling to the top after installation and clarified references to other apps.</string>
+</resources>

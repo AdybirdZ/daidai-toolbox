@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="cv_title">呆呆色觉模拟</string>
+  <string name="cv_title">色觉模拟器</string>
   <string name="cv_subtitle">内部应用 %1$s · 本机处理</string>
   <string name="cv_camera">实时相机</string>
   <string name="cv_photo">选择图片</string>

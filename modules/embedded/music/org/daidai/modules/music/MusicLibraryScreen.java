@@ -27,7 +27,10 @@ public final class MusicLibraryScreen {
     private final ArrayList<Runnable> scanCallbacks=new ArrayList<>();
     private final LinkedHashSet<String> folderUris=new LinkedHashSet<>(),selected=new LinkedHashSet<>();
     private final HashSet<String> deleting=new HashSet<>();
-    private boolean scanning;
+    private boolean scanning,closed;
+    private int songsGeneration;
+    private MusicImportProgress scanProgress;
+    private final MusicFolder.ScanCache scanCache=new MusicFolder.ScanCache();
     private String pendingUri,filter=MusicCollections.ALL;
     private Runnable afterEdit;
     private LinearLayout pageRoot,songsHost;
@@ -37,13 +40,14 @@ public final class MusicLibraryScreen {
     private String t(String key,Object...args){return Texts.get(a,key,args);}
     public static View createPage(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);return screen.createContent();}
     public static void open(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);screen.dialog(screen.t("library_my_songs"),screen.createContent());}
+    public static void refreshFolder(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);screen.scanFolder(()->{screen.renderSongs();screen.notifyChanged();});}
     public static void openPlaylists(Activity a,Runnable changed){get(a,changed).chooseViewPlaylist();}
     public static void openFavorites(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);screen.selectFilter(MusicCollections.FAVORITES);}
     public static void edit(Activity a,MusicLibrary.Track track,Runnable changed){get(a,changed).editTrack(track.uri,changed);}
     public static boolean toggleFavorite(Activity a,MusicLibrary.Track track,Runnable changed){MusicLibrary.discover(a,Collections.singleton(track));boolean value=MusicCollections.toggleFavorite(a,track.uri);if(changed!=null)changed.run();return value;}
     public static boolean onActivityResult(Activity a,int request,int result,Intent data){return onActivityResult(a,request,result,data,null);}
     public static boolean onActivityResult(Activity a,int request,int result,Intent data,Runnable changed){if(request!=PICK_LYRICS&&request!=PICK_COVER)return false;return get(a,changed).result(request,result,data);}
-    public static void destroy(Activity a){MusicLibraryScreen screen=INSTANCES.remove(a);if(screen!=null){screen.worker.shutdownNow();screen.main.removeCallbacksAndMessages(null);for(Dialog dialog:new ArrayList<>(screen.dialogs))if(dialog.isShowing())dialog.dismiss();screen.dialogs.clear();screen.scanCallbacks.clear();}}
+    public static void destroy(Activity a){MusicLibraryScreen screen=INSTANCES.remove(a);if(screen!=null){screen.closed=true;screen.worker.shutdownNow();if(screen.scanProgress!=null)screen.scanProgress.destroy();screen.main.removeCallbacksAndMessages(null);for(Dialog dialog:new ArrayList<>(screen.dialogs))if(dialog.isShowing())dialog.dismiss();screen.dialogs.clear();screen.scanCallbacks.clear();}}
     private LinearLayout box(){LinearLayout b=Ui.column(a);b.setPadding(Ui.dp(a,22),Ui.dp(a,10),Ui.dp(a,22),Ui.dp(a,12));return b;}
     private ScrollView scroll(LinearLayout b){ScrollView view=new ScrollView(a);view.addView(b);return view;}
     private AlertDialog track(AlertDialog dialog){dialogs.add(dialog);dialog.setOnDismissListener(v->dialogs.remove(dialog));return dialog;}
@@ -51,29 +55,49 @@ public final class MusicLibraryScreen {
     private void notifyChanged(){if(changed!=null)changed.run();}
     private void toast(String key){Ui.toast(a,t(key),Toast.LENGTH_SHORT).show();}
 
-    private LinearLayout createContent(){pageRoot=box();LinearLayout first=Ui.row(pageRoot);Ui.cell(first,t("library050_refresh_folder"),()->scanFolder(this::renderSongs));Ui.cell(first,t("music_search"),()->MusicSearchScreen.open(a,visibleTracks(),song->{MusicLibrary.addToQueue(a,Collections.singleton(song));notifyChanged();}));LinearLayout second=Ui.row(pageRoot);Ui.cell(second,"♥ "+t("library_favorites"),()->selectFilter(MusicCollections.FAVORITES));Ui.cell(second,t("library_playlists"),this::chooseViewPlaylist);songsHost=Ui.column(a);pageRoot.addView(songsHost);renderSongs();main.post(()->{if(!a.isDestroyed())scanFolder(this::renderSongs);});return pageRoot;}
+    private LinearLayout createContent(){pageRoot=box();LinearLayout first=Ui.row(pageRoot);Ui.cell(first,t("library050_refresh_folder"),()->scanFolder(this::renderSongs));Ui.cell(first,t("music_search"),this::openSearch);LinearLayout second=Ui.row(pageRoot);Ui.cell(second,"♥ "+t("library_favorites"),()->selectFilter(MusicCollections.FAVORITES));Ui.cell(second,t("library_playlists"),this::chooseViewPlaylist);songsHost=Ui.column(a);pageRoot.addView(songsHost);renderSongs();main.post(()->{if(!a.isDestroyed())scanFolder(this::renderSongs);});return pageRoot;}
+    private void openSearch(){
+        final Dialog[] search={null};
+        search[0]=MusicSearchScreen.open(a,this::visibleTracks,selected,(song,saved)->editTrack(song.uri,saved),()->{dialogs.remove(search[0]);if(!closed)renderSongs();});
+        dialogs.add(search[0]);
+    }
     private void selectFilter(String value){filter=value;selected.clear();if(pageRoot==null||!pageRoot.isAttachedToWindow()){dialog(t("library_my_songs"),createContent());return;}renderSongs();}
     private String filterName(){return MusicCollections.ALL.equals(filter)?t("music060_all_songs"):MusicCollections.FAVORITES.equals(filter)?t("library_favorites"):filter;}
-    private ArrayList<MusicLibrary.Track> tracks(Collection<String> uris){ArrayList<MusicLibrary.Track> rows=new ArrayList<>();for(String uri:uris){MusicLibrary.Track song=MusicLibrary.find(a,uri);if(song!=null)rows.add(song);}return rows;}
+    private ArrayList<MusicLibrary.Track> tracks(Collection<String> uris){return MusicLibrary.findAll(a,uris);}
     private ArrayList<MusicLibrary.Track> visibleTracks(){if(!MusicCollections.builtIn(filter)&&!MusicCollections.playlistNames(a).contains(filter))filter=MusicCollections.ALL;ArrayList<MusicLibrary.Track> rows=tracks(folderUris);if(!MusicCollections.ALL.equals(filter)){Set<String> allowed=MusicCollections.FAVORITES.equals(filter)?MusicCollections.favorites(a):MusicCollections.playlist(a,filter);rows.removeIf(song->!allowed.contains(song.uri));}return rows;}
     private void scanFolder(Runnable ready){
         if(ready!=null)scanCallbacks.add(ready);if(scanning)return;String tree=a.getSharedPreferences("music_module",0).getString("storage_tree_uri","");if(tree.isEmpty()){folderUris.clear();finishScan();return;}scanning=true;
-        ProgressDialog progress=new ProgressDialog(a);progress.setMessage(t("library_scanning"));progress.setCancelable(false);dialogs.add(progress);progress.show();
-        worker.execute(()->{ArrayList<MusicLibrary.Track> rows=new ArrayList<>();boolean failed=false;try{rows=MusicFolder.loadChecked(a,tree);MusicLibrary.discover(a,rows);}catch(InterruptedException e){Thread.currentThread().interrupt();return;}catch(Exception e){failed=true;}final ArrayList<MusicLibrary.Track> found=rows;final boolean error=failed;main.post(()->{scanning=false;if(a.isDestroyed())return;progress.dismiss();dialogs.remove(progress);folderUris.clear();for(MusicLibrary.Track song:found){MusicLibrary.Track canonical=MusicLibrary.find(a,song.uri);if(canonical!=null)folderUris.add(canonical.uri);}finishScan();if(error)Ui.note(a,t("library_my_songs"),t("library_folder_failed"));});});
+        MusicImportProgress progress=new MusicImportProgress(a);scanProgress=progress;
+        worker.execute(()->{
+            ArrayList<MusicLibrary.Track> rows=new ArrayList<>();ArrayList<String> canonical=new ArrayList<>();boolean failed=false;
+            try{
+                rows=MusicFolder.loadChecked(a,tree,progress,scanCache);progress.saving();MusicLibrary.discover(a,rows);
+                ArrayList<String> uris=new ArrayList<>();for(MusicLibrary.Track song:rows)uris.add(song.uri);
+                for(MusicLibrary.Track song:MusicLibrary.findAll(a,uris))canonical.add(song.uri);
+            }catch(java.io.InterruptedIOException e){/* User cancellation keeps the existing folder view. */}
+            catch(InterruptedException e){Thread.currentThread().interrupt();}
+            catch(Exception e){failed=true;}
+            final boolean error=failed;
+            main.post(()->{scanning=false;scanProgress=null;progress.close();if(closed||a.isDestroyed())return;
+                if(!progress.cancelled()&&!error){folderUris.clear();folderUris.addAll(canonical);}
+                finishScan();if(error)Ui.note(a,t("library_my_songs"),t("library_folder_failed"));
+            });
+        });
     }
+
     private void finishScan(){ArrayList<Runnable> callbacks=new ArrayList<>(scanCallbacks);scanCallbacks.clear();for(Runnable callback:callbacks)callback.run();}
 
     private void renderSongs(){
-        if(songsHost==null)return;songsHost.removeAllViews();ArrayList<MusicLibrary.Track> rows=visibleTracks();HashSet<String> available=new HashSet<>();for(MusicLibrary.Track song:rows)available.add(song.uri);selected.retainAll(available);
+        final int generation=++songsGeneration;if(songsHost==null)return;final LinearLayout target=songsHost;songsHost.removeAllViews();ArrayList<MusicLibrary.Track> rows=visibleTracks();HashSet<String> available=new HashSet<>();for(MusicLibrary.Track song:rows)available.add(song.uri);selected.retainAll(available);
         LinearLayout heading=Ui.row(songsHost);TextView name=Ui.text(a,filterName(),18);name.setTag("music060_playlist_heading");heading.addView(name,new LinearLayout.LayoutParams(0,-2,1));Button settings=Ui.button(heading,"⚙",this::managePlaylist);settings.setContentDescription(t("music060_manage_playlist",filterName()));settings.setEnabled(!MusicCollections.builtIn(filter));((LinearLayout.LayoutParams)settings.getLayoutParams()).width=Ui.dp(a,48);
         if(a.getSharedPreferences("music_module",0).getString("storage_tree_uri","").isEmpty()){songsHost.addView(Ui.text(a,t("music_folder_required"),15));return;}
         Button addPlaylist=Ui.button(songsHost,t("music060_selected_to_playlist"),()->chooseDestination(new ArrayList<>(selected)));
         Button addQueue=Ui.button(songsHost,t("library_add_selected"),()->{MusicLibrary.addToQueue(a,tracks(selected));notifyChanged();toast("library_added_to_queue");});Button delete=Ui.button(songsHost,t("music060_delete_selected"),()->deleteFiles(new ArrayList<>(selected),this::renderSongs));
         CheckBox all=new CheckBox(a);all.setText(t("music060_select_all"));all.setTextColor(Ui.INK);all.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));songsHost.addView(all,new LinearLayout.LayoutParams(-1,-2));
         final boolean[] syncing={false};ArrayList<CheckBox> checks=new ArrayList<>();Runnable update=()->{syncing[0]=true;all.setChecked(!rows.isEmpty()&&selected.containsAll(available));all.setEnabled(!rows.isEmpty());syncing[0]=false;addQueue.setEnabled(!selected.isEmpty());addPlaylist.setEnabled(!selected.isEmpty());delete.setEnabled(!selected.isEmpty());};
-        all.setOnCheckedChangeListener((button,on)->{if(syncing[0])return;if(on)selected.addAll(available);else selected.removeAll(available);for(int i=0;i<checks.size();i++)checks.get(i).setChecked(selected.contains(rows.get(i).uri));update.run();});
+        all.setOnCheckedChangeListener((button,on)->{if(syncing[0])return;if(on)selected.addAll(available);else selected.removeAll(available);syncing[0]=true;try{for(int i=0;i<checks.size();i++)checks.get(i).setChecked(selected.contains(rows.get(i).uri));}finally{syncing[0]=false;}update.run();});
         LinearLayout list=Ui.column(a);songsHost.addView(list);if(rows.isEmpty())list.addView(Ui.text(a,t("library_no_songs"),15));
-        for(MusicLibrary.Track song:rows){LinearLayout row=Ui.row(list);CheckBox check=new CheckBox(a);check.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));check.setContentDescription(t("music060_select_song",song.title));check.setChecked(selected.contains(song.uri));checks.add(check);row.addView(check);check.setOnCheckedChangeListener((button,on)->{if(on)selected.add(song.uri);else selected.remove(song.uri);update.run();});LinearLayout content=Ui.column(a);row.addView(content,new LinearLayout.LayoutParams(0,-2,1));MusicCredits.songRow(content,song,song.title,()->songActions(song));}update.run();
+        MusicRows.append(list,rows.size(),()->!closed&&songsHost==target&&songsGeneration==generation,i->{MusicLibrary.Track song=rows.get(i);LinearLayout row=Ui.row(list);CheckBox check=new CheckBox(a);check.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));check.setContentDescription(t("music060_select_song",song.title));check.setChecked(selected.contains(song.uri));checks.add(check);row.addView(check);check.setOnCheckedChangeListener((button,on)->{if(syncing[0])return;if(on)selected.add(song.uri);else selected.remove(song.uri);update.run();});LinearLayout content=Ui.column(a);row.addView(content,new LinearLayout.LayoutParams(0,-2,1));MusicCredits.songRow(content,song,song.title,()->songActions(song));});update.run();
     }
 
     private void chooseViewPlaylist(){LinearLayout b=box();AlertDialog[] chooser={null};Ui.button(b,t("library_create_playlist"),()->playlistName(null,value->{if(chooser[0]!=null)chooser[0].dismiss();selectFilter(value);}));Ui.button(b,t("music060_all_songs"),()->{chooser[0].dismiss();selectFilter(MusicCollections.ALL);});for(String name:MusicCollections.playlistNames(a))Ui.button(b,name,()->{chooser[0].dismiss();selectFilter(name);});chooser[0]=dialog(t("library_playlists"),b);}

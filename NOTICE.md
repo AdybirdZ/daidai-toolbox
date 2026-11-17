@@ -136,7 +136,7 @@ Historical independent APKs and the final music migration helper are retained in
 
 ## 应用图标
 
-`modules/icons/` 的 13 个 SVG 及对应 Android VectorDrawable 为本项目原创几何图形，按项目许可证发布，未复制第三方应用商标或图标。
+天文、音乐、天气地图、色觉模拟器、状态、设置、地震和课程表图标使用用户提供并指定的图片，原图及来源记录见 `modules/icons/ASSETS.md`。这些图片不据此纳入代码 MIT 许可，也不声称由本项目原创。其余 5 个 SVG 及对应 Android VectorDrawable 为本项目原创几何图形，按项目许可证发布。
 
 ## pre-3.0.0-2 内部应用
 

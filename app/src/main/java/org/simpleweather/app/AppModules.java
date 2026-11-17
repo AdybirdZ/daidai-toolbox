@@ -18,8 +18,8 @@ import java.util.zip.*;
 
 /** Signed, host-version-bound executable packages. Never loads code from shared storage. */
 public final class AppModules {
-    public static final String API="daidai-toolbox/pre-3.0.0-2";
-    public static final String CATALOG="https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/catalog.json";
+    public static final String API="daidai-toolbox/pre-3.0.0-3";
+    public static final String CATALOG="https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-3/catalog.json";
     public static final String[] IDS={"weather","schedule","status","weather-map","astronomy","earthquake","random","todo"};
     public static final String[] CLASSES={"WeatherScreen","ScheduleScreen","GpsScreen","MapScreen","AstronomyScreen","EarthquakeScreen","RandomChoiceScreen","TodoScreen"};
     public static final String[] EMBEDDED={"music","messaging","colorvision"};
@@ -88,7 +88,7 @@ public final class AppModules {
                     new ToolDialog(a).setTitle(title(selected)).setMessage(a.getString(R.string.module_trust_note))
                         .setPositiveButton(a.getString(R.string.module_install),(d,w)->{
                             new Thread(()->{
-                                try{try(InputStream in=new FileInputStream(temp)){install(in,selected,null);}a.runOnUiThread(()->{if(!a.isDestroyed()){a.releaseModule(selected);a.refreshScreen();}});}
+                                try{try(InputStream in=new FileInputStream(temp)){install(in,selected,null);}a.runOnUiThread(()->{if(!a.isDestroyed()){a.releaseModule(selected);a.installedAppsChanged();}});}
                                 catch(Exception e){a.runOnUiThread(()->a.toast(a.getString(R.string.module_install_failed)));}
                                 finally{temp.delete();busy=false;}
                             }).start();

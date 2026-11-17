@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_import_reading_folder">Reading the music folder…</string>
+    <string name="music_import_file">Importing %1$s\nFile %2$d of %3$d</string>
+    <string name="music_import_scanning_file">Importing %1$s\n%2$d songs read</string>
+    <string name="music_import_saving">Saving song information…</string>
+    <string name="music_import_summary">Imported: %1$d · Non-audio files skipped: %2$d · Failed: %3$d</string>
+    <string name="music_search_select_matches">Select all search results</string>
+    <string name="music_search_selected_count">Selected: %1$d</string>
+</resources>

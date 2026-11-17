@@ -26,7 +26,7 @@ public final class ModuleStoreOnlineTests extends Instrumentation {
     private List<String> text(){List<String> out=new ArrayList<>();collect(activity.getWindow().getDecorView(),out);return out;}
     @Override public void onStart(){Bundle result=new Bundle();try{
         String lang=args.getString("language","zh-CN");
-        getTargetContext().getSharedPreferences("toolbox",0).edit().putString("app_language",lang).putInt("seen_version",53).commit();
+        getTargetContext().getSharedPreferences("toolbox",0).edit().putString("app_language",lang).putInt("seen_version",54).commit();
         loader=getTargetContext().getClassLoader();activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");
         JSONArray catalog=(JSONArray)call(apps,"remoteCatalog",new Class[]{});check(catalog.length()==11,"public catalog includes eleven apps");
         String[] ids={"weather","schedule","status","weather-map","astronomy","earthquake","random","todo","music","messaging","colorvision"};

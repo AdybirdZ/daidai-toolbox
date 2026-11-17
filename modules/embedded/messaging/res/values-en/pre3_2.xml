@@ -1,5 +1,5 @@
 <resources>
-  <string name="msg_title">Daidai Messenger</string>
+  <string name="msg_title">Device Messaging</string>
   <string name="msg_subtitle">Bluetooth or LAN · One-to-one text</string>
   <string name="msg_transport">Transport</string>
   <string name="msg_lan">LAN</string>

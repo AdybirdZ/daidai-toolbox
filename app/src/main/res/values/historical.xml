@@ -130,8 +130,8 @@
     <string name="astronomy_128" formatted="false">"观星条件 · 经验参考"</string>
     <string name="astronomy_129" formatted="false">"月球在地平线上方 · 照亮比例约 "</string>
     <string name="astronomy_130" formatted="false">"月球在地平线下方，月光影响较小"</string>
-    <string name="astronomy_131" formatted="false">"天气数据缺失或已过期，请在天气页刷新。天体位置仍可离线计算。"</string>
-    <string name="astronomy_132" formatted="false">"所选时刻暂无完整天气数据，请在天气页刷新，或调整天文时间。"</string>
+    <string name="astronomy_131" formatted="false">"天气数据缺失或已过期，请打开“天气”应用刷新。天体位置仍可离线计算。"</string>
+    <string name="astronomy_132" formatted="false">"所选时刻暂无完整天气数据，请打开“天气”应用刷新，或调整天文时间。"</string>
     <string name="astronomy_133" formatted="false">"云量 "</string>
     <string name="astronomy_134" formatted="false">"% · 降水概率 "</string>
     <string name="astronomy_135" formatted="false">"%\n湿度 "</string>
@@ -316,7 +316,7 @@
     <string name="earthquake_info_014" formatted="false">"Wolfx 的 intensity 字段标度和模型尚未核实，本应用不采用该字段，也不将其认作正式最大烈度。"</string>
     <string name="earthquake_info_015" formatted="false">"德国、欧洲和美国来源提供全球补充目录。"</string>
     <string name="earthquake_info_016" formatted="false">"\n\n德国和欧洲来源的 CC BY 4.0 许可不适用于中国地震台网或 Wolfx 数据。"</string>
-    <string name="earthquake_info_017" formatted="false">"地震查询会向所选来源发送 IP 地址、客户端标识、时间范围和最低震级。地震页处于前台时按设置刷新，默认间隔为 15 分钟；关闭自动刷新后，即使无缓存也不自动请求。手动刷新至少间隔 1 分钟，并遵守来源限流要求。\n\n目录及烈度字段缓存在本机，请求失败时保留上次结果。清除缓存不删除设置或限流记录；关闭某来源后，不再请求或显示该来源的缓存记录。"</string>
+    <string name="earthquake_info_017" formatted="false">"地震查询会向所选来源发送 IP 地址、客户端标识、时间范围和最低震级。“地震”应用处于前台时按设置刷新，默认间隔为 15 分钟；关闭自动刷新后，即使无缓存也不自动请求。手动刷新至少间隔 1 分钟，并遵守来源限流要求。\n\n目录及烈度字段缓存在本机，请求失败时保留上次结果。清除缓存不删除设置或限流记录；关闭某来源后，不再请求或显示该来源的缓存记录。"</string>
     <string name="earthquake_info_018" formatted="false">"德国地学研究中心 · 来源与许可"</string>
     <string name="earthquake_info_019" formatted="false">"欧洲—地中海地震中心 · 许可与条款"</string>
     <string name="earthquake_info_020" formatted="false">"美国地质调查局 · 全球目录接口文档"</string>
@@ -458,7 +458,7 @@
     <string name="earthquake_091" formatted="false">"最低震级"</string>
     <string name="earthquake_092" formatted="false">"排序方式"</string>
     <string name="earthquake_093" formatted="false">"自动刷新间隔"</string>
-    <string name="earthquake_094" formatted="false">"自动刷新间隔 · 仅页面前台"</string>
+    <string name="earthquake_094" formatted="false">"自动刷新间隔 · 仅“地震”应用处于前台时"</string>
     <string name="earthquake_095" formatted="false">"5 分钟"</string>
     <string name="earthquake_096" formatted="false">"15 分钟（默认）"</string>
     <string name="earthquake_097" formatted="false">"30 分钟"</string>
@@ -493,7 +493,7 @@
     <string name="earthquake_126" formatted="false">"保存参考位置"</string>
     <string name="earthquake_127" formatted="false">"参考位置已保存，距离已更新"</string>
     <string name="earthquake_128" formatted="false">"请输入有效的经度与纬度"</string>
-    <string name="earthquake_129" formatted="false">"定位位置使用最近有效定位。点击地震页的“刷新定位”可按状态设置中的定位方式获取新位置。选择手动参考位置后，先输入经度，再输入纬度并保存；经度正数为东经 E、负数为西经 W，纬度正数为北纬 N、负数为南纬 S。坐标仅用于本机距离和附近筛选，不发送给目录来源。"</string>
+    <string name="earthquake_129" formatted="false">"定位位置使用最近有效定位。在“地震”应用中点击“刷新定位”可按状态设置中的定位方式获取新位置。选择手动参考位置后，先输入经度，再输入纬度并保存；经度正数为东经 E、负数为西经 W，纬度正数为北纬 N、负数为南纬 S。坐标仅用于本机距离和附近筛选，不发送给目录来源。"</string>
     <string name="earthquake_130" formatted="false">"深度"</string>
     <string name="earthquake_131" formatted="false">"距参考位置的距离"</string>
     <string name="earthquake_132" formatted="false">"烈度信息"</string>
@@ -552,7 +552,7 @@
     <string name="gps_043" formatted="false">"尚未选中卫星"</string>
     <string name="gps_044" formatted="false">"展开或收起卫星明细"</string>
     <string name="gps_045" formatted="false">"等待设备数据"</string>
-    <string name="gps_046" formatted="false">"仅显示设备芯片和 Android 系统报告的卫星，不推算完整卫星分布。读取卫星状态须授予精确定位权限；开始卫星接收时会同时启动当前位置更新，采用状态设置中的定位方式。停止卫星接收不会停止已启动的定位；停止定位则同时停止卫星接收。离开状态页后，卫星接收和持续定位分别按各自设置处理。系统辅助定位可能联网，本应用不下载星历。"</string>
+    <string name="gps_046" formatted="false">"仅显示设备芯片和 Android 系统报告的卫星，不推算完整卫星分布。读取卫星状态须授予精确定位权限；开始卫星接收时会同时启动当前位置更新，采用状态设置中的定位方式。停止卫星接收不会停止已启动的定位；停止定位则同时停止卫星接收。离开“状态”应用后，卫星接收和持续定位分别按各自设置处理。系统辅助定位可能联网，本应用不下载星历。"</string>
     <string name="gps_047" formatted="false">"未授予精确定位，不能读取卫星状态"</string>
     <string name="gps_048" formatted="false">"所选卫星当前未报告或已被隐藏"</string>
     <string name="gps_049" formatted="false">"%.1f° · 方位角 %.1f° %s"</string>
@@ -638,13 +638,13 @@
     <string name="gps_129" formatted="false">"读取系统信息"</string>
     <string name="gps_130" formatted="false">"已在设置中隐藏所有设备信息。"</string>
     <string name="gps_131" formatted="false">"状态使用说明"</string>
-    <string name="gps_132" formatted="false">"指南针、系统传感器及电池信息仅在状态页处于前台时读取，相机采集按独立设置执行。已开始的卫星接收默认在切换栏目、锁屏或进入后台时暂停，返回后自动恢复；关闭自动继续选项后，须手动开始接收。\n\n如需离开状态页后持续定位，可在“设置 → 状态”中开启“切换栏目、锁屏和后台持续定位”，然后手动开始定位。运行期间可通过通知或状态页停止定位。未允许通知时，可通过系统活动应用管理查看服务。系统省电策略、权限变更或强制停止可能中断定位。\n\n水平和垂直定位误差由 Android 系统提供，通常对应约 68% 的置信水平，并非实际误差的上限保证。垂直误差表示高度方向的不确定范围；未提供时显示“未提供垂直精度”。海拔字段采用 WGS84 椭球高，不等同于以海平面为基准的正高。系统未返回高度时显示“未提供海拔”，不表示海拔为零。\n\n卫星硬件定位使用设备支持的卫星信号，应用无需联网；室内或遮挡环境可能无法获得有效结果。系统辅助定位可能使用网络。\n\n网络定位依赖系统网络位置服务及网络连接。系统可能向定位服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商的规则。设备未提供网络位置服务时，无法使用此方式。网络定位间隔为请求系统更新的最短间隔，实际更新可能延迟或复用已有结果。\n\n坐标采用 WGS84，按经度、纬度的顺序显示：E 为东经，W 为西经，N 为北纬，S 为南纬。应用不上传定位坐标；地震距离和地点方位均在本机计算。距上次定位的时间按定位结果的实际时刻计算。"</string>
+    <string name="gps_132" formatted="false">"指南针、系统传感器及电池信息仅在“状态”应用处于前台时读取，相机采集按独立设置执行。已开始的卫星接收默认在切换应用、锁屏或进入后台时暂停，返回后自动恢复；关闭自动继续选项后，须手动开始接收。\n\n如需离开“状态”应用后持续定位，可在“设置 → 状态”中开启“切换应用、锁屏和后台持续定位”，然后手动开始定位。运行期间可通过通知或“状态”应用停止定位。未允许通知时，可通过系统活动应用管理查看服务。系统省电策略、权限变更或强制停止可能中断定位。\n\n水平和垂直定位误差由 Android 系统提供，通常对应约 68% 的置信水平，并非实际误差的上限保证。垂直误差表示高度方向的不确定范围；未提供时显示“未提供垂直精度”。海拔字段采用 WGS84 椭球高，不等同于以海平面为基准的正高。系统未返回高度时显示“未提供海拔”，不表示海拔为零。\n\n卫星硬件定位使用设备支持的卫星信号，应用无需联网；室内或遮挡环境可能无法获得有效结果。系统辅助定位可能使用网络。\n\n网络定位依赖系统网络位置服务及网络连接。系统可能向定位服务商发送 IP、基站或 Wi-Fi 信息，适用系统及服务商的规则。设备未提供网络位置服务时，无法使用此方式。网络定位间隔为请求系统更新的最短间隔，实际更新可能延迟或复用已有结果。\n\n坐标采用 WGS84，按经度、纬度的顺序显示：E 为东经，W 为西经，N 为北纬，S 为南纬。应用不上传定位坐标；地震距离和地点方位均在本机计算。距上次定位的时间按定位结果的实际时刻计算。"</string>
     <string name="gps_133" formatted="false">"本应用不读取设备序列号、IMEI、MAC 地址、已安装应用列表或通信内容。权限及数据使用范围见“设置 → 关于 → 数据来源与隐私”。"</string>
     <string name="gps_134" formatted="false">"打开系统定位设置"</string>
     <string name="gps_135" formatted="false">"打开应用权限设置"</string>
     <string name="gps_136" formatted="false">"定位方式已修改，卫星接收已停止"</string>
     <string name="gps_137" formatted="false">"未授予所需定位权限；可到应用权限设置开启。"</string>
-    <string name="gps_138" formatted="false">"通知未开启，可在状态页或系统活动应用管理中停止定位"</string>
+    <string name="gps_138" formatted="false">"通知未开启，可在“状态”应用或系统活动应用管理中停止定位"</string>
     <string name="gps_139" formatted="false">"正在启动定位…"</string>
     <string name="gps_140" formatted="false">"定位启动失败，请返回应用前台重新开始"</string>
     <string name="gps_141" formatted="false">"%.1f 米"</string>
@@ -718,7 +718,7 @@
     <string name="location_service_010" formatted="false">"持续定位"</string>
     <string name="location_service_011" formatted="false">"主动开始持续定位后显示，点击停止可结束定位"</string>
     <string name="location_service_012" formatted="false">"呆呆工具箱 · 持续定位中"</string>
-    <string name="location_service_013" formatted="false">" · 切换栏目和后台继续工作"</string>
+    <string name="location_service_013" formatted="false">" · 切换应用和后台继续工作"</string>
     <string name="location_service_014" formatted="false">"已获取 "</string>
     <string name="location_service_015" formatted="false">"已关闭，正在等待开启"</string>
     <string name="main_001" formatted="false">"底栏向左翻页"</string>
@@ -843,7 +843,7 @@
     <string name="main_059" formatted="false">"缓存已清除"</string>
     <string name="main_060" formatted="false">"部分缓存未能删除，请重试"</string>
     <string name="main_061" formatted="false">"天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。"</string>
-    <string name="main_062" formatted="false">"课程表、背景、收藏、地点、路线、随机抽取名单与抽取记录及最近定位保存在本机；地震距离、地点方位和配置导入也在本机处理，不上传这些资料。清除缓存或恢复默认设置会保留已保存地点、路线、随机抽取名单与抽取进度及目标选择，卸载应用将删除本机资料。\n\n状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息。卫星状态需精确定位权限，离开状态页后的接收行为按设置执行；持续定位须主动开启，以前台服务运行。系统网络定位及辅助定位可能向服务商发送 IP、基站或 Wi-Fi 信息，适用其规则。应用不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。\n\n相机环境光采集需相机权限，仅在内存中处理亮度样本，不保存或上传画面。可随时暂停采集以关闭摄像头；离开状态页后默认停止，允许后台采集时仍受系统限制。\n\n主动导出的 JSON 文件可能包含坐标、时刻、名称及其他个人配置；地点文件还包含颜色和显示状态。保存位置由系统文件选择器指定，云盘等提供方适用其自身隐私规则。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。"</string>
+    <string name="main_062" formatted="false">"课程表、背景、收藏、地点、路线、随机抽取名单与抽取记录及最近定位保存在本机；地震距离、地点方位和配置导入也在本机处理，不上传这些资料。清除缓存或恢复默认设置会保留已保存地点、路线、随机抽取名单与抽取进度及目标选择。卸载内部应用会保留其资料；卸载工具箱将删除其本机资料。\n\n状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息。卫星状态需精确定位权限，离开“状态”应用后的接收行为按设置执行；持续定位须主动开启，以前台服务运行。系统网络定位及辅助定位可能向服务商发送 IP、基站或 Wi-Fi 信息，适用其规则。应用不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。\n\n相机环境光采集需相机权限，仅在内存中处理亮度样本，不保存或上传画面。可随时暂停采集以关闭摄像头；离开“状态”应用后默认停止，允许后台采集时仍受系统限制。\n\n主动导出的 JSON 文件可能包含坐标、时刻、名称及其他个人配置；地点文件还包含颜色和显示状态。保存位置由系统文件选择器指定，云盘等提供方适用其自身隐私规则。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。"</string>
     <string name="main_063" formatted="false">"Open-Meteo · 天气数据来源"</string>
     <string name="main_064" formatted="false">"Open-Meteo · 使用条款与隐私"</string>
     <string name="main_065" formatted="false">"GeoNames · 地区数据来源"</string>
@@ -1084,14 +1084,14 @@
     <string name="settings_061" formatted="false">"卫星系统显示"</string>
     <string name="settings_062" formatted="false">"卫星明细排序"</string>
     <string name="settings_063" formatted="false">"卫星天空图跟随设备转动"</string>
-    <string name="settings_064" formatted="false">"回到状态页面自动继续卫星接收"</string>
-    <string name="settings_065" formatted="false">"切换栏目、锁屏和后台持续定位"</string>
-    <string name="settings_066" formatted="false">"默认关闭。开启后须手动开始定位；定位通过前台服务持续运行，可在通知或状态页停止。"</string>
+    <string name="settings_064" formatted="false">"回到“状态”应用自动继续卫星接收"</string>
+    <string name="settings_065" formatted="false">"切换应用、锁屏和后台持续定位"</string>
+    <string name="settings_066" formatted="false">"默认关闭。开启后须手动开始定位；定位通过前台服务持续运行，可在通知或“状态”应用停止。"</string>
     <string name="settings_067" formatted="false">"系统环境光传感器（默认）"</string>
     <string name="settings_068" formatted="false">"相机亮度样本"</string>
     <string name="settings_069" formatted="false">"环境光摄像头"</string>
-    <string name="settings_070" formatted="false">"切换栏目、锁屏和后台持续开启相机"</string>
-    <string name="settings_071" formatted="false">"默认关闭。开启后，相机环境光读取可在离开状态页面或锁屏时继续；系统仍可能因权限、省电策略或硬件限制中断。"</string>
+    <string name="settings_070" formatted="false">"切换应用、锁屏和后台持续开启相机"</string>
+    <string name="settings_071" formatted="false">"默认关闭。开启后，相机环境光读取可在离开“状态”应用或锁屏时继续；系统仍可能因权限、省电策略或硬件限制中断。"</string>
     <string name="settings_072" formatted="false">"后置摄像头（默认）"</string>
     <string name="settings_073" formatted="false">"前置摄像头"</string>
     <string name="settings_074" formatted="false">"路线绘制间隔 · "</string>
@@ -1134,8 +1134,8 @@
     <string name="settings_111" formatted="false">"底部栏目显示与排序"</string>
     <string name="sky_visibility_001" formatted="false">"约 %.1f 等"</string>
     <string name="status_hardware_001" formatted="false">"尚未开始卫星接收"</string>
-    <string name="status_hardware_002" formatted="false">"卫星接收已暂停 · 回到状态页面后继续"</string>
-    <string name="status_hardware_003" formatted="false">"已停止卫星接收 · 切换栏目或后台停止"</string>
+    <string name="status_hardware_002" formatted="false">"卫星接收已暂停 · 返回“状态”应用后继续"</string>
+    <string name="status_hardware_003" formatted="false">"卫星接收已停止 · 已离开“状态”应用"</string>
     <string name="status_hardware_004" formatted="false">"旋转矢量传感器"</string>
     <string name="status_hardware_005" formatted="false">"加速度计 + 磁力计"</string>
     <string name="status_hardware_006" formatted="false">"设备未提供可用的方向传感器"</string>
@@ -1147,7 +1147,7 @@
     <string name="status_hardware_012" formatted="false">"设备尚未报告卫星，不表示天空中没有卫星"</string>
     <string name="status_hardware_013" formatted="false">"已收到设备卫星状态"</string>
     <string name="status_hardware_014" formatted="false">"正在启动卫星接收"</string>
-    <string name="status_hardware_015" formatted="false">"请在状态页处于前台时开始接收"</string>
+    <string name="status_hardware_015" formatted="false">"请在“状态”应用处于前台时开始接收"</string>
     <string name="status_hardware_016" formatted="false">"此设备没有卫星定位提供程序"</string>
     <string name="status_hardware_017" formatted="false">"请先打开系统定位开关"</string>
     <string name="status_hardware_018" formatted="false">"等待设备报告卫星 · 室内可能无信号"</string>

@@ -1,5 +1,5 @@
 package org.simpleweather.app;
-/** Original artwork, also supplied as SVG sources in modules/icons. */
+/** App artwork sources and user-supplied image notices are in modules/icons. */
 public final class AppIcons { public static int resource(String id){switch(id){
 case "weather":return R.drawable.app_weather;
 case "status":return R.drawable.app_status;

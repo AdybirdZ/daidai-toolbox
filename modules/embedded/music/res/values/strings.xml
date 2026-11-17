@@ -28,7 +28,7 @@
   <string name="music_exporting">正在解码并剪辑…</string>
   <string name="music_export_failed">无法写入目标文件</string>
   <string name="music_exported">音频片段已导出</string>
-  <string name="music_title">呆呆音乐</string>
+  <string name="music_title">音乐</string>
   <string name="music_subtitle">工具箱内部应用 · 本地音乐播放器</string>
   <string name="music_now_playing">正在播放</string>
   <string name="music_no_track">还没有选择歌曲</string>
@@ -60,7 +60,7 @@
   <string name="music_unplayable">无法播放此音频。可能格式不支持、文件已移动或访问权限失效；请重新导入。</string>
   <string name="music_open_failed">无法打开音频：</string>
   <string name="music_focus_unavailable">暂未获得音频焦点，请稍后重试。</string>
-  <string name="music_notification">呆呆音乐 · 本地播放</string>
+  <string name="music_notification">音乐 · 本地播放</string>
   <string name="music_audio">音频</string>
   <string name="music_storage_settings">歌曲存储</string>
   <string name="music_choose_folder">选择歌曲存储文件夹</string>

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="cv_title">Daidai Color Vision</string>
+  <string name="cv_title">Color Vision Simulator</string>
   <string name="cv_subtitle">Internal app %1$s · On-device processing</string>
   <string name="cv_camera">Live camera</string>
   <string name="cv_photo">Choose image</string>

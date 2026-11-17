@@ -99,7 +99,7 @@
     <string name="todo_permissions_notifications">通知设置</string>
     <string name="todo_permissions_exact">准时提醒权限</string>
     <string name="todo_config_count">\n待办事项：%1$d 项</string>
-    <string name="todo_local_note">事项资料仅保存在本机，并纳入完整配置导入导出；卸载应用会删除未导出的资料。通知内容可能显示在锁屏上，可在待办提醒设置中隐藏。</string>
+    <string name="todo_local_note">事项资料仅保存在本机，并纳入完整配置导入导出；卸载内部应用会保留资料；卸载工具箱会删除其本机资料。通知内容可能显示在锁屏上，可在待办提醒设置中隐藏。</string>
     <string name="update_210">新增待办事项：支持当天多个时段、全天及连续多天事项、重复规则、分类颜色、优先级、子任务、搜索筛选与排序。\n\n新增到时提醒、通知快捷完成、延后提醒及可选常驻摘要，支持通知内容隐私和系统权限检查。待办资料纳入完整配置导入导出，兼容旧配置。</string>
     <string name="todo_last_completed">最近完成：%1$s</string>
     <string name="update_210_title">2.1.0 · 待办事项</string>
