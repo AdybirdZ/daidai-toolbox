@@ -1,0 +1,20 @@
+<resources>
+  <string name="music_migration_title">Music data transfer</string>
+  <string name="music_migration_export">Export music data</string>
+  <string name="music_migration_import">Import music data</string>
+  <string name="music_migration_note">Transfers playlists, favourites, queue, ratings, notes, tags, BPM, credits, lyrics, artwork and settings on the same device. Audio files are excluded. Keep the original music folder and grant access again during import. A file mismatch leaves existing data unchanged.</string>
+  <string name="music_migration_working">Checking and processing music data…</string>
+  <string name="music_migration_failed">Transfer could not be completed. Existing data has not been replaced.</string>
+  <string name="music_migration_exported">Music data exported. Install Music inside the toolbox, then open Settings → Music data transfer → Import music data. Select this file and grant access to the original music folder. Keep the old app until data and playback have been checked.</string>
+  <string name="music_migration_folder_title">Link the original music folder</string>
+  <string name="music_migration_folder_note">Select the music storage folder used by the old app. Files are verified and linked without copying or modifying audio.</string>
+  <string name="music_migration_choose_folder">Choose original music folder</string>
+  <string name="music_migration_confirm_title">Confirm music data import</string>
+  <string name="music_migration_summary">Songs: %1$d\nCustom playlists: %2$d\nLyric files: %3$d\nArtwork files: %4$d</string>
+  <string name="music_migration_replace_note">Import replaces the current internal music data and settings. Original audio files and the old app’s data are not changed.</string>
+  <string name="music_migration_confirm">Import</string>
+  <string name="music_migration_cancel">Cancel</string>
+  <string name="music_migration_close">Close</string>
+  <string name="music_migration_imported">Music data imported. Check playlists, lyrics and artwork and test playback before uninstalling the old music app.</string>
+  <string name="music_migration_missing">%1$d audio files are missing or have changed. No data was imported. Check that the original folder was selected:\n%2$s</string>
+</resources>

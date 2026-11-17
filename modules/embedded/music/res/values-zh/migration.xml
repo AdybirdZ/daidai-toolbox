@@ -1,0 +1,20 @@
+<resources>
+  <string name="music_migration_title">音乐资料迁移</string>
+  <string name="music_migration_export">导出音乐资料</string>
+  <string name="music_migration_import">导入音乐资料</string>
+  <string name="music_migration_note">用于同一设备上的音乐资料转移，包含歌单、喜欢、播放列表、评分、备注、标签、BPM、人员信息、歌词、曲绘和设置，不包含歌曲文件。请保留原歌曲文件夹；导入时需重新选择并授权。文件核对失败不会覆盖现有资料。</string>
+  <string name="music_migration_working">正在核对和处理资料…</string>
+  <string name="music_migration_failed">未能完成迁移，现有资料保持不变。</string>
+  <string name="music_migration_exported">音乐资料已导出。请在工具箱内安装呆呆音乐，打开“设置 → 音乐资料迁移 → 导入音乐资料”，选择此文件并重新授权原歌曲文件夹。确认资料和播放正常前，请勿卸载旧音乐应用。</string>
+  <string name="music_migration_folder_title">关联原歌曲文件夹</string>
+  <string name="music_migration_folder_note">请选择旧音乐应用使用的歌曲存储文件夹。程序只核对和关联文件，不复制或修改歌曲。</string>
+  <string name="music_migration_choose_folder">选择原歌曲文件夹</string>
+  <string name="music_migration_confirm_title">确认导入音乐资料</string>
+  <string name="music_migration_summary">歌曲：%1$d 首\n自建歌单：%2$d 个\n歌词文件：%3$d 个\n曲绘文件：%4$d 个</string>
+  <string name="music_migration_replace_note">导入将覆盖当前内部音乐应用的资料和设置，不更改原歌曲文件，也不删除旧应用资料。</string>
+  <string name="music_migration_confirm">确认导入</string>
+  <string name="music_migration_cancel">取消</string>
+  <string name="music_migration_close">关闭</string>
+  <string name="music_migration_imported">音乐资料已导入。请核对歌单、歌词和曲绘，并试听歌曲；确认正常后再自行卸载旧音乐应用。</string>
+  <string name="music_migration_missing">有 %1$d 个歌曲文件缺失或内容不符，未导入任何资料。请确认选择了原歌曲文件夹：\n%2$s</string>
+</resources>

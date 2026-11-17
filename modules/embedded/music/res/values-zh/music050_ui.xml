@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music_tab_playback">播放</string>
+  <string name="music_tab_settings">设置</string>
+  <string name="music_queue_remove">移除歌曲</string>
+  <string name="music_queue_remove_done">完成移除歌曲</string>
+  <string name="music_app_volume">应用内音量：%1$d%% · 上限 %2$d%%</string>
+  <string name="music_max_volume">最大应用内音量</string>
+  <string name="music_max_volume_value">音量上限：%1$d%%</string>
+  <string name="music_volume_note">仅调整本应用的播放音量，不改变系统媒体音量。降低上限会同时降低当前应用内音量；实际输出还取决于系统音量和播放设备。</string>
+  <string name="music_artwork_settings">曲绘</string>
+  <string name="music_bpm_rounding">测量 BPM 写入方式</string>
+  <string name="music_bpm_integer">四舍五入为整数（默认）</string>
+  <string name="music_bpm_decimal">保留测量结果的一位小数</string>
+  <string name="music_bpm_rounding_note">仅影响测量结果写入歌曲资料时的格式；手动输入和文件内嵌的 BPM 不受此选项限制。</string>
+  <string name="music_bpm_write">填入当前歌曲</string>
+  <string name="music_bpm_written">已写入 %1$s BPM</string>
+  <string name="music_analysis_settings">音频分析</string>
+  <string name="music_frequency_log">对数频率轴（默认）</string>
+  <string name="music_frequency_linear">线性频率轴</string>
+  <string name="music_spectral_peak_count">标注频谱峰值数量：%1$d</string>
+  <string name="music_analysis_note">频谱峰值用于标注幅度较大的局部频率峰。dBFS 为相对于数字满幅的电平，不代表环境声压级。双指横向缩放频谱；分析基于原音频，不包含播放倍速、音调或设备音效。</string>
+  <string name="music_folder_unset">尚未选择歌曲存储文件夹</string>
+  <string name="music_folder_set">已选择歌曲存储文件夹</string>
+  <string name="music_analysis_show">显示音频分析</string>
+  <string name="music_analysis_hide">隐藏音频分析</string>
+</resources>

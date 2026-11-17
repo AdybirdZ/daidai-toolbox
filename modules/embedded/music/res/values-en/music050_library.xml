@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library050_refresh_folder">Refresh songs</string>
+    <string name="library050_delete_file">Delete audio file</string>
+    <string name="library050_delete_file_confirm">Delete “%1$s” from the music storage folder? This also removes it from the playback queue, playlists, and Liked songs. This action cannot be undone in the app.</string>
+    <string name="library050_delete_failed">The audio file could not be deleted. Check that it is still in the selected music storage folder and that the app has read and write access to that folder.</string>
+    <string name="library050_file_deleted">Audio file deleted</string>
+    <string name="library050_edit_requires_folder">Only songs in the selected music storage folder can be edited. Choose a music storage folder, then import or refresh songs.</string>
+    <string name="library050_bpm_positive_decimal">Enter a number greater than 0. Decimals are accepted; leave blank if unset.</string>
+    <string name="library050_metadata_note">Song details are stored only in the app. Audio files and file names are unchanged. Songs with the same title are managed separately.</string>
+</resources>

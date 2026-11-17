@@ -79,7 +79,7 @@ final class ConfigurationData {
         }
         return doc;
     }
-    private static void checkNesting(String text)throws JSONException {
+    static void checkNesting(String text)throws JSONException {
         boolean quoted=false,escaped=false;int depth=0;
         for(int i=0;i<text.length();i++){char c=text.charAt(i);if(quoted){if(escaped)escaped=false;else if(c=='\\')escaped=true;else if(c=='"')quoted=false;}else if(c=='"')quoted=true;else if(c=='{'||c=='['){if(++depth>16)throw invalid();}else if(c=='}'||c==']'){if(--depth<0)throw invalid();}}
         if(depth!=0||quoted)throw invalid();

@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music_tab_playback">Playback</string>
+  <string name="music_tab_settings">Settings</string>
+  <string name="music_queue_remove">Remove songs</string>
+  <string name="music_queue_remove_done">Finish removing songs</string>
+  <string name="music_app_volume">App volume: %1$d%% · Limit %2$d%%</string>
+  <string name="music_max_volume">Maximum app volume</string>
+  <string name="music_max_volume_value">Volume limit: %1$d%%</string>
+  <string name="music_volume_note">Only changes this app’s playback volume, not the system media volume. Lowering the limit also lowers the current app volume. Output also depends on system volume and the playback device.</string>
+  <string name="music_artwork_settings">Artwork</string>
+  <string name="music_bpm_rounding">Measured BPM format</string>
+  <string name="music_bpm_integer">Round to an integer (default)</string>
+  <string name="music_bpm_decimal">Keep the measured decimal place</string>
+  <string name="music_bpm_rounding_note">Only affects measurement results written to song metadata. Manually entered and embedded BPM values are not limited by this option.</string>
+  <string name="music_bpm_write">Write to current song</string>
+  <string name="music_bpm_written">Saved %1$s BPM</string>
+  <string name="music_analysis_settings">Audio analysis</string>
+  <string name="music_frequency_log">Logarithmic frequency axis (default)</string>
+  <string name="music_frequency_linear">Linear frequency axis</string>
+  <string name="music_spectral_peak_count">Spectral peaks to label: %1$d</string>
+  <string name="music_analysis_note">Labels mark local frequency peaks with high amplitude. dBFS is level relative to digital full scale, not environmental sound pressure level. Pinch horizontally to zoom the spectrum. Analysis uses the source audio before playback speed, pitch or device effects.</string>
+  <string name="music_folder_unset">No song storage folder selected</string>
+  <string name="music_folder_set">Song storage folder selected</string>
+  <string name="music_analysis_show">Show audio analysis</string>
+  <string name="music_analysis_hide">Hide audio analysis</string>
+</resources>

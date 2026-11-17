@@ -88,6 +88,7 @@ public class MainActivity extends Activity {
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
         tab=state==null?-1:state.getInt("toolbox_tab",-1);
         if(state!=null){astronomyTime=Instant.ofEpochMilli(state.getLong("toolbox_astro_time",astronomyTime.toEpochMilli()));pendingScrollY=state.getInt("toolbox_scroll",0);}
+        if(state==null&&getIntent().hasExtra("last_tab"))tab=getIntent().getIntExtra("last_tab",-1);
         if(state==null&&getIntent().getBooleanExtra("open_location",false))tab=2;
         if(state==null&&getIntent().getBooleanExtra("open_todo",false))tab=7;
         if(getIntent().getBooleanExtra("configuration_applied",false)){tab=-1;getIntent().removeExtra("configuration_applied");}
@@ -292,6 +293,7 @@ public class MainActivity extends Activity {
     }
     public void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,"pre-3.0.0-2",getString(R.string.changes_pre3_2));
         updateEntry(c,getString(R.string.update_pre3001_title),getString(R.string.update_pre3001_detail));
         updateEntry(c,getString(R.string.update_221_title),getString(R.string.update_221_detail));
         updateEntry(c,getString(R.string.update_220_title),getString(R.string.update_220_detail));

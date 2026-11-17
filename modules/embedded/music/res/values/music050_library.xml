@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library050_refresh_folder">刷新歌曲</string>
+    <string name="library050_delete_file">删除音频文件</string>
+    <string name="library050_delete_file_confirm">确定从歌曲存储文件夹中删除“%1$s”吗？此操作同时将其从播放列表、歌单和“我喜欢的音乐”中移除，无法在应用内撤销。</string>
+    <string name="library050_delete_failed">未能删除音频文件。请确认文件仍位于所选歌曲存储文件夹中，且已授予该文件夹的读写权限。</string>
+    <string name="library050_file_deleted">音频文件已删除</string>
+    <string name="library050_edit_requires_folder">只能编辑所选歌曲存储文件夹中的歌曲。请先选择歌曲存储文件夹，再导入或刷新歌曲。</string>
+    <string name="library050_bpm_positive_decimal">请输入大于 0 的数，可包含小数；不填写表示未设置。</string>
+    <string name="library050_metadata_note">歌曲资料仅保存在应用中，不改写音频文件或文件名。同名歌曲分别管理。</string>
+</resources>

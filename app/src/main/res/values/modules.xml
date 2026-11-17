@@ -23,10 +23,8 @@
   <string name="module_downloading">正在下载并校验应用…</string>
   <string name="module_busy">请等待当前安装完成</string>
   <string name="module_trust_note">此应用将在工具箱内运行，可使用宿主已获授权的能力。仅支持由工具箱开发者签名且与当前宿主版本兼容的模块包。</string>
-  <string name="module_external_note">此应用将由 Android 系统单独安装，数据和权限独立管理。安装完成后，工具箱桌面会显示其入口。</string>
   <string name="module_remove_note">卸载应用会停止其活动并移除运行代码，保留本机资料和设置。重新安装后可继续使用。是否卸载？</string>
-  <string name="module_remove_external_note">此应用由 Android 独立管理。系统卸载通常会删除其私有数据，请先在应用内导出需要保留的资料。</string>
-  <string name="module_store_note">应用由 GitHub 下载，首次安装需要联网。工具箱内应用卸载后保留资料；独立 Android 应用的安装、权限及卸载由系统处理。天气与状态默认安装，也可卸载；设置和应用商店为固定入口。</string>
+  <string name="module_store_note">应用从 GitHub 下载，安装时需要联网。所有应用均在工具箱内运行，卸载后保留个人资料，可在全局设置中单独删除。天气与状态默认安装，也可卸载；设置和应用商店为固定入口。</string>
   <string name="update_pre3001_title">pre-3.0.0-1 · 应用桌面与模块安装</string>
   <string name="update_pre3001_detail">新增图标式应用桌面与 GitHub 应用商店。默认安装天气和状态，支持安装、打开及卸载应用；工具箱内应用卸载后保留资料。新增统一风格图标，设置与权限入口按安装状态显示。此版本为 3.0.0 内测宿主，共享资源与基础服务仍由宿主提供。</string>
 </resources>

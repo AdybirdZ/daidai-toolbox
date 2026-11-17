@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music_trim_keep">Keep selection</string>
+  <string name="music_trim_remove">Remove selection</string>
+  <string name="music_trim_plan">%1$d edits applied · output duration %2$s s</string>
+  <string name="music_trim_apply">Apply edit</string>
+  <string name="music_trim_empty_or_invalid">Enter a valid time range. At least one audio segment must remain.</string>
+  <string name="music_trim_undo">Undo edit</string>
+  <string name="music_trim_reset">Reset edits</string>
+  <string name="music_trim_export_speed">Apply current speed and pitch settings to export</string>
+  <string name="music_trim_edit_note">Times refer to the original audio. Apply multiple edits to join the remaining segments in their original order. Preview plays the entered source range. Speed affects preview only by default. The original file is unchanged; WAV files are usually larger than compressed audio. Each temporary WAV is limited to 512 MiB; at least 16 MiB of additional free space is required.</string>
+  <string name="music_pitch_follow">Change pitch with playback speed</string>
+  <string name="music_pitch_note">Pitch is preserved by default. Export can optionally apply the current speed and pitch settings.</string>
+  <string name="music_importing">Importing songs…</string>
+  <string name="music_folder_required">Select a song storage folder first.</string>
+  <string name="music_copy_failed">Could not copy to the song storage folder. Check folder access and available space.</string>
+  <string name="music_remove_queue">Remove from playback queue</string>
+  <string name="music_remove_queue_note">Remove this song from the current queue? Song metadata, playlists, favorites and the original file will be kept.</string>
+</resources>

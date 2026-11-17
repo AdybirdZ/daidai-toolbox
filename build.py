@@ -56,7 +56,7 @@ def main():
          '--manifest', source / 'AndroidManifest.xml', '--java', build / 'generated',
          '-A', source / 'assets', '--min-sdk-version', '26', '--target-sdk-version', '35',
          build / 'resources.zip'])
-    sources = list((source / 'java').rglob('*.java')) + list((ROOT / 'modules/apps').rglob('*.java')) + list((build / 'generated').rglob('*.java'))
+    sources = list((source / 'java').rglob('*.java')) + list((ROOT / 'modules/apps').rglob('*.java')) + list((ROOT / 'modules/embedded').rglob('*.java')) + list((build / 'generated').rglob('*.java'))
     run([javac, '-encoding', 'UTF-8', '--release', '8', '-classpath', platform, '-d', build / 'classes', *sources])
     signing = ROOT / '.signing'
     signing.mkdir(exist_ok=True)

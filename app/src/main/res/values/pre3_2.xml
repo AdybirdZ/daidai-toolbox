@@ -1,0 +1,14 @@
+<resources>
+  <string name="module_update">更新应用</string>
+  <string name="permissions_bluetooth_settings">蓝牙设置</string>
+  <string name="course_notify_starts_at">%1$s 开始</string>
+  <string name="config_archive_note">备份包含工具箱设置和各内部应用的个人资料、歌词及曲绘，不包含应用程序、歌曲文件、系统权限或正在运行的任务。音乐文件夹可能需要重新授权。</string>
+  <string name="config_archive_modules">\n内部应用：%1$d 个；附属文件：%2$d 个</string>
+  <string name="changes_pre3_2">音乐、传话和色觉模拟改为工具箱内部应用，支持独立下载安装及更新。\n\n课程通知使用系统倒计时；传话可在切换栏目、返回桌面和锁屏后继续通信。\n\n完整备份包含内部应用资料；兼容旧工具箱配置。音乐提供同机迁移工具，关联原歌曲文件夹，保留歌单、歌词、曲绘和歌曲资料。</string>
+  <string name="internal_data_title">内部应用资料</string>
+  <string name="internal_data_delete">删除资料</string>
+  <string name="internal_data_warning">将删除“%1$s”的本机设置、资料及私有附属文件，无法撤销。不会删除歌曲文件夹中的音频及歌词，也不会卸载应用。请先导出需要保留的资料。</string>
+  <string name="internal_data_deleted">应用资料已删除</string>
+  <string name="internal_data_failed">未能删除应用资料</string>
+  <string name="internal_data_note">卸载应用仅移除程序。此处可单独删除音乐、传话及色觉模拟的保留资料；完整备份仍可包含未安装应用的资料。</string>
+</resources>

@@ -137,3 +137,7 @@ Independent test applications are distributed separately in `test-apk/`, with co
 ## 应用图标
 
 `modules/icons/` 的 13 个 SVG 及对应 Android VectorDrawable 为本项目原创几何图形，按项目许可证发布，未复制第三方应用商标或图标。
+
+## pre-3.0.0-2 内部应用
+
+Music, Messenger and Color Vision now execute as signed internal app packages. No new third-party runtime dependency or data service is added. Color Vision retains the DaltonLens MIT notice in its downloadable package at assets/licenses/DaltonLens-MIT.txt. See modules/embedded/colorvision/assets/licenses/ and test-apps/NOTICE.md for the underlying model attribution. The user-supplied default music artwork retains its separate asset terms in modules/embedded/music/ASSETS.md; the code MIT licence does not grant a general licence to that image. Local encrypted messaging has no cloud relay, and system networking/power restrictions still apply.

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music_trim_keep">保留选定段</string>
+  <string name="music_trim_remove">去除选定段</string>
+  <string name="music_trim_plan">已应用 %1$d 次操作 · 输出时长 %2$s 秒</string>
+  <string name="music_trim_apply">应用本次剪辑</string>
+  <string name="music_trim_empty_or_invalid">请输入有效的起止时间；操作后须至少保留一段音频。</string>
+  <string name="music_trim_undo">撤销上次剪辑</string>
+  <string name="music_trim_reset">重置剪辑</string>
+  <string name="music_trim_export_speed">导出时应用当前倍速与音调设置</string>
+  <string name="music_trim_edit_note">时间均以原音频为准。可连续应用多次剪辑，导出时按原顺序拼接剩余片段；试听仅播放输入的原片段。默认倍速仅影响试听，原文件不变。WAV 文件通常比压缩音频大。 单次临时 WAV 上限为 512 MiB，需另保留至少 16 MiB 可用空间。</string>
+  <string name="music_pitch_follow">音调随倍速改变</string>
+  <string name="music_pitch_note">默认保持音调不变。导出时可选择是否应用当前倍速与音调设置。</string>
+  <string name="music_importing">正在导入歌曲…</string>
+  <string name="music_folder_required">请先选择歌曲存储文件夹。</string>
+  <string name="music_copy_failed">无法复制到歌曲存储文件夹，请检查文件夹访问权限和剩余空间。</string>
+  <string name="music_remove_queue">从播放列表移除</string>
+  <string name="music_remove_queue_note">从当前播放列表移除此歌曲？歌曲资料、歌单、收藏和原文件将保留。</string>
+</resources>

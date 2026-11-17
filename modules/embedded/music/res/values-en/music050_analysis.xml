@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="music050_analysis_switch">Display: %1$s</string>
+  <string name="music050_analysis_waveform">Time-domain waveform</string>
+  <string name="music050_analysis_xy">X-Y display</string>
+  <string name="music050_analysis_spectrum">Spectrum</string>
+  <string name="music050_analysis_select">Select a track and wait for it to load.</string>
+  <string name="music050_analysis_loading">Decoding audio…</string>
+  <string name="music050_analysis_ready">Displaying source audio samples</string>
+  <string name="music050_analysis_failed">Cannot decode this audio segment. Try selecting the track again.</string>
+  <string name="music050_analysis_note">The time-domain waveform shows normalized digital amplitudes of both channels. X-Y display plots the left channel horizontally and the right channel vertically. The spectrum uses dBFS and marks the strongest spectral peaks. Its history shows the newest samples at the top. Pinch horizontally to zoom the frequency axis; drag horizontally to pan. Analysis uses source audio before playback speed, pitch, and volume processing. It does not measure sound pressure level.</string>
+  <string name="music050_scope_range">Vertical amplitude: %1$s per division</string>
+  <string name="music050_scope_axes">Digital amplitude · L: blue / R: orange</string>
+  <string name="music050_scope_xy_axes">Vertical: normalized right-channel amplitude</string>
+  <string name="music050_scope_xy_bottom">Horizontal: normalized left-channel amplitude</string>
+  <string name="music050_scope_time_bottom">Time (ms)</string>
+  <string name="music050_spectrum_axes">Digital level (dBFS)</string>
+  <string name="music050_spectrum_newest">Spectrum history · newest at top</string>
+  <string name="music050_spectrum_log">Logarithmic frequency axis (default)</string>
+  <string name="music050_spectrum_linear">Linear frequency axis</string>
+  <string name="music050_spectrum_peaks">Spectral peak labels</string>
+  <string name="music050_spectrum_note">Frequency peaks are estimated by a discrete Fourier transform of the source audio. Frequency resolution depends on the sample rate and analysis window. dBFS is relative to digital full scale and cannot measure environmental noise or hearing risk.</string>
+  <string name="music050_spectrum_peak_list">Spectral peaks: %1$s</string>
+</resources>

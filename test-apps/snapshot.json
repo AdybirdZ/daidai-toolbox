@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "developmentSource": "prototypes/",
   "apps": {
-    "music": "0.7.0",
+    "music": "0.7.1-migration",
     "messaging": "0.2.0",
     "colorvision": "0.2.0"
   },
@@ -15,7 +15,7 @@
     {
       "file": "docs/MUSIC-ARCHITECTURE.md",
       "developmentSource": "prototypes/docs/MUSIC-ARCHITECTURE.md",
-      "sha256": "2981de95f174992a53ce57fb58f793281baef8a75e8ef3bdd4b8142dba309402"
+      "sha256": "822453e00b8685a03f9861a89b19724a5ceae15d9a93744cca32c6038cc13904"
     },
     {
       "file": "launchers/colorvision/AndroidManifest.xml",
@@ -40,7 +40,7 @@
     {
       "file": "launchers/music/AndroidManifest.xml",
       "developmentSource": "prototypes/launchers/music/AndroidManifest.xml",
-      "sha256": "0b3326c450982dd75d280434aae2dad63fd69c59c6aeea56320a831ac5108c3b"
+      "sha256": "3c0c4b20c7604fed788f9cd0e5f0e1808f4b5fea9d243ed099c8398700f537ae"
     },
     {
       "file": "launchers/music/java/org/daidai/prototype/music/MainActivity.java",
@@ -50,7 +50,7 @@
     {
       "file": "module-packages/README.md",
       "developmentSource": "prototypes/module-packages/README.md",
-      "sha256": "aada16605f015008514e2a420797a29479ddac76e0280517d41b3c6fdc5b2bcf"
+      "sha256": "eebfd75f2525d3e5d7f5e7510bcb5e9d104969aae27c3bf0aafb7cace4b3a7f5"
     },
     {
       "file": "module-packages/module_tools.py",
@@ -170,7 +170,7 @@
     {
       "file": "modules/music/org/daidai/modules/music/MusicActivity.java",
       "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicActivity.java",
-      "sha256": "2799b97b63f7c6d4fb7c226793402d686ef762c1f51e276ee2016a43d2410860"
+      "sha256": "4ce4015aac2d81db22f50a7f570736a6c1b8a508e609b20dc7b1427dcb4453d1"
     },
     {
       "file": "modules/music/org/daidai/modules/music/MusicAnalysisPanel.java",
@@ -223,6 +223,16 @@
       "sha256": "e2fde58960f37394e038222029a55fabeedb7188b4ec2f9508bfb04255e7725e"
     },
     {
+      "file": "modules/music/org/daidai/modules/music/MusicMigration.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicMigration.java",
+      "sha256": "29791907a5c87a2823e3e083b0d8f5329bdec7586a3525b091c24601ae186548"
+    },
+    {
+      "file": "modules/music/org/daidai/modules/music/MusicMigrationUi.java",
+      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicMigrationUi.java",
+      "sha256": "473b94bb4166c883079d244ec0e9f0e9e1b6f3c438b8b44274b89e554334a3d6"
+    },
+    {
       "file": "modules/music/org/daidai/modules/music/MusicPeople.java",
       "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicPeople.java",
       "sha256": "7cdb41ebea082d0a968a11c6339520f57a667a95177e5410ddd5f16ce8ecd048"
@@ -250,7 +260,7 @@
     {
       "file": "modules/music/org/daidai/modules/music/MusicSettingsScreen.java",
       "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicSettingsScreen.java",
-      "sha256": "d1ede5bb0a79863e7230a736c72a77a9e72fc064713f21462460d8acd59d87ca"
+      "sha256": "e4f89d711c5cad817b9c13688f9eab6eceb4e65c1851640afe8427879c479eb1"
     },
     {
       "file": "modules/music/org/daidai/modules/music/MusicSpectrum.java",
@@ -328,6 +338,11 @@
       "sha256": "0825e3ff288f6bd11c0527d9528a9843ed307e2d29681ad9db82576967a3988b"
     },
     {
+      "file": "modules/music/res/values-en/migration.xml",
+      "developmentSource": "prototypes/modules/music/res/values-en/migration.xml",
+      "sha256": "364ce2e49cf53982b38e33f7490a3cd533b0512216fe94b02975c2fa578b3205"
+    },
+    {
       "file": "modules/music/res/values-en/music050_analysis.xml",
       "developmentSource": "prototypes/modules/music/res/values-en/music050_analysis.xml",
       "sha256": "9b3e06b63d80116fc2dcf75fc53eb2900e010731476dc354788087e349d7522e"
@@ -390,12 +405,17 @@
     {
       "file": "modules/music/res/values-en/strings.xml",
       "developmentSource": "prototypes/modules/music/res/values-en/strings.xml",
-      "sha256": "60cb43a23fc02041eef85bb99f290b7cb3292d7533d5cdcad96dc7c9d3efce50"
+      "sha256": "6b7f54eeb788f6d811dccb35ff811571ee06542a540015939917ff64cbffb4b3"
     },
     {
       "file": "modules/music/res/values-zh/audio.xml",
       "developmentSource": "prototypes/modules/music/res/values-zh/audio.xml",
       "sha256": "9d611b8cf26d9ea8696e2edeb2277229245ece76d3840e6ff192b90d44c56736"
+    },
+    {
+      "file": "modules/music/res/values-zh/migration.xml",
+      "developmentSource": "prototypes/modules/music/res/values-zh/migration.xml",
+      "sha256": "a2c3b95483a833ed2461f57f62bddd85983d8c5ba605b75f9ff0b79591457977"
     },
     {
       "file": "modules/music/res/values-zh/music050_analysis.xml",
@@ -460,12 +480,17 @@
     {
       "file": "modules/music/res/values-zh/strings.xml",
       "developmentSource": "prototypes/modules/music/res/values-zh/strings.xml",
-      "sha256": "cd28a3a995cfbc0ff1c5a2d1329aa050b66b5ea66c2167094e7293bfc4d143f5"
+      "sha256": "0cb776ad405f393d413de46ca3220edf88509cdee3be7b3a4e0bf8dadaa03157"
     },
     {
       "file": "modules/music/res/values/audio.xml",
       "developmentSource": "prototypes/modules/music/res/values/audio.xml",
       "sha256": "9d611b8cf26d9ea8696e2edeb2277229245ece76d3840e6ff192b90d44c56736"
+    },
+    {
+      "file": "modules/music/res/values/migration.xml",
+      "developmentSource": "prototypes/modules/music/res/values/migration.xml",
+      "sha256": "a2c3b95483a833ed2461f57f62bddd85983d8c5ba605b75f9ff0b79591457977"
     },
     {
       "file": "modules/music/res/values/music050_analysis.xml",
@@ -530,7 +555,12 @@
     {
       "file": "modules/music/res/values/strings.xml",
       "developmentSource": "prototypes/modules/music/res/values/strings.xml",
-      "sha256": "cd28a3a995cfbc0ff1c5a2d1329aa050b66b5ea66c2167094e7293bfc4d143f5"
+      "sha256": "0cb776ad405f393d413de46ca3220edf88509cdee3be7b3a4e0bf8dadaa03157"
+    },
+    {
+      "file": "shared/java/org/daidai/contracts/MusicDataContract.java",
+      "developmentSource": "prototypes/shared/java/org/daidai/contracts/MusicDataContract.java",
+      "sha256": "542419ba97621a6fb4253601a2d463e84caf40c2327a5fda9a3db7814fbe2962"
     },
     {
       "file": "shared/java/org/daidai/modules/shared/Texts.java",
@@ -697,5 +727,7 @@
       "developmentSource": "prototypes/tests/WavSpeedChecks.java",
       "sha256": "cf8907fea50098ae916d4a8e58115fad2913c658d16035b73e9303764af7b608"
     }
-  ]
+  ],
+  "updated": "2026-11-17",
+  "status": "historical-with-final-music-migration-helper"
 }

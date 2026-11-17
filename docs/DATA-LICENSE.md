@@ -272,3 +272,11 @@ Wolfx 仍只接入 cenc_eqlist，非全球目录，无预警流。默认关闭�
 ## 2.2.0 自定义桌面图标
 
 图标图片通过系统文件选择器读取、在本机裁剪和保存，可随完整配置导出。创建或更新桌面快捷方式使用 Android 系统接口，受桌面支持和用户确认控制；应用列表与系统设置仍使用安装包图标。导入配置不会自动更改桌面。没有新增网络服务、运行时依赖或权限。
+
+## pre-3.0.0-2 内部应用与本机迁移
+
+音乐、传话、色觉模拟改为宿主内签名应用，不增加外部数据服务或第三方运行时依赖；代码、权限与资料共享宿主 Android UID，安装提示明确此信任边界。色觉模拟保留参考实现的 MIT 声明，音乐默认曲绘沿用用户提供素材的限定授权，详见 `modules/embedded/music/ASSETS.md`。
+
+完整备份及音乐迁移文件由用户通过系统选择器自行保存，包含个人资料、文件名与可能的精确坐标；音频、权限、执行文件及运行会话不随备份导出。传话消息只发送给用户主动连接的对端；会话消息与配对码保留在运行内存，后台预览默认关闭。活动连接使用前台服务及 CPU/Wi-Fi 锁，可由通知停止，不保证绕过系统强制停止或厂商省电策略。
+
+课程倒计时使用 Android 通知计时器；传话使用 remoteMessaging 类型前台服务。依据：[通知计时器](https://developer.android.com/reference/android/app/Notification.Builder#setChronometerCountDown(boolean))、[前台服务类型](https://developer.android.com/develop/background-work/services/fgs/service-types#remote-messaging)。

@@ -1,0 +1,14 @@
+<resources>
+  <string name="module_update">Update app</string>
+  <string name="permissions_bluetooth_settings">Bluetooth settings</string>
+  <string name="course_notify_starts_at">Starts at %1$s</string>
+  <string name="config_archive_note">Backups include toolbox settings and internal app data, lyrics and artwork. Executables, audio files, system permissions and running tasks are excluded. Music folder access may need to be granted again.</string>
+  <string name="config_archive_modules">\nInternal apps: %1$d; supporting files: %2$d</string>
+  <string name="changes_pre3_2">Music, Messenger and Colour Vision are now internal apps with separate downloads, installation and updates.\n\nCourse notifications use a system countdown. Messenger sessions continue across navigation, Home and screen lock.\n\nFull backups include internal app data and accept older toolbox configurations. A same-device music migration tool links the original folder while preserving playlists, lyrics, artwork and track details.</string>
+  <string name="internal_data_title">Internal app data</string>
+  <string name="internal_data_delete">Delete data</string>
+  <string name="internal_data_warning">Delete local settings, data and private supporting files for %1$s? This cannot be undone. Audio and lyrics in the music folder are not deleted, and the app remains installed. Export any data you want to keep first.</string>
+  <string name="internal_data_deleted">App data deleted</string>
+  <string name="internal_data_failed">Could not delete app data</string>
+  <string name="internal_data_note">Uninstalling removes executable code only. Delete retained Music, Messenger or Color Vision data here. Full backups also include retained data for uninstalled apps.</string>
+</resources>

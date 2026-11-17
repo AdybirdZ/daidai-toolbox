@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music070_add_tag">Add a genre tag</string>
+    <string name="music070_remove_tag">Remove this genre tag</string>
+    <string name="music070_lyrics_storage_note">Lyric files must not exceed 2 MiB and need LRC timestamps for synchronized display. Imported lyrics are stored in the song storage folder. Existing files are retained, and new copies with the same name receive a numbered suffix.</string>
+    <string name="music070_lyrics_copy_failed">Unable to import lyrics. Select a text file no larger than 2 MiB, and check access to the song storage folder and the available space.</string>
+</resources>

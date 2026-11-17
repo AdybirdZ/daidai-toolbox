@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.simpleweather.app"
-    android:versionCode="52" android:versionName="pre-3.0.0-1">
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <queries><package android:name="org.daidai.prototype.music"/><package android:name="org.daidai.prototype.messaging"/><package android:name="org.daidai.prototype.colorvision"/></queries>
+    android:versionCode="53" android:versionName="pre-3.0.0-2">
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -34,11 +41,13 @@
                 <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+        <activity android:name=".InternalAppActivity" android:exported="false" android:configChanges="orientation|screenSize|keyboardHidden" android:windowSoftInputMode="adjustResize" />
+        <service android:name=".MusicServiceBridge" android:exported="false" android:foregroundServiceType="mediaPlayback" />
+        <service android:name=".MessagingServiceBridge" android:exported="false" android:foregroundServiceType="remoteMessaging" />
         <service android:name=".LocationService" android:exported="false" android:foregroundServiceType="location" />
         <activity android:name=".OfficialPageActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".BackgroundCropActivity" android:exported="false" android:screenOrientation="portrait" />
         <activity android:name=".AppIconCropActivity" android:exported="false" android:screenOrientation="portrait" />
-        <provider android:name=".ModuleApkProvider" android:authorities="org.simpleweather.app.module-apk" android:exported="false" android:grantUriPermissions="true" />
     </application>
 </manifest>
 

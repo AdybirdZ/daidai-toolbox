@@ -1,0 +1,110 @@
+{
+  "format": "daidai-app-store",
+  "schemaVersion": 1,
+  "hostApi": "daidai-toolbox/pre-3.0.0-2",
+  "defaultInstalled": [
+    "weather",
+    "status"
+  ],
+  "apps": [
+    {
+      "id": "weather",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 16851,
+      "sha256": "abd003d82ea20329342ab6d80d1579b8b1880ea8a131ac2f238df967f0752f0e",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/weather.ddapp"
+    },
+    {
+      "id": "schedule",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 29139,
+      "sha256": "a9eca229fd02530076985b67689bd364f9e015a8d3aa967a521b0816908eb3de",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/schedule.ddapp"
+    },
+    {
+      "id": "status",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 33235,
+      "sha256": "adec1d16ebf3d604d0454e71f109a025b069ea6436b02aea6eecade519ac7b43",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/status.ddapp"
+    },
+    {
+      "id": "weather-map",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 16851,
+      "sha256": "c6eecd1fde5d698c92fcb8f713e66a4966b348040359c493fe5ddfc2113e1e4d",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/weather-map.ddapp"
+    },
+    {
+      "id": "astronomy",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 29139,
+      "sha256": "43f6485c28e27929696d58458d8d56b14d00070e7de890b17da7d7a7e9ac1b73",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/astronomy.ddapp"
+    },
+    {
+      "id": "earthquake",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 33235,
+      "sha256": "cf484b4bc59ffe249e73f0ff00a186dc4b0c9879cbc5d1f12c968c88de37236d",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/earthquake.ddapp"
+    },
+    {
+      "id": "random",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 20947,
+      "sha256": "7498d1c700886df3d13f0adc4c8213149d131cd319b8ca151aa8e5a9097bdd16",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/random.ddapp"
+    },
+    {
+      "id": "todo",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 33235,
+      "sha256": "c1204fa9112cd183223595de3baf25915583a28c27a6eb4c1308cca928799564",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/todo.ddapp"
+    },
+    {
+      "id": "music",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 1323636,
+      "sha256": "83ea7ece753469c400622c6a35779983e4447cde2154794cee9bc8530b3da100",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/music.ddapp"
+    },
+    {
+      "id": "messaging",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 45593,
+      "sha256": "1100b9d5c1d2df156c074cebd306b03e075c56ca58f0f2c8caedaa3b11fe75cc",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/messaging.ddapp"
+    },
+    {
+      "id": "colorvision",
+      "type": "signed-dex-app",
+      "version": "pre-3.0.0-2",
+      "versionCode": 2,
+      "bytes": 41577,
+      "sha256": "c8d52015ff1367af25208b9b06e9d44964611dfdbb77a9c5574612a49f1def47",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-2/colorvision.ddapp"
+    }
+  ]
+}

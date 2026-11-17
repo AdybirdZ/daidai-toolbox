@@ -24,6 +24,7 @@ print(f'Release metadata: {name} / {code}; current version labels use package me
 
 import subprocess,sys
 subprocess.run([sys.executable,str(root / "tests/resource_checks.py")],check=True)
+subprocess.run([sys.executable,str(root / "tests/internal_resource_checks.py")],check=True)
 
 for client in ("WeatherApi.java","EarthquakeApi.java"):
     text=(root/"app/src/main/java/org/simpleweather/app"/client).read_text(encoding="utf8")
