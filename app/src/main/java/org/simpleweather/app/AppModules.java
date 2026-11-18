@@ -156,7 +156,27 @@ public final class AppModules {
     public void pick(){try{a.startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE),PICK);}catch(Exception e){a.toast(a.getString(R.string.config_picker_failed));}}
     public static InputStream network(String address)throws Exception{return network(address,null);}
     private static InputStream network(String address,DownloadTask task)throws Exception{
-        URL u=new URL(address);for(int redirects=0;redirects<5;redirects++){String host=u.getHost();if(!u.getProtocol().equals("https")||!(host.equals("raw.githubusercontent.com")||host.equals("github.com")||host.equals("release-assets.githubusercontent.com")||host.equals("objects.githubusercontent.com")))throw new IOException("Unsupported download origin");HttpURLConnection c=(HttpURLConnection)u.openConnection();c.setConnectTimeout(20000);c.setReadTimeout(30000);c.setInstanceFollowRedirects(false);if(task!=null){task.check();task.connection=c;}int code;try{code=c.getResponseCode();}catch(Exception e){c.disconnect();throw e;}if(code>=300&&code<400){String next=c.getHeaderField("Location");c.disconnect();u=new URL(u,next);continue;}if(code!=200){c.disconnect();throw new IOException("HTTP "+code);}InputStream input;try{input=c.getInputStream();}catch(Exception failure){c.disconnect();throw failure;}return new FilterInputStream(input){@Override public void close()throws IOException{try{super.close();}finally{c.disconnect();}}};}throw new IOException("Too many redirects");
+        try{return connect(address,task);}catch(IOException primary){
+            if(task!=null)task.check();if(Thread.currentThread().isInterrupted()||primary instanceof InterruptedIOException&&!(primary instanceof SocketTimeoutException))throw primary;
+            String fallback=contentsFallback(address);if(fallback==null)throw primary;
+            try{return connect(fallback,task);}catch(Exception failure){failure.addSuppressed(primary);throw failure;}
+        }
+    }
+    private static final String RAW_STORE="/AdybirdZ/daidai-toolbox/main/modules/store/",API_STORE="/repos/AdybirdZ/daidai-toolbox/contents/modules/store/";
+    /** One anonymous official fallback, limited to this repository's published main store. */
+    static String contentsFallback(String address){try{URL u=new URL(address);String originalPath=new URI(address).getRawPath();if(!plainHttps(u)||!u.getHost().equals("raw.githubusercontent.com")||u.getQuery()!=null||originalPath==null||!originalPath.startsWith(RAW_STORE))return null;String path=originalPath.substring(RAW_STORE.length());return storePath(path)?"https://api.github.com"+API_STORE+path+"?ref=main":null;}catch(MalformedURLException|URISyntaxException invalid){return null;}}
+    private static boolean plainHttps(URL u){return u.getProtocol().equals("https")&&u.getUserInfo()==null&&u.getPort()==-1&&u.getRef()==null;}
+    private static boolean storePath(String path){if(path.isEmpty()||path.length()>1024)return false;for(String segment:path.split("/",-1))if(!segment.matches("[A-Za-z0-9._-]+")||segment.equals(".")||segment.equals(".."))return false;return true;}
+    private static boolean contentsApi(URL u){return plainHttps(u)&&u.getHost().equals("api.github.com")&&"ref=main".equals(u.getQuery())&&u.getPath().startsWith(API_STORE)&&storePath(u.getPath().substring(API_STORE.length()));}
+    private static InputStream connect(String address,DownloadTask task)throws Exception{
+        URL u=new URL(address);for(int redirects=0;redirects<5;redirects++){
+            String host=u.getHost();boolean api=contentsApi(u);if(!plainHttps(u)||!(api||host.equals("raw.githubusercontent.com")||host.equals("github.com")||host.equals("release-assets.githubusercontent.com")||host.equals("objects.githubusercontent.com")))throw new IOException("Unsupported download origin");
+            if(task!=null)task.check();HttpURLConnection c=(HttpURLConnection)u.openConnection();c.setConnectTimeout(20000);c.setReadTimeout(30000);c.setInstanceFollowRedirects(false);if(api){c.setRequestProperty("Accept","application/vnd.github.raw+json");c.setRequestProperty("X-GitHub-Api-Version","2022-11-28");c.setRequestProperty("User-Agent","DaidaiToolbox");}
+            if(task!=null){task.check();task.connection=c;}int code;try{code=c.getResponseCode();}catch(Exception e){c.disconnect();throw e;}
+            if(code>=300&&code<400){String next=c.getHeaderField("Location");c.disconnect();if(next==null)throw new IOException("Missing redirect");u=new URL(u,next);continue;}
+            if(code!=200){c.disconnect();throw new IOException("HTTP "+code);}InputStream input;try{input=c.getInputStream();}catch(Exception failure){c.disconnect();throw failure;}
+            return new FilterInputStream(input){@Override public void close()throws IOException{try{super.close();}finally{c.disconnect();}}};
+        }throw new IOException("Too many redirects");
     }
     public static void copy(InputStream in,OutputStream out,long max)throws IOException{if(in==null)throw new IOException("No file");byte[] b=new byte[32768];long total=0;int n;while((n=in.read(b))!=-1){if((total+=n)>max)throw new IOException("File too large");out.write(b,0,n);}}
     public static byte[] read(InputStream in,int max)throws IOException{try(InputStream source=in;ByteArrayOutputStream out=new ByteArrayOutputStream()){copy(source,out,max);return out.toByteArray();}}
