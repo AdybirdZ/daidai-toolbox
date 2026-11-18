@@ -10,5 +10,5 @@
   <string name="internal_data_warning">将删除“%1$s”的本机设置、资料及私有附属文件，无法撤销。不会删除歌曲文件夹中的音频及歌词，也不会卸载应用。请先导出需要保留的资料。</string>
   <string name="internal_data_deleted">应用资料已删除</string>
   <string name="internal_data_failed">未能删除应用资料</string>
-  <string name="internal_data_note">卸载应用仅移除程序。此处可单独删除音乐、传话及色觉模拟的保留资料；完整备份仍可包含未安装应用的资料。</string>
+  <string name="internal_data_note">卸载应用保留资料和设置。可在应用资料与存储中单独管理；完整备份仍可包含未安装应用的资料。</string>
 </resources>

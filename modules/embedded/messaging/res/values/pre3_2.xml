@@ -13,7 +13,7 @@
   <string name="msg_no_device">尚未选择已配对设备</string>
   <string name="msg_choose_device">选择已配对设备</string>
   <string name="msg_enter_code">对方的 16 位配对码</string>
-  <string name="msg_wait">等待连接</string>
+  <string name="msg_wait">开始等待连接</string>
   <string name="msg_connect">连接对方</string>
   <string name="msg_stop">断开并停止</string>
   <string name="msg_conversation">本次会话</string>
@@ -34,8 +34,8 @@
   <string name="msg_me">我</string>
   <string name="msg_peer">对方</string>
   <string name="msg_no_address">未找到，请连接 Wi-Fi 或热点</string>
-  <string name="msg_connection_channel">传话连接</string>
-  <string name="msg_message_channel">传话新消息</string>
+  <string name="msg_connection_channel">设备通信连接</string>
+  <string name="msg_message_channel">设备通信新消息</string>
   <string name="msg_disconnected">未连接</string>
   <string name="msg_connected_bluetooth">蓝牙已连接 · 加密会话</string>
   <string name="msg_connected_lan">局域网已连接 · 加密会话</string>
@@ -45,5 +45,6 @@
   <string name="msg_connection_failed">连接已断开或未能建立，请检查网络、蓝牙和配对码。</string>
   <string name="msg_message_too_long">消息不能超过 4096 个 UTF-8 字节</string>
   <string name="msg_new_message">收到新消息</string>
-  <string name="msg_guide">蓝牙：先在系统设置中配对两台 Android 设备。一台等待连接，另一台选择它并输入本程序的配对码；不支持 iPhone 的普通经典蓝牙通信。\n\n局域网：两台设备连接同一 Wi-Fi 或热点。一台等待连接，另一台输入它的地址和配对码。路由器的客户端隔离可能阻止通信。\n\n连接或等待期间会显示运行通知。切换应用、返回桌面或锁屏不会主动断开；点击“断开并停止”才结束通信。系统强制停止、网络或蓝牙关闭、省电限制仍可能中断连接；不提供离线消息推送。持续等待和连接会增加耗电。\n\n消息使用配对码和 AES-256-GCM 保护，无云服务器，协议尚未经过独立安全审计。配对码和最近 100 条会话消息仅在内存中保留，服务结束后清除；仅持久保存通信方式、上次局域网地址和通知选项。</string>
+  <string name="msg_guide">蓝牙：先在系统设置中配对两台 Android 设备。在本机点击“开始等待连接”后，再由另一台设备选择本机、输入本机显示的配对码并点击“连接对方”。不支持 iPhone 的普通经典蓝牙通信。\n\n局域网：两台设备连接同一 Wi-Fi 或热点。在本机点击“开始等待连接”后，再由另一台设备输入本机地址和配对码并点击“连接对方”。路由器的客户端隔离可能阻止通信。\n\n等待期间，按钮显示“停止等待连接”，点击可停止等待；建立连接后，点击“断开并停止”结束通信。等待或连接期间显示运行通知，切换应用、返回桌面或锁屏不会主动断开。系统强制停止、网络或蓝牙关闭、省电限制仍可能中断连接；不提供离线消息推送。持续等待和连接会增加耗电。\n\n消息使用配对码和 AES-256-GCM 保护，无云服务器，协议尚未经过独立安全审计。配对码和最近 100 条会话消息仅在内存中保留，服务结束后清除；仅持久保存通信方式、上次局域网地址和通知选项。</string>
+  <string name="msg_stop_wait">停止等待连接</string>
 </resources>

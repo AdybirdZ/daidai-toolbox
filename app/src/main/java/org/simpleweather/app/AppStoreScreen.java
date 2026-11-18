@@ -1,22 +1,92 @@
 package org.simpleweather.app;
+
 import android.app.*;
-import android.widget.*;
+import android.os.Handler;
 import android.view.*;
+import android.widget.*;
 import org.json.*;
+import java.io.InterruptedIOException;
 import java.util.*;
 
+/** The same list stays mounted during downloads and install-state refreshes. */
 public final class AppStoreScreen {
     private final MainActivity a;
     private final LinearLayout owner;
-    private LinearLayout list;
-    private TextView status;
+    private final Handler main=new Handler();
+    private LinearLayout list,progressPanel;
+    private TextView status,progressText,cancelButton,retryButton;
+    private ProgressBar progressBar;
     private JSONArray catalog=new JSONArray();
+    private static volatile AppModules.DownloadTask downloadTask;
+    private static volatile boolean batchRunning;
+    private static java.lang.ref.WeakReference<AppStoreScreen> latest=new java.lang.ref.WeakReference<>(null);
+    private static int lastSuccess,lastReason;
+    private static boolean lastCancelled;
+    private static volatile boolean cancelQueue;
+    private static List<JSONObject> retryItems=new ArrayList<>();
+    private static int completed,queueSize;
+    private static String activeId="";
+    private final Runnable progressTick=new Runnable(){public void run(){
+        if(!current())return;AppModules.DownloadTask task=downloadTask;
+        if(task!=null){progressText.setText(a.getString(task.verifying?R.string.store_verifying_progress:R.string.store_download_progress,a.apps.title(activeId),completed+1,queueSize,bytes(task.received),bytes(task.total)));progressBar.setIndeterminate(task.total<=0);if(task.total>0)progressBar.setProgress((int)Math.min(1000,task.received*1000/task.total));cancelButton.setEnabled(!task.completed&&!task.cancelled);}if(batchRunning)main.postDelayed(this,100);
+    }};
+
     public AppStoreScreen(MainActivity a){this.a=a;owner=a.body;}
     private boolean current(){return !a.isFinishing()&&!a.isDestroyed()&&a.body==owner;}
-    public void render(){owner.addView(a.text(a.getString(R.string.launcher_store),24,a.TITLE,true));a.gap(owner,14);LinearLayout controls=a.row();controls.addView(a.button(a.getString(R.string.module_catalog_refresh),false,this::refresh),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(controls,8);controls.addView(a.button(a.getString(R.string.module_import_package),false,a.apps::pick),new LinearLayout.LayoutParams(0,-2,1));owner.addView(controls);a.gap(owner,12);status=a.text(a.getString(R.string.module_catalog_local),13,a.MUTED,false);owner.addView(status);a.gap(owner,12);list=a.column();owner.addView(list);try{draw(a.apps.bundledCatalog());}catch(Exception e){status.setText(a.getString(R.string.module_catalog_failed));}a.gap(owner,16);TextParagraphs.append(a,owner,a.getString(R.string.module_store_note),13,a.MUTED);refresh();}
-    private void draw(JSONArray entries)throws Exception{catalog=entries;list.removeAllViews();Set<String> seen=new HashSet<>();for(int i=0;i<entries.length();i++){JSONObject item=entries.getJSONObject(i);String id=item.getString("id");if(!(Arrays.asList(AppModules.IDS).contains(id)||Arrays.asList(AppModules.EMBEDDED).contains(id))||!seen.add(id))continue;LinearLayout card=a.column();card.setPadding(a.dp(16),a.dp(16),a.dp(16),a.dp(16));card.setBackground(a.shape(a.WHITE,22));LinearLayout heading=a.row();ImageView icon=new ImageView(a);icon.setImageResource(AppIcons.resource(id));heading.addView(icon,a.lp(48,48));a.gapHorizontal(heading,12);LinearLayout labels=a.column();labels.addView(a.text(a.apps.title(id),18,a.INK,true));a.gap(labels,5);labels.addView(a.text(item.getString("version")+" · "+String.format(Locale.ROOT,"%.0f KiB",item.getLong("bytes")/1024.0),12,a.MUTED,false));heading.addView(labels,new LinearLayout.LayoutParams(0,-2,1));card.addView(heading);a.gap(card,14);boolean installed=a.apps.installed(id);LinearLayout buttons=a.row();TextView install=a.button(a.getString(installed?R.string.module_open:R.string.module_install),!installed,()->{if(installed){if(Arrays.asList(AppModules.EMBEDDED).contains(id))a.apps.openInternal(id);else a.switchTab(Arrays.asList(AppModules.IDS).indexOf(id));}else confirm(item);});buttons.addView(install,new LinearLayout.LayoutParams(0,-2,1));if(installed){a.gapHorizontal(buttons,8);buttons.addView(a.button(a.getString(R.string.module_uninstall),false,()->new LauncherScreen(a).manage(id)),new LinearLayout.LayoutParams(0,-2,1));}if(installed&&a.apps.updateAvailable(item)){a.gap(card,8);card.addView(a.button(a.getString(R.string.module_update),true,()->confirm(item)));}card.addView(buttons);list.addView(card);a.gap(list,12);}}
-    public void installedChanged(){if(!current())return;a.updateReadingValues(()->{try{draw(catalog);status.setText(a.getString(R.string.module_installed));}catch(Exception e){status.setText(a.getString(R.string.module_catalog_failed));}});}
-    private void refresh(){if(a.apps.busy)return;status.setText(a.getString(R.string.module_catalog_loading));new Thread(()->{try{JSONArray items=a.apps.remoteCatalog();a.runOnUiThread(()->{if(!current())return;a.updateReadingValues(()->{try{draw(items);status.setText(a.getString(R.string.module_catalog_online));}catch(Exception e){status.setText(a.getString(R.string.module_catalog_failed));}});});}catch(Exception e){a.runOnUiThread(()->{if(current())status.setText(a.getString(R.string.module_catalog_failed));});}}).start();}
-    private void confirm(JSONObject item){String id=item.optString("id");new ToolDialog(a).setTitle(a.apps.title(id)).setMessage(a.getString(R.string.module_trust_note)).setPositiveButton(a.getString(R.string.module_install),(d,w)->download(item)).setNegativeButton(a.getString(R.string.action_cancel),null).show();}
-    private void download(JSONObject item){if(a.apps.busy){a.toast(a.getString(R.string.module_busy));return;}a.apps.busy=true;status.setText(a.getString(R.string.module_downloading));new Thread(()->{try{a.apps.download(item);a.runOnUiThread(()->{a.apps.busy=false;{a.releaseModule(item.optString("id"));if(current())installedChanged();a.toast(a.getString(R.string.module_installed));}});}catch(Exception e){a.runOnUiThread(()->{a.apps.busy=false;if(current())status.setText(a.getString(R.string.module_download_failed));a.toast(a.getString(R.string.module_install_failed));});}}).start();}
+    private String bytes(long n){return n>=1024*1024?String.format(Locale.ROOT,"%.2f MiB",n/(1024.0*1024)):String.format(Locale.ROOT,"%.1f KiB",Math.max(0,n)/1024.0);}
+    public void render(){
+        owner.addView(a.text(a.getString(R.string.launcher_store),24,a.TITLE,true));a.gap(owner,14);
+        LinearLayout controls=a.row();controls.addView(a.button(a.getString(R.string.module_catalog_refresh),false,this::refresh),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(controls,8);controls.addView(a.button(a.getString(R.string.module_import_package),false,a.apps::pick),new LinearLayout.LayoutParams(0,-2,1));owner.addView(controls);a.gap(owner,8);
+        owner.addView(a.button(a.getString(R.string.store_update_all),false,this::updateAll));a.gap(owner,12);
+        status=a.text(a.getString(R.string.module_catalog_local),13,a.MUTED,false);owner.addView(status);a.gap(owner,12);
+        progressPanel=a.column();progressText=a.text("",13,a.INK,false);progressPanel.addView(progressText);a.gap(progressPanel,8);progressBar=new ProgressBar(a,null,android.R.attr.progressBarStyleHorizontal);progressBar.setMax(1000);progressBar.setProgressTintList(android.content.res.ColorStateList.valueOf(0xff2979ff));progressBar.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(0xff2979ff));progressPanel.addView(progressBar,a.lp(-1,12));a.gap(progressPanel,8);cancelButton=a.button(a.getString(R.string.store_cancel_download),false,()->{cancelQueue=true;AppModules.DownloadTask task=downloadTask;if(task!=null)task.cancel();});progressPanel.addView(cancelButton);progressPanel.setVisibility(View.GONE);owner.addView(progressPanel);
+        retryButton=a.button(a.getString(R.string.store_retry_failed),false,()->start(new ArrayList<>(retryItems)));retryButton.setVisibility(View.GONE);owner.addView(retryButton);a.gap(owner,12);
+        list=a.column();owner.addView(list);try{draw(a.apps.bundledCatalog());}catch(Exception e){status.setText(a.getString(R.string.module_catalog_failed));}a.gap(owner,16);TextParagraphs.append(a,owner,a.getString(R.string.module_store_note),13,a.MUTED);latest=new java.lang.ref.WeakReference<>(this);if(batchRunning){progressPanel.setVisibility(View.VISIBLE);status.setText(a.getString(R.string.module_downloading));main.post(progressTick);}else{if(!retryItems.isEmpty()){retryButton.setVisibility(View.VISIBLE);showResult();}else refresh();}
+    }
+    private int state(JSONObject item){String id=item.optString("id");if(!a.apps.compatible(item))return R.string.store_status_host_update;if(a.apps.updateAvailable(item))return R.string.store_status_update;if(a.apps.installed(id))return R.string.store_status_installed;if(ModuleRuntime.packageFile(a,id).exists())return R.string.store_status_app_update;return R.string.store_status_uninstalled;}
+    private void draw(JSONArray entries)throws Exception{
+        catalog=entries;list.removeAllViews();Set<String> seen=new HashSet<>();
+        for(int i=0;i<entries.length();i++){
+            JSONObject item=entries.getJSONObject(i);String id=item.getString("id");if(!AppModules.known(id)||!seen.add(id))continue;
+            LinearLayout card=a.column();card.setPadding(a.dp(16),a.dp(16),a.dp(16),a.dp(16));card.setBackground(a.shape(a.WHITE,22));LinearLayout heading=a.row();ImageView icon=new ImageView(a);icon.setImageResource(AppIcons.resource(id));heading.addView(icon,a.lp(48,48));a.gapHorizontal(heading,12);
+            LinearLayout labels=a.column();labels.addView(a.text(a.apps.title(id),18,a.INK,true));a.gap(labels,5);labels.addView(a.text(item.optString("version")+" · "+bytes(item.optLong("bytes")),12,a.MUTED,false));a.gap(labels,4);labels.addView(a.text(a.getString(state(item)),13,a.MUTED,false));heading.addView(labels,new LinearLayout.LayoutParams(0,-2,1));card.addView(heading);a.gap(card,12);
+            LinearLayout buttons=a.row();boolean installed=a.apps.installed(id),compatible=a.apps.compatible(item);boolean update=a.apps.updateAvailable(item);int label=installed?R.string.module_open:ModuleRuntime.packageFile(a,id).exists()?R.string.module_update:R.string.module_install;
+            TextView install=a.button(a.getString(label),!installed,()->{if(installed){if(Arrays.asList(AppModules.EMBEDDED).contains(id))a.apps.openInternal(id);else a.switchTab(Arrays.asList(AppModules.IDS).indexOf(id));}else confirm(item);});install.setEnabled(installed||compatible);buttons.addView(install,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(buttons,8);buttons.addView(a.button(a.getString(R.string.store_details),false,()->details(item)),new LinearLayout.LayoutParams(0,-2,1));card.addView(buttons);
+            if(installed){a.gap(card,8);LinearLayout management=a.row();if(update&&compatible){management.addView(a.button(a.getString(R.string.module_update),true,()->confirm(item)),new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(management,8);}management.addView(a.button(a.getString(R.string.module_uninstall),false,()->new LauncherScreen(a).manage(id)),new LinearLayout.LayoutParams(0,-2,1));card.addView(management);}
+            list.addView(card);a.gap(list,12);
+        }
+    }
+    public void installedChanged(){if(!current())return;a.updateReadingValues(()->{try{draw(catalog);if(downloadTask==null)status.setText(a.getString(R.string.module_installed));}catch(Exception e){status.setText(a.getString(R.string.module_catalog_failed));}});}
+    private void refresh(){
+        if(a.apps.busy)return;status.setText(a.getString(R.string.module_catalog_loading));new Thread(()->{try{JSONArray items=a.apps.remoteCatalog();a.runOnUiThread(()->{if(!current())return;a.updateReadingValues(()->{try{draw(items);status.setText(a.getString(R.string.module_catalog_online));}catch(Exception e){status.setText(a.getString(R.string.module_catalog_failed));}});});}catch(Exception e){a.runOnUiThread(()->{if(current())status.setText(a.getString(R.string.module_catalog_failed));});}},"store-catalog").start();
+    }
+    private String localized(JSONObject item,String key,String fallback){Object value=item.opt(key);if(value instanceof JSONObject){JSONObject texts=(JSONObject)value;String language=a.getResources().getConfiguration().getLocales().get(0).getLanguage();return texts.optString(language,texts.optString("en",fallback));}return value instanceof String?(String)value:fallback;}
+    private void details(JSONObject item){
+        String id=item.optString("id");int description=a.getResources().getIdentifier("store_description_"+id.replace('-','_'),"string",a.getPackageName());String summary=description==0?"":a.getString(description);
+        LinearLayout content=a.column();content.setPadding(a.dp(18),a.dp(8),a.dp(18),a.dp(16));content.addView(a.text(item.optString("version")+" · "+bytes(item.optLong("bytes")),14,a.INK,false));a.gap(content,10);content.addView(a.text(a.getString(state(item)),14,a.INK,true));a.gap(content,14);TextParagraphs.append(a,content,localized(item,"description",summary),14,a.INK);a.gap(content,14);
+        content.addView(a.text(a.getString(R.string.store_release_notes),16,a.TITLE,true));a.gap(content,8);TextParagraphs.append(a,content,localized(item,"releaseNotes",a.getString(R.string.store_release_notes_fallback)),13,a.MUTED);a.gap(content,14);content.addView(a.text(a.getString(R.string.store_permissions),16,a.TITLE,true));a.gap(content,8);content.addView(a.text(permissionText(id,item),13,a.MUTED,false));a.gap(content,14);TextParagraphs.append(a,content,a.getString(R.string.module_trust_note),13,a.MUTED);
+        ScrollView scroll=new ScrollView(a);scroll.addView(content);new ToolDialog(a).setTitle(a.apps.title(id)).setView(scroll).setNegativeButton(a.getString(R.string.action_close),null).show();
+    }
+    private String permissionText(String id,JSONObject item){
+        JSONArray permissions=item.optJSONArray("permissions");if(permissions==null)try{if(a.apps.installed(id))permissions=AppModules.inspect(a,ModuleRuntime.packageFile(a,id),id).optJSONArray("permissions");}catch(Exception ignored){}
+        if(permissions==null){if(id.equals("weather")||id.equals("weather-map"))return a.getString(R.string.store_permission_internet);if(id.equals("astronomy")||id.equals("random"))return a.getString(R.string.store_permission_none);return a.getString(R.string.store_permission_unspecified);}
+        LinkedHashSet<String> names=new LinkedHashSet<>();for(int n=0;n<permissions.length();n++){String permission=permissions.optString(n);int resource=permission.contains("LOCATION")?R.string.store_permission_location:permission.endsWith("CAMERA")?R.string.store_permission_camera:permission.contains("BLUETOOTH")?R.string.store_permission_bluetooth:permission.endsWith("POST_NOTIFICATIONS")?R.string.store_permission_notifications:permission.contains("EXACT_ALARM")?R.string.store_permission_alarms:permission.endsWith("INTERNET")?R.string.store_permission_internet:permission.contains("FOREGROUND_SERVICE")?R.string.store_permission_background:permission.endsWith("WAKE_LOCK")?R.string.store_permission_wake:permission.endsWith("ACCESS_NETWORK_STATE")?R.string.store_permission_network:permission.endsWith("RECEIVE_BOOT_COMPLETED")?R.string.store_permission_boot:R.string.store_permission_other;names.add(a.getString(resource));}return names.isEmpty()?a.getString(R.string.store_permission_none):android.text.TextUtils.join("\n",names);
+    }
+    private void confirm(JSONObject item){if(!a.apps.compatible(item))return;new ToolDialog(a).setTitle(a.apps.title(item.optString("id"))).setMessage(a.getString(R.string.module_trust_note)).setPositiveButton(a.getString(a.apps.installed(item.optString("id"))?R.string.module_update:R.string.module_install),(d,w)->start(Collections.singletonList(item))).setNegativeButton(a.getString(R.string.action_cancel),null).show();}
+    private void updateAll(){
+        if(a.apps.busy){a.toast(a.getString(R.string.module_busy));return;}List<JSONObject> items=new ArrayList<>();long bytes=0;for(int n=0;n<catalog.length();n++){JSONObject item=catalog.optJSONObject(n);if(item!=null&&a.apps.compatible(item)&&a.apps.updateAvailable(item)){items.add(item);bytes+=item.optLong("bytes");}}
+        if(items.isEmpty()){a.toast(a.getString(R.string.store_no_updates));return;}new ToolDialog(a).setTitle(a.getString(R.string.store_update_all)).setMessage(a.getString(R.string.store_batch_confirm,items.size(),bytes(bytes))).setPositiveButton(a.getString(R.string.module_update),(d,w)->start(items)).setNegativeButton(a.getString(R.string.action_cancel),null).show();
+    }
+    private void showResult(){status.setText(lastCancelled?a.getString(R.string.store_batch_cancelled,lastSuccess):retryItems.isEmpty()?a.getString(R.string.store_batch_complete,lastSuccess):a.getString(R.string.store_batch_failed,lastSuccess,retryItems.size(),a.getString(lastReason)));}
+    private void start(List<JSONObject> items){
+        if(items.isEmpty())return;if(a.apps.busy){a.toast(a.getString(R.string.module_busy));return;}a.apps.busy=true;batchRunning=true;cancelQueue=false;completed=0;queueSize=items.size();retryItems=new ArrayList<>();retryButton.setVisibility(View.GONE);progressPanel.setVisibility(View.VISIBLE);status.setText(a.getString(R.string.module_downloading));
+        new Thread(()->{
+            List<JSONObject> failures=new ArrayList<>();int succeeded=0;int failureText=R.string.store_failure_package;
+            for(int index=0;index<items.size();index++){
+                JSONObject item=items.get(index);if(cancelQueue){failures.addAll(items.subList(index,items.size()));break;}activeId=item.optString("id");completed=index;AppModules.DownloadTask task=new AppModules.DownloadTask();downloadTask=task;main.removeCallbacks(progressTick);main.post(progressTick);
+                try{a.apps.download(item,task);succeeded++;a.runOnUiThread(()->{a.releaseModule(item.optString("id"));if(current())installedChanged();});}catch(Exception e){failures.add(item);failureText=a.apps.failureMessage(e);if(task.cancelled||e instanceof InterruptedIOException&&!(e instanceof java.net.SocketTimeoutException)){cancelQueue=true;if(index+1<items.size())failures.addAll(items.subList(index+1,items.size()));break;}}
+            }
+            lastSuccess=succeeded;lastReason=failureText;lastCancelled=cancelQueue;retryItems=failures;downloadTask=null;batchRunning=false;a.apps.busy=false;main.removeCallbacks(progressTick);a.runOnUiThread(()->{AppStoreScreen target=latest.get();if(target==null||!target.current())return;target.progressPanel.setVisibility(View.GONE);target.retryButton.setVisibility(failures.isEmpty()?View.GONE:View.VISIBLE);target.a.updateReadingValues(()->{try{target.draw(target.catalog);}catch(Exception ignored){}});target.showResult();});
+        },"store-install-queue").start();
+    }
 }

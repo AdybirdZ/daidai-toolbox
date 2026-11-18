@@ -1,0 +1,14 @@
+<resources>
+  <string name="cross_weather_missing">Install Weather to update weather data</string>
+  <string name="cross_reference_title">Reference location</string>
+  <string name="cross_longitude">Longitude (east positive, west negative)</string>
+  <string name="cross_latitude">Latitude (north positive, south negative)</string>
+  <string name="cross_reference_note">When Weather is not installed, enter the location used by the sky chart. Weather-based observing conditions require the Weather app and updated data.</string>
+  <string name="cross_coordinates_invalid">Enter valid coordinates</string>
+  <string name="update_pre3003_title">pre-3.0.0-3 · App icons and music import</string>
+  <string name="update_pre3002_title">pre-3.0.0-2 · Internal apps and data migration</string>
+  <string name="cross_weather_unavailable">No current weather data is available. Weather-based observing conditions are unavailable; the sky chart and celestial calculations remain available.</string>
+  <string name="module_recovered">The update could not start. The previous version was restored; open the app again</string>
+  <string name="update_pre3004_title">pre-3.0.0-4 · App separation and desktop customization</string>
+  <string name="changes_pre3_4">Refine the host API and move more app code, resources and settings into app packages. Cross-app features provide alternatives when Weather or Status is uninstalled.\n\nCustomize icon size, columns, labels, drag order, folders and system shortcuts, with separate phone and tablet layouts. In-app navigation keeps only Home.\n\nThe store adds download progress, cancellation, retry, batch updates, compatibility status, permissions and release notes. A failed first launch can restore the previous app package.\n\nManage storage, data transfer, caches and data deletion for every app, including retained data from uninstalled apps. Strengthen import isolation and rollback.\n\nRestore supported settings and task, course, place and music editing drafts after activity recreation. Music imports add stages, timing, result reports and failed-item retry.\n\nRestore titles for the previous two updates, clarify how to start waiting for a connection, and record future command and communication plans.</string>
+</resources>

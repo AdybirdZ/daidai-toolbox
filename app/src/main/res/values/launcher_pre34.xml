@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="launcher_customization">桌面设置</string>
+  <string name="launcher_edit">编辑桌面</string>
+  <string name="launcher_finish_edit">完成编辑</string>
+  <string name="launcher_new_folder">新建文件夹</string>
+  <string name="launcher_drag_note">长按图标后拖至另一图标处可调整顺序。点击应用可移动至文件夹；文件夹可长按管理。设置与应用商店固定在末尾。</string>
+  <string name="launcher_drag_folder_note">长按图标后拖至另一图标处可调整文件夹内顺序。点击应用可将其移回桌面或移至其他文件夹。</string>
+  <string name="launcher_move_to_folder">移至文件夹</string>
+  <string name="launcher_move_to_desktop">移回桌面</string>
+  <string name="launcher_pin_shortcut">添加系统桌面快捷方式</string>
+  <string name="launcher_shortcut_requested">已向系统桌面提交添加请求，请按系统提示确认</string>
+  <string name="launcher_shortcut_unsupported">当前系统桌面不支持添加应用快捷方式</string>
+  <string name="launcher_shortcut_failed">未能提交快捷方式请求，请检查系统桌面设置</string>
+  <string name="launcher_shortcut_missing">此应用尚未安装或暂不兼容。可前往应用商店安装兼容版本。</string>
+  <string name="launcher_folder_manage">文件夹管理</string>
+  <string name="launcher_folder_empty">文件夹内暂无已安装的应用</string>
+  <string name="launcher_folder_edit">编辑文件夹</string>
+  <string name="launcher_folder_delete">删除文件夹</string>
+  <string name="launcher_folder_delete_note">确定删除此文件夹吗？其中的应用将移回桌面，应用与资料不会删除。</string>
+  <string name="launcher_folder_name">文件夹名称</string>
+  <string name="launcher_folder_members">包含的应用</string>
+  <string name="launcher_folder_members_note">应用同时只能位于桌面或一个文件夹中。未勾选的原有应用将移回桌面；卸载后保留所属位置，重新安装时恢复。空文件夹不在桌面显示。</string>
+  <string name="launcher_folder_name_invalid">请输入 1 至 40 个字符的文件夹名称</string>
+  <string name="launcher_folder_limit">文件夹数量已达到 32 个</string>
+  <string name="launcher_profile_phone">手机布局</string>
+  <string name="launcher_profile_tablet">平板布局</string>
+  <string name="launcher_icon_size">图标大小：%1$d dp</string>
+  <string name="launcher_columns">每行图标数：%1$d</string>
+  <string name="launcher_text_size">名称字号：%1$d sp</string>
+  <string name="launcher_sort_items">图标与文件夹排序</string>
+  <string name="launcher_customization_note">手机和平板布局分别保存，以设备最小可用宽度 600 dp 为分界。默认图标大小为 72 dp，名称字号为 14 sp；手机每行 3 个，平板每行 5 个。空间不足时会适当缩小图标并减少列数，避免内容重叠。</string>
+  <string name="launcher_move_up">上移</string>
+  <string name="launcher_move_down">下移</string>
+  <string name="launcher_sort_note">默认顺序：天气、课程表、状态、天气地图、天文、地震、随机抽取、待办事项、音乐、设备通信、色觉模拟器。新文件夹位于可排序项目末尾；应用商店与设置固定在最后。未安装的应用不显示，其原有位置保留。</string>
+  <string name="launcher_no_folders">尚无文件夹</string>
+</resources>

@@ -75,9 +75,37 @@ public final class MusicLibrary {
         HashSet<String> edited=new HashSet<>(c.getSharedPreferences(PREFS,0).getStringSet("metadata_manually_edited",Collections.emptySet()));edited.remove(id);c.getSharedPreferences(PREFS,0).edit().putString("catalogue",entries.toString()).putString("queue",queued.toString()).putStringSet("metadata_manually_edited",edited).apply();MusicCollections.prune(c,catalogue.keySet());
     }
     public static String title(Context c,Uri uri){try(Cursor cursor=c.getContentResolver().query(uri,new String[]{OpenableColumns.DISPLAY_NAME},null,null,null)){if(cursor!=null&&cursor.moveToFirst()){String name=cursor.getString(0);if(name!=null&&!name.isEmpty())return name;}}catch(Exception ignored){}return org.daidai.modules.shared.Texts.get(c,"music_audio");}
-    public static Track readMetadata(Context c,Uri uri){String name=title(c,uri),vocalist="",composer="",arranger="",cover="";long length=0;AudioFileTags.Tags tags=new AudioFileTags.Tags();try(InputStream in=c.getContentResolver().openInputStream(uri)){if(in!=null)tags=AudioFileTags.read(in);}catch(Exception ignored){}if(!tags.title.isEmpty())name=tags.title;vocalist=first(tags.artist,tags.albumArtist);composer=tags.composer;arranger=tags.arranger;byte[] art=tags.picture;
-        MediaMetadataRetriever r=new MediaMetadataRetriever();try{r.setDataSource(c,uri);String v=r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);if(tags.title.isEmpty()&&v!=null&&!v.trim().isEmpty())name=v;vocalist=first(vocalist,first(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST),r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)));composer=first(composer,first(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER),r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_WRITER)));String d=r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);if(d!=null)length=Long.parseLong(d);if(art==null)art=r.getEmbeddedPicture();}catch(Exception ignored){}finally{try{r.release();}catch(Exception ignored){}}
-        if(art!=null)cover=saveEmbeddedCover(c,art);return new Track(uri.toString(),name,vocalist,composer,arranger,"","","",tags.bpm,-1,false,length,cover);}
+    public static Track readMetadata(Context c,Uri uri){try{return readMetadataChecked(c,uri,null);}catch(IOException ignored){return new Track(uri.toString(),title(c,uri));}}
+    static Track readMetadataChecked(Context c,Uri uri,MusicImportProgress progress)throws IOException {
+        if(progress!=null)progress.phase(MusicImportReport.Phase.METADATA);
+        String name=title(c,uri),vocalist="",composer="",arranger="",cover="";long length=0;
+        AudioFileTags.Tags tags=new AudioFileTags.Tags();Exception tagsFailure=null,nativeFailure=null;
+        try(InputStream source=c.getContentResolver().openInputStream(uri)){
+            if(source==null)throw new FileNotFoundException();
+            InputStream checked=new FilterInputStream(source){
+                private void check()throws InterruptedIOException{if(progress!=null)progress.check();else if(Thread.currentThread().isInterrupted())throw new InterruptedIOException();}
+                public int read()throws IOException{check();return super.read();}
+                public int read(byte[] b,int off,int len)throws IOException{check();return in.read(b,off,len);}
+                public long skip(long n)throws IOException{check();return in.skip(n);}
+            };tags=AudioFileTags.read(checked);
+        }catch(InterruptedIOException e){throw e;}catch(Exception e){tagsFailure=e;if(progress!=null)progress.warning();}
+        if(!tags.title.isEmpty())name=tags.title;vocalist=first(tags.artist,tags.albumArtist);composer=tags.composer;arranger=tags.arranger;byte[] art=tags.picture;
+        if(progress!=null)progress.phase(MusicImportReport.Phase.METADATA);
+        MediaMetadataRetriever r=new MediaMetadataRetriever();
+        try{
+            r.setDataSource(c,uri);if(progress!=null)progress.check();
+            String v=r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);if(tags.title.isEmpty()&&v!=null&&!v.trim().isEmpty())name=v;
+            vocalist=first(vocalist,first(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST),r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST)));
+            composer=first(composer,first(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER),r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_WRITER)));
+            String d=r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);if(d!=null)length=Long.parseLong(d);
+            if(art==null){if(progress!=null)progress.phase(MusicImportReport.Phase.ARTWORK);art=r.getEmbeddedPicture();}
+        }catch(InterruptedIOException e){throw e;}catch(Exception e){nativeFailure=e;if(progress!=null)progress.warning();}
+        finally{try{r.release();}catch(Exception ignored){}}
+        if(progress!=null)progress.check();
+        if(tagsFailure!=null&&nativeFailure!=null){if(tagsFailure instanceof SecurityException)throw new IOException(tagsFailure);throw new IOException(tagsFailure);}
+        if(art!=null){if(progress!=null)progress.phase(MusicImportReport.Phase.ARTWORK);cover=saveEmbeddedCover(c,art);if(cover.isEmpty()&&progress!=null)progress.warning();}
+        if(progress!=null)progress.check();return new Track(uri.toString(),name,vocalist,composer,arranger,"","","",tags.bpm,-1,false,length,cover);
+    }
     private static String saveEmbeddedCover(Context c,byte[] raw){if(raw.length==0||raw.length>8*1024*1024)return "";Bitmap image=null;File temp=null;try{MessageDigest md=MessageDigest.getInstance("SHA-256");StringBuilder id=new StringBuilder();for(byte b:md.digest(raw))id.append(String.format(Locale.ROOT,"%02x",b&255));File dir=new File(c.getFilesDir(),"covers");if(!dir.exists()&&!dir.mkdirs())return "";File output=new File(dir,"embedded-"+id+".png");if(output.isFile()&&output.length()>0)return output.getAbsolutePath();BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(raw,0,raw.length,options);if(options.outWidth<1||options.outHeight<1||options.outWidth>50000||options.outHeight>50000||(long)options.outWidth*options.outHeight>200000000L)return "";options.inSampleSize=1;while(Math.max(options.outWidth,options.outHeight)/options.inSampleSize>1024)options.inSampleSize*=2;options.inJustDecodeBounds=false;image=BitmapFactory.decodeByteArray(raw,0,raw.length,options);if(image==null)return "";temp=File.createTempFile("embedded-",".tmp",dir);try(OutputStream out=new FileOutputStream(temp)){if(!image.compress(Bitmap.CompressFormat.PNG,100,out))return "";}if(!temp.renameTo(output))return "";temp=null;return output.getAbsolutePath();}catch(Exception ignored){return "";}finally{if(temp!=null)temp.delete();if(image!=null)image.recycle();}}
     private static String first(String a,String b){return a!=null&&!a.trim().isEmpty()?a:b==null?"":b;}
     private static final Map<String,MusicLyrics> LYRIC_CACHE=Collections.synchronizedMap(new LinkedHashMap<String,MusicLyrics>(16,.75f,true){protected boolean removeEldestEntry(Map.Entry<String,MusicLyrics> e){return size()>12;}});

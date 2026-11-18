@@ -7,19 +7,23 @@ final class ModuleRegistry {
     static final class Module { final String id, title; final String[] groups; Module(String id,String title,String...groups){this.id=id;this.title=title;this.groups=groups;} }
     static final List<Module> ALL=Collections.unmodifiableList(Arrays.asList(
         new Module("weather","tab_weather","weather","toolbox"),
-        new Module("weather-map","tab_weather_map","toolbox"),
-        new Module("status","tab_status","status_places","status_routes","toolbox"),
-        new Module("todo","tab_todo","todos","toolbox"),
         new Module("schedule","tab_schedule","timetable","toolbox"),
+        new Module("status","tab_status","status_places","status_routes","toolbox"),
+        new Module("weather-map","tab_weather_map","toolbox"),
         new Module("astronomy","tab_astronomy","toolbox"),
         new Module("earthquake","tab_earthquake","toolbox"),
         new Module("random","tab_random","random_choice","toolbox"),
+        new Module("todo","tab_todo","todos","toolbox"),
+        new Module("music","module_music","music_module"),
+        new Module("messaging","module_messaging","messaging_module"),
+        new Module("colorvision","module_colorvision","colorvision_module"),
         new Module("global","settings_014","toolbox")));
+    static boolean embedded(String id){return Arrays.asList(AppModules.EMBEDDED).contains(id);}
     static Module find(String id){for(Module m:ALL)if(m.id.equals(id))return m;return null;}
     static boolean allowed(Module m,String group,String key){
         if(!Arrays.asList(m.groups).contains(group))return false;
         if(!group.equals("toolbox"))return true;
-        if(m.id.equals("global"))return true;
+        if(m.id.equals("global")){if(ConfigurationData.type(group,key)==null)return false;for(Module other:ALL)if(!other.id.equals("global")&&allowed(other,group,key))return false;return true;}
         if(m.id.equals("astronomy"))return key.startsWith("astro_");
         if(m.id.equals("earthquake"))return key.startsWith("quake_");
         if(m.id.equals("weather"))return key.startsWith("weather_");

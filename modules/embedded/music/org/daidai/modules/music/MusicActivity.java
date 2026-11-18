@@ -15,6 +15,7 @@ import java.util.*;
 import java.io.*;
 import java.util.concurrent.*;
 import org.daidai.modules.shared.Texts;
+import org.json.*;
 
 public class MusicActivity extends org.simpleweather.app.ModulePage {
     public MusicActivity(Activity activity){super(activity);}
@@ -24,15 +25,16 @@ public class MusicActivity extends org.simpleweather.app.ModulePage {
     private MusicLyricsView lyrics;private TextView title,state,clock,volumeLabel;private ImageView cover;private Button favorite,toggle,mode,speedButton,removeQueue,analysisToggle,sleepTimerButton;
     private String displayedCover="";private SeekBar seek,volume;private boolean dragging,closed;private int queueGeneration;private final Set<String> removal=new HashSet<>();
     private final ExecutorService worker=Executors.newSingleThreadExecutor();private Future<?> exportTask;private File pendingWav;private ProgressDialog exportProgress;private MusicImportProgress importProgress;
+    private String uiStateToken="";private boolean restoringUi;
     private final Runnable listener=this::update;private final Runnable tick=new Runnable(){public void run(){update();main.postDelayed(this,250);}};
     private final ServiceConnection connection=new ServiceConnection(){public void onServiceConnected(ComponentName n,IBinder b){service=((PlaybackService.LocalBinder)b).service();service.reload();service.addListener(listener);attachAnalysis();update();}public void onServiceDisconnected(ComponentName n){closeAnalysis();service=null;}};
-    @Override public void onCreate(Bundle b){super.onCreate(b);if(b!=null)tab=b.getInt("tab",0);File[] old=getCacheDir().listFiles((d,n)->(n.startsWith("trim-")||n.startsWith("scope-")||n.startsWith("music-analysis-"))&&n.endsWith(".wav"));if(old!=null)for(File file:old)file.delete();render();}
-    @Override protected void onSaveInstanceState(Bundle b){b.putInt("tab",tab);super.onSaveInstanceState(b);}
+    @Override public void onCreate(Bundle b){super.onCreate(b);if(b!=null)tab=Math.max(0,Math.min(2,b.getInt("tab",0)));File[] old=getCacheDir().listFiles((d,n)->(n.startsWith("trim-")||n.startsWith("scope-")||n.startsWith("music-analysis-"))&&n.endsWith(".wav"));if(old!=null)for(File file:old)file.delete();if(b!=null){restoringUi=true;uiStateToken=b.getString("music_ui_token","");LinearLayout loading=Ui.page(activity,txt("music_title"),txt("music_subtitle"));loading.addView(Ui.text(activity,txt("music_ui_restoring"),15));worker.execute(()->{JSONObject state=MusicUiState.read(activity,uiStateToken);main.post(()->{if(closed||isDestroyed())return;restoringUi=false;MusicLibraryScreen.restoreUi(activity,state==null?null:state.optJSONObject("library"));if(state!=null){JSONArray selected=state.optJSONArray("queue_selection");if(selected!=null)for(int i=0;i<selected.length();i++)removal.add(selected.optString(i));}render();});});}else render();}
+    @Override protected void onSaveInstanceState(Bundle b){b.putInt("tab",tab);if(restoringUi){b.putString("music_ui_token",uiStateToken);super.onSaveInstanceState(b);return;}JSONObject state=new JSONObject();try{state.put("version",1).put("library",MusicLibraryScreen.saveUi(activity)).put("queue_selection",new JSONArray(removal));uiStateToken=MusicUiState.save(activity,uiStateToken,state);b.putString("music_ui_token",uiStateToken);}catch(Exception ignored){}super.onSaveInstanceState(b);}
     private void render(){
         closeAnalysis();if(lyrics!=null){lyrics.close();lyrics=null;}sleepTimerButton=null;title=null;list=null;volume=null;analysisSlot=null;displayedCover="";
         LinearLayout page=Ui.page(activity,txt("music_title"),txt("music_subtitle"));LinearLayout body=Ui.scroll(page);
-        if(tab==0)renderPlayback(body);else if(tab==1){Ui.button(body,txt("music_import"),this::importAudio);body.addView(MusicLibraryScreen.createPage(activity,this::libraryChanged));}
-        else MusicSettingsScreen.populate(activity,body,()->service,this::chooseFolder,this::render);
+        if(tab==0)renderPlayback(body);else if(tab==1){Ui.button(body,txt("music_import"),this::importAudio);body.addView(MusicLibraryScreen.createPage(activity,this::libraryChanged,this::retryImport));}
+        else MusicSettingsScreen.populate(activity,body,()->service,this::chooseFolder);
         LinearLayout navigation=Ui.row(page);String[] names={"music_tab_playback","library_my_songs","music_tab_settings"};
         for(int i=0;i<names.length;i++){final int next=i;Button button=Ui.cell(navigation,txt(names[i]),()->{if(tab!=next){tab=next;render();}});if(tab==i){button.setTextColor(Color.WHITE);button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));}}
         attachAnalysis();showList();update();
@@ -95,40 +97,41 @@ public class MusicActivity extends org.simpleweather.app.ModulePage {
         }catch(Exception e){if(file!=null)file.delete();if(processed!=null)processed.delete();main.post(()->{if(exportProgress!=null)exportProgress.dismiss();if(!isDestroyed()&&!(e instanceof InterruptedException))Ui.error(activity,e);});}});
     }
     private void finishExport(int result,Intent data){File file=pendingWav;pendingWav=null;if(file==null)return;if(result!=RESULT_OK||data==null||data.getData()==null){file.delete();return;}Uri destination=data.getData();exportTask=worker.submit(()->{try(InputStream in=new FileInputStream(file);OutputStream out=getContentResolver().openOutputStream(destination,"wt")){if(out==null)throw new IOException(txt("music_export_failed"));byte[] b=new byte[65536];int n;while((n=in.read(b))!=-1){if(Thread.currentThread().isInterrupted())throw new InterruptedException();out.write(b,0,n);}main.post(()->{if(!isDestroyed())Ui.toast(activity,txt("music_exported"),Toast.LENGTH_LONG).show();});}catch(Exception e){main.post(()->{if(!isDestroyed())Ui.error(activity,e);});}finally{file.delete();}});}
-    @Override protected void onDestroy(){closed=true;queueGeneration++;MusicMigrationUi.destroy(activity);MusicLibraryScreen.destroy(activity);if(exportTask!=null)exportTask.cancel(true);worker.shutdownNow();if(pendingWav!=null)pendingWav.delete();if(exportProgress!=null)exportProgress.dismiss();if(importProgress!=null)importProgress.destroy();if(lyrics!=null)lyrics.close();closeAnalysis();super.onDestroy();}
+    @Override protected void onDestroy(){closed=true;queueGeneration++;MusicLibraryScreen.destroy(activity);if(exportTask!=null)exportTask.cancel(true);worker.shutdownNow();if(pendingWav!=null)pendingWav.delete();if(exportProgress!=null)exportProgress.dismiss();if(importProgress!=null)importProgress.destroy();if(lyrics!=null)lyrics.close();closeAnalysis();super.onDestroy();}
     private void command(String action,int index){if(service==null)return;Intent i=org.simpleweather.app.ModuleRuntime.serviceIntent(activity,"music").setAction(action);if(index>=0)i.putExtra("index",index);
         try{if(action.equals(PlaybackService.PLAY)){if(Build.VERSION.SDK_INT>=33&&checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS},12);startForegroundService(i);}else startService(i);}catch(Exception e){Ui.error(activity,e);}}
     private void chooseFolder(){try{startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION),31);}catch(Exception e){Ui.error(activity,e);}}
     private void importAudio(){if(getSharedPreferences("music_module",0).getString("storage_tree_uri","").isEmpty()){new AlertDialog.Builder(activity).setMessage(txt("music_folder_required")).setNegativeButton(txt("music_cancel"),null).setPositiveButton(txt("music_choose_folder"),(d,w)->chooseFolder()).show();return;}Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("audio/*").addCategory(Intent.CATEGORY_OPENABLE).putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);try{startActivityForResult(i,11);}catch(Exception e){Ui.error(activity,e);}}
-    private void storageSettings(){LinearLayout c=Ui.column(activity);c.setPadding(Ui.dp(activity,22),Ui.dp(activity,10),Ui.dp(activity,22),Ui.dp(activity,10));MusicSettingsScreen.populate(activity,c,()->service,this::chooseFolder,this::render);new AlertDialog.Builder(activity).setTitle(txt("music_tab_settings")).setView(wrap(c)).setPositiveButton(txt("music_close"),null).show();}
+    private void storageSettings(){LinearLayout c=Ui.column(activity);c.setPadding(Ui.dp(activity,22),Ui.dp(activity,10),Ui.dp(activity,22),Ui.dp(activity,10));MusicSettingsScreen.populate(activity,c,()->service,this::chooseFolder);new AlertDialog.Builder(activity).setTitle(txt("music_tab_settings")).setView(wrap(c)).setPositiveButton(txt("music_close"),null).show();}
     private ScrollView wrap(LinearLayout c){ScrollView sc=new ScrollView(activity);sc.addView(c);return sc;}
     private void libraryChanged(){if(service!=null)service.reload();if(lyrics!=null)lyrics.refresh();showList();update();}
     @Override protected void onActivityResult(int request,int result,Intent data){
-        super.onActivityResult(request,result,data);if(MusicMigrationUi.result(activity,request,result,data)){if(result==RESULT_OK){if(service!=null)service.reload();}return;}if(MusicLibraryScreen.onActivityResult(activity,request,result,data,this::libraryChanged))return;if(request==21){finishExport(result,data);return;}
+        super.onActivityResult(request,result,data);if(MusicLibraryScreen.onActivityResult(activity,request,result,data,this::libraryChanged))return;if(request==21){finishExport(result,data);return;}
         if(request==31&&result==RESULT_OK&&data!=null&&data.getData()!=null){Uri u=data.getData();try{getContentResolver().takePersistableUriPermission(u,data.getFlags()&(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION));getSharedPreferences("music_module",0).edit().putString("storage_tree_uri",u.toString()).apply();if(tab!=0)render();MusicLibraryScreen.refreshFolder(activity,this::libraryChanged);}catch(Exception e){Ui.error(activity,e);}return;}
         if(request!=11||result!=RESULT_OK||data==null)return;ArrayList<Uri> uris=new ArrayList<>();if(data.getClipData()!=null){for(int j=0;j<data.getClipData().getItemCount();j++)uris.add(data.getClipData().getItemAt(j).getUri());}else if(data.getData()!=null)uris.add(data.getData());
-        if(importProgress!=null)return;
-        MusicImportProgress importing=new MusicImportProgress(activity);importProgress=importing;
+        ArrayList<MusicImportReport.Entry> selected=new ArrayList<>();for(Uri uri:uris)selected.add(new MusicImportReport.Entry("",uri.toString(),uri.toString(),MusicImportReport.Phase.COPY,MusicImportReport.Result.FAILED,""));startImport(selected);
+    }
+    private void retryImport(MusicImportReport report){if(report.mode==MusicImportReport.Mode.COPY)startImport(report.failures());else MusicLibraryScreen.retryImport(activity,report,this::libraryChanged);}
+    private void startImport(List<MusicImportReport.Entry> requests){
+        if(importProgress!=null||requests.isEmpty())return;
+        MusicImportProgress importing=new MusicImportProgress(activity,MusicImportReport.Mode.COPY);importProgress=importing;
         worker.submit(()->{
-            ArrayList<MusicLibrary.Track> added=new ArrayList<>();int denied=0,skipped=0;Exception problem=null;
+            ArrayList<MusicLibrary.Track> added=new ArrayList<>();MusicImporter.Batch batch=null;int position=0;
             try{
-                MusicImporter.Batch batch=new MusicImporter.Batch(activity,importing);int position=0;
-                for(Uri uri:uris){
-                    importing.check();String name=MusicLibrary.title(activity,uri);importing.file(name,++position,uris.size());
+                batch=new MusicImporter.Batch(activity,importing);
+                for(MusicImportReport.Entry request:requests){
+                    importing.check();Uri uri=Uri.parse(request.retryUri);String name=request.name.isEmpty()?MusicLibrary.title(activity,uri):request.name;
+                    importing.file(name,++position,requests.size());Uri stored=null;
                     try{
-                        if(!MusicAudioFiles.accepts(name,getContentResolver().getType(uri))){skipped++;continue;}
-                        Uri stored=batch.copy(uri);importing.check();added.add(MusicLibrary.readMetadata(activity,stored));
-                    }catch(InterruptedIOException e){throw e;}catch(Exception e){denied++;}
+                        if(!MusicAudioFiles.accepts(name,getContentResolver().getType(uri))){importing.skipped(request.source,name);continue;}
+                        stored=batch.copy(uri);importing.check();added.add(MusicLibrary.readMetadataChecked(activity,stored,importing));importing.success(request.source,stored.toString(),name);
+                    }catch(InterruptedIOException e){throw e;}catch(Exception e){importing.failed(request.source,stored==null?uri.toString():stored.toString(),name,e);}
                 }
-            }catch(InterruptedIOException e){/* Completed copies remain available; unfinished copies are deleted. */}
-            catch(Exception e){problem=e;}
+            }catch(InterruptedIOException e){/* Wait for the current system operation; completed copies remain available. */}
+            catch(Exception e){for(int i=position;i<requests.size();i++){MusicImportReport.Entry request=requests.get(i);importing.failed(request.source,request.retryUri,request.name.isEmpty()?txt("music_audio"):request.name,e);}}
             if(!importing.cancelled()&&!Thread.currentThread().isInterrupted())try{importing.saving();}catch(InterruptedIOException ignored){}
-            MusicLibrary.addToQueue(activity,added);final int failures=denied,ignored=skipped;final Exception error=problem;
-            main.post(()->{importing.close();importProgress=null;if(closed||isDestroyed())return;libraryChanged();
-                if(tab==1)render();
-                if(error!=null)Ui.error(activity,error);
-                else Ui.toast(activity,txt("music_import_summary",added.size(),ignored,failures),Toast.LENGTH_LONG).show();
-            });
+            MusicLibrary.addToQueue(activity,added);MusicImportDiagnostics.save(activity,importing.report);
+            main.post(()->{importing.close();importProgress=null;if(closed||isDestroyed())return;libraryChanged();if(tab==1)render();MusicImportDiagnostics.show(activity,importing.report,this::retryImport);});
         });
     }
     private void showList(){final int generation=++queueGeneration;if(list==null)return;final LinearLayout target=list;list.removeAllViews();ArrayList<MusicLibrary.Track> tracks=MusicLibrary.load(activity);Set<String> valid=new HashSet<>();for(MusicLibrary.Track t:tracks)valid.add(t.uri);removal.retainAll(valid);LinearLayout actions=Ui.row(list);removeQueue=Ui.cell(actions,txt("music060_remove_selected_queue"),()->{MusicLibrary.removeFromQueue(activity,new ArrayList<>(removal));removal.clear();libraryChanged();});removeQueue.setEnabled(!removal.isEmpty());Ui.cell(actions,txt("music_import"),this::importAudio);

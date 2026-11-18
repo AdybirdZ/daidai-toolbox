@@ -73,7 +73,7 @@ public final class AppIconCropActivity extends Activity {
     private void button(LinearLayout parent,int label,Runnable action){
         Button button=new Button(this);button.setText(label);button.setTextSize(14);button.setAllCaps(false);
         int seed=UiColors.seed(this,UiColors.BUTTON);GradientDrawable background=new GradientDrawable();background.setColor(ThemeColors.pale(seed));background.setCornerRadius(dp(12));
-        button.setTextColor(ThemeColors.dark(seed));button.setBackground(background);button.setOnClickListener(view->{if(!saving)action.run();});
+        button.setTextColor(ThemeColors.dark(seed));button.setBackground(new android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(0x223577CC),background,null));button.setOnClickListener(view->{if(!saving)action.run();});
         if(parent.getOrientation()==LinearLayout.HORIZONTAL&&parent.getChildCount()>0)parent.addView(new View(this),new LinearLayout.LayoutParams(dp(8),1));
         parent.addView(button,parent.getOrientation()==LinearLayout.VERTICAL?new LinearLayout.LayoutParams(-1,dp(48)):new LinearLayout.LayoutParams(0,dp(48),1));
     }

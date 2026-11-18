@@ -217,6 +217,6 @@
     <string name="update_200_detail">新增英语界面，可在全局设置的语言页面选择简体中文、English 或跟随系统。切换后立即生效并保留当前栏目与已有资料，语言选择纳入全部配置的导入与导出。大版本更新用于底层代码变动或易用性更新。</string>
     <string name="module_transfer_title">应用资料导入与导出</string>
     <string name="module_export_short">导出</string><string name="module_import_short">导入</string>
-    <string name="module_transfer_note">各应用资料使用独立 JSON 文件。状态资料包含地点和路线；全局设置包含颜色、语言、时间及应用顺序。导入会覆盖所选应用的对应资料，不导入权限、缓存或运行中的任务。</string>
+    <string name="module_transfer_note">状态等应用及全局设置使用 JSON 文件；音乐、设备通信与色觉模拟器使用包含私有附属文件的 ZIP 资料包。状态资料包含地点和路线；全局设置包含颜色、语言、时间及桌面布局。导入会覆盖所选应用的资料，不导入程序、系统授权、外部歌曲或运行中的任务。</string>
     <string name="module_import_title">导入应用资料</string><string name="module_import_summary">即将覆盖“%1$s”的本机资料。请确认文件来自可信来源。</string><string name="module_exported">应用资料已导出</string></resources>
 

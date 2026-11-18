@@ -34,16 +34,25 @@ public final class DocumentsContract {
 'org/daidai/modules/shared/Texts.java': r'''package org.daidai.modules.shared;public final class Texts {public static String get(android.content.Context c,String key){return key;}}''',
 'org/daidai/modules/music/MusicImportProgress.java': r'''package org.daidai.modules.music;
 import java.io.*;import java.util.*;
-final class MusicImportProgress {final List<String> names=new ArrayList<>();boolean cancel;int checks,cancelAfter=Integer.MAX_VALUE;void check()throws InterruptedIOException{if(cancel||++checks>=cancelAfter||Thread.currentThread().isInterrupted())throw new InterruptedIOException();}void file(String name,int done,int total)throws InterruptedIOException{check();names.add(name);}}''',
+final class MusicImportProgress {
+ final List<String> names=new ArrayList<>();final MusicImportReport report=new MusicImportReport(MusicImportReport.Mode.FOLDER);MusicImportReport.Phase current=MusicImportReport.Phase.SCAN;boolean cancel;int checks,cancelAfter=Integer.MAX_VALUE;
+ void check()throws InterruptedIOException{if(cancel||++checks>=cancelAfter||Thread.currentThread().isInterrupted())throw new InterruptedIOException();}
+ void file(String name,int done,int total)throws InterruptedIOException{check();names.add(name);}
+ void phase(MusicImportReport.Phase phase)throws InterruptedIOException{check();current=phase;}
+ void success(String source,String stored,String name){report.add(new MusicImportReport.Entry(name,source,stored,current,MusicImportReport.Result.SUCCESS,""));}
+ void skipped(String source,String name){report.add(new MusicImportReport.Entry(name,source,source,current,MusicImportReport.Result.SKIPPED,"music_import_reason_non_audio"));}
+ void failed(String source,String stored,String name,Throwable error){report.add(new MusicImportReport.Entry(name,source,stored,current,MusicImportReport.Result.FAILED,MusicImportReport.reason(error)));}
+}''',
 # The traversal/copy unit has a catalogue boundary; Android metadata decoding is not emulated.
 'org/daidai/modules/music/MusicLibrary.java': r'''package org.daidai.modules.music;
 import android.content.Context;import android.net.Uri;import android.provider.DocumentsContract;import java.util.*;
 public final class MusicLibrary {
- static int metadataReads;static final ArrayList<Track> saved=new ArrayList<>();
+ static int metadataReads;static final Set<String> denied=new HashSet<>();static final ArrayList<Track> saved=new ArrayList<>();
  public static final class Track {public final String uri,title;Track(String u,String n){uri=u;title=n;}}
  static String identity(String raw){try{return Uri.parse(raw).getAuthority()+":"+DocumentsContract.getDocumentId(Uri.parse(raw));}catch(Exception e){return raw;}}
  public static ArrayList<Track> catalogue(Context c){return new ArrayList<>(saved);}public static boolean needsMetadataRefresh(Context c,Track t){return true;}
  public static Track readMetadata(Context c,Uri u){metadataReads++;return new Track(u.toString(),title(c,u));}
+ public static Track readMetadataChecked(Context c,Uri u,MusicImportProgress progress)throws java.io.IOException{if(progress!=null)progress.phase(MusicImportReport.Phase.METADATA);if(denied.contains(DocumentsContract.getDocumentId(u)))throw new java.io.FileNotFoundException();return readMetadata(c,u);}
  public static String title(Context c,Uri u){try(android.database.Cursor row=c.getContentResolver().query(u,new String[]{"name"},null,null,null)){return row.moveToFirst()?row.getString(0):"audio";}}
  public static void removeEverywhere(Context c,String uri){}
 }''',
@@ -71,10 +80,26 @@ public final class BulkImportChecks {
   for(int i=0;i<600;i++)p.add("root/song"+i,i%2==0?"root":"root/sub","song"+i+".mp3","audio/mpeg");
   p.add("root/art","root","art.jpg","audio/mpeg");p.add("root/lyrics","root","song.lrc","text/plain");p.add("root/readme","root/sub","notes.txt","text/plain");
   MusicFolder.ScanCache cache=new MusicFolder.ScanCache();MusicImportProgress progress=new MusicImportProgress();
-  ArrayList<MusicLibrary.Track> songs=MusicFolder.loadChecked(c,tree,progress,cache);ok(songs.size()==600,"mixed folder has only 600 audio files");ok(progress.names.size()==600&&progress.names.contains("song599.mp3"),"filenames reported for every song");ok(MusicLibrary.metadataReads==600,"read each new song once");
+  ArrayList<MusicLibrary.Track> songs=MusicFolder.loadChecked(c,tree,progress,cache);ok(songs.size()==600,"mixed folder has only 600 audio files");ok(progress.names.size()==603&&progress.names.contains("song599.mp3"),"filenames reported for every song");ok(MusicLibrary.metadataReads==600,"read each new song once");
+  ok(progress.report.count(MusicImportReport.Result.SUCCESS)==600&&progress.report.count(MusicImportReport.Result.SKIPPED)==3,"report includes every accepted and skipped file");
+  ok(progress.report.failures().isEmpty(),"successful scan has no retry candidates");
   MusicLibrary.saved.addAll(songs);MusicFolder.loadChecked(c,tree,new MusicImportProgress(),cache);ok(MusicLibrary.metadataReads==600,"unchanged missing optional tags are cached");
   p.docs.get("root/song0").modified++;MusicFolder.loadChecked(c,tree,new MusicImportProgress(),cache);ok(MusicLibrary.metadataReads==601,"changed file refreshed alone");
   MusicImportProgress cancel=new MusicImportProgress();cancel.cancel=true;try{MusicFolder.loadChecked(c,tree,cancel,cache);throw new AssertionError("scan cancellation");}catch(InterruptedIOException expected){checks++;}
+  MusicLibrary.denied.add("root/song9");p.docs.get("root/song9").modified++;MusicImportProgress failed=new MusicImportProgress();
+  ArrayList<MusicLibrary.Track> partialRows=MusicFolder.loadChecked(c,tree,failed,cache);
+  ok(partialRows.size()==599&&failed.report.failures().size()==1,"single inaccessible audio does not abort remaining songs");
+  MusicImportReport.Entry failedFile=failed.report.failures().get(0);ok(failedFile.name.equals("song9.mp3")&&failedFile.reason.equals("music_import_reason_missing"),"failed filename and normalized reason are retained");
+  MusicLibrary.denied.clear();int metadataBefore=MusicLibrary.metadataReads;MusicImportProgress retried=new MusicImportProgress();
+  ArrayList<MusicLibrary.Track> retriedRows=MusicFolder.retryChecked(c,tree,failed.report.failures(),retried,cache);
+  ok(retriedRows.size()==1&&MusicLibrary.metadataReads==metadataBefore+1,"retry reparses only the failed song");
+  ok(retried.report.count(MusicImportReport.Result.SUCCESS)==1&&retried.report.failures().isEmpty(),"retry success replaces failure state");
+  ok(MusicImportReport.reason(new IOException(new SecurityException("private provider path"))).equals("music_import_reason_permission"),"permission diagnostics do not leak raw exception text");
+  ok(MusicImportReport.reason(new IOException()).equals("music_import_reason_io"),"I/O failures have a distinct cause");
+  MusicImportReport duplicateFailures=new MusicImportReport(MusicImportReport.Mode.COPY);
+  duplicateFailures.add(new MusicImportReport.Entry("original","content://source/document/a","content://files/document/copy",MusicImportReport.Phase.METADATA,MusicImportReport.Result.FAILED,"music_import_reason_read"));
+  duplicateFailures.add(new MusicImportReport.Entry("same","content://source/document/a","content://files/document/copy",MusicImportReport.Phase.ARTWORK,MusicImportReport.Result.FAILED,"music_import_reason_read"));
+  ok(duplicateFailures.failures().size()==1&&duplicateFailures.failures().get(0).retryUri.endsWith("/copy"),"retry uses a completed target copy once");
   int before=p.directories;MusicImporter.Batch batch=new MusicImporter.Batch(c,new MusicImportProgress());int indexed=p.directories;
   ok(indexed-before==3,"destination directories enumerated once per batch");
   for(int i=0;i<120;i++){p.add("incoming"+i,"incoming","same.mp3","audio/mpeg");batch.copy(Uri.parse("content://files/document/incoming"+i));}
@@ -104,7 +129,7 @@ def run():
         path.write_text(contents, encoding='utf8')
         sources.append(path)
     module = ROOT / 'modules/embedded/music/org/daidai/modules/music'
-    sources += [module / name for name in ('MusicFolder.java', 'MusicImporter.java', 'MusicAudioFiles.java', 'MusicRows.java')]
+    sources += [module / name for name in ('MusicFolder.java', 'MusicImporter.java', 'MusicAudioFiles.java', 'MusicRows.java', 'MusicImportReport.java')]
     arguments = ['-encoding','UTF-8','--release','8','-d',str(OUT),*map(str,sources)]
     argfile = OUT / 'sources.args'
     argfile.write_text('\n'.join('"'+s.replace('\\','/')+'"' for s in arguments), encoding='utf8')

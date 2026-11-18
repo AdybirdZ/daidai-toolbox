@@ -1,4 +1,5 @@
-"""Exercise an APK upgrade and data export under the old UID, then import in the host."""
+"""Historical pre-3.0.0-2 test; use its matching source checkout only."""
+raise SystemExit("The standalone music migration feature was removed in 3.0.0. Run this historical test from the pre-3.0.0-2 checkout.")
 from pathlib import Path
 import shutil,subprocess,zipfile
 ws=Path(__file__).resolve().parents[3];src=ws/'source';sdk=ws/'tools/android-sdk';bt=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar';jdk=Path(shutil.which('javac')).parent;out=ws/'work/qa/music-migration';out.mkdir(parents=True,exist_ok=True)

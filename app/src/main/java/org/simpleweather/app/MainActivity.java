@@ -19,12 +19,14 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class MainActivity extends Activity {
+    @Override public android.content.res.Resources getResources(){return ModuleAssets.resources(this,super.getResources());}
+    @Override public android.content.res.AssetManager getAssets(){return getResources().getAssets();}
     @Override protected void attachBaseContext(android.content.Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     public static final int TITLE=0xFF010102;
     public static final int BG=0xFFF5F7FB, WHITE=Color.WHITE, INK=0xFF20324C, MUTED=0xFF718097, BLUE=0xFF246BCE, PALE=0xFFEAF2FF;
     private final ExecutorService workers=Executors.newFixedThreadPool(2);
     private final Handler main=new Handler(Looper.getMainLooper());
-    private WeatherApi api;
+    private WeatherClient api;
     private final Set<String> inFlight=new HashSet<>();
     private final Map<String,Long> attempts=new HashMap<>();
     public WeatherStore store;
@@ -70,7 +72,7 @@ public class MainActivity extends Activity {
         getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         if(Build.VERSION.SDK_INT>=29)getWindow().setNavigationBarContrastEnforced(false);
-        store=new WeatherStore(this);api=new WeatherApi(store);catalog=store.catalog();
+        store=new WeatherStore(this);catalog=store.catalog();
         if(catalog.isEmpty()) {
             try {catalog.add(new City(new JSONObject(UiText.raw("identity_main_001"))));}catch(Exception ignored){}
         }
@@ -83,7 +85,7 @@ public class MainActivity extends Activity {
             String[][] renamed={{UiText.raw("identity_main_005"),UiText.raw("identity_astronomy_017")},{UiText.raw("identity_main_006"),UiText.raw("identity_astronomy_018")},{UiText.raw("identity_main_007"),UiText.raw("identity_astronomy_019")},{UiText.raw("identity_main_008"),UiText.raw("identity_astronomy_020")},{UiText.raw("identity_main_009"),UiText.raw("identity_astronomy_021")},{UiText.raw("identity_main_010"),UiText.raw("identity_astronomy_030")},{UiText.raw("identity_main_011"),UiText.raw("identity_astronomy_031")}};
             SharedPreferences.Editor e=preferences.edit();for(String[] pair:renamed){String oldKey="astro_deep_"+pair[0],newKey="astro_deep_"+pair[1];if(preferences.contains(oldKey)&&!preferences.contains(newKey))e.putBoolean(newKey,preferences.getBoolean(oldKey,true));if(preferences.getString("astro_selected","").equals(pair[0]))e.putString("astro_selected",pair[1]);e.remove(oldKey);}e.putInt("deep_names_schema",1).apply();
         }
-        initialScreenState=state;apps=new AppModules(this);apps.initialize();
+        initialScreenState=state;apps=new AppModules(this);apps.reconcile();apps.initialize();ModuleAssets.invalidate();catalog=store.catalog();
         background=android.graphics.BitmapFactory.decodeFile(new java.io.File(getFilesDir(),"background.jpg").getPath());
         if(state==null&&getIntent().getBooleanExtra("open_todo",false))preferences.edit().putInt("last_tab",7).putBoolean("tab_show_7",true).apply();
         if(state==null&&getIntent().getBooleanExtra("open_location",false))preferences.edit().putInt("last_tab",2).putBoolean("tab_show_2",true).apply();
@@ -93,11 +95,12 @@ public class MainActivity extends Activity {
         if(state==null&&getIntent().getBooleanExtra("open_location",false))tab=2;
         if(state==null&&getIntent().getBooleanExtra("open_todo",false))tab=7;
         if(getIntent().getBooleanExtra("configuration_applied",false)){tab=-1;getIntent().removeExtra("configuration_applied");}
-        switchTab(tab);if(tab==0)load(false);
+        switchTab(tab);if(tab==0)load(false);LauncherScreen.openRequested(this,getIntent());
 
 
-        if(reopenSettings>0){int level=reopenSettings;reopenSettings=0;new SettingsScreen(this).settingsPath(level==2);}
-        if(preferences.getInt("seen_version",0)<versionCode())main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",versionCode()).apply();}},700);
+        boolean languageReopen=reopenSettings>0;if(languageReopen){int level=reopenSettings;reopenSettings=0;new SettingsScreen(this).settingsPath(level==2);}
+        if(!languageReopen)UiSession.restore(this,state,id->{int index=Arrays.asList(AppModules.IDS).indexOf(id);return index<0?null:screen(index);});
+        if(state==null&&preferences.getInt("seen_version",0)<versionCode())main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",versionCode()).apply();}},700);
     }
     public int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
     public LinearLayout column() {LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;}
@@ -165,26 +168,31 @@ public class MainActivity extends Activity {
     public void updateReadingValues(Runnable change){if(pageScroll instanceof ReadingScrollView)((ReadingScrollView)pageScroll).updateValues(change);else change.run();}
     public void refreshScreen(){switchTab(tab);}
     public void installedAppsChanged(){if(tab==-2&&appStoreScreen!=null)appStoreScreen.installedChanged();else{pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();refreshScreen();}}
+    public void prepareApplicationDataChange(String id){if(id.equals("weather")){cacheGeneration++;searchVersion++;loading=false;data=null;notice="";inFlight.clear();}}
+    public void applicationDataChanged(String id,boolean erased){if(id.equals("weather")){if(erased){store=new WeatherStore(this);catalog=store.catalog();try{City fallback=new City(new JSONObject(UiText.raw("identity_main_001")));city=store.selected(catalog.isEmpty()?fallback:catalog.get(0));}catch(Exception e){android.util.Log.e("WeatherStore","Cannot reset selected location",e);}}data=store.cached(city);notice="";}if(tab>=0&&AppModules.IDS[tab].equals(id))refreshScreen();}
     private void pageHeader(){
         TextView title=text(tab<0?getString(R.string.app_name):getString(R.string.app_name)+" · "+tabName(tab),25,TITLE,true);body.addView(title);gap(body,7);body.addView(text(getString(R.string.app_footer),12,MUTED,false));gap(body,12);
         if(tab<0)return;LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->{ScreenHandle s=screen(1);if(s!=null)s.call("addCourse");}));}body.addView(actions);gap(body,16);
     }
     public void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
-    private void renderNavigation(){navigation.removeAllViews();navigation.setVisibility(tab==-1?View.GONE:View.VISIBLE);if(tab!=-1){navigation.addView(button(getString(R.string.launcher_home),false,()->switchTab(-1)),new LinearLayout.LayoutParams(0,dp(48),1));gapHorizontal(navigation,8);navigation.addView(button(getString(R.string.launcher_store),false,()->switchTab(-2)),new LinearLayout.LayoutParams(0,dp(48),1));}}
+    private void renderNavigation(){navigation.removeAllViews();navigation.setVisibility(tab==-1?View.GONE:View.VISIBLE);if(tab!=-1){navigation.addView(button(getString(R.string.launcher_home),false,()->switchTab(-1)),new LinearLayout.LayoutParams(0,dp(48),1));}}
     private ScreenHandle screen(int id){
         if(id<0||id>=8||!apps.installed(AppModules.IDS[id]))return null;
         ScreenHandle value=screens.get(id);if(value!=null)return value;
-        try{value=apps.create(id,this,city,data,astronomyTime,this::showAstronomy);screens.put(id,value);if(id==1)schedule=value;if(id==2)gps=value;if(id==3)maps=value;if(id==5){earthquakes=value;if(initialScreenState!=null){value.call("restoreState",initialScreenState);initialScreenState=null;}}if(id==6)randomChoice=value;if(id==7)todo=value;return value;}catch(Exception e){android.util.Log.e("AppModules","Cannot create "+AppModules.IDS[id],e);toast(getString(R.string.module_open_failed));return null;}
+        try{value=apps.create(id,this,city,data,astronomyTime,this::showAstronomy);screens.put(id,value);if(id==1)schedule=value;if(id==2)gps=value;if(id==3)maps=value;if(id==5){earthquakes=value;if(initialScreenState!=null){value.call("restoreState",initialScreenState);initialScreenState=null;}}if(id==6)randomChoice=value;if(id==7)todo=value;return value;}catch(Throwable e){moduleFailed(id,e);return null;}
     }
-    public void releaseModule(String id){int n=Arrays.asList(AppModules.IDS).indexOf(id);ScreenHandle s=screens.remove(n);if(s!=null){s.call("flush");s.call("pause");s.call("destroy");}if(n==2){LocationService.stop(this);gps=null;}if(n==1)schedule=null;if(n==3)maps=null;if(n==5)earthquakes=null;if(n==6)randomChoice=null;if(n==7)todo=null;}
+    public void releaseModule(String id){ModuleLaunch.cancel(this,id);int n=Arrays.asList(AppModules.IDS).indexOf(id);ScreenHandle s=screens.remove(n);if(s!=null)for(String hook:new String[]{"flush","pause","destroy"})try{s.call(hook);}catch(Throwable e){android.util.Log.w("AppModules","Cannot stop "+id,e);}if(n==0)api=null;if(n==2){LocationService.stop(this);gps=null;}if(n==1)schedule=null;if(n==3)maps=null;if(n==5)earthquakes=null;if(n==6)randomChoice=null;if(n==7)todo=null;}
+    private void moduleFailed(int index,Throwable failure){String id=AppModules.IDS[index];android.util.Log.e("AppModules","Cannot open "+id,failure);releaseModule(id);boolean recovered=false;try{recovered=apps.recoverPrevious(id);}catch(Exception e){android.util.Log.e("AppModules","Cannot recover "+id,e);}toast(getString(recovered?R.string.module_recovered:R.string.module_open_failed));main.post(()->{if(!dead)launcher();});}
+    private void renderModule(int id,boolean mapReload){ModuleLaunch.begin(this,AppModules.IDS[id]);ScreenHandle s=screen(id);if(s==null)return;try{if(id==3)s.call("render",mapReload);else s.call("render");View rendered=body;ModuleLaunch.observe(this,AppModules.IDS[id],rendered,()->tab==id&&body==rendered);}catch(Throwable e){moduleFailed(id,e);}}
     public void launcher(){switchTab(-1);}
     private void showLauncher(){startScreen();new LauncherScreen(this).render();}
 
     public LinearLayout card() {LinearLayout c=column();c.setPadding(dp(18),dp(20),dp(18),dp(18));c.setBackground(shape(WHITE,24));body.addView(c,lp(-1,-2));return c;}
-    private void showWeather(){ScreenHandle w=screen(0);if(w!=null)w.call("render");}
+    private void showWeather(){renderModule(0,false);}
 
     public void load(boolean force) {
         if(dead)return;
+        if(!apps.installed("weather")){toast(getString(R.string.cross_weather_missing));return;}
         String key=city.key();WeatherData cache=store.cached(city);
         if(inFlight.contains(key)){toast(UiText.get("earthquake_082"));return;}
         long now=System.currentTimeMillis();
@@ -194,7 +202,7 @@ public class MainActivity extends Activity {
         attempts.put(key,now);inFlight.add(key);loading=true;notice="";if(weatherVisible())showWeather();final City requested=city;final int generation=cacheGeneration;
         workers.execute(()->{
             WeatherData received=null;String error=null;
-            try {received=new WeatherData(api.forecast(requested),System.currentTimeMillis());}
+            try {received=new WeatherData(weatherClient().forecast(requested),System.currentTimeMillis());}
             catch(Exception e){error=e instanceof java.io.IOException?e.getMessage():UiText.get("main_036");if(error==null||!error.matches(".*[\\u4e00-\\u9fff].*"))error=UiText.get("main_037");}
             final WeatherData result=received;final String failure=error;
             main.post(()->{if(dead)return;inFlight.remove(key);if(generation!=cacheGeneration){loading=inFlight.contains(city.key());if(weatherVisible())showWeather();return;}if(result!=null)store.save(requested,result);if(!city.key().equals(key))return;loading=false;
@@ -203,10 +211,33 @@ public class MainActivity extends Activity {
             });
         });
     }
+    private WeatherClient weatherClient()throws Exception {
+        if(api==null)api=(WeatherClient)Class.forName("org.simpleweather.app.WeatherApi",true,ModuleRuntime.loader(this,"weather")).getConstructor(WeatherClient.RequestPolicy.class).newInstance(store);
+        return api;
+    }
+    private void manualReferenceCity(){
+        LinearLayout fields=column();fields.setPadding(dp(18),dp(8),dp(18),dp(8));
+        EditText longitude=new EditText(this),latitude=new EditText(this);
+        longitude.setInputType(android.text.InputType.TYPE_CLASS_NUMBER|android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL|android.text.InputType.TYPE_NUMBER_FLAG_SIGNED);
+        latitude.setInputType(longitude.getInputType());longitude.setSingleLine(true);latitude.setSingleLine(true);
+        longitude.setHint(getString(R.string.cross_longitude));latitude.setHint(getString(R.string.cross_latitude));
+        longitude.setText(Double.toString(city.longitude));latitude.setText(Double.toString(city.latitude));
+        fields.addView(longitude,lp(-1,56));gap(fields,10);fields.addView(latitude,lp(-1,56));gap(fields,12);
+        TextParagraphs.append(this,fields,getString(R.string.cross_reference_note),13,MUTED);
+        AlertDialog dialog=new ToolDialog(this).setTitle(getString(R.string.cross_reference_title)).setView(fields).setPositiveButton(getString(R.string.action_save),null).setNegativeButton(getString(R.string.action_cancel),null).create();
+        dialog.setOnShowListener(v->dialog.getButton(-1).setOnClickListener(b->{try{
+            double lon=Double.parseDouble(longitude.getText().toString()),lat=Double.parseDouble(latitude.getText().toString());
+            if(!Double.isFinite(lon)||!Double.isFinite(lat)||lon< -180||lon>180||lat< -90||lat>90)throw new IllegalArgumentException();
+            City next=new City(new JSONObject().put("id",0).put("name",getString(R.string.cross_reference_title)).put("latitude",lat).put("longitude",lon).put("timezone",java.time.ZoneId.systemDefault().getId()));
+            store.select(next);city=next;data=store.cached(next);dialog.dismiss();switchTab(tab);
+        }catch(Exception e){toast(getString(R.string.cross_coordinates_invalid));}}));dialog.show();
+    }
+    private boolean clearEarthquakeFiles(){File directory=new File(getFilesDir(),"earthquake_cache");File[] files=directory.listFiles();boolean ok=true;if(files!=null)for(File f:files)if(f.isFile())ok=f.delete()&&ok;return ok;}
     private void choose(City selected) {
         hideKeyboard();city=selected;store.select(city);data=store.cached(city);notice="";loading=inFlight.contains(city.key());switchTab(tab);if(!loading)load(false);
     }
     public void showPicker() {
+        if(!apps.installed("weather")){manualReferenceCity();return;}
         picking=true;searchVersion++;startScreen();
         LinearLayout heading=row();heading.addView(text(UiText.get("main_039"),25,TITLE,true));spacer(heading);heading.addView(button(UiText.get("main_040"),false,()->{hideKeyboard();switchTab(tab);}));body.addView(heading);gap(body,10);
         body.addView(text(UiText.get("main_041"),13,MUTED,false));gap(body,18);
@@ -241,7 +272,7 @@ public class MainActivity extends Activity {
         if(search==null)return;final String query=search.getText().toString().trim();if(query.length()<2){toast(UiText.get("main_050"));return;}
         final int version=++searchVersion;hideKeyboard();results.removeAllViews();results.addView(text(UiText.get("main_051")+query+"”…",14,MUTED,false));
         workers.execute(()->{
-            List<City> found=new ArrayList<>();String failure=null;try{found=api.search(query);}catch(Exception e){failure=UiText.get("main_052");}
+            List<City> found=new ArrayList<>();String failure=null;try{found=weatherClient().search(query);}catch(Exception e){failure=UiText.get("main_052");}
             final List<City> list=new ArrayList<>();
             for(City c:catalog)if(c.matches(query))addUniquePlace(list,c);
             for(City c:found)addUniquePlace(list,c);
@@ -253,7 +284,7 @@ public class MainActivity extends Activity {
     }
     private void addUniquePlace(List<City> list,City candidate){candidate=City.resolve(catalog,candidate);if(candidate.excludedAdministrativeArea())return;for(City existing:list)if(existing.samePlace(candidate))return;list.add(candidate);}
     public boolean weatherVisible(){return tab==0&&!picking;}
-    public void switchTab(int next){hideKeyboard();for(ScreenHandle s:screens.values())s.call("pause");if(next!=2&&gps!=null)gps.call("stopForNavigation");if(next>=0&&!apps.installed(AppModules.IDS[next]))next=-1;tab=next;picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==-1){showLauncher();return;}if(next==-2){startScreen();appStoreScreen=new AppStoreScreen(this);appStoreScreen.render();return;}if(next==0){showWeather();load(false);return;}if(next==4){ScreenHandle old=screens.remove(4);if(old!=null)old.call("destroy");}startScreen();ScreenHandle s=screen(next);if(s!=null){if(next==3)s.call("render",!deferMapReload);else s.call("render");}deferMapReload=false;}
+    public void switchTab(int next){hideKeyboard();for(ScreenHandle s:screens.values())s.call("pause");if(next!=2&&gps!=null)gps.call("stopForNavigation");ModuleLaunch.leave(this);if(next>=0&&!apps.installed(AppModules.IDS[next]))next=-1;tab=next;picking=false;preferences.edit().putInt("last_tab",tab).apply();if(next==-1){showLauncher();return;}if(next==-2){startScreen();appStoreScreen=new AppStoreScreen(this);appStoreScreen.render();return;}if(next==0){showWeather();load(false);return;}if(next==4){ScreenHandle old=screens.remove(4);if(old!=null)old.call("destroy");}startScreen();renderModule(next,!deferMapReload);deferMapReload=false;}
 
     public void official(String title,String url){Intent i=new Intent(this,OfficialPageActivity.class);i.putExtra("title",title);i.putExtra("url",url);startActivity(i);}
     private void showAstronomy(Instant at){pendingScrollY=pageScroll==null?0:pageScroll.getScrollY();astronomyTime=at;switchTab(4);}
@@ -295,8 +326,10 @@ public class MainActivity extends Activity {
     }
     public void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
-        updateEntry(c,"pre-3.0.0-3",getString(R.string.changes_pre3_3));
-        updateEntry(c,"pre-3.0.0-2",getString(R.string.changes_pre3_2));
+        updateEntry(c,getString(R.string.update_300_title),getString(R.string.update_300_detail));
+        updateEntry(c,getString(R.string.update_pre3004_title),getString(R.string.changes_pre3_4));
+        updateEntry(c,getString(R.string.update_pre3003_title),getString(R.string.changes_pre3_3));
+        updateEntry(c,getString(R.string.update_pre3002_title),getString(R.string.changes_pre3_2));
         updateEntry(c,getString(R.string.update_pre3001_title),getString(R.string.update_pre3001_detail));
         updateEntry(c,getString(R.string.update_221_title),getString(R.string.update_221_detail));
         updateEntry(c,getString(R.string.update_220_title),getString(R.string.update_220_detail));
@@ -353,7 +386,7 @@ public class MainActivity extends Activity {
         cacheGeneration++;searchVersion++;data=null;notice="";
         deferMapReload=tab==3;
         if(maps!=null){maps.call("destroy");maps=null;screens.remove(3);}
-        boolean filesCleared=store.clearCache() & (earthquakes==null?new EarthquakeCache(getFilesDir()).clear():Boolean.TRUE.equals(earthquakes.call("clear")));
+        boolean filesCleared=store.clearCache() & (earthquakes==null?clearEarthquakeFiles():Boolean.TRUE.equals(earthquakes.call("clear")));
         android.webkit.WebView web=new android.webkit.WebView(this);web.clearCache(true);web.clearHistory();web.destroy();
         android.webkit.WebStorage.getInstance().deleteAllData();
         android.webkit.CookieManager.getInstance().removeAllCookies(removed->{android.webkit.CookieManager.getInstance().flush();if(!dead){refreshScreen();done.run();toast(filesCleared?UiText.get("main_059"):UiText.get("main_060"));}});
@@ -363,14 +396,14 @@ public class MainActivity extends Activity {
     public String cacheBytesText(){long n=cacheBytes();if(n<1024)return n+" B";if(n<1024*1024)return String.format(Locale.ROOT,"%.1f KiB",n/1024.0);if(n<1024L*1024*1024)return String.format(Locale.ROOT,"%.2f MiB",n/1024.0/1024.0);return String.format(Locale.ROOT,"%.2f GiB",n/1024.0/1024.0/1024.0);}
     public void about() {
         LinearLayout content=column();content.setPadding(dp(22),dp(8),dp(22),dp(10));
-        EarthquakeInfo.paragraph(this,content,getString(R.string.about_version,versionName()));
-        EarthquakeInfo.paragraph(this,content,UiText.get("main_061"));
-        EarthquakeInfo.paragraph(this,content,UiText.get("main_062"));
-        EarthquakeInfo.paragraph(this,content,getString(R.string.city_sources));
-        EarthquakeInfo.paragraph(this,content,getString(R.string.todo_local_note));
-        EarthquakeInfo.append(this,content);
+        TextParagraphs.append(this,content,getString(R.string.about_version,versionName()),14,INK);
+        TextParagraphs.append(this,content,UiText.get("main_061"),14,INK);
+        TextParagraphs.append(this,content,UiText.get("main_062"),14,INK);
+        TextParagraphs.append(this,content,getString(R.string.city_sources),14,INK);
+        TextParagraphs.append(this,content,getString(R.string.todo_local_note),14,INK);
+        FeatureAccess.earthquakeInfo(this,content,false);
         link(content,UiText.get("main_063"),"https://open-meteo.com/");link(content,UiText.get("main_064"),"https://open-meteo.com/en/terms");link(content,UiText.get("main_065"),"https://www.geonames.org/");link(content,getString(R.string.city_sources_link),"https://github.com/AdybirdZ/daidai-toolbox/blob/main/docs/CITY-CATALOG.md");link(content,UiText.get("main_066"),"https://creativecommons.org/licenses/by/4.0/");link(content,UiText.get("main_067"),"https://www.nmc.cn/");link(content,UiText.get("main_068"),"https://stjarnhimlen.se/comp/ppcomp.html");link(content,UiText.get("main_069"),"https://developer.android.google.cn/reference/android/location/GnssStatus");link(content,UiText.get("main_070"),"https://developer.android.google.cn/develop/sensors-and-location/sensors/sensors_overview");link(content,UiText.get("main_071"),"https://www.wikidata.org/wiki/Wikidata:Licensing");
-        EarthquakeInfo.links(this,content);
+        FeatureAccess.earthquakeInfo(this,content,true);
         gap(content,10);content.addView(text(UiText.get("main_072"),17,TITLE,true));gap(content,10);content.addView(text(UiText.get("main_073"),14,MUTED,false));gap(content,12);link(content,UiText.get("main_074"),"https://github.com/anyin233/weather-fighter-global");link(content,UiText.get("main_075"),"https://github.com/ShiGuangSchedule/shiguangschedule");link(content,UiText.get("main_076"),"https://github.com/AdybirdZ/daidai-toolbox");
         ScrollView scroll=new ScrollView(this);scroll.addView(content);new ToolDialog(this).setTitle(getString(R.string.about_title)).setView(scroll).setPositiveButton(UiText.get("action_close"),null).show();
     }
@@ -387,15 +420,15 @@ public class MainActivity extends Activity {
     @Override protected void onSaveInstanceState(Bundle state){
         if(randomChoice!=null)randomChoice.call("flush");state.putInt("toolbox_language_settings",reopenSettings);state.putInt("toolbox_tab",tab);state.putInt("toolbox_navigation",navigationOffset);
         state.putInt("toolbox_scroll",pageScroll==null?0:pageScroll.getScrollY());state.putLong("toolbox_astro_time",astronomyTime.toEpochMilli());
-        if(earthquakes!=null)earthquakes.call("saveState",state);super.onSaveInstanceState(state);
+        if(earthquakes!=null)earthquakes.call("saveState",state);UiSession.capture(this,state);super.onSaveInstanceState(state);
     }
-    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(intent.hasExtra("last_tab")){switchTab(intent.getIntExtra("last_tab",-1));}if(intent.getBooleanExtra("open_todo",false)){preferences.edit().putBoolean("tab_show_7",true).apply();switchTab(7);}if(intent.getBooleanExtra("open_location",false)){preferences.edit().putBoolean("tab_show_2",true).apply();switchTab(2);}}
+    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);LauncherScreen.openRequested(this,intent);if(intent.hasExtra("last_tab")){switchTab(intent.getIntExtra("last_tab",-1));}if(intent.getBooleanExtra("open_todo",false)){preferences.edit().putBoolean("tab_show_7",true).apply();switchTab(7);}if(intent.getBooleanExtra("open_location",false)){preferences.edit().putBoolean("tab_show_2",true).apply();switchTab(2);}}
     @Override public void onBackPressed() {if(picking){hideKeyboard();switchTab(tab);}else if(tab!=-1)switchTab(-1);else super.onBackPressed();}
-    @Override protected void onPause(){if(todo!=null)todo.call("pause");if(randomChoice!=null)randomChoice.call("pause");if(earthquakes!=null)earthquakes.call("pause");if(gps!=null)gps.call("pause");if(maps!=null)maps.call("pause");super.onPause();}
-    @Override protected void onResume(){super.onResume();if(appIcons!=null)appIcons.refresh();TodoScheduler.refresh(this,true);ScheduleNotifier.refresh(this,true);if(todo!=null&&tab==7)todo.call("resume");if(randomChoice!=null&&tab==6)randomChoice.call("resume");if(gps!=null&&tab==2)gps.call("resume");if(maps!=null)maps.call("resume");if(earthquakes!=null&&tab==5)earthquakes.call("resume");}
+    @Override protected void onPause(){if(todo!=null)todo.call("pause");if(randomChoice!=null)randomChoice.call("pause");if(earthquakes!=null)earthquakes.call("pause");if(gps!=null)gps.call("pause");if(maps!=null)maps.call("pause");ModuleLaunch.pause(this);super.onPause();}
+    @Override protected void onResume(){super.onResume();if(appIcons!=null)appIcons.refresh();TodoScheduler.refresh(this,true);ScheduleNotifier.refresh(this,true);if(todo!=null&&tab==7)todo.call("resume");if(randomChoice!=null&&tab==6)randomChoice.call("resume");if(gps!=null&&tab==2)gps.call("resume");if(maps!=null)maps.call("resume");if(earthquakes!=null&&tab==5)earthquakes.call("resume");ModuleLaunch.resume(this);}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(gps==null&&(request==41||request==44||request==46||request==47))return;if(request==41)gps.call("permissionResult");else if(request==44)gps.call("notificationPermissionResult");else if(request==45&&earthquakes!=null)earthquakes.call("locationPermissionResult");else if(request==46)gps.call("satellitePermissionResult");else if(request==47)gps.call("placesPermissionResult");else if(request==48&&tab==2)refreshScreen();else if(request==49)TodoScheduler.refresh(this,true);}
     @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(apps!=null&&apps.result(request,result,intent))return;if(request==AppIconSettings.PICK||request==AppIconSettings.CROP){appIcons.result(request,result,intent);return;}if(request==StatusTransfer.EXPORT||request==StatusTransfer.IMPORT){if(gps==null)gps=screen(2);if(gps!=null)gps.call("fileResult",request,result,intent);return;}if(request==ConfigurationTransfer.EXPORT||request==ConfigurationTransfer.IMPORT){configuration.result(request,result,intent);return;}if(request==ModuleTransfer.EXPORT||request==ModuleTransfer.IMPORT){moduleTransfer.result(request,result,intent);return;}if(request==42&&result==RESULT_OK&&intent!=null&&intent.getData()!=null){Intent crop=new Intent(this,BackgroundCropActivity.class);crop.setData(intent.getData());crop.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivityForResult(crop,43);}else if(request==43&&result==RESULT_OK)reloadBackground();}
-    @Override protected void onDestroy(){dead=true;if(todo!=null)todo.call("destroy");if(randomChoice!=null)randomChoice.call("pause");if(gps!=null)gps.call("prepareNextLaunch");if(earthquakes!=null)earthquakes.call("destroy");if(maps!=null)maps.call("destroy");if(gps!=null)gps.call("destroy");main.removeCallbacksAndMessages(null);workers.shutdownNow();super.onDestroy();}
+    @Override protected void onDestroy(){UiSession.release(this);dead=true;if(todo!=null)todo.call("destroy");if(randomChoice!=null)randomChoice.call("pause");if(gps!=null)gps.call("prepareNextLaunch");if(earthquakes!=null)earthquakes.call("destroy");if(maps!=null)maps.call("destroy");if(gps!=null)gps.call("destroy");main.removeCallbacksAndMessages(null);workers.shutdownNow();ModuleLaunch.destroy(this);super.onDestroy();}
 }
 
 

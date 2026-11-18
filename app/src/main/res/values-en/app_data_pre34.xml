@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_data_manager_title">App data and storage</string>
+    <string name="app_data_calculating">Calculating storage usage…</string>
+    <string name="app_data_program_size">App package: %1$s</string>
+    <string name="app_data_personal_size">Data and settings (estimated): %1$s</string>
+    <string name="app_data_cache_size">Cache: %1$s</string>
+    <string name="app_data_clear_cache">Clear this app cache</string>
+    <string name="app_data_cache_cleared">App cache cleared</string>
+    <string name="app_data_failed">Operation incomplete; check storage or try again later</string>
+    <string name="app_data_manager_note">Data size estimates private files and preference values. External audio, shared file-format overhead and system compilation caches are excluded. Clearing cache retains saved data. Retained data can be exported, imported or deleted even when the app is not installed.</string>
+    <string name="app_data_erase_confirm">Stop %1$s and permanently delete its locally saved data, settings, private attachments and cache? The app, external audio and exported files will be retained.</string>
+    <string name="app_data_cache_confirm">Stop %1$s and clear its temporary cache? Saved data and settings will be retained.</string>
+    <string name="app_data_import_attachments">\n\nAttachments: %1$d. Programs, audio and system grants are excluded. Playback and messaging will not start automatically.</string>
+</resources>

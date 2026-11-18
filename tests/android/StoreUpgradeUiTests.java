@@ -1,0 +1,58 @@
+package org.simpleweather.qa;
+
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.view.*;
+import android.widget.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import org.json.*;
+
+/** Exercises production compatibility, transfer tracking and installed-package recovery. */
+public final class StoreUpgradeUiTests extends Instrumentation {
+    private Activity activity;private ClassLoader loader;private int checks;private Bundle args;
+    public void onCreate(Bundle a){super.onCreate(a);args=a;start();}
+    private Class<?> type(String n)throws Exception{return Class.forName("org.simpleweather.app."+n,true,loader);}
+    private Object field(Object o,String n)throws Exception{Field f=o.getClass().getDeclaredField(n);f.setAccessible(true);return f.get(o);}
+    private Object call(Object o,String n,Class<?>[] types,Object...values)throws Exception{Class<?> c=o instanceof Class?(Class<?>)o:o.getClass();Method m=c.getDeclaredMethod(n,types);m.setAccessible(true);return m.invoke(o instanceof Class?null:o,values);}
+    private void ui(Runnable r){AtomicReference<Throwable> e=new AtomicReference<>();runOnMainSync(()->{try{r.run();}catch(Throwable x){e.set(x);}});if(e.get()!=null)throw new RuntimeException(e.get());waitForIdleSync();}
+    private void check(boolean b,String name){if(!b)throw new AssertionError(name);checks++;}
+    private String text(String key){int id=activity.getResources().getIdentifier(key,"string",activity.getPackageName());return activity.getString(id);}
+    private void collect(View v,List<TextView> out){if(v instanceof TextView)out.add((TextView)v);if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)collect(((ViewGroup)v).getChildAt(i),out);}
+    private boolean visible(String value){List<TextView> views=new ArrayList<>();collect(activity.getWindow().getDecorView(),views);for(TextView v:views)if(value.equals(v.getText().toString()))return true;return false;}
+    private InputStream tracked(byte[] bytes,int length,Object task)throws Exception{return (InputStream)call(type("AppModules"),"trackedStream",new Class[]{InputStream.class,long.class,type("AppModules$DownloadTask")},new ByteArrayInputStream(bytes),(long)length,task);}
+    private void consume(InputStream in)throws Exception{try(InputStream input=in){byte[] b=new byte[2];while(input.read(b)!=-1){}}}
+    private boolean rejected(InputStream in){try{consume(in);return false;}catch(Exception expected){return true;}}
+    private Object task()throws Exception{return type("AppModules$DownloadTask").getConstructor().newInstance();}
+    public void onStart(){Bundle result=new Bundle();try{
+        Context c=getTargetContext();String language=args.getString("language","zh-CN");c.getSharedPreferences("toolbox",0).edit().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).commit();loader=c.getClassLoader();
+        activity=startActivitySync(new Intent().setClassName(c,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");Class<?> modules=type("AppModules"),compat=type("ModuleCompatibility");String api=(String)modules.getField("API").get(null);check(api.equals("daidai-toolbox/api-1"),"interface independent of release name");
+        Class<?>[] signature={String.class,String.class,int.class,int.class,int.class,int.class};
+        check((Boolean)call(compat,"accepts",signature,api,api,55,56,26,35),"new compatible host accepts an existing app");
+        check(!(Boolean)call(compat,"accepts",signature,"future-api",api,0,55,26,35),"new interface rejected");
+        check(!(Boolean)call(compat,"accepts",signature,api,api,56,55,26,35),"minimum host requirement checked");
+        check(!(Boolean)call(compat,"accepts",signature,api,api,0,55,36,35),"minimum Android requirement checked");
+        check(!(Boolean)call(compat,"accepts",signature,api,api,-1,55,26,35),"invalid negative requirement rejected");
+        Object transfer=task();consume(tracked(new byte[]{1,2,3,4,5},5,transfer));check(((Long)field(transfer,"received"))==5,"bytes counted on actual production stream");check(((Long)field(transfer,"total"))==5,"advertised total exposed");
+        check(rejected(tracked(new byte[]{1,2,3},4,task())),"truncated transfer rejected");check(rejected(tracked(new byte[]{1,2,3},2,task())),"overlong transfer rejected");
+        Object cancelled=task();InputStream interrupted=tracked(new byte[]{1,2,3},3,cancelled);call(cancelled,"cancel",new Class[]{});check(rejected(interrupted),"cancel stops tracked reads");
+        Object completed=task();Field done=completed.getClass().getField("completed");done.setBoolean(completed,true);call(completed,"cancel",new Class[]{});check(!(Boolean)field(completed,"cancelled"),"committed install cannot be cancelled retrospectively");
+        check((Integer)call(apps,"failureMessage",new Class[]{Throwable.class},new java.net.SocketTimeoutException())==c.getResources().getIdentifier("store_failure_network","string",c.getPackageName()),"timeout explained as network issue");
+        check((Integer)call(apps,"failureMessage",new Class[]{Throwable.class},new IOException("Checksum mismatch"))==c.getResources().getIdentifier("store_failure_integrity","string",c.getPackageName()),"checksum failure distinguished");
+        JSONArray catalog=(JSONArray)call(apps,"bundledCatalog",new Class[]{});JSONObject item=catalog.getJSONObject(0);check((Boolean)call(apps,"compatible",new Class[]{JSONObject.class},item),"bundled listing compatible");JSONObject future=new JSONObject(item.toString()).put("minHostVersionCode",Integer.MAX_VALUE);check(!(Boolean)call(apps,"compatible",new Class[]{JSONObject.class},future),"future host listing disabled");
+        ui(()->{try{call(activity,"switchTab",new Class[]{int.class},-2);}catch(Exception e){throw new RuntimeException(e);}});check(visible(text("store_update_all")),"batch update button visible");check(visible(text("store_details")),"details buttons visible");
+        Object store=field(activity,"appStoreScreen");if(store==null)throw new AssertionError("Store instance missing");
+        int incompatible=(Integer)call(store,"state",new Class[]{JSONObject.class},future);check(incompatible==c.getResources().getIdentifier("store_status_host_update","string",c.getPackageName()),"requires host update status");
+        File original=new File(c.getFilesDir(),"apps/weather.ddapp"),previous=new File(c.getFilesDir(),"apps/weather.previous.ddapp");call(modules,"markLaunchSucceeded",new Class[]{Context.class,String.class},c,"weather");String before=(String)call(modules,"sha",new Class[]{File.class},original);c.getSharedPreferences("toolbox",0).edit().putString("store_recovery_fixture","keep").commit();
+        try(InputStream in=new FileInputStream("/data/local/tmp/internal-apps/weather.ddapp")){call(apps,"install",new Class[]{InputStream.class,String.class,String.class},in,"weather",null);}
+        check(previous.isFile(),"update retains signed previous executable");check((android.system.Os.stat(previous.getPath()).st_mode&0222)==0,"previous executable read-only");call(modules,"inspect",new Class[]{Context.class,File.class,String.class},c,previous,"weather");checks++;
+        call(modules,"beginLaunch",new Class[]{Context.class,String.class},c,"weather");check(c.getSharedPreferences("apps_host",0).getBoolean("launching_weather",false),"launch attempt persisted before execution");
+        check((Boolean)call(modules,"recoverPrevious",new Class[]{Context.class,String.class},c,"weather"),"startup failure restores previous executable");check(before.equals(call(modules,"sha",new Class[]{File.class},original)),"restored previous hash");check(!previous.exists(),"recovery consumes backup atomically");check("keep".equals(c.getSharedPreferences("toolbox",0).getString("store_recovery_fixture","")),"recovery preserves personal preferences");check(!c.getSharedPreferences("apps_host",0).contains("launching_weather"),"launch marker cleared on recovery");
+        try(InputStream in=new FileInputStream("/data/local/tmp/internal-apps/weather.ddapp")){call(apps,"install",new Class[]{InputStream.class,String.class,String.class},in,"weather",null);}check(previous.isFile(),"next update retains another backup");call(modules,"markLaunchSucceeded",new Class[]{Context.class,String.class},c,"weather");check(!previous.exists(),"successful startup releases temporary backup");check(!c.getSharedPreferences("apps_host",0).contains("pending_weather"),"successful startup confirms installed version");
+        Object cancelledDownload=task();call(cancelledDownload,"cancel",new Class[]{});boolean stopped=false;try{call(apps,"download",new Class[]{JSONObject.class,cancelledDownload.getClass()},item,cancelledDownload);}catch(InvocationTargetException e){stopped=e.getCause() instanceof InterruptedIOException;}check(stopped,"cancel before network leaves installation untouched");check(before.equals(call(modules,"sha",new Class[]{File.class},original)),"cancelled transfer retains installed code");
+        result.putString("result","PASS: "+checks+" store upgrade checks ("+language+")");
+    }catch(Throwable e){StringWriter log=new StringWriter();e.printStackTrace(new PrintWriter(log));result.putString("result","FAIL: "+log);}finally{if(activity!=null)ui(()->activity.finish());finish(Activity.RESULT_OK,result);}}
+}

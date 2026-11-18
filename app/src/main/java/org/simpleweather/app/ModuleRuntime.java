@@ -15,17 +15,19 @@ public final class ModuleRuntime {
     private static final Map<String,Set<InternalAppActivity>> PAGES=new HashMap<>();
     private static final Map<String,ModuleServiceBridge> SERVICES=new HashMap<>();
     private static final Set<String> CHANGING=new HashSet<>();
+    static final class Updating extends IOException {Updating(){super("Application is being updated");}}
     private ModuleRuntime(){}
     public static File dataDirectory(Context c,String id){File f=new File(c.getApplicationInfo().dataDir,"files/internal-app-data/"+id);f.mkdirs();return f;}
     public static File packageFile(Context c,String id){return new File(c.getApplicationInfo().dataDir,"files/apps/"+id+".ddapp");}
     public static synchronized ClassLoader loader(Context c,String id)throws Exception{
-        if(CHANGING.contains(id))throw new IOException("Application is being updated");
+        if(CHANGING.contains(id))throw new Updating();
         ClassLoader result=LOADERS.get(id);if(result!=null)return result;
         File file=packageFile(c,id);AppModules.inspect(c,file,id);
         result=new DexClassLoader(file.getAbsolutePath(),c.getCodeCacheDir().getAbsolutePath(),null,ModuleRuntime.class.getClassLoader());LOADERS.put(id,result);return result;
     }
-    static Resources resources(Context c,String id)throws Exception{
-        File file=packageFile(c,id);AppModules.inspect(c,file,id);
+    static synchronized Resources resources(Context c,String id)throws Exception{
+        if(CHANGING.contains(id))throw new Updating();
+        File original=packageFile(c,id);AppModules.inspect(c,original,id);File file=ModuleAssets.resourceFile(c,id);
         PackageInfo info=c.getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),0);
         if(info==null)throw new IOException("Missing resources");
         info.applicationInfo.sourceDir=file.getAbsolutePath();info.applicationInfo.publicSourceDir=file.getAbsolutePath();
@@ -57,7 +59,7 @@ public final class ModuleRuntime {
         if(Looper.myLooper()==Looper.getMainLooper())stop.run();else new Handler(Looper.getMainLooper()).post(stop);
         if(!done.await(10,java.util.concurrent.TimeUnit.SECONDS))throw new IOException("Application could not be stopped");
     }
-    static synchronized void endChange(String id){CHANGING.remove(id);}
+    static synchronized void endChange(String id){CHANGING.remove(id);ModuleAssets.changed(id);}
     public static void stopService(Context c,String id){c.stopService(serviceIntent(c,id));}
     static final class ModuleContext extends ContextWrapper {
         private final String id;private final Resources resources;

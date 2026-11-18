@@ -9,11 +9,12 @@ import android.widget.*;
 /** Apply the optional outline to platform dialog buttons and input regions too. */
 public final class ToolDialog extends AlertDialog.Builder {
     private static final java.util.WeakHashMap<AlertDialog,Boolean> OPEN=new java.util.WeakHashMap<>();
-    public ToolDialog(Context context){super(context);}
-    @Override public AlertDialog create(){return prepare(super.create());}
+    private final UiSession.Route sessionRoute;
+    public ToolDialog(Context context){super(context);sessionRoute=UiSession.inferRoute();}
+    @Override public AlertDialog create(){AlertDialog dialog=prepare(super.create());UiSession.register(dialog,sessionRoute);return dialog;}
     /** Inflate and style before the first measurement; keep caller OnShow validation intact. */
     public static <T extends AlertDialog> T prepare(T dialog){
-        dialog.create();OPEN.put(dialog,true);
+        dialog.create();OPEN.put(dialog,true);UiSession.register(dialog,null);
         Window window=dialog.getWindow();
         if(window!=null)window.setWindowAnimations(0);
         Context context=dialog.getContext();

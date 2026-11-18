@@ -12,15 +12,26 @@ import org.daidai.modules.shared.Ui;
 import org.daidai.modules.shared.Texts;
 import java.util.*;
 import java.util.function.Supplier;
+import org.json.JSONObject;
 
 /** Search edits the library's selection; song-name taps open the library metadata editor. */
 public final class MusicSearchScreen {
     public interface TrackEditor { void open(MusicLibrary.Track track,Runnable saved); }
+    static final class State {
+        String draft="",applied="";
+        MusicSearch.Category category=MusicSearch.Category.TITLE;
+        boolean open;
+        Runnable refresher;
+        void refresh(){if(refresher!=null)refresher.run();}
+        JSONObject json(){JSONObject out=new JSONObject();try{out.put("draft",draft).put("applied",applied).put("category",category.name()).put("open",open);}catch(Exception ignored){}return out;}
+        static State read(JSONObject data){State state=new State();if(data!=null){state.draft=data.optString("draft");state.applied=data.optString("applied");state.open=data.optBoolean("open");try{state.category=MusicSearch.Category.valueOf(data.optString("category"));}catch(Exception ignored){}}return state;}
+    }
     private MusicSearchScreen(){}
     private static String text(Context c,String key,Object...args){return Texts.get(c,key,args);}
     public static Dialog open(Activity activity,Supplier<List<MusicLibrary.Track>> source,Set<String> selection,TrackEditor editor,Runnable returned){
-        return new Session(activity,source,selection,editor,returned).show();
+        return open(activity,source,selection,editor,returned,new State());
     }
+    static Dialog open(Activity activity,Supplier<List<MusicLibrary.Track>> source,Set<String> selection,TrackEditor editor,Runnable returned,State state){return new Session(activity,source,selection,editor,returned,state).show();}
     private static final class Session {
         final Activity activity;
         final Supplier<List<MusicLibrary.Track>> source;
@@ -28,6 +39,7 @@ public final class MusicSearchScreen {
         final TrackEditor editor;
         final Runnable returned;
         final Dialog dialog;
+        final State state;
         final Map<CheckBox,String> checks=new LinkedHashMap<>();
         final Set<String> matches=new LinkedHashSet<>();
         LinearLayout groups;
@@ -37,8 +49,9 @@ public final class MusicSearchScreen {
         String applied="";
         boolean closed,syncing;
         int generation;
-        Session(Activity activity,Supplier<List<MusicLibrary.Track>> source,Set<String> selection,TrackEditor editor,Runnable returned){
+        Session(Activity activity,Supplier<List<MusicLibrary.Track>> source,Set<String> selection,TrackEditor editor,Runnable returned,State state){
             this.activity=activity;this.source=source;selected=selection;this.editor=editor;this.returned=returned;
+            this.state=state;category=state.category;applied=state.applied;
             dialog=new Dialog(activity,android.R.style.Theme_Material_Light_NoActionBar);
         }
         Dialog show(){
@@ -46,15 +59,16 @@ public final class MusicSearchScreen {
             if(android.os.Build.VERSION.SDK_INT>=30){page.setOnApplyWindowInsetsListener((v,i)->{android.graphics.Insets bars=i.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.ime());v.setPadding(Ui.dp(activity,18)+bars.left,Ui.dp(activity,12)+bars.top,Ui.dp(activity,18)+bars.right,Ui.dp(activity,12)+bars.bottom);return i;});}
             page.addView(Ui.text(activity,text(activity,"music_search_title"),22));
             EditText query=Ui.input(page,text(activity,"music_search_input"),android.text.InputType.TYPE_CLASS_TEXT);query.setSingleLine(true);query.setImeOptions(EditorInfo.IME_ACTION_SEARCH);query.setPadding(Ui.dp(activity,12),Ui.dp(activity,10),Ui.dp(activity,12),Ui.dp(activity,10));
+            query.setText(state.draft);query.addTextChangedListener(new android.text.TextWatcher(){public void beforeTextChanged(CharSequence s,int start,int count,int after){}public void onTextChanged(CharSequence s,int start,int before,int count){state.draft=s.toString();}public void afterTextChanged(android.text.Editable e){}});
             LinearLayout actions=Ui.row(page);Button search=Ui.cell(actions,text(activity,"music_search_apply"),()->{}),clear=Ui.cell(actions,text(activity,"music_search_reset"),()->{});
             selectAll=Ui.button(page,text(activity,"music_search_select_matches"),()->{selected.addAll(matches);syncSelection();});
             selectionSummary=Ui.text(activity,"",14);page.addView(selectionSummary);
             page.addView(Ui.text(activity,text(activity,"music_search_category"),15));Button[] categories=new Button[6];String[] keys={"music_search_by_title","music_search_by_composer","music_search_by_arranger","music_search_by_vocalist","music_search_by_rating","music_search_by_bpm"};LinearLayout first=Ui.row(page),second=Ui.row(page);
             summary=Ui.text(activity,"",14);page.addView(summary);groups=Ui.scroll(page);
-            for(int i=0;i<keys.length;i++){final int n=i;categories[i]=Ui.cell(i<3?first:second,text(activity,keys[i]),()->{category=MusicSearch.Category.values()[n];updateButtons(categories,category);render();});}
-            Runnable apply=()->{applied=query.getText().toString().trim();render();};search.setOnClickListener(v->apply.run());clear.setOnClickListener(v->{query.setText("");applied="";render();});query.setOnEditorActionListener((v,id,event)->{if(id==EditorInfo.IME_ACTION_SEARCH){apply.run();return true;}return false;});updateButtons(categories,category);
+            for(int i=0;i<keys.length;i++){final int n=i;categories[i]=Ui.cell(i<3?first:second,text(activity,keys[i]),()->{category=MusicSearch.Category.values()[n];state.category=category;updateButtons(categories,category);render();});}
+            Runnable apply=()->{applied=query.getText().toString().trim();state.applied=applied;render();};search.setOnClickListener(v->apply.run());clear.setOnClickListener(v->{query.setText("");applied="";state.applied="";render();});query.setOnEditorActionListener((v,id,event)->{if(id==EditorInfo.IME_ACTION_SEARCH){apply.run();return true;}return false;});updateButtons(categories,category);
             Ui.button(page,text(activity,"music_search_back"),dialog::dismiss);
-            dialog.setOnDismissListener(d->{closed=true;generation++;checks.clear();if(returned!=null)returned.run();});
+            state.open=true;state.refresher=this::render;dialog.setOnDismissListener(d->{closed=true;state.open=false;state.refresher=null;generation++;checks.clear();if(returned!=null)returned.run();});
             dialog.setContentView(page);render();dialog.show();if(dialog.getWindow()!=null){dialog.getWindow().setLayout(-1,-1);dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);}
             return dialog;
         }
@@ -102,6 +116,6 @@ public final class MusicSearchScreen {
         }
     }
     private static void updateButtons(Button[] buttons,MusicSearch.Category selected){for(int i=0;i<buttons.length;i++)style(buttons[i],MusicSearch.Category.values()[i]==selected);}
-    private static void style(Button button,boolean selected){Context c=button.getContext();GradientDrawable bg=new GradientDrawable();bg.setColor(selected?0xff246bce:0xffedf3fd);bg.setCornerRadius(Ui.dp(c,10));bg.setStroke(Ui.dp(c,1),selected?0xff246bce:0xffdce6f5);button.setBackground(bg);button.setTextColor(selected?Color.WHITE:0xff246bce);}
+    private static void style(Button button,boolean selected){Context c=button.getContext();GradientDrawable bg=new GradientDrawable();bg.setColor(selected?0xff246bce:0xffedf3fd);bg.setCornerRadius(Ui.dp(c,10));bg.setStroke(Ui.dp(c,1),selected?0xff246bce:0xffdce6f5);button.setBackground(new android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(selected?0x33ffffff:0x22246bce),bg,null));button.setTextColor(selected?Color.WHITE:0xff246bce);}
     private static String label(Context c,String key){if(key.equals("missing"))return text(c,"music_search_unset");if(key.startsWith("rating:"))return text(c,"music_search_rating_value",Integer.parseInt(key.substring(7)));if(key.equals("bpm:under100"))return text(c,"music_search_bpm_under100");if(key.equals("bpm:100-130"))return text(c,"music_search_bpm_100_130");if(key.equals("bpm:130-160"))return text(c,"music_search_bpm_130_160");if(key.equals("bpm:over160"))return text(c,"music_search_bpm_over160");String[] parts=key.split(":",2);String language=parts[0].equals("zh")?"music_search_lang_zh":parts[0].equals("en")?"music_search_lang_en":"music_search_lang_other";return text(c,"music_search_language_initial",text(c,language),parts.length>1?parts[1]:"#");}
 }

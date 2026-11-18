@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="launcher_customization">Desktop settings</string>
+  <string name="launcher_edit">Edit desktop</string>
+  <string name="launcher_finish_edit">Finish editing</string>
+  <string name="launcher_new_folder">New folder</string>
+  <string name="launcher_drag_note">Touch and hold an icon, then drag it to another icon to reorder. Tap an app to move it to a folder; touch and hold a folder to manage it. Settings and App store stay at the end.</string>
+  <string name="launcher_drag_folder_note">Touch and hold an icon, then drag it to another icon to reorder this folder. Tap an app to move it to the desktop or another folder.</string>
+  <string name="launcher_move_to_folder">Move to folder</string>
+  <string name="launcher_move_to_desktop">Move to desktop</string>
+  <string name="launcher_pin_shortcut">Add home screen shortcut</string>
+  <string name="launcher_shortcut_requested">Shortcut request sent; confirm it on your system home screen</string>
+  <string name="launcher_shortcut_unsupported">Your system launcher does not support pinning app shortcuts</string>
+  <string name="launcher_shortcut_failed">Could not request the shortcut; check your launcher settings</string>
+  <string name="launcher_shortcut_missing">This app is not installed or is incompatible. Open App store to install a compatible version.</string>
+  <string name="launcher_folder_manage">Manage folders</string>
+  <string name="launcher_folder_empty">No installed apps in this folder</string>
+  <string name="launcher_folder_edit">Edit folder</string>
+  <string name="launcher_folder_delete">Delete folder</string>
+  <string name="launcher_folder_delete_note">Delete this folder? Its apps will return to the desktop. Apps and their data will be retained.</string>
+  <string name="launcher_folder_name">Folder name</string>
+  <string name="launcher_folder_members">Included apps</string>
+  <string name="launcher_folder_members_note">Each app can appear on the desktop or in one folder. Unchecking an existing member returns it to the desktop. Uninstalling retains its assigned location for reinstallation. Empty folders are hidden from the desktop.</string>
+  <string name="launcher_folder_name_invalid">Enter a folder name of 1 to 40 characters</string>
+  <string name="launcher_folder_limit">The limit of 32 folders has been reached</string>
+  <string name="launcher_profile_phone">Phone layout</string>
+  <string name="launcher_profile_tablet">Tablet layout</string>
+  <string name="launcher_icon_size">Icon size: %1$d dp</string>
+  <string name="launcher_columns">Icons per row: %1$d</string>
+  <string name="launcher_text_size">Label size: %1$d sp</string>
+  <string name="launcher_sort_items">Icon and folder order</string>
+  <string name="launcher_customization_note">Phone and tablet layouts are saved separately; the boundary is a smallest available device width of 600 dp. Defaults are 72 dp icons and 14 sp labels, with 3 icons per row on phones and 5 on tablets. Icons and column counts may shrink to fit the available space without overlapping.</string>
+  <string name="launcher_move_up">Move up</string>
+  <string name="launcher_move_down">Move down</string>
+  <string name="launcher_sort_note">Default order: Weather, Timetable, Status, Weather Maps, Astronomy, Earthquakes, Random draw, To-do, Music, Device Messaging, Color Vision Simulator. New folders follow the sortable items; App store and Settings stay last. Uninstalled apps are hidden, retaining their assigned locations.</string>
+  <string name="launcher_no_folders">No folders yet</string>
+</resources>

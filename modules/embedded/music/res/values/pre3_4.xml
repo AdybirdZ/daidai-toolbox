@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_import_phase_scan">正在扫描文件夹…</string>
+    <string name="music_import_phase_copy">正在复制音频…</string>
+    <string name="music_import_phase_metadata">正在读取歌曲资料…</string>
+    <string name="music_import_phase_artwork">正在读取曲绘…</string>
+    <string name="music_import_phase_save">正在保存歌曲资料…</string>
+    <string name="music_import_position">第 %1$d / %2$d 个文件</string>
+    <string name="music_import_slow_operation">当前操作已持续 %1$d 秒。文件提供方或音频解析器可能响应较慢。</string>
+    <string name="music_import_cancelling">正在取消，等待当前系统操作返回…</string>
+    <string name="music_import_results">最近一次导入记录</string>
+    <string name="music_import_no_results">暂无导入记录。</string>
+    <string name="music_import_cancelled_note">操作已取消，已完成的歌曲仍保留。</string>
+    <string name="music_import_warning_count">%1$d 首歌曲的部分资料或曲绘未能读取，已保留可用内容。</string>
+    <string name="music_import_result_success">成功</string>
+    <string name="music_import_result_skipped">跳过</string>
+    <string name="music_import_result_failed">失败</string>
+    <string name="music_import_retry_failed">重试失败项</string>
+    <string name="music_import_diagnostic_note">记录仅保存在本机缓存中，清理缓存会删除记录。重试会复用已完成的音频副本；扫描失败的文件夹需重新扫描。系统文件访问或音频解析操作可能无法立即中断，取消需等待当前操作返回。</string>
+    <string name="music_import_result_empty">此分类暂无记录。</string>
+    <string name="music_import_results_limited">仅显示前 %1$d 条记录；重试仍包含全部失败项。</string>
+    <string name="music_import_reason_permission">未取得文件访问权限</string>
+    <string name="music_import_reason_missing">文件不存在或文件提供方无法打开文件</string>
+    <string name="music_import_reason_cancelled">已取消</string>
+    <string name="music_import_reason_io">文件访问或读写失败</string>
+    <string name="music_import_reason_read">无法读取歌曲资料</string>
+    <string name="music_import_reason_optional">部分资料或曲绘未能读取</string>
+    <string name="music_import_reason_non_audio">非音频文件</string>
+    <string name="music_import_folder_name">歌曲文件夹</string>
+    <string name="music_ui_restoring">正在恢复界面…</string>
+</resources>

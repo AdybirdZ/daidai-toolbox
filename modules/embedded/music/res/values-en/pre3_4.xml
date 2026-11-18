@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_import_phase_scan">Scanning folder…</string>
+    <string name="music_import_phase_copy">Copying audio…</string>
+    <string name="music_import_phase_metadata">Reading track information…</string>
+    <string name="music_import_phase_artwork">Reading artwork…</string>
+    <string name="music_import_phase_save">Saving track information…</string>
+    <string name="music_import_position">File %1$d of %2$d</string>
+    <string name="music_import_slow_operation">This operation has taken %1$d seconds. The file provider or audio parser may be responding slowly.</string>
+    <string name="music_import_cancelling">Cancelling; waiting for the current system operation…</string>
+    <string name="music_import_results">Latest import report</string>
+    <string name="music_import_no_results">No import report is available.</string>
+    <string name="music_import_cancelled_note">The operation was cancelled. Completed tracks have been kept.</string>
+    <string name="music_import_warning_count">Some information or artwork could not be read for %1$d tracks. Available content has been kept.</string>
+    <string name="music_import_result_success">Successful</string>
+    <string name="music_import_result_skipped">Skipped</string>
+    <string name="music_import_result_failed">Failed</string>
+    <string name="music_import_retry_failed">Retry failed items</string>
+    <string name="music_import_diagnostic_note">This report stays in the local cache and is removed when the cache is cleared. Retries reuse completed audio copies. A folder whose scan failed must be scanned again. System file access and audio parsing may not stop immediately; cancellation waits for the current operation to return.</string>
+    <string name="music_import_result_empty">No entries in this category.</string>
+    <string name="music_import_results_limited">Showing the first %1$d entries. Retrying still includes every failed item.</string>
+    <string name="music_import_reason_permission">File access permission is unavailable</string>
+    <string name="music_import_reason_missing">The file is missing or the file provider cannot open it</string>
+    <string name="music_import_reason_cancelled">Cancelled</string>
+    <string name="music_import_reason_io">File access or input/output failed</string>
+    <string name="music_import_reason_read">Track information could not be read</string>
+    <string name="music_import_reason_optional">Some information or artwork could not be read</string>
+    <string name="music_import_reason_non_audio">Not an audio file</string>
+    <string name="music_import_folder_name">Music folder</string>
+    <string name="music_ui_restoring">Restoring the previous view…</string>
+</resources>

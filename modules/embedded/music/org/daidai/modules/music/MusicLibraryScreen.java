@@ -14,6 +14,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import org.daidai.modules.shared.Ui;
 import org.daidai.modules.shared.Texts;
+import org.json.*;
 
 /** Folder-backed songs with independent queue, playlist and favourite references. */
 public final class MusicLibraryScreen {
@@ -21,6 +22,7 @@ public final class MusicLibraryScreen {
     private static final WeakHashMap<Activity,MusicLibraryScreen> INSTANCES=new WeakHashMap<>();
     private final Activity a;
     private Runnable changed;
+    private Consumer<MusicImportReport> retryCopy;
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     private final Handler main=new Handler(Looper.getMainLooper());
     private final ArrayList<Dialog> dialogs=new ArrayList<>();
@@ -28,6 +30,10 @@ public final class MusicLibraryScreen {
     private final LinkedHashSet<String> folderUris=new LinkedHashSet<>(),selected=new LinkedHashSet<>();
     private final HashSet<String> deleting=new HashSet<>();
     private boolean scanning,closed;
+    private boolean suppressNextScan,restoreSearch,restoringEditor;
+    private JSONObject restoredEditor;
+    private EditorSession editorSession;
+    private MusicSearchScreen.State searchState=new MusicSearchScreen.State();
     private int songsGeneration;
     private MusicImportProgress scanProgress;
     private final MusicFolder.ScanCache scanCache=new MusicFolder.ScanCache();
@@ -39,8 +45,12 @@ public final class MusicLibraryScreen {
     private static MusicLibraryScreen get(Activity a,Runnable changed){MusicLibraryScreen screen=INSTANCES.get(a);if(screen==null){screen=new MusicLibraryScreen(a,changed);INSTANCES.put(a,screen);}else if(changed!=null)screen.changed=changed;return screen;}
     private String t(String key,Object...args){return Texts.get(a,key,args);}
     public static View createPage(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);return screen.createContent();}
+    static View createPage(Activity a,Runnable changed,Consumer<MusicImportReport> retry){MusicLibraryScreen screen=get(a,changed);screen.retryCopy=retry;return screen.createContent();}
+    static JSONObject saveUi(Activity a){MusicLibraryScreen screen=INSTANCES.get(a);JSONObject state=new JSONObject();if(screen!=null)try{state.put("filter",screen.filter).put("selected",new JSONArray(screen.selected)).put("folder",new JSONArray(screen.folderUris)).put("search",screen.searchState.json());JSONObject editor=screen.editorSession==null?screen.restoredEditor:screen.editorSession.snapshot();if(editor!=null)state.put("editor",editor);}catch(Exception ignored){}return state;}
+    static void restoreUi(Activity a,JSONObject state){MusicLibraryScreen screen=get(a,null);screen.suppressNextScan=true;if(state==null)return;screen.filter=state.optString("filter",MusicCollections.ALL);JSONArray selected=state.optJSONArray("selected"),folder=state.optJSONArray("folder");if(selected!=null)for(int i=0;i<selected.length();i++)screen.selected.add(selected.optString(i));if(folder!=null)for(int i=0;i<folder.length();i++)screen.folderUris.add(folder.optString(i));screen.searchState=MusicSearchScreen.State.read(state.optJSONObject("search"));screen.restoreSearch=screen.searchState.open;screen.restoredEditor=state.optJSONObject("editor");}
     public static void open(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);screen.dialog(screen.t("library_my_songs"),screen.createContent());}
     public static void refreshFolder(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);screen.scanFolder(()->{screen.renderSongs();screen.notifyChanged();});}
+    static void retryImport(Activity a,MusicImportReport report,Runnable changed){get(a,changed).scanFolder(()->{get(a,changed).renderSongs();get(a,changed).notifyChanged();},true,report);}
     public static void openPlaylists(Activity a,Runnable changed){get(a,changed).chooseViewPlaylist();}
     public static void openFavorites(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);screen.selectFilter(MusicCollections.FAVORITES);}
     public static void edit(Activity a,MusicLibrary.Track track,Runnable changed){get(a,changed).editTrack(track.uri,changed);}
@@ -55,32 +65,35 @@ public final class MusicLibraryScreen {
     private void notifyChanged(){if(changed!=null)changed.run();}
     private void toast(String key){Ui.toast(a,t(key),Toast.LENGTH_SHORT).show();}
 
-    private LinearLayout createContent(){pageRoot=box();LinearLayout first=Ui.row(pageRoot);Ui.cell(first,t("library050_refresh_folder"),()->scanFolder(this::renderSongs));Ui.cell(first,t("music_search"),this::openSearch);LinearLayout second=Ui.row(pageRoot);Ui.cell(second,"♥ "+t("library_favorites"),()->selectFilter(MusicCollections.FAVORITES));Ui.cell(second,t("library_playlists"),this::chooseViewPlaylist);songsHost=Ui.column(a);pageRoot.addView(songsHost);renderSongs();main.post(()->{if(!a.isDestroyed())scanFolder(this::renderSongs);});return pageRoot;}
+    private LinearLayout createContent(){pageRoot=box();LinearLayout first=Ui.row(pageRoot);Ui.cell(first,t("library050_refresh_folder"),()->scanFolder(this::renderSongs));Ui.cell(first,t("music_search"),this::openSearch);LinearLayout second=Ui.row(pageRoot);Ui.cell(second,"♥ "+t("library_favorites"),()->selectFilter(MusicCollections.FAVORITES));Ui.cell(second,t("library_playlists"),this::chooseViewPlaylist);songsHost=Ui.column(a);pageRoot.addView(songsHost);Ui.button(pageRoot,t("music_import_results"),()->MusicImportDiagnostics.open(a,worker,this::retryReport));renderSongs();boolean scan=!suppressNextScan;boolean search=restoreSearch;suppressNextScan=false;restoreSearch=false;main.post(()->{if(!a.isDestroyed()){if(scan)scanFolder(this::renderSongs,false,null);if(search)openSearch();restoreEditor();}});return pageRoot;}
+    private void retryReport(MusicImportReport report){if(report.mode==MusicImportReport.Mode.COPY){if(retryCopy!=null)retryCopy.accept(report);}else scanFolder(()->{renderSongs();notifyChanged();},true,report);}
     private void openSearch(){
         final Dialog[] search={null};
-        search[0]=MusicSearchScreen.open(a,this::visibleTracks,selected,(song,saved)->editTrack(song.uri,saved),()->{dialogs.remove(search[0]);if(!closed)renderSongs();});
+        search[0]=MusicSearchScreen.open(a,this::visibleTracks,selected,(song,saved)->editTrack(song.uri,saved),()->{dialogs.remove(search[0]);if(!closed)renderSongs();},searchState);
         dialogs.add(search[0]);
     }
     private void selectFilter(String value){filter=value;selected.clear();if(pageRoot==null||!pageRoot.isAttachedToWindow()){dialog(t("library_my_songs"),createContent());return;}renderSongs();}
     private String filterName(){return MusicCollections.ALL.equals(filter)?t("music060_all_songs"):MusicCollections.FAVORITES.equals(filter)?t("library_favorites"):filter;}
     private ArrayList<MusicLibrary.Track> tracks(Collection<String> uris){return MusicLibrary.findAll(a,uris);}
     private ArrayList<MusicLibrary.Track> visibleTracks(){if(!MusicCollections.builtIn(filter)&&!MusicCollections.playlistNames(a).contains(filter))filter=MusicCollections.ALL;ArrayList<MusicLibrary.Track> rows=tracks(folderUris);if(!MusicCollections.ALL.equals(filter)){Set<String> allowed=MusicCollections.FAVORITES.equals(filter)?MusicCollections.favorites(a):MusicCollections.playlist(a,filter);rows.removeIf(song->!allowed.contains(song.uri));}return rows;}
-    private void scanFolder(Runnable ready){
+    private void scanFolder(Runnable ready){scanFolder(ready,true,null);}
+    private void scanFolder(Runnable ready,boolean showResults,MusicImportReport retry){
         if(ready!=null)scanCallbacks.add(ready);if(scanning)return;String tree=a.getSharedPreferences("music_module",0).getString("storage_tree_uri","");if(tree.isEmpty()){folderUris.clear();finishScan();return;}scanning=true;
         MusicImportProgress progress=new MusicImportProgress(a);scanProgress=progress;
         worker.execute(()->{
             ArrayList<MusicLibrary.Track> rows=new ArrayList<>();ArrayList<String> canonical=new ArrayList<>();boolean failed=false;
             try{
-                rows=MusicFolder.loadChecked(a,tree,progress,scanCache);progress.saving();MusicLibrary.discover(a,rows);
+                rows=retry==null?MusicFolder.loadChecked(a,tree,progress,scanCache):MusicFolder.retryChecked(a,tree,retry.failures(),progress,scanCache);progress.saving();MusicLibrary.discover(a,rows);
                 ArrayList<String> uris=new ArrayList<>();for(MusicLibrary.Track song:rows)uris.add(song.uri);
                 for(MusicLibrary.Track song:MusicLibrary.findAll(a,uris))canonical.add(song.uri);
             }catch(java.io.InterruptedIOException e){/* User cancellation keeps the existing folder view. */}
             catch(InterruptedException e){Thread.currentThread().interrupt();}
-            catch(Exception e){failed=true;}
+            catch(Exception e){failed=true;progress.failed(tree,tree,t("music_import_folder_name"),e);}
+            if(showResults||progress.report.count(MusicImportReport.Result.FAILED)>0)MusicImportDiagnostics.save(a,progress.report);
             final boolean error=failed;
             main.post(()->{scanning=false;scanProgress=null;progress.close();if(closed||a.isDestroyed())return;
-                if(!progress.cancelled()&&!error){folderUris.clear();folderUris.addAll(canonical);}
-                finishScan();if(error)Ui.note(a,t("library_my_songs"),t("library_folder_failed"));
+                if(!progress.cancelled()&&!error){if(retry==null&&progress.report.count(MusicImportReport.Result.FAILED)==0)folderUris.clear();folderUris.addAll(canonical);}
+                finishScan();if(showResults||error||progress.report.count(MusicImportReport.Result.FAILED)>0)MusicImportDiagnostics.show(a,progress.report,this::retryReport);
             });
         });
     }
@@ -116,18 +129,33 @@ public final class MusicLibraryScreen {
         final LinearLayout names;final ArrayList<EditText> fields=new ArrayList<>();final String role;
         PeopleFields(LinearLayout host,String role,String initial){this.role=role;LinearLayout heading=Ui.row(host);heading.addView(Ui.text(a,MusicCredits.label(a,role),14),new LinearLayout.LayoutParams(0,-2,1));Button plus=Ui.button(heading,"+",()->add("",true));plus.setContentDescription(t("music060_add_person",MusicCredits.label(a,role)));((LinearLayout.LayoutParams)plus.getLayoutParams()).width=Ui.dp(a,48);names=Ui.column(a);host.addView(names);for(String name:MusicPeople.split(initial))add(name,false);}
         void add(String value,boolean focus){LinearLayout row=Ui.row(names);EditText name=input(row,"",value,InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_CAP_WORDS);name.setSingleLine(true);name.setTag("music060_person_"+role);LinearLayout.LayoutParams layout=(LinearLayout.LayoutParams)name.getLayoutParams();layout.width=0;layout.weight=1;fields.add(name);Button remove=Ui.button(row,"×",()->{fields.remove(name);names.removeView(row);});remove.setContentDescription(t("music060_remove_person",MusicCredits.label(a,role)));((LinearLayout.LayoutParams)remove.getLayoutParams()).width=Ui.dp(a,48);if(focus)name.requestFocus();}
+        void restore(JSONArray values){if(values==null)return;fields.clear();names.removeAllViews();for(int i=0;i<values.length();i++)add(values.optString(i),false);}
         String value(){ArrayList<String> names=new ArrayList<>();for(EditText field:fields)names.add(field.getText().toString());return MusicPeople.join(names);}
     }
     private final class TagFields {
         final LinearLayout tags;final ArrayList<EditText> fields=new ArrayList<>();
         TagFields(LinearLayout host,String initial){LinearLayout heading=Ui.row(host);heading.addView(Ui.text(a,t("music_meta_tags"),14),new LinearLayout.LayoutParams(0,-2,1));Button plus=Ui.button(heading,"+",()->add("",true));plus.setContentDescription(t("music070_add_tag"));((LinearLayout.LayoutParams)plus.getLayoutParams()).width=Ui.dp(a,48);tags=Ui.column(a);host.addView(tags);for(String value:MusicTags.split(initial))add(value,false);}
         void add(String value,boolean focus){LinearLayout row=Ui.row(tags);EditText field=input(row,"",value,InputType.TYPE_CLASS_TEXT);field.setSingleLine(true);field.setTag("music070_style_tag");LinearLayout.LayoutParams layout=(LinearLayout.LayoutParams)field.getLayoutParams();layout.width=0;layout.weight=1;fields.add(field);Button remove=Ui.button(row,"×",()->{fields.remove(field);tags.removeView(row);});remove.setContentDescription(t("music070_remove_tag"));((LinearLayout.LayoutParams)remove.getLayoutParams()).width=Ui.dp(a,48);if(focus)field.requestFocus();}
+        void restore(JSONArray values){if(values==null)return;fields.clear();tags.removeAllViews();for(int i=0;i<values.length();i++)add(values.optString(i),false);}
         String value(){ArrayList<String> values=new ArrayList<>();for(EditText field:fields)values.add(field.getText().toString());return MusicTags.join(values);}
     }
     private void editTrack(String uri,Runnable after){String tree=a.getSharedPreferences("music_module",0).getString("storage_tree_uri","");worker.execute(()->{boolean allowed=MusicFolder.contains(a,tree,uri);main.post(()->{if(a.isDestroyed())return;if(allowed)editTrackChecked(uri,after);else Ui.note(a,t("music_edit_metadata"),t("library050_edit_requires_folder"));});});}
-    private void editTrackChecked(String uri,Runnable after){
-        MusicLibrary.Track song=MusicLibrary.find(a,uri);if(song==null)return;LinearLayout b=box();EditText title=input(b,t("music_meta_title"),song.title,InputType.TYPE_CLASS_TEXT);title.setTag("music060_meta_title");PeopleFields composer=new PeopleFields(b,MusicCredits.COMPOSER,song.composer),arranger=new PeopleFields(b,MusicCredits.ARRANGER,song.arranger),vocalist=new PeopleFields(b,MusicCredits.VOCALIST,song.vocalist);EditText notes=input(b,t("music_meta_notes"),song.notes,InputType.TYPE_CLASS_TEXT);TagFields tags=new TagFields(b,song.tags);EditText bpm=input(b,t("music_meta_bpm"),song.bpmText,InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL),rating=input(b,t("music_meta_rating"),song.rating<0?"":Integer.toString(song.rating),InputType.TYPE_CLASS_NUMBER);bpm.setTag("music060_meta_bpm");rating.setTag("music060_meta_rating");Switch pure=new Switch(a);pure.setText(t("music_meta_instrumental"));pure.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));pure.setChecked(song.instrumental);b.addView(pure);Ui.button(b,t("music_import_lrc"),()->pick(uri,PICK_LYRICS,after));Ui.button(b,t("music_import_cover"),()->pick(uri,PICK_COVER,after));b.addView(Ui.text(a,t("library050_metadata_note"),13));b.addView(Ui.text(a,t("music070_lyrics_storage_note"),13));
-        AlertDialog d=track(new AlertDialog.Builder(a).setTitle(t("music_edit_metadata")).setView(scroll(b)).setNegativeButton(t("music_cancel"),null).setPositiveButton(t("music_save"),null).create());d.setOnShowListener(v->d.getButton(-1).setOnClickListener(w->{String name=title.getText().toString().trim();if(name.isEmpty()){title.setError(t("library_title_required"));return;}String value;try{value=MusicLibrary.normalizeBpm(bpm.getText().toString());}catch(IllegalArgumentException invalid){bpm.setError(t("library050_bpm_positive_decimal"));return;}int score=number(rating,-1,0,10);if(score==-2)return;MusicLibrary.Track latest=MusicLibrary.find(a,uri);if(latest==null){d.dismiss();return;}MusicLibrary.update(a,latest.withMeta(name,vocalist.value(),composer.value(),arranger.value(),notes.getText().toString().trim(),tags.value(),value,score,pure.isChecked(),latest.lrcPath,latest.coverPath));MusicLibrary.markMetadataEdited(a,uri);notifyChanged();if(after!=null)after.run();renderSongs();d.dismiss();}));d.show();
+    private static JSONArray rawFields(List<EditText> fields){JSONArray out=new JSONArray();for(EditText field:fields)out.put(field.getText().toString());return out;}
+    private final class EditorSession {
+        final String uri;final EditText title,notes,bpm,rating;final PeopleFields composer,arranger,vocalist;final TagFields tags;final Switch pure;final ScrollView scroll;
+        EditorSession(String uri,EditText title,EditText notes,EditText bpm,EditText rating,PeopleFields composer,PeopleFields arranger,PeopleFields vocalist,TagFields tags,Switch pure,ScrollView scroll){this.uri=uri;this.title=title;this.notes=notes;this.bpm=bpm;this.rating=rating;this.composer=composer;this.arranger=arranger;this.vocalist=vocalist;this.tags=tags;this.pure=pure;this.scroll=scroll;}
+        JSONObject snapshot(){JSONObject out=new JSONObject();try{out.put("uri",uri).put("title",title.getText().toString()).put("notes",notes.getText().toString()).put("bpm",bpm.getText().toString()).put("rating",rating.getText().toString()).put("composer",rawFields(composer.fields)).put("arranger",rawFields(arranger.fields)).put("vocalist",rawFields(vocalist.fields)).put("tags",rawFields(tags.fields)).put("instrumental",pure.isChecked()).put("scroll",scroll.getScrollY());}catch(Exception ignored){}return out;}
+    }
+    private void restoreEditor(){
+        if(restoredEditor==null||restoringEditor)return;restoringEditor=true;JSONObject draft=restoredEditor;String uri=draft.optString("uri"),tree=a.getSharedPreferences("music_module",0).getString("storage_tree_uri","");
+        worker.execute(()->{boolean allowed=MusicFolder.contains(a,tree,uri);main.post(()->{restoringEditor=false;if(closed||a.isDestroyed()||pageRoot==null||!pageRoot.isAttachedToWindow())return;restoredEditor=null;if(allowed)editTrackChecked(uri,()->{renderSongs();searchState.refresh();},draft);else Ui.note(a,t("music_edit_metadata"),t("library050_edit_requires_folder"));});});
+    }
+    private void editTrackChecked(String uri,Runnable after){editTrackChecked(uri,after,null);}
+    private void editTrackChecked(String uri,Runnable after,JSONObject draft){
+        MusicLibrary.Track song=MusicLibrary.find(a,uri);if(song==null)return;LinearLayout b=box();EditText title=input(b,t("music_meta_title"),song.title,InputType.TYPE_CLASS_TEXT);title.setTag("music060_meta_title");PeopleFields composer=new PeopleFields(b,MusicCredits.COMPOSER,song.composer),arranger=new PeopleFields(b,MusicCredits.ARRANGER,song.arranger),vocalist=new PeopleFields(b,MusicCredits.VOCALIST,song.vocalist);EditText notes=input(b,t("music_meta_notes"),song.notes,InputType.TYPE_CLASS_TEXT);notes.setTag("music060_meta_notes");TagFields tags=new TagFields(b,song.tags);EditText bpm=input(b,t("music_meta_bpm"),song.bpmText,InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL),rating=input(b,t("music_meta_rating"),song.rating<0?"":Integer.toString(song.rating),InputType.TYPE_CLASS_NUMBER);bpm.setTag("music060_meta_bpm");rating.setTag("music060_meta_rating");Switch pure=new Switch(a);pure.setText(t("music_meta_instrumental"));pure.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));pure.setChecked(song.instrumental);b.addView(pure);Ui.button(b,t("music_import_lrc"),()->pick(uri,PICK_LYRICS,after));Ui.button(b,t("music_import_cover"),()->pick(uri,PICK_COVER,after));b.addView(Ui.text(a,t("library050_metadata_note"),13));b.addView(Ui.text(a,t("music070_lyrics_storage_note"),13));
+        if(draft!=null){title.setText(draft.optString("title",song.title));notes.setText(draft.optString("notes",song.notes));bpm.setText(draft.optString("bpm",song.bpmText));rating.setText(draft.optString("rating",song.rating<0?"":Integer.toString(song.rating)));pure.setChecked(draft.optBoolean("instrumental",song.instrumental));composer.restore(draft.optJSONArray("composer"));arranger.restore(draft.optJSONArray("arranger"));vocalist.restore(draft.optJSONArray("vocalist"));tags.restore(draft.optJSONArray("tags"));}
+        ScrollView scroller=scroll(b);EditorSession session=new EditorSession(uri,title,notes,bpm,rating,composer,arranger,vocalist,tags,pure,scroller);editorSession=session;
+        AlertDialog d=track(new AlertDialog.Builder(a).setTitle(t("music_edit_metadata")).setView(scroller).setNegativeButton(t("music_cancel"),null).setPositiveButton(t("music_save"),null).create());d.setOnDismissListener(v->{dialogs.remove(d);if(editorSession==session)editorSession=null;});d.setOnShowListener(v->d.getButton(-1).setOnClickListener(w->{String name=title.getText().toString().trim();if(name.isEmpty()){title.setError(t("library_title_required"));return;}String value;try{value=MusicLibrary.normalizeBpm(bpm.getText().toString());}catch(IllegalArgumentException invalid){bpm.setError(t("library050_bpm_positive_decimal"));return;}int score=number(rating,-1,0,10);if(score==-2)return;MusicLibrary.Track latest=MusicLibrary.find(a,uri);if(latest==null){d.dismiss();return;}MusicLibrary.update(a,latest.withMeta(name,vocalist.value(),composer.value(),arranger.value(),notes.getText().toString().trim(),tags.value(),value,score,pure.isChecked(),latest.lrcPath,latest.coverPath));MusicLibrary.markMetadataEdited(a,uri);notifyChanged();if(after!=null)after.run();renderSongs();d.dismiss();}));d.show();if(draft!=null){b.setFocusableInTouchMode(true);b.requestFocus();scroller.post(()->scroller.scrollTo(0,Math.max(0,draft.optInt("scroll"))));}
     }
     private int number(EditText field,int empty,int min,int max){String raw=field.getText().toString().trim();if(raw.isEmpty())return empty;try{int value=Integer.parseInt(raw);if(value<min||value>max)throw new Exception();return value;}catch(Exception error){field.setError(t("library_number_range",min,max));return -2;}}
     private void pick(String uri,int request,Runnable after){pendingUri=uri;afterEdit=after;a.getSharedPreferences("music_module",0).edit().putString("library_pick_uri",uri).putInt("library_pick_request",request).apply();Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT).setType(request==PICK_LYRICS?"*/*":"image/*").addCategory(Intent.CATEGORY_OPENABLE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);try{a.startActivityForResult(intent,request);}catch(Exception error){a.getSharedPreferences("music_module",0).edit().remove("library_pick_uri").remove("library_pick_request").apply();Ui.error(a,error);}}

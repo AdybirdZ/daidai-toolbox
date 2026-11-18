@@ -22,6 +22,7 @@ public final class MusicImporter {
             if(raw.isEmpty())throw new IOException(Texts.get(context,"music_folder_required"));
             tree=Uri.parse(raw);String root=DocumentsContract.getTreeDocumentId(tree);
             parent=DocumentsContract.buildDocumentUriUsingTree(tree,root);
+            if(progress!=null)progress.phase(MusicImportReport.Phase.SCAN);
             ArrayDeque<String> pending=new ArrayDeque<>();pending.add(root);Set<String> visited=new HashSet<>();
             while(!pending.isEmpty()){
                 check();String folder=pending.removeFirst();if(!visited.add(folder))continue;
@@ -38,7 +39,7 @@ public final class MusicImporter {
         }
         void check()throws InterruptedIOException {if(progress!=null)progress.check();else if(Thread.currentThread().isInterrupted())throw new InterruptedIOException();}
         Uri copy(Uri source)throws IOException {
-            check();if(members.contains(MusicLibrary.identity(source.toString())))return DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getDocumentId(source));
+            check();if(progress!=null)progress.phase(MusicImportReport.Phase.COPY);if(members.contains(MusicLibrary.identity(source.toString())))return DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getDocumentId(source));
             String name=MusicLibrary.title(context,source);
             name=name.replaceAll("[\\\\/:*?\"<>|]","_");if(name.isEmpty())name="audio";
             String candidate=name;int extension=name.lastIndexOf('.');String base=extension>0?name.substring(0,extension):name,suffix=extension>0?name.substring(extension):"";

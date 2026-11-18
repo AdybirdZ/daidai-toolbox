@@ -8,7 +8,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-public final class WeatherStore implements WeatherApi.RequestPolicy {
+public final class WeatherStore implements WeatherClient.RequestPolicy {
     private final Context context;
     private final SharedPreferences prefs;
     private List<City> directory;
@@ -69,6 +69,7 @@ public final class WeatherStore implements WeatherApi.RequestPolicy {
     }
     public synchronized boolean clearCache(){return ForecastCache.clear(context.getFilesDir());}
     public List<City> catalog() {
+        if(directory!=null&&directory.isEmpty())directory=null;
         if(directory!=null)return directory;
         List<City> cities=new ArrayList<>();
         try(InputStream in=context.getAssets().open("cities.json")) {

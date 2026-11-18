@@ -16,10 +16,10 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.zip.*;
 
-/** Signed, host-version-bound executable packages. Never loads code from shared storage. */
+/** Signed executable packages bound to a stable host interface, never shared storage. */
 public final class AppModules {
-    public static final String API="daidai-toolbox/pre-3.0.0-3";
-    public static final String CATALOG="https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/pre-3.0.0-3/catalog.json";
+    public static final String API="daidai-toolbox/api-1";
+    public static final String CATALOG="https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.0/catalog.json";
     public static final String[] IDS={"weather","schedule","status","weather-map","astronomy","earthquake","random","todo"};
     public static final String[] CLASSES={"WeatherScreen","ScheduleScreen","GpsScreen","MapScreen","AstronomyScreen","EarthquakeScreen","RandomChoiceScreen","TodoScreen"};
     public static final String[] EMBEDDED={"music","messaging","colorvision"};
@@ -27,7 +27,8 @@ public final class AppModules {
     public static final long MAX=32L*1024*1024;
     private final MainActivity a;
     private final File directory;
-    public volatile boolean busy;
+    private static final String PROCESS=UUID.randomUUID().toString();
+    public static volatile boolean busy;
     public AppModules(MainActivity a){this.a=a;directory=new File(a.getFilesDir(),"apps");directory.mkdirs();}
     public static boolean known(String id){return Arrays.asList(IDS).contains(id)||Arrays.asList(EMBEDDED).contains(id);}
     public static boolean present(Context c,String id){if(!known(id))return false;try(ZipFile zip=new ZipFile(ModuleRuntime.packageFile(c,id))){ZipEntry e=zip.getEntry("assets/module.json");return e!=null&&API.equals(new JSONObject(new String(read(zip.getInputStream(e),65536),"UTF-8")).optString("hostApi"));}catch(Exception e){return false;}}
@@ -35,7 +36,28 @@ public final class AppModules {
     private static int flags(){return Build.VERSION.SDK_INT>=28?PackageManager.GET_SIGNING_CERTIFICATES:PackageManager.GET_SIGNATURES;}
     private static byte[] certificate(PackageInfo info)throws Exception{if(info==null)throw new IOException("Invalid package");android.content.pm.Signature[] sig=Build.VERSION.SDK_INT>=28?info.signingInfo.getApkContentsSigners():info.signatures;if(sig==null||sig.length!=1)throw new IOException("Invalid signer");return sig[0].toByteArray();}
     public boolean installed(String id){return present(a,id);}
-    public boolean reconcile(){return false;}
+    public boolean reconcile(){boolean changed=false;SharedPreferences p=a.getSharedPreferences("apps_host",0);for(String id:allIds())if(p.getBoolean("launching_"+id,false)&&!PROCESS.equals(p.getString("launch_process_"+id,""))){try{changed|=recoverPrevious(a,id);}catch(Exception ignored){}clearLaunch(p.edit(),id).commit();}return changed;}
+    public static List<String> allIds(){List<String> ids=new ArrayList<>(Arrays.asList(IDS));ids.addAll(Arrays.asList(EMBEDDED));return ids;}
+    public static int hostVersion(Context c){try{return c.getPackageManager().getPackageInfo(c.getPackageName(),0).versionCode;}catch(Exception e){return 0;}}
+    public boolean compatible(JSONObject item){return ModuleCompatibility.accepts(item.optString("hostApi",API),API,item.optInt("minHostVersionCode",0),hostVersion(a),item.optInt("minSdk",26),Build.VERSION.SDK_INT);}
+    public static void beginLaunch(Context c,String id){beginTrackedLaunch(c,id);}
+    static synchronized String beginTrackedLaunch(Context c,String id){if(!known(id))return null;SharedPreferences p=c.getSharedPreferences("apps_host",0);if(!p.getBoolean("pending_"+id,false))return null;String token=UUID.randomUUID().toString();p.edit().putBoolean("launching_"+id,true).putString("launch_token_"+id,token).putString("launch_process_"+id,PROCESS).commit();return token;}
+    private static SharedPreferences.Editor clearLaunch(SharedPreferences.Editor edit,String id){return edit.remove("launching_"+id).remove("launch_token_"+id).remove("launch_process_"+id);}
+    static synchronized void cancelLaunch(Context c,String id,String token){SharedPreferences p=c.getSharedPreferences("apps_host",0);if(token!=null&&token.equals(p.getString("launch_token_"+id,"")))clearLaunch(p.edit(),id).commit();}
+    static synchronized void markLaunchSucceeded(Context c,String id,String token){SharedPreferences p=c.getSharedPreferences("apps_host",0);if(token!=null&&token.equals(p.getString("launch_token_"+id,"")))markLaunchSucceeded(c,id);}
+    public static synchronized void markLaunchSucceeded(Context c,String id){if(!known(id))return;clearLaunch(c.getSharedPreferences("apps_host",0).edit(),id).remove("pending_"+id).commit();File previous=new File(ModuleRuntime.packageFile(c,id).getParentFile(),id+".previous.ddapp");previous.delete();}
+    public void markLaunchSucceeded(String id){markLaunchSucceeded(a,id);}
+    public static boolean recoverPrevious(Context c,String id)throws Exception{
+        if(!known(id))return false;File previous=new File(ModuleRuntime.packageFile(c,id).getParentFile(),id+".previous.ddapp");if(!previous.isFile())return false;inspect(c,previous,id);boolean changing=false;
+        try{ModuleRuntime.beginChange(c,id);changing=true;Files.move(previous.toPath(),ModuleRuntime.packageFile(c,id).toPath(),StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);clearLaunch(c.getSharedPreferences("apps_host",0).edit(),id).remove("pending_"+id).commit();return true;}finally{if(changing)ModuleRuntime.endChange(id);}
+    }
+    public boolean recoverPrevious(String id)throws Exception{return recoverPrevious(a,id);}
+    private void retainPrevious(String id)throws Exception{
+        File current=ModuleRuntime.packageFile(a,id),previous=new File(directory,id+".previous.ddapp");
+        if(!current.isFile())return;try{inspect(a,current,id);}catch(Exception incompatible){return;}
+        if(previous.isFile()&&a.getSharedPreferences("apps_host",0).contains("pending_"+id))return;
+        File stage=new File(directory,id+".previous.pending");stage.delete();try{Files.copy(current.toPath(),stage.toPath(),StandardCopyOption.REPLACE_EXISTING);if(!stage.setReadOnly())throw new IOException("Cannot protect executable");Files.move(stage.toPath(),previous.toPath(),StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);}finally{stage.delete();}
+    }
     public void initialize(){SharedPreferences p=a.getSharedPreferences("apps_host",0);boolean first=!p.getBoolean("initialized",false);if(!first&&API.equals(p.getString("api","")))return;try{for(String id:new String[]{"weather","status"})if(first||ModuleRuntime.packageFile(a,id).exists()){try(InputStream in=a.getAssets().open("default-apps/"+id+".ddapp")){install(in,id,null);}}if(!p.edit().putBoolean("initialized",true).putString("api",API).remove("pending_external").commit())throw new IOException("Cannot commit defaults");}catch(Exception e){a.toast(a.getString(R.string.module_install_failed));}}
     public static JSONObject inspect(Context c,File file,String id)throws Exception{
         if(!known(id)||file.length()>MAX)throw new IOException("Unsupported app");
@@ -44,17 +66,21 @@ public final class AppModules {
         if(info==null||!info.packageName.equals("org.simpleweather.module."+id.replace('-','_'))||!MessageDigest.isEqual(own,certificate(info)))throw new IOException("Signature mismatch");
         try(ZipFile zip=new ZipFile(file)){Set<String> paths=new HashSet<>();Enumeration<? extends ZipEntry> entries=zip.entries();while(entries.hasMoreElements()){ZipEntry e=entries.nextElement();String n=e.getName();if(!paths.add(n)||n.contains("..")||n.startsWith("/")||n.contains("\\")||e.getSize()>MAX)throw new IOException("Invalid package path");}
             if(!paths.contains("classes.dex"))throw new IOException("Missing executable");ZipEntry descriptor=zip.getEntry("assets/module.json");if(descriptor==null)throw new IOException("Missing descriptor");JSONObject m=new JSONObject(new String(read(zip.getInputStream(descriptor),65536),"UTF-8"));
-            if(!API.equals(m.optString("hostApi"))||!id.equals(m.optString("id"))||!"signed-dex-app".equals(m.optString("format"))||m.optInt("versionCode")<=0||m.optInt("versionCode")!=info.versionCode||!entryName(id).equals(m.optString("entry")))throw new IOException("Incompatible app");return m;
+            if(!ModuleCompatibility.accepts(m.optString("hostApi"),API,m.optInt("minHostVersionCode",0),hostVersion(c),m.optInt("minSdk",26),Build.VERSION.SDK_INT)||!id.equals(m.optString("id"))||!"signed-dex-app".equals(m.optString("format"))||m.optInt("versionCode")<=0||m.optInt("versionCode")!=info.versionCode||!entryName(id).equals(m.optString("entry")))throw new IOException("Incompatible app");return m;
         }
     }
     private static String entryName(String id){int n=Arrays.asList(IDS).indexOf(id);return n>=0?CLASSES[n]:"org.daidai.modules."+id+"."+(id.equals("music")?"MusicActivity":id.equals("messaging")?"MessagingActivity":"ColorVisionActivity");}
-    public synchronized void install(InputStream input,String id,String expectedHash)throws Exception{
+    public synchronized void install(InputStream input,String id,String expectedHash)throws Exception{install(input,id,expectedHash,null);}
+    private synchronized void install(InputStream input,String id,String expectedHash,DownloadTask task)throws Exception{
         if(!known(id))throw new IOException("Unknown application");boolean changing=false;File stage=new File(directory,id+".pending");if(stage.exists())stage.delete();
         try{try(FileOutputStream out=new FileOutputStream(stage);InputStream in=input){if(!stage.setReadOnly())throw new IOException("Cannot protect executable");copy(in,out,MAX);out.getFD().sync();}
-            if(expectedHash!=null&&!expectedHash.equals(sha(stage)))throw new IOException("Checksum mismatch");JSONObject next=inspect(a,stage,id);if(present(a,id)&&inspect(a,ModuleRuntime.packageFile(a,id),id).getInt("versionCode")>next.getInt("versionCode"))throw new IOException("Downgrade rejected");if(android.os.Looper.myLooper()==android.os.Looper.getMainLooper())a.releaseModule(id);else{java.util.concurrent.CountDownLatch released=new java.util.concurrent.CountDownLatch(1);a.runOnUiThread(()->{try{a.releaseModule(id);}finally{released.countDown();}});if(!released.await(10,java.util.concurrent.TimeUnit.SECONDS))throw new IOException("Page did not stop");}ModuleRuntime.beginChange(a,id);changing=true;
-            Files.move(stage.toPath(),new File(directory,id+".ddapp").toPath(),StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);
-            if(id.equals("todo"))TodoScheduler.afterImport(a);
+            if(task!=null){task.check();task.verifying=true;}
+            if(expectedHash!=null&&!expectedHash.equals(sha(stage)))throw new IOException("Checksum mismatch");JSONObject next=inspect(a,stage,id);if(present(a,id)&&inspect(a,ModuleRuntime.packageFile(a,id),id).getInt("versionCode")>next.getInt("versionCode"))throw new IOException("Downgrade rejected");if(android.os.Looper.myLooper()==android.os.Looper.getMainLooper())a.releaseModule(id);else{java.util.concurrent.CountDownLatch released=new java.util.concurrent.CountDownLatch(1);a.runOnUiThread(()->{try{a.releaseModule(id);}finally{released.countDown();}});if(!released.await(10,java.util.concurrent.TimeUnit.SECONDS))throw new IOException("Page did not stop");}if(task!=null)task.check();ModuleRuntime.beginChange(a,id);changing=true;
+            retainPrevious(id);if(task!=null)task.check();
+            if(task==null)Files.move(stage.toPath(),new File(directory,id+".ddapp").toPath(),StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);else synchronized(task){task.check();Files.move(stage.toPath(),new File(directory,id+".ddapp").toPath(),StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);task.completed=true;}
+            a.getSharedPreferences("apps_host",0).edit().putBoolean("pending_"+id,true).commit();
         }finally{stage.delete();if(changing)ModuleRuntime.endChange(id);}
+        try{if(id.equals("todo"))TodoScheduler.afterImport(a);else if(id.equals("schedule"))ScheduleNotifier.refresh(a,false);}catch(Exception failure){android.util.Log.w("AppModules","App installed; reminders could not refresh",failure);}
     }
     public ScreenHandle create(int index,MainActivity activity,City city,WeatherData data,Instant at,Consumer<Instant> change)throws Exception{
         String id=IDS[index];File file=new File(directory,id+".ddapp");inspect(a,file,id);
@@ -64,12 +90,41 @@ public final class AppModules {
         Object screen=index==4?entry.getConstructor(MainActivity.class,City.class,WeatherData.class,Instant.class,Consumer.class).newInstance(activity,city,data,at,change):entry.getConstructor(MainActivity.class).newInstance(activity);
         return new ScreenHandle(screen);
     }
-    public void uninstall(String id){if(!known(id)||busy)return;busy=true;a.releaseModule(id);new Thread(()->{try{ModuleRuntime.beginChange(a,id);File file=ModuleRuntime.packageFile(a,id);if(file.exists()&&!file.delete())throw new IOException("Cannot remove application");if(id.equals("status")){RouteRecorder.stop();LocationService.stop(a);}if(id.equals("todo"))TodoScheduler.suspend(a);if(id.equals("schedule"))ScheduleNotifier.refresh(a,false);a.runOnUiThread(a::launcher);}catch(Exception e){a.runOnUiThread(()->a.toast(a.getString(R.string.module_install_failed)));}finally{ModuleRuntime.endChange(id);busy=false;}},"app-uninstall").start();}
+    public void uninstall(String id){if(!known(id)||busy)return;busy=true;a.releaseModule(id);new Thread(()->{try{ModuleRuntime.beginChange(a,id);File file=ModuleRuntime.packageFile(a,id);if(file.exists()&&!file.delete())throw new IOException("Cannot remove application");new File(directory,id+".previous.ddapp").delete();a.getSharedPreferences("apps_host",0).edit().remove("launching_"+id).remove("pending_"+id).commit();if(id.equals("status")){RouteRecorder.stop();LocationService.stop(a);}if(id.equals("todo"))TodoScheduler.suspend(a);if(id.equals("schedule"))ScheduleNotifier.refresh(a,false);a.runOnUiThread(a::launcher);}catch(Exception e){a.runOnUiThread(()->a.toast(a.getString(R.string.module_install_failed)));}finally{ModuleRuntime.endChange(id);busy=false;}},"app-uninstall").start();}
     public void openInternal(String id){if(installed(id))a.startActivity(ModuleRuntime.pageIntent(a,id,"main"));}
     public JSONArray bundledCatalog()throws Exception{try(InputStream in=a.getAssets().open("app-catalog.json")){return new JSONObject(new String(read(in,1024*1024),"UTF-8")).getJSONArray("apps");}}
-    public JSONArray remoteCatalog()throws Exception{try(InputStream in=network(CATALOG)){JSONObject object=new JSONObject(new String(read(in,1024*1024),"UTF-8"));if(!API.equals(object.optString("hostApi")))throw new IOException("Catalog ABI mismatch");JSONArray items=object.getJSONArray("apps");if(items.length()>32)throw new IOException("Catalog too large");return items;}}
+    public JSONArray remoteCatalog()throws Exception{try(InputStream in=network(CATALOG)){JSONObject object=new JSONObject(new String(read(in,1024*1024),"UTF-8"));if(!"daidai-app-store".equals(object.optString("format"))||object.optInt("schemaVersion")!=1)throw new IOException("Invalid catalog");JSONArray items=object.getJSONArray("apps");if(items.length()>32)throw new IOException("Catalog too large");for(int n=0;n<items.length();n++){JSONObject item=items.getJSONObject(n);if(!item.has("hostApi"))item.put("hostApi",object.optString("hostApi"));}return items;}}
     public boolean updateAvailable(JSONObject item){try{return installed(item.getString("id"))&&item.getInt("versionCode")>inspect(a,ModuleRuntime.packageFile(a,item.getString("id")),item.getString("id")).getInt("versionCode");}catch(Exception e){return false;}}
-    public void download(JSONObject item)throws Exception{String id=item.getString("id"),hash=item.getString("sha256");if(!known(id)||!hash.matches("[0-9a-f]{64}")||!"signed-dex-app".equals(item.getString("type")))throw new IOException("Invalid application");try(InputStream in=network(item.getString("url"))){install(in,id,hash);}}
+    public void download(JSONObject item)throws Exception{download(item,new DownloadTask());}
+    public void download(JSONObject item,DownloadTask task)throws Exception{
+        String id=item.getString("id"),hash=item.getString("sha256");long length=item.optLong("bytes",-1);
+        if(!known(id)||!hash.matches("[0-9a-f]{64}")||!"signed-dex-app".equals(item.getString("type"))||length<=0||length>MAX)throw new IOException("Invalid application");
+        if(!compatible(item))throw new IOException("Incompatible app");task.total=length;task.check();
+        try(InputStream raw=network(item.getString("url"),task);InputStream in=trackedStream(raw,length,task)){install(in,id,hash,task);}catch(Exception failure){if(task.cancelled)throw new InterruptedIOException("Cancelled");throw failure;}finally{task.connection=null;}
+    }
+    static InputStream trackedStream(InputStream raw,long length,DownloadTask task){
+        task.total=length;return new FilterInputStream(raw){
+            public int read()throws IOException{byte[] one=new byte[1];int n=read(one,0,1);return n<0?-1:one[0]&255;}
+            public int read(byte[] b,int off,int count)throws IOException{task.check();int n=super.read(b,off,count);if(n<0){if(!ModuleCompatibility.validLength(length,task.received,MAX))throw new IOException("Length mismatch");}else{task.received+=n;if(task.received>length)throw new IOException("Length mismatch");}task.check();return n;}
+        };
+    }
+    public static final class DownloadTask {
+        public volatile long received,total;public volatile boolean verifying,completed,cancelled;
+        private volatile HttpURLConnection connection;
+        public synchronized void cancel(){if(completed)return;cancelled=true;HttpURLConnection c=connection;if(c!=null)c.disconnect();}
+        public void check()throws InterruptedIOException{if(cancelled||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Cancelled");}
+    }
+    public int failureMessage(Throwable failure){
+        Throwable e=failure;while(e.getCause()!=null&&e.getCause()!=e)e=e.getCause();String text=String.valueOf(failure.getMessage());
+        if(e instanceof InterruptedIOException&&!(e instanceof SocketTimeoutException))return R.string.store_failure_cancelled;
+        if(e instanceof UnknownHostException||e instanceof ConnectException||e instanceof SocketTimeoutException||e instanceof javax.net.ssl.SSLException)return R.string.store_failure_network;
+        if(text.contains("Signature"))return R.string.store_failure_signature;
+        if(text.contains("Checksum")||text.contains("Length"))return R.string.store_failure_integrity;
+        if(text.contains("Incompatible")||text.contains("Downgrade"))return R.string.store_failure_compatibility;
+        if(text.startsWith("HTTP "))return R.string.store_failure_server;
+        if(text.contains("ENOSPC")||text.contains("space"))return R.string.store_failure_storage;
+        return R.string.store_failure_package;
+    }
     public boolean result(int request,int result,Intent data){
         if(request!=PICK)return false;
         if(result!=Activity.RESULT_OK||data==null||data.getData()==null||busy)return true;
@@ -99,8 +154,9 @@ public final class AppModules {
         }).start();return true;
     }
     public void pick(){try{a.startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE),PICK);}catch(Exception e){a.toast(a.getString(R.string.config_picker_failed));}}
-    public static InputStream network(String address)throws Exception{
-        URL u=new URL(address);for(int redirects=0;redirects<5;redirects++){String host=u.getHost();if(!u.getProtocol().equals("https")||!(host.equals("raw.githubusercontent.com")||host.equals("github.com")||host.equals("release-assets.githubusercontent.com")||host.equals("objects.githubusercontent.com")))throw new IOException("Unsupported download origin");HttpURLConnection c=(HttpURLConnection)u.openConnection();c.setConnectTimeout(20000);c.setReadTimeout(30000);c.setInstanceFollowRedirects(false);int code=c.getResponseCode();if(code>=300&&code<400){String next=c.getHeaderField("Location");c.disconnect();u=new URL(u,next);continue;}if(code!=200){c.disconnect();throw new IOException("HTTP "+code);}return new FilterInputStream(c.getInputStream()){@Override public void close()throws IOException{try{super.close();}finally{c.disconnect();}}};}throw new IOException("Too many redirects");
+    public static InputStream network(String address)throws Exception{return network(address,null);}
+    private static InputStream network(String address,DownloadTask task)throws Exception{
+        URL u=new URL(address);for(int redirects=0;redirects<5;redirects++){String host=u.getHost();if(!u.getProtocol().equals("https")||!(host.equals("raw.githubusercontent.com")||host.equals("github.com")||host.equals("release-assets.githubusercontent.com")||host.equals("objects.githubusercontent.com")))throw new IOException("Unsupported download origin");HttpURLConnection c=(HttpURLConnection)u.openConnection();c.setConnectTimeout(20000);c.setReadTimeout(30000);c.setInstanceFollowRedirects(false);if(task!=null){task.check();task.connection=c;}int code;try{code=c.getResponseCode();}catch(Exception e){c.disconnect();throw e;}if(code>=300&&code<400){String next=c.getHeaderField("Location");c.disconnect();u=new URL(u,next);continue;}if(code!=200){c.disconnect();throw new IOException("HTTP "+code);}InputStream input;try{input=c.getInputStream();}catch(Exception failure){c.disconnect();throw failure;}return new FilterInputStream(input){@Override public void close()throws IOException{try{super.close();}finally{c.disconnect();}}};}throw new IOException("Too many redirects");
     }
     public static void copy(InputStream in,OutputStream out,long max)throws IOException{if(in==null)throw new IOException("No file");byte[] b=new byte[32768];long total=0;int n;while((n=in.read(b))!=-1){if((total+=n)>max)throw new IOException("File too large");out.write(b,0,n);}}
     public static byte[] read(InputStream in,int max)throws IOException{try(InputStream source=in;ByteArrayOutputStream out=new ByteArrayOutputStream()){copy(source,out,max);return out.toByteArray();}}

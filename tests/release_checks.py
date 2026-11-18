@@ -27,5 +27,5 @@ subprocess.run([sys.executable,str(root / "tests/resource_checks.py")],check=Tru
 subprocess.run([sys.executable,str(root / "tests/internal_resource_checks.py")],check=True)
 
 for client in ("WeatherApi.java","EarthquakeApi.java"):
-    text=(root/"app/src/main/java/org/simpleweather/app"/client).read_text(encoding="utf8")
+    text=next(root.glob('modules/apps/*/java/org/simpleweather/app/'+client)).read_text(encoding="utf8")
     assert "DaidaiToolbox/"+name+" " in text, "HTTP client version mismatch: "+client

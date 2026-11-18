@@ -21,7 +21,7 @@
   <string name="module_download_failed">Download or verification failed; check the connection and retry</string>
   <string name="module_installed">App installed</string>
   <string name="module_downloading">Downloading and verifying app…</string>
-  <string name="module_busy">Wait for the current installation to finish</string>
+  <string name="module_busy">Wait for the current operation to finish</string>
   <string name="module_trust_note">This app runs inside the toolbox and can use permissions granted to the host. Only developer-signed packages compatible with this host version are accepted.</string>
   <string name="module_remove_note">Uninstalling stops the app and removes its executable code. Local data and settings are retained for reinstallation. Uninstall this app?</string>
   <string name="module_store_note">Apps are downloaded from GitHub and run inside the toolbox. Uninstalling retains personal data, which can be deleted separately in Global settings. Weather and Status are installed by default and can be removed; Settings and App store are permanent.</string>

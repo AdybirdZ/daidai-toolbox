@@ -58,7 +58,7 @@ public final class AstronomyScreen {
         double sun=Astronomy.sunPosition(at,city.latitude,city.longitude)[0],moon=Astronomy.moonPosition(at,city.latitude,city.longitude)[0],lit=Astronomy.illumination(at);
         c.addView(a.text(Astronomy.skyDescription(at,city.latitude,city.longitude),16,a.INK,true));a.gap(c,10);
         c.addView(a.text(moon>0?UiText.get("astronomy_129")+Math.round(lit*100)+"%":UiText.get("astronomy_130"),13,a.MUTED,false));a.gap(c,10);
-        if(data==null||data.currentIsOld(Instant.now())){c.addView(a.text(UiText.get("astronomy_131"),13,a.MUTED,false));return;}
+        if(data==null||data.currentIsOld(Instant.now())){c.addView(a.text(a.getString(R.string.cross_weather_unavailable),13,a.MUTED,false));return;}
         int best=-1;long delta=Long.MAX_VALUE;org.json.JSONArray times=data.hourly.optJSONArray("time");
         for(int i=0;i<times.length();i++)try{long d=Math.abs(Duration.between(LocalDateTime.parse(times.getString(i)).atZone(zone).toInstant(),at).toMinutes());if(d<delta){delta=d;best=i;}}catch(Exception ignored){}
         double cloud=WeatherData.at(data.hourly,"cloud_cover",best),rain=WeatherData.at(data.hourly,"precipitation_probability",best),wind=WeatherData.at(data.hourly,"wind_speed_10m",best),humidity=WeatherData.at(data.hourly,"relative_humidity_2m",best),visibility=WeatherData.at(data.hourly,"visibility",best);

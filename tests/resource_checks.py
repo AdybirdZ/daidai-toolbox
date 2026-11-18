@@ -24,7 +24,7 @@ assert len(arrays['identity_keys'])==len(arrays['identity_label_keys'])
 for raw,label in zip(arrays['identity_keys'],arrays['identity_label_keys']):
  assert raw in strings and label in strings
  assert strings[raw].attrib.get('translatable')=='false'
-assert 'relative?"' not in (java/'StatusViews.java').read_text(encoding='utf8')
+assert 'relative?"' not in (root/'modules/apps/status/java/org/simpleweather/app/StatusViews.java').read_text(encoding='utf8')
 print('XML resource references, stable identifiers and historical UI migration verified')
 
 # A shipped language must fully cover built-in UI text and preserve format contracts.

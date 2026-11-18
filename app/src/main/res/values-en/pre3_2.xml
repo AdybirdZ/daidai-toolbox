@@ -10,5 +10,5 @@
   <string name="internal_data_warning">Delete local settings, data and private supporting files for %1$s? This cannot be undone. Audio and lyrics in the music folder are not deleted, and the app remains installed. Export any data you want to keep first.</string>
   <string name="internal_data_deleted">App data deleted</string>
   <string name="internal_data_failed">Could not delete app data</string>
-  <string name="internal_data_note">Uninstalling removes executable code only. Delete retained Music, Messenger or Color Vision data here. Full backups also include retained data for uninstalled apps.</string>
+  <string name="internal_data_note">Uninstalling retains data and settings. Manage them under App data and storage. Full backups can include retained data for uninstalled apps.</string>
 </resources>

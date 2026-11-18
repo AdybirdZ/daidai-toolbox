@@ -1,0 +1,14 @@
+<resources>
+  <string name="cross_weather_missing">天气应用尚未安装，无法更新天气资料</string>
+  <string name="cross_reference_title">参考位置</string>
+  <string name="cross_longitude">经度（东经为正，西经为负）</string>
+  <string name="cross_latitude">纬度（北纬为正，南纬为负）</string>
+  <string name="cross_reference_note">未安装天气应用时，可直接输入星图使用的参考位置。天气相关的观星条件需要安装天气应用并更新资料。</string>
+  <string name="cross_coordinates_invalid">请输入有效的经纬度</string>
+  <string name="update_pre3003_title">pre-3.0.0-3 · 应用图标与音乐导入</string>
+  <string name="update_pre3002_title">pre-3.0.0-2 · 内部应用与资料迁移</string>
+  <string name="cross_weather_unavailable">暂无可用天气资料，天气相关的观星条件暂不可用；星图及天体计算仍可使用</string>
+  <string name="module_recovered">应用更新未能启动，已恢复上一版本，请重新打开</string>
+  <string name="update_pre3004_title">pre-3.0.0-4 · 应用拆分与桌面自定义</string>
+  <string name="changes_pre3_4">完善宿主与应用接口，进一步拆分应用代码、资源和设置；卸载天气或状态后，相关跨应用功能提供可用的替代入口。\n\n桌面支持图标大小、列数、字号、拖动排序、文件夹和系统快捷方式，手机与平板分别保存布局。应用内底栏仅保留桌面。\n\n应用商店增加下载进度、取消、重试、批量更新、兼容状态、权限和更新说明；更新首次启动失败时可恢复上一应用包。\n\n统一管理全部应用的存储、资料导入导出、缓存及资料删除，保留未安装应用的资料管理；改进导入隔离和失败回滚。\n\n改进设置层级及待办、课程、地点、音乐等编辑草稿的界面恢复；音乐导入增加阶段、耗时、结果记录和失败重试。\n\n补齐前两次更新记录标题，明确开始等待连接的操作，登记后续指令与通信扩展计划。</string>
+</resources>

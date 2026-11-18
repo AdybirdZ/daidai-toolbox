@@ -11,6 +11,8 @@ import shutil
 import subprocess
 import sys
 import zipfile
+import json
+import re
 
 ROOT = Path(__file__).resolve().parent
 
@@ -52,12 +54,41 @@ def main():
     source = ROOT / 'app/src/main'
     run([tools / ('aapt2' + ext), 'compile', '--dir', source / 'res', '-o', build / 'resources.zip'])
     unsigned = build / 'unsigned.apk'
+    stable_ids=ROOT/'modules/stable-resource-ids.txt'
+    full_ids=build/'full-resource-ids.txt'
+    stable_args=['--stable-ids',stable_ids] if stable_ids.exists() else []
     run([tools / ('aapt2' + ext), 'link', '-o', unsigned, '-I', platform,
          '--manifest', source / 'AndroidManifest.xml', '--java', build / 'generated',
          '-A', source / 'assets', '--min-sdk-version', '26', '--target-sdk-version', '35',
-         build / 'resources.zip'])
+         '--emit-ids',full_ids,*stable_args,build / 'resources.zip'])
+    if stable_ids.exists():
+        before=dict(line.split(' = ') for line in stable_ids.read_text('utf8').splitlines() if ' = ' in line)
+        after=dict(line.split(' = ') for line in full_ids.read_text('utf8').splitlines() if ' = ' in line)
+        assert all(after.get(key)==value for key,value in before.items()), 'Host API 1 resource IDs must not be removed or changed'
+    # The complete public resource ID map is append-only within host API 1.
+    shutil.copyfile(full_ids,stable_ids)
+    sys.path.insert(0,str(ROOT/'modules'))
+    from resource_partition import partition
+    parts=partition(ROOT)
+    run([tools/('aapt2'+ext),'compile','--dir',parts/'host','-o',build/'host-resources.zip'])
     sources = list((source / 'java').rglob('*.java')) + list((ROOT / 'modules/apps').rglob('*.java')) + list((ROOT / 'modules/embedded').rglob('*.java')) + list((build / 'generated').rglob('*.java'))
     run([javac, '-encoding', 'UTF-8', '--release', '8', '-classpath', platform, '-d', build / 'classes', *sources])
+    contract=ROOT/'modules/host-java-api.json'
+    exported={}
+    javap=java_bin/('javap'+ext)
+    host_names={p.stem for p in (source/'java/org/simpleweather/app').glob('*.java')}
+    for path in sorted((build/'classes/org/simpleweather/app').glob('*.class')):
+        if path.stem.split('$')[0] not in host_names:continue
+        if path.stem=='R' or path.stem.startswith('R$'):continue
+        name='org.simpleweather.app.'+path.stem
+        output=subprocess.check_output([str(javap),'-public','-classpath',str(build/'classes'),name],text=True,encoding='utf8')
+        # Synchronization changes method implementation, not its JVM linkage contract.
+        lines=[line.strip().replace(' synchronized ',' ') for line in output.splitlines() if line.strip().startswith(('public ','protected '))]
+        if lines and any(re.match(r'public .*\b(?:class|interface|enum)\b', line) for line in lines):exported[name]=lines
+    previous=json.loads(contract.read_text('utf8')) if contract.exists() else {}
+    previous={name:[line.replace(' synchronized ',' ') for line in lines] for name,lines in previous.items()}
+    for name,lines in previous.items():assert set(lines)<=set(exported.get(name,[])), 'Host API 1 signature changed: '+name
+    contract.write_text(json.dumps(exported,indent=2)+'\n','utf8')
     signing = ROOT / '.signing'
     signing.mkdir(exist_ok=True)
     keystore = signing / 'development.jks'
@@ -71,10 +102,13 @@ def main():
     from build_executable import build as build_apps
     app_classes = build_apps(ROOT, sdk, java, run)
     # Refresh packaged assets after the default signed apps and catalog are generated.
+    host_assets=build/'host-assets'
+    shutil.copytree(source/'assets',host_assets,dirs_exist_ok=True)
+    (host_assets/'cities.json').unlink(missing_ok=True)
     run([tools / ('aapt2' + ext), 'link', '-o', unsigned, '-I', platform,
          '--manifest', source / 'AndroidManifest.xml', '--java', build / 'generated',
-         '-A', source / 'assets', '--min-sdk-version', '26', '--target-sdk-version', '35',
-         build / 'resources.zip'])
+         '-A', host_assets, '--min-sdk-version', '26', '--target-sdk-version', '35',
+         '--stable-ids',stable_ids,build / 'host-resources.zip'])
     run([java, '-cp', tools / 'lib/d8.jar', 'com.android.tools.r8.D8', '--lib', platform,
          '--classpath', build / 'all-classes.jar', '--min-api', '26', '--output', build / 'dex',
          *[p for p in (build / 'classes').rglob('*.class') if p not in app_classes]])

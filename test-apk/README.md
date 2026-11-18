@@ -12,4 +12,4 @@
 
 [可构建源码与许可](../test-apps/) · [音乐 0.7.0 说明](../test-apps/MUSIC-0.7.0.md) · [机器索引](index.json) · [主程序正式发布](https://github.com/AdybirdZ/daidai-toolbox/releases/latest)
 
-旧 APK 按历史用途保留。`DaidaiMusic-0.7.1-migration.apk` 是一次性原签名音乐资料导出工具，使用方式见 [同机迁移](../docs/MUSIC-MIGRATION.md)。视频播放器仍仅本地保存；计算器已取消，不再发布或作为未来模块。
+旧 APK 按历史用途保留。`DaidaiMusic-0.7.1-migration.apk` 是旧内测版的一次性原签名音乐资料导出工具；正式 3.0.0 已取消对应迁移功能。其 [历史说明](../docs/MUSIC-MIGRATION.md) 仅适用于 pre-3.0.0-2 / -3。视频播放器仍仅本地保存；计算器已取消，不再发布或作为未来模块。

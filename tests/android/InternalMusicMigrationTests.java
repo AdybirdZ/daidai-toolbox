@@ -1,5 +1,6 @@
 package org.simpleweather.qa;
 import android.app.*;import android.content.*;import android.net.Uri;import android.os.*;import android.provider.DocumentsContract;import java.io.*;import java.lang.reflect.*;import java.nio.file.*;import java.util.*;import java.util.concurrent.atomic.AtomicReference;import org.json.*;
+/** Historical pre-3.0.0-2 fixture; excluded from the current test runner. */
 public final class InternalMusicMigrationTests extends Instrumentation {
     private Activity host,music;private Context c;private ClassLoader loader,ml;private int checks;
     public void onCreate(Bundle b){super.onCreate(b);start();}
