@@ -58,7 +58,28 @@ public final class Embedded301UiTests extends Instrumentation {
         check(!(Boolean)field(page,"sourceCamera")&&field(page,"camera")==null,"stop control closes and removes the camera");check(start.equals(toggle.getText().toString()),"stopped control changes back to start");
         Class<?> module=page.getClass().getSuperclass();Method dispatch=module.getMethod("dispatch",String.class,Bundle.class);ui(()->{try{dispatch.invoke(page,"pause",null);dispatch.invoke(page,"resume",null);}catch(Exception failure){throw new RuntimeException(failure);}});SystemClock.sleep(200);waitForIdleSync();
         check(!(Boolean)field(page,"sourceCamera")&&field(page,"camera")==null,"pause and resume do not restart an explicitly stopped camera");
-        FrameLayout frame=(FrameLayout)field(page,"frame");check(frame.getChildCount()==1,"stopped camera leaves only the image-comparison view");ui(()->child.finish());child=null;
+        FrameLayout frame=(FrameLayout)field(page,"frame");check(frame.getChildCount()==1,"stopped camera leaves only the image-comparison view");
+        SharedPreferences preferences=child.getSharedPreferences("colorvision_module",0);boolean initialFront=(Boolean)field(page,"front");boolean hadDirection=preferences.contains("front_camera");boolean savedFront=preferences.getBoolean("front_camera",false);
+        int settingsRequest=Class.forName("org.simpleweather.app.SettingsActivity",true,context.getClassLoader()).getField("REQUEST").getInt(null);
+        try{
+            String stoppedStatus=((TextView)field(page,"status")).getText().toString();
+            ui(()->{preferences.edit().putBoolean("front_camera",!initialFront).apply();try{call(page,"onActivityResult",new Class[]{int.class,int.class,Intent.class},settingsRequest,Activity.RESULT_CANCELED,null);}catch(Exception failure){throw new RuntimeException(failure);}});
+            check((Boolean)field(page,"front")==!initialFront,"return from settings applies the camera direction even without result data");
+            check(!(Boolean)field(page,"sourceCamera")&&field(page,"camera")==null,"changing camera direction does not enable a stopped camera");
+            check(stoppedStatus.contentEquals(((TextView)field(page,"status")).getText()),"returning from settings preserves the stopped-camera status");
+            ui(()->{
+                toggle.performClick();try{
+                    Object previous=field(page,"camera");check(previous!=null,"live source exists before changing direction");preferences.edit().putBoolean("front_camera",initialFront).apply();
+                    call(page,"onActivityResult",new Class[]{int.class,int.class,Intent.class},settingsRequest,Activity.RESULT_OK,null);
+                    check((Boolean)field(page,"front")==initialFront,"running camera immediately uses the new direction");
+                    check((Boolean)field(page,"sourceCamera")&&field(page,"camera")!=null&&field(page,"camera")!=previous,"returning from settings replaces the active camera source");
+                    check(!start.contentEquals(toggle.getText()),"changing direction preserves the running stop action");
+                    toggle.performClick();
+                }catch(Exception failure){throw new RuntimeException(failure);}
+            });
+            check(field(page,"camera")==null&&frame.getChildCount()==1,"camera still closes cleanly after a settings direction change");
+        }finally{SharedPreferences.Editor restore=preferences.edit();if(hadDirection)restore.putBoolean("front_camera",savedFront);else restore.remove("front_camera");restore.commit();}
+        ui(()->child.finish());child=null;
     }
     public void onStart(){Bundle result=new Bundle();try{
         context=getTargetContext();check(Build.HARDWARE.contains("ranchu")||Build.HARDWARE.contains("goldfish"),"isolated emulator required");String lang=args.getString("language","zh-CN");context.getSharedPreferences("toolbox",0).edit().putString("app_language",lang).putInt("seen_version",Integer.MAX_VALUE).commit();host=startActivitySync(new Intent().setClassName(context,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();apps=field(host,"apps");install("messaging");install("colorvision");messaging();camera();result.putString("result","PASS: "+checks+" messaging scroll and camera toggle checks ("+lang+")");

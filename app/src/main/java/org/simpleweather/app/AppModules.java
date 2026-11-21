@@ -157,11 +157,23 @@ public final class AppModules {
     public void pick(){try{a.startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE),PICK);}catch(Exception e){a.toast(a.getString(R.string.config_picker_failed));}}
     public static InputStream network(String address)throws Exception{return network(address,null);}
     private static InputStream network(String address,DownloadTask task)throws Exception{
-        try{return connect(address,task);}catch(IOException primary){
-            if(task!=null)task.check();if(Thread.currentThread().isInterrupted()||primary instanceof InterruptedIOException&&!(primary instanceof SocketTimeoutException))throw primary;
-            String fallback=contentsFallback(address);if(fallback==null)throw primary;
-            try{return connect(fallback,task);}catch(Exception failure){failure.addSuppressed(primary);throw failure;}
+        return network(address,task,AppModules::connect,android.os.SystemClock::elapsedRealtime);
+    }
+    private static final long CONTENTS_PREFERENCE_MS=5*60*1000L;
+    private static volatile long contentsPreferredUntil;
+    interface NetworkConnection {InputStream open(String address,DownloadTask task)throws Exception;}
+    /** A successful official fallback avoids repeating a known failing Raw connection per app. */
+    static InputStream network(String address,DownloadTask task,NetworkConnection connection,java.util.function.LongSupplier clock)throws Exception{
+        checkNetworkCancellation(task,null);String fallback=contentsFallback(address);long now=clock.getAsLong();boolean preferred=fallback!=null&&contentsPreferredUntil>now;
+        String first=preferred?fallback:address,second=preferred?address:fallback;
+        try{return connection.open(first,task);}catch(IOException primary){
+            if(preferred)contentsPreferredUntil=0;
+            checkNetworkCancellation(task,primary);if(second==null)throw primary;
+            try{InputStream result=connection.open(second,task);if(!preferred)contentsPreferredUntil=clock.getAsLong()+CONTENTS_PREFERENCE_MS;return result;}catch(Exception failure){failure.addSuppressed(primary);throw failure;}
         }
+    }
+    private static void checkNetworkCancellation(DownloadTask task,IOException failure)throws InterruptedIOException{
+        if(task!=null)task.check();if(Thread.currentThread().isInterrupted()||failure instanceof InterruptedIOException&&!(failure instanceof SocketTimeoutException))throw failure instanceof InterruptedIOException?(InterruptedIOException)failure:new InterruptedIOException("Cancelled");
     }
     private static final String RAW_STORE="/AdybirdZ/daidai-toolbox/main/modules/store/",API_STORE="/repos/AdybirdZ/daidai-toolbox/contents/modules/store/";
     /** One anonymous official fallback, limited to this repository's published main store. */

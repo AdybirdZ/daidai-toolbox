@@ -135,6 +135,11 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
  }
  @Override protected void onActivityResult(int request,int result,Intent data){
   super.onActivityResult(request,result,data);
+  if(request==org.simpleweather.app.SettingsActivity.REQUEST){
+   boolean next=getSharedPreferences("colorvision_module",0).getBoolean("front_camera",false);
+   if(front!=next){front=next;if(sourceCamera&&frame!=null&&!isDestroyed()&&!isFinishing())activateCamera();}
+   return;
+  }
   if(result!=RESULT_OK||data==null||data.getData()==null){if(exportSnapshot!=null){exportSnapshot.recycle();exportSnapshot=null;}return;}
   if(request==10)loadPhoto(data.getData());
   else if(request==11&&exportSnapshot!=null){

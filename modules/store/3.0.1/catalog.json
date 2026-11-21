@@ -27,7 +27,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 152083,
-      "sha256": "4e6caee92fcc257035c6fa2d764967552f90b6e14f1db9091a68b3fe209984b6",
+      "sha256": "6be4b2ed727fd16655126badb24969725608ae98ab7b7f03df7ff4b64b6f42f9",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/weather.ddapp"
     },
     {
@@ -52,7 +52,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 57811,
-      "sha256": "c294771b27742cdeec8ddcdfd4145d5e8756836f152c34c7ca6b39b14d7f850a",
+      "sha256": "1cbc609d569715ad0df59dad5ce72314faba2013c5d3acf2b44920df6614a60b",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/schedule.ddapp"
     },
     {
@@ -80,7 +80,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 164307,
-      "sha256": "baf3782bd8ec20f3555ec93421e1b30ed54d86e21f86cbc1a415a925969b63d6",
+      "sha256": "deadd4f8a583048de751e248f95d495669b649a393cbf8a37c8d7eaeb6cda78e",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/status.ddapp"
     },
     {
@@ -103,7 +103,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 37331,
-      "sha256": "ff71f2865002b7599a1a4ebb378de8710eab308cb1877926873a73757410a33f",
+      "sha256": "f6dc8a261012edb41d23635af3b1b4738a5f227873c0c578d6be92945683c7a2",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/weather-map.ddapp"
     },
     {
@@ -124,7 +124,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 82387,
-      "sha256": "ee498dd6332a4cc3725206be018dfafef0db45026f28720495d186f4eec08401",
+      "sha256": "d9da4d5f260efbcbfe7ea74cf57b110198c635cca3cc8f3c3328aad81fb88598",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/astronomy.ddapp"
     },
     {
@@ -149,7 +149,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 119251,
-      "sha256": "e057179278dbf9623940508fe5f0c6e981b7ef4287620fb03284cc5d9767e4c6",
+      "sha256": "d57c6e99553a0ac56e892024822ecf810f7334a1dd2e7aff5a5f553f4ca2653f",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/earthquake.ddapp"
     },
     {
@@ -170,7 +170,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 41427,
-      "sha256": "9e3179f6ce591360481cd992e99095d59d5efec2078e8a7283a3a56d96d509a3",
+      "sha256": "4dcb8f37f38c62cdbe3e4c26d247433b21bc217542e01657b7aba6d572cddad0",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/random.ddapp"
     },
     {
@@ -195,7 +195,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 78291,
-      "sha256": "0ff83424379e77d1b7914c7e3559f4e12afebd2bd6bcea56bdc8872b2fdfaddf",
+      "sha256": "d913e74f9b426cb48ce5bdb1ed796f79c89d832ec1cd89d5cb3ea19a2d34d3db",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/todo.ddapp"
     },
     {
@@ -221,7 +221,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 1331828,
-      "sha256": "a2c94d3e6dba8b22fd2573481e994969caa72ef267a3bbac1bf337c94c4d5d0b",
+      "sha256": "b69505343ddb4710ece5823b8d7f484b8f79224f40ea2e4973da164107355f65",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/music.ddapp"
     },
     {
@@ -250,7 +250,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 45593,
-      "sha256": "5b7f188029c721fc18f11bbfde0b4c2fa31d35264f4e6fd0065e8192349012a9",
+      "sha256": "e96ce1783c956f70fd18ae74243f5e6165ea1fe58e3d74c2f76dfdb306be61b2",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/messaging.ddapp"
     },
     {
@@ -273,7 +273,7 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 41577,
-      "sha256": "40f066da1e5790f371207ec5f713222cd735f28e101b021f43164b3947b0a18e",
+      "sha256": "8c7056221dacc1216bcf0a2cb8edfc35194521a3d3f131b8e72688d7452fc837",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/colorvision.ddapp"
     }
   ]
