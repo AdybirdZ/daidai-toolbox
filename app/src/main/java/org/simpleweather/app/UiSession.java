@@ -76,7 +76,7 @@ public final class UiSession {
         try{
             JSONArray rows=new JSONArray();for(Map.Entry<AlertDialog,Entry> row:dialogs(a)){
                 if(rows.length()>=MAX_DIALOGS)break;Route route=row.getValue().route;
-                JSONObject item=new JSONObject().put("owner",route.owner).put("method",route.method).put("module",route.module).put("views",viewState(row.getKey().getWindow().getDecorView()));
+                JSONObject item=new JSONObject().put("owner",route.owner).put("method",route.method).put("module",route.module).put("views",viewState(dialogView(row.getKey())));
                 if(row.getValue().extra!=null)item.put("extra",row.getValue().extra.get());rows.put(item);
             }
             JSONArray root=new JSONArray();if(a.getWindow()!=null){JSONArray candidates=viewState(a.getWindow().getDecorView());for(int i=0;i<candidates.length();i++){JSONObject value=candidates.getJSONObject(i);if(value.has("text"))root.put(value);}}
@@ -112,9 +112,10 @@ public final class UiSession {
             }
             long before=next;Method call=target.getClass().getDeclaredMethod(method,draft?new Class<?>[]{JSONObject.class}:new Class<?>[0]);call.setAccessible(true);if(draft)call.invoke(target,row.optJSONObject("extra"));else call.invoke(target);
             AlertDialog opened=null;for(Map.Entry<AlertDialog,Entry> dialog:dialogs(a))if(dialog.getValue().sequence>before)opened=dialog.getKey();
-            if(opened!=null&&opened.getWindow()!=null){final AlertDialog current=opened;JSONArray values=row.optJSONArray("views");restoreViews(current.getWindow().getDecorView(),values);current.getWindow().getDecorView().post(()->restoreViews(current.getWindow().getDecorView(),values));}
+            if(opened!=null&&opened.getWindow()!=null){final AlertDialog current=opened;JSONArray values=row.optJSONArray("views");restoreViews(dialogView(current),values);dialogView(current).post(()->restoreViews(dialogView(current),values));}
         }catch(Exception failure){android.util.Log.w("UiSession","Skipped unavailable interface",failure);}
     }
+    private static View dialogView(AlertDialog dialog){return dialog instanceof SettingsPanel?((SettingsPanel)dialog).pageView():dialog.getWindow().getDecorView();}
     private static File directory(Context c){return new File(c.getCacheDir(),"ui-session");}
     private static void prune(File directory){File[] files=directory.listFiles();if(files==null)return;Arrays.sort(files,Comparator.comparingLong(File::lastModified).reversed());long cutoff=System.currentTimeMillis()-MAX_AGE;for(int i=0;i<files.length;i++)if(files[i].lastModified()<cutoff||i>=24)files[i].delete();}
     static JSONArray viewState(View root)throws JSONException{JSONArray out=new JSONArray();captureView(root,"",out);return out;}

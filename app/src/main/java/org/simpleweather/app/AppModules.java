@@ -19,7 +19,7 @@ import java.util.zip.*;
 /** Signed executable packages bound to a stable host interface, never shared storage. */
 public final class AppModules {
     public static final String API="daidai-toolbox/api-1";
-    public static final String CATALOG="https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.0/catalog.json";
+    public static final String CATALOG="https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/catalog.json";
     public static final String[] IDS={"weather","schedule","status","weather-map","astronomy","earthquake","random","todo"};
     public static final String[] CLASSES={"WeatherScreen","ScheduleScreen","GpsScreen","MapScreen","AstronomyScreen","EarthquakeScreen","RandomChoiceScreen","TodoScreen"};
     public static final String[] EMBEDDED={"music","messaging","colorvision"};
@@ -90,11 +90,12 @@ public final class AppModules {
         Object screen=index==4?entry.getConstructor(MainActivity.class,City.class,WeatherData.class,Instant.class,Consumer.class).newInstance(activity,city,data,at,change):entry.getConstructor(MainActivity.class).newInstance(activity);
         return new ScreenHandle(screen);
     }
-    public void uninstall(String id){if(!known(id)||busy)return;busy=true;a.releaseModule(id);new Thread(()->{try{ModuleRuntime.beginChange(a,id);File file=ModuleRuntime.packageFile(a,id);if(file.exists()&&!file.delete())throw new IOException("Cannot remove application");new File(directory,id+".previous.ddapp").delete();a.getSharedPreferences("apps_host",0).edit().remove("launching_"+id).remove("pending_"+id).commit();if(id.equals("status")){RouteRecorder.stop();LocationService.stop(a);}if(id.equals("todo"))TodoScheduler.suspend(a);if(id.equals("schedule"))ScheduleNotifier.refresh(a,false);a.runOnUiThread(a::launcher);}catch(Exception e){a.runOnUiThread(()->a.toast(a.getString(R.string.module_install_failed)));}finally{ModuleRuntime.endChange(id);busy=false;}},"app-uninstall").start();}
+    public void uninstall(String id){if(!known(id)||busy)return;busy=true;a.releaseModule(id);new Thread(()->{boolean removed=false;try{ModuleRuntime.beginChange(a,id);File file=ModuleRuntime.packageFile(a,id);if(file.exists()&&!file.delete())throw new IOException("Cannot remove application");new File(directory,id+".previous.ddapp").delete();a.getSharedPreferences("apps_host",0).edit().remove("launching_"+id).remove("pending_"+id).commit();if(id.equals("status")){RouteRecorder.stop();LocationService.stop(a);}if(id.equals("todo"))TodoScheduler.suspend(a);if(id.equals("schedule"))ScheduleNotifier.refresh(a,false);removed=true;}catch(Exception e){a.runOnUiThread(()->a.toast(a.getString(R.string.module_install_failed)));}finally{ModuleRuntime.endChange(id);busy=false;}if(removed)a.runOnUiThread(()->{if(!a.isDestroyed())a.installedAppsChanged();});},"app-uninstall").start();}
     public void openInternal(String id){if(installed(id))a.startActivity(ModuleRuntime.pageIntent(a,id,"main"));}
     public JSONArray bundledCatalog()throws Exception{try(InputStream in=a.getAssets().open("app-catalog.json")){return new JSONObject(new String(read(in,1024*1024),"UTF-8")).getJSONArray("apps");}}
     public JSONArray remoteCatalog()throws Exception{try(InputStream in=network(CATALOG)){JSONObject object=new JSONObject(new String(read(in,1024*1024),"UTF-8"));if(!"daidai-app-store".equals(object.optString("format"))||object.optInt("schemaVersion")!=1)throw new IOException("Invalid catalog");JSONArray items=object.getJSONArray("apps");if(items.length()>32)throw new IOException("Catalog too large");for(int n=0;n<items.length();n++){JSONObject item=items.getJSONObject(n);if(!item.has("hostApi"))item.put("hostApi",object.optString("hostApi"));}return items;}}
-    public boolean updateAvailable(JSONObject item){try{return installed(item.getString("id"))&&item.getInt("versionCode")>inspect(a,ModuleRuntime.packageFile(a,item.getString("id")),item.getString("id")).getInt("versionCode");}catch(Exception e){return false;}}
+    /** A retained legacy/unreadable executable also needs replacement, exactly as its row offers. */
+    public boolean updateAvailable(JSONObject item){String id=item.optString("id");if(!known(id)||!compatible(item)||item.optInt("versionCode")<=0)return false;File file=ModuleRuntime.packageFile(a,id);if(!file.isFile())return false;try{return item.getInt("versionCode")>inspect(a,file,id).getInt("versionCode");}catch(Exception legacyOrDamaged){return true;}}
     public void download(JSONObject item)throws Exception{download(item,new DownloadTask());}
     public void download(JSONObject item,DownloadTask task)throws Exception{
         String id=item.getString("id"),hash=item.getString("sha256");long length=item.optLong("bytes",-1);

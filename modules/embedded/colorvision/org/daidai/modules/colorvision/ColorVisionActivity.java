@@ -21,6 +21,7 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
  private FrameLayout frame;
  private ComparisonView comparison;
  private TextView status;
+ private Button cameraToggle;
  private CameraPreview camera;
  private Bitmap[] pictures;
  private Bitmap exportSnapshot;
@@ -32,12 +33,14 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
  private String version(){return org.simpleweather.app.ModuleRuntime.appVersion(activity,"colorvision");}
  @Override public void onCreate(Bundle saved){
   super.onCreate(saved);
+  front=getSharedPreferences("colorvision_module",0).getBoolean("front_camera",false);
+  if(getIntent().getBooleanExtra("settings_mode",false)){new org.simpleweather.app.ToolDialog(activity).setTitle(t("settings")).setView(settingsContent(activity)).setNegativeButton(Texts.get(activity,"shared_3"),null).show();return;}
   selectedMask=getSharedPreferences("colorvision_module",0).getInt("views",15)&15;
   if(selectedMask==0)selectedMask=15;
   LinearLayout page=Ui.page(activity,t("title"),t("subtitle",version()));
   LinearLayout body=Ui.scroll(page);
   LinearLayout actions=Ui.row(body);
-  Ui.cell(actions,t("camera"),this::activateCamera);
+  cameraToggle=Ui.cell(actions,t("camera_start"),()->{if(sourceCamera)deactivateCamera();else activateCamera();});
   Ui.cell(actions,t("photo"),this::pickPhoto);
   LinearLayout choices=Ui.card(body,t("views"));
   String[] keys={"reference","protan","deutan","tritan"};
@@ -67,26 +70,34 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
   frame.addView(comparison,new FrameLayout.LayoutParams(-1,-1));
   status=Ui.text(activity,t("choose"),14);body.addView(status);
   LinearLayout controls=Ui.row(body);
-  Ui.cell(controls,t("switch_camera"),()->{front=!front;if(sourceCamera)activateCamera();});
+  Ui.cell(controls,t("switch_camera"),()->{front=!front;getSharedPreferences("colorvision_module",0).edit().putBoolean("front_camera",front).apply();if(sourceCamera)activateCamera();});
   Ui.cell(controls,t("export"),this::export);
+  Ui.button(body,t("settings"),()->org.simpleweather.app.SettingsActivity.open(activity,"colorvision"));
   Ui.button(body,t("guide_title"),()->Ui.note(activity,t("guide_title"),t("guide")));
  }
  private int stageHeight(){return Math.max(Ui.dp(activity,280),Math.min(Ui.dp(activity,520),(int)(getResources().getDisplayMetrics().heightPixels*.58f)));}
- @Override public void onConfigurationChanged(Configuration configuration){super.onConfigurationChanged(configuration);frame.getLayoutParams().height=stageHeight();frame.requestLayout();if(camera!=null)camera.requestRender();}
+ @Override public void onConfigurationChanged(Configuration configuration){super.onConfigurationChanged(configuration);if(frame==null)return;frame.getLayoutParams().height=stageHeight();frame.requestLayout();if(camera!=null)camera.requestRender();}
+ public static android.view.View settingsContent(Activity activity){
+  LinearLayout content=Ui.column(activity);content.addView(Ui.text(activity,Texts.get(activity,"cv_camera_direction"),17));RadioGroup choices=new RadioGroup(activity);content.addView(choices);
+  for(int i=0;i<2;i++){RadioButton choice=new RadioButton(activity);choice.setId(7200+i);choice.setText(Texts.get(activity,i==0?"cv_camera_back":"cv_camera_front"));choice.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));choices.addView(choice);}
+  choices.check(activity.getSharedPreferences("colorvision_module",0).getBoolean("front_camera",false)?7201:7200);
+  choices.setOnCheckedChangeListener((group,id)->activity.getSharedPreferences("colorvision_module",0).edit().putBoolean("front_camera",id==7201).apply());return content;
+ }
  private void pickPhoto(){try{startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE),10);}catch(Exception e){Ui.error(activity,e);}}
  private void closeCamera(){if(camera!=null){camera.stop();frame.removeView(camera);camera=null;}}
- private void clearPictures(){ready=false;comparison.setImages(null);release(pictures);pictures=null;}
+ private void deactivateCamera(){generation++;sourceCamera=false;closeCamera();comparison.setCamera(false);cameraToggle.setText(t("camera_start"));status.setText(t("camera_stopped"));}
+ private void clearPictures(){ready=false;if(comparison!=null)comparison.setImages(null);release(pictures);pictures=null;}
  private static void release(Bitmap[] images){if(images!=null)for(Bitmap image:images)if(image!=null&&!image.isRecycled())image.recycle();}
  private void activateCamera(){
   if(checkSelfPermission(android.Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){requestPermissions(new String[]{android.Manifest.permission.CAMERA},20);return;}
-  sourceCamera=true;final int token=++generation;closeCamera();clearPictures();comparison.setCamera(true);
-  camera=new CameraPreview(activity,message->{if(sourceCamera&&token==generation)status.setText(t("camera_failed",message));});
+  sourceCamera=true;final int token=++generation;closeCamera();clearPictures();comparison.setCamera(true);cameraToggle.setText(t("camera_stop"));
+  camera=new CameraPreview(activity,message->{if(sourceCamera&&token==generation){deactivateCamera();status.setText(t("camera_failed",message));}});
   frame.addView(camera,0,new FrameLayout.LayoutParams(-1,-1));camera.setMask(selectedMask);status.setText(t("live"));
   if(resumed)camera.start(front);
  }
  private boolean stale(int token){return token!=generation||Thread.currentThread().isInterrupted();}
  private void loadPhoto(Uri uri){
-  sourceCamera=false;closeCamera();clearPictures();comparison.setCamera(false);
+  sourceCamera=false;closeCamera();clearPictures();comparison.setCamera(false);cameraToggle.setText(t("camera_start"));
   final int token=++generation;status.setText(t("processing"));
   worker.execute(()->{
    Bitmap[] output=new Bitmap[4];
@@ -137,7 +148,7 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
   }
  }
  @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);if(request==20&&results.length>0){if(results[0]==PackageManager.PERMISSION_GRANTED)activateCamera();else status.setText(t("permission"));}}
- @Override protected void onResume(){super.onResume();resumed=true;if(sourceCamera&&camera!=null)camera.start(front);}
+ @Override protected void onResume(){super.onResume();resumed=true;front=getSharedPreferences("colorvision_module",0).getBoolean("front_camera",false);if(sourceCamera&&camera!=null)camera.start(front);}
  @Override protected void onPause(){resumed=false;if(camera!=null)camera.stop();super.onPause();}
  @Override protected void onDestroy(){generation++;closeCamera();clearPictures();if(exportSnapshot!=null)exportSnapshot.recycle();worker.shutdownNow();super.onDestroy();}
 }

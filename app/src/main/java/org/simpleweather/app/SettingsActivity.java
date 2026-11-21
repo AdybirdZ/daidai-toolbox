@@ -1,0 +1,34 @@
+package org.simpleweather.app;
+
+import android.app.*;
+import android.content.*;
+import android.os.Bundle;
+
+/** Dedicated settings application window, shared by all installed internal applications. */
+public final class SettingsActivity extends MainActivity {
+    public static final int REQUEST=7301;
+    private SettingsNavigation pages;
+    public static Activity owner(Context context){for(int i=0;i<10&&context!=null;i++){if(context instanceof Activity)return (Activity)context;if(!(context instanceof ContextWrapper))break;Context next=((ContextWrapper)context).getBaseContext();if(next==context)break;context=next;}return null;}
+    public static String hostText(Context context,int id){Activity a=owner(context);return (a==null?context:a.getBaseContext()).getString(id);}
+    public static void open(Activity origin,String app){
+        if(origin instanceof SettingsActivity&&!java.util.Arrays.asList(AppModules.EMBEDDED).contains(app)){((SettingsActivity)origin).openTarget(app);return;}
+        Intent intent;
+        if(java.util.Arrays.asList(AppModules.EMBEDDED).contains(app)){
+            try{if(!AppModules.inspect(origin,ModuleRuntime.packageFile(origin,app),app).getJSONObject("pages").has("settings")){android.widget.Toast.makeText(origin,hostText(origin,R.string.settings_update_required),0).show();return;}}catch(Exception e){android.widget.Toast.makeText(origin,hostText(origin,R.string.module_open_failed),0).show();return;}
+            intent=new Intent(origin,InternalAppActivity.class).putExtra("internal_app",app).putExtra("internal_page","settings").putExtra("settings_mode",true);
+        }
+        else intent=new Intent(origin,SettingsActivity.class).putExtra("settings_target",app==null?"":app);
+        origin.startActivityForResult(intent,REQUEST);
+    }
+    @Override protected void onShellReady(Bundle state){pages=new SettingsNavigation(this);setResult(RESULT_OK);if(state==null||!state.containsKey("toolbox_ui_session")&&state.getInt("toolbox_language_settings",0)==0){new SettingsScreen(this).show();openTarget(getIntent().getStringExtra("settings_target"));}getWindow().getDecorView().post(()->getWindow().getDecorView().post(()->{if(pages.empty()&&!isFinishing())new SettingsScreen(this).show();}));}
+    private void openTarget(String id){if(id==null||id.isEmpty())return;if(!apps.installed(id))return;
+        if(java.util.Arrays.asList(AppModules.EMBEDDED).contains(id)){open(this,id);return;}
+        switch(id){case "weather":case "weather-map":case "status":case "astronomy":FeatureAccess.settings(this,id);break;case "earthquake":earthquakeSettings();break;case "schedule":scheduleSettings();break;case "random":randomChoiceSettings();break;case "todo":todoSettings();break;}
+    }
+    @Override public void refreshScreen(){if(pages==null)super.refreshScreen();else{ToolDialog.refresh(this);pages.refresh();}}
+    @Override public void changeLanguage(String choice){if(pages!=null&&!AppLanguage.choice(this).equals(choice))pages.preparingRecreation();super.changeLanguage(choice);}
+    @Override public boolean restoreDefaults(){if(pages!=null&&!AppLanguage.choice(this).equals("system"))pages.preparingRecreation();return super.restoreDefaults();}
+    @Override public void switchTab(int next){if(pages==null)super.switchTab(next);else if(next==-1)SettingsNavigation.desktop(this);}
+    @Override public void onBackPressed(){if(pages==null||!pages.back())finish();}
+    @Override protected void onDestroy(){if(pages!=null)pages.close();super.onDestroy();}
+}

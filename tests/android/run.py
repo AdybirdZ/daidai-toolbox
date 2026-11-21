@@ -1,9 +1,10 @@
 """Run signed Android UI regressions on an already running, isolated emulator."""
-import argparse,os,shutil,subprocess,zipfile
+import argparse,os,shutil,subprocess,zipfile,sys
+if hasattr(sys.stdout,"reconfigure"):sys.stdout.reconfigure(encoding="utf-8")
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
 workspace=root.parent
-parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['ButtonStyleUiTests','ModuleLaunchUiTests','ModuleEnduranceUiTests','StoreUpgradeUiTests','AppDataManagerUiTests','ArchitectureUiTests','LauncherUiTests','MusicDiagnosticsUiTests','UiSessionUiTests','Pre3UpdateUiTests','InternalAppsUiTests','ModuleStoreOnlineTests','ModuleHostUiTests','Release221UiTests','AppIconPinUiTests','AppIconUiTests','TodoUiTests','StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','Release130UiTests','EnglishPreviewUiTests','LanguageUiTests'],default='StatusUiTests');parser.add_argument('--language',choices=['zh-CN','en'],default='zh-CN');opts=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['StoreBatchOnline301UiTests','SettingsData301UiTests','Settings301UiTests','Store301UiTests','Embedded301UiTests','Performance301UiTests','ButtonStyleUiTests','ModuleLaunchUiTests','ModuleEnduranceUiTests','StoreUpgradeUiTests','AppDataManagerUiTests','ArchitectureUiTests','LauncherUiTests','MusicDiagnosticsUiTests','UiSessionUiTests','Pre3UpdateUiTests','InternalAppsUiTests','ModuleStoreOnlineTests','ModuleHostUiTests','Release221UiTests','AppIconPinUiTests','AppIconUiTests','TodoUiTests','StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','Release130UiTests','EnglishPreviewUiTests','LanguageUiTests'],default='StatusUiTests');parser.add_argument('--language',choices=['zh-CN','en'],default='zh-CN');opts=parser.parse_args()
 if not opts.serial.startswith('emulator-'):raise SystemExit('Use an isolated Android emulator, not a personal device.')
 sdk=workspace/'tools/android-sdk';tools=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar'
 java_dir=Path(shutil.which('javac')).parent

@@ -28,12 +28,26 @@ public final class ModuleRuntime {
     static synchronized Resources resources(Context c,String id)throws Exception{
         if(CHANGING.contains(id))throw new Updating();
         File original=packageFile(c,id);AppModules.inspect(c,original,id);File file=ModuleAssets.resourceFile(c,id);
-        PackageInfo info=c.getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),0);
-        if(info==null)throw new IOException("Missing resources");
-        info.applicationInfo.sourceDir=file.getAbsolutePath();info.applicationInfo.publicSourceDir=file.getAbsolutePath();
-        Resources source=c.getPackageManager().getResourcesForApplication(info.applicationInfo);
         Configuration config=new Configuration(AppLanguage.wrap(c).getResources().getConfiguration());
-        return new Resources(source.getAssets(),c.getResources().getDisplayMetrics(),config);
+        return isolatedResources(file.getAbsolutePath(),c.getResources().getDisplayMetrics(),config);
+    }
+    /** A Resources constructor configures its AssetManager, so it must not share one
+     * with another live locale/configuration (including PackageManager caches). */
+    private static Resources isolatedResources(String path,android.util.DisplayMetrics metrics,Configuration config)throws Exception{
+        AssetManager assets=AssetManager.class.getDeclaredConstructor().newInstance();
+        java.lang.reflect.Method add=AssetManager.class.getMethod("addAssetPath",String.class);
+        if((Integer)add.invoke(assets,path)==0){assets.close();throw new IOException("Missing resources");}
+        return new ModuleResources(assets,metrics,config,path);
+    }
+    private static final class ModuleResources extends Resources {
+        final String path;
+        ModuleResources(AssetManager assets,android.util.DisplayMetrics metrics,Configuration config,String path){super(assets,metrics,config);this.path=path;}
+    }
+    static Resources configuredResources(Resources source,Configuration override){
+        if(!(source instanceof ModuleResources))throw new IllegalArgumentException("Not application resources");
+        Configuration merged=new Configuration(source.getConfiguration());merged.updateFrom(override);
+        try{return isolatedResources(((ModuleResources)source).path,source.getDisplayMetrics(),merged);}
+        catch(Exception failure){throw new IllegalStateException("Cannot configure application resources",failure);}
     }
     public static Intent pageIntent(Context c,String id,String page){return new Intent(c,InternalAppActivity.class).putExtra("internal_app",id).putExtra("internal_page",page);}
     public static String appVersion(Context c,String id){try{return AppModules.inspect(c,packageFile(c,id),id).getString("version");}catch(Exception e){return "";}}
@@ -66,7 +80,7 @@ public final class ModuleRuntime {
         ModuleContext(Context base,String id,Resources resources){super(base);this.id=id;this.resources=resources;}
         @Override public Resources getResources(){return resources;}
         @Override public AssetManager getAssets(){return resources.getAssets();}
-        @Override public Context createConfigurationContext(Configuration config){return new ModuleContext(getBaseContext().createConfigurationContext(config),id,new Resources(resources.getAssets(),resources.getDisplayMetrics(),config));}
+        @Override public Context createConfigurationContext(Configuration config){return new ModuleContext(getBaseContext().createConfigurationContext(config),id,configuredResources(resources,config));}
         @Override public Context getApplicationContext(){return this;}
         @Override public File getFilesDir(){return dataDirectory(this,id);}
         @Override public File getCacheDir(){File f=new File(super.getCacheDir(),"internal-"+id);f.mkdirs();return f;}

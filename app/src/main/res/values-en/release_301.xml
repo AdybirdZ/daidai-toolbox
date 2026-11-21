@@ -1,0 +1,5 @@
+<resources>
+  <string name="settings_update_required">Update this app to use centralized settings</string>
+  <string name="update_301_title">3.0.1 · Performance fixes and centralized settings</string>
+  <string name="update_301_detail">Fixed Update all, scrolling during downloads, and returning to the desktop after uninstalling an app.\n\nReduced resource-file access in live views, moved battery, memory and storage queries off the UI thread, and avoided rebuilding the earthquake catalog for repeated location updates. Improved responsiveness in Status, Astronomy and Earthquakes.\n\nSettings now open as full pages in a dedicated window, with each internal app linking to its own group. Fixed clipped course editor actions on narrow screens and message scrolling in Device communication. Color vision simulator can start or stop the live camera.</string>
+</resources>

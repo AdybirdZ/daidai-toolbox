@@ -33,6 +33,10 @@ public final class GpsScreen {
     private TextView compassInfo,pitchView,rollView,satelliteStatus,satelliteInfo,satelliteDetails,treasureInfo,batteryInfo,deviceInfo;
     private LinearLayout satelliteDetailBox;private boolean details,pendingSatellite,batteryRegistered;
     private Intent battery;
+    private final java.util.concurrent.ExecutorService systemReader=java.util.concurrent.Executors.newSingleThreadExecutor(r->new Thread(r,"status-system-readings"));
+    private volatile boolean systemReadPending,destroyed;
+    private volatile SystemReadings systemReadings=new SystemReadings();
+    private static final class SystemReadings {int current=Integer.MIN_VALUE,charge=Integer.MIN_VALUE;long availableMemory=-1,totalMemory=-1,availableStorage=-1,totalStorage=-1;}
     private long lastSecond=-1;
     private String selectedSatellite="";
     private final java.util.Map<Integer,TextView> sensorViews=new java.util.HashMap<>();
@@ -189,7 +193,7 @@ public final class GpsScreen {
     private boolean network(){return a.preferences.getString("location_provider","gps").equals("network");}
     private String mode(){return network()?UiText.get("earthquake_location_005"):UiText.get("earthquake_location_006");}
     public void configurationChanged(){hardware.configurationChanged();lastSecond=-1;update();}
-    public void destroy(){pause();hardware.shutdown();}
+    public void destroy(){destroyed=true;pause();hardware.shutdown();systemReader.shutdownNow();}
     public void prepareNextLaunch(){hardware.prepareNextLaunch();}
     public void stopForImport(){pause();hardware.shutdown();LocationService.stop(a);}
     public void modeChanged(){locationStarting=false;pendingPermission=false;pendingSatellite=false;LocationService.stop(a);hardware.stopGnss(UiText.get("gps_136"));}
@@ -213,6 +217,7 @@ public final class GpsScreen {
     private void set(TextView view,String value){if(view!=null&&!value.contentEquals(view.getText()))view.setText(value);}
     private void update(){
         if(!visible)return;
+        sampleSystemReadings();
         if(locationStarting&&(LocationService.running||!UiText.get("gps_139").equals(LocationService.status())))locationStarting=false;
         set(locationToggle,LocationService.running||locationStarting||pendingPermission?UiText.get("gps_034"):UiText.get("gps_035"));
         set(satelliteToggle,hardware.gnssRunning||pendingSatellite?UiText.get("gps_039"):UiText.get("gps_040"));
@@ -259,7 +264,7 @@ public final class GpsScreen {
         String healthText=health==BatteryManager.BATTERY_HEALTH_GOOD?UiText.get("gps_186"):health==BatteryManager.BATTERY_HEALTH_OVERHEAT?UiText.get("gps_187"):health==BatteryManager.BATTERY_HEALTH_COLD?UiText.get("gps_188"):health==BatteryManager.BATTERY_HEALTH_DEAD?UiText.get("gps_189"):health==BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE?UiText.get("gps_190"):health==BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE?UiText.get("gps_191"):UiText.get("earthquake_options_001");
         String source=plugged<0?UiText.get("earthquake_options_001"):plugged==0?UiText.get("gps_192"):(plugged&BatteryManager.BATTERY_PLUGGED_AC)!=0?UiText.get("gps_193"):(plugged&BatteryManager.BATTERY_PLUGGED_USB)!=0?"USB":(plugged&BatteryManager.BATTERY_PLUGGED_WIRELESS)!=0?UiText.get("gps_194"):UiText.get("gps_195");
         String technology=battery.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY);if(technology==null||technology.isEmpty())technology=UiText.get("earthquake_options_001");
-        BatteryManager bm=(BatteryManager)a.getSystemService(Context.BATTERY_SERVICE);int rawCurrent=Integer.MIN_VALUE,rawCharge=Integer.MIN_VALUE;if(bm!=null){try{rawCurrent=bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);}catch(Exception ignored){}try{rawCharge=bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);}catch(Exception ignored){}}
+        SystemReadings system=systemReadings;int rawCurrent=system.current,rawCharge=system.charge;
         String[] readings=batteryReadingText(rawCurrent,rawCharge);String currentText=readings[0],chargeText=readings[1];
         String[] values={level>=0&&scale>0?Math.round(level*100f/scale)+"%":UiText.get("earthquake_options_001"),chargeStatus(battery.getIntExtra(BatteryManager.EXTRA_STATUS,0)),temperature!=Integer.MIN_VALUE?String.format(Locale.ROOT,"%.1f ℃",temperature/10.0):UiText.get("earthquake_options_001"),voltage>0?String.format(Locale.ROOT,"%.3f V",voltage/1000.0):UiText.get("earthquake_options_001"),healthText,source,technology,currentText,chargeText};for(int id:batteryViews.keySet()){String value=values[id];set(batteryViews.get(id),value);}
     }
@@ -270,10 +275,21 @@ public final class GpsScreen {
         return new String[]{Double.isNaN(milliamps)?missing:String.format(Locale.ROOT,"%.1f mA",milliamps),Double.isNaN(milliampHours)?missing:String.format(Locale.ROOT,UiText.get("gps_196"),milliampHours)};
     }
     private void updateDevice(){if(deviceViews.isEmpty())return;String[] values=new String[deviceLabels().length];values[0]=Build.MANUFACTURER+" "+Build.MODEL;values[1]=Build.VERSION.RELEASE+" · API "+Build.VERSION.SDK_INT;values[2]=Build.VERSION.SECURITY_PATCH;
-        try{ActivityManager am=(ActivityManager)a.getSystemService(Context.ACTIVITY_SERVICE);ActivityManager.MemoryInfo m=new ActivityManager.MemoryInfo();am.getMemoryInfo(m);values[3]=bytes(m.availMem)+" / "+bytes(m.totalMem);StatFs fs=new StatFs(a.getFilesDir().getPath());values[4]=bytes(fs.getAvailableBytes())+" / "+bytes(fs.getTotalBytes());}catch(Exception ignored){values[3]=values[4]=UiText.get("earthquake_options_001");}
+        SystemReadings system=systemReadings;values[3]=system.availableMemory>=0?bytes(system.availableMemory)+" / "+bytes(system.totalMemory):UiText.get("earthquake_options_001");values[4]=system.availableStorage>=0?bytes(system.availableStorage)+" / "+bytes(system.totalStorage):UiText.get("earthquake_options_001");
         long seconds=SystemClock.elapsedRealtime()/1000;values[5]=(seconds/86400)+UiText.get("gps_197")+(seconds/3600%24)+UiText.get("gps_198")+(seconds/60%60)+UiText.get("gps_199");
         android.util.DisplayMetrics dm=a.getResources().getDisplayMetrics();values[6]=dm.widthPixels+" × "+dm.heightPixels+" px · "+dm.densityDpi+" dpi";
         for(int id:deviceViews.keySet())set(deviceViews.get(id),values[id]);
+    }
+    private void sampleSystemReadings(){
+        if(systemReadPending||destroyed)return;boolean readBattery=!batteryViews.isEmpty(),readDevice=!deviceViews.isEmpty();if(!readBattery&&!readDevice)return;systemReadPending=true;
+        try{systemReader.execute(()->{try{
+            // Vendor battery Binder calls, memory queries and statfs can block. Keep
+            // the 50 ms display loop independent, with at most one sample in flight.
+            SystemReadings next=new SystemReadings();
+            if(readBattery){BatteryManager manager=(BatteryManager)a.getSystemService(Context.BATTERY_SERVICE);if(manager!=null){try{next.current=manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);}catch(Exception ignored){}try{next.charge=manager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);}catch(Exception ignored){}}}
+            if(readDevice){try{ActivityManager manager=(ActivityManager)a.getSystemService(Context.ACTIVITY_SERVICE);ActivityManager.MemoryInfo memory=new ActivityManager.MemoryInfo();manager.getMemoryInfo(memory);next.availableMemory=memory.availMem;next.totalMemory=memory.totalMem;}catch(Exception ignored){}try{StatFs storage=new StatFs(a.getFilesDir().getPath());next.availableStorage=storage.getAvailableBytes();next.totalStorage=storage.getTotalBytes();}catch(Exception ignored){}}
+            if(!destroyed)systemReadings=next;
+        }finally{systemReadPending=false;}});}catch(java.util.concurrent.RejectedExecutionException stopped){systemReadPending=false;}
     }
     private static String bytes(long bytes){return String.format(Locale.ROOT,"%.2f GiB",bytes/1073741824.0);}
 }

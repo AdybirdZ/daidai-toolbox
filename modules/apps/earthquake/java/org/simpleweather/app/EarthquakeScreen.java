@@ -32,6 +32,9 @@ public final class EarthquakeScreen {
     private LinearLayout locationControls;
     private final EarthquakeLocation location;
     private String locationKey="";
+    private List<EarthquakeData.Report> mergedReports=Collections.emptyList();
+    private List<EarthquakeData.Event> mergedEvents=Collections.emptyList();
+    private final Map<EarthquakeData.Report,TextView> distanceRows=new IdentityHashMap<>();
     private int ticks;
     private volatile boolean visible,dead;
     private boolean cacheLoaded,cleared;
@@ -40,8 +43,8 @@ public final class EarthquakeScreen {
     private String restoredMetadata;
     public void restoreState(Bundle state){if(state!=null){restoredMetadata=state.getString("quake_session");shown=Math.max(30,Math.min(10000,state.getInt("quake_shown",30)));}}
     public void saveState(Bundle state){state.putString("quake_session",cacheLoaded&&restoredMetadata==null?EarthquakeRestore.snapshot(data,fromCache,failures):restoredMetadata);state.putInt("quake_shown",shown);}
-    private final Runnable tick=new Runnable(){public void run(){if(visible&&!dead){if(ticks++%15==0){refresh(false);updateStatus();}updateReference();String key=referenceKey();if(!key.equals(locationKey)){locationKey=key;updateList();}ui.postDelayed(this,1000);}}};
-    public EarthquakeScreen(MainActivity activity){a=activity;p=a.preferences;if(p.contains("quake_intensity_scale")||p.contains("quake_mmi_default_113"))p.edit().remove("quake_intensity_scale").remove("quake_mmi_default_113").apply();limits=a.getSharedPreferences("earthquake_limits",0);cache=new EarthquakeCache(a.getFilesDir());location=new EarthquakeLocation(a,()->{updateReference();updateList();});}
+    private final Runnable tick=new Runnable(){public void run(){if(visible&&!dead){if(ticks++%15==0){refresh(false);updateStatus();}updateReference();updateReferenceList();ui.postDelayed(this,1000);}}};
+    public EarthquakeScreen(MainActivity activity){a=activity;p=a.preferences;if(p.contains("quake_intensity_scale")||p.contains("quake_mmi_default_113"))p.edit().remove("quake_intensity_scale").remove("quake_mmi_default_113").apply();limits=a.getSharedPreferences("earthquake_limits",0);cache=new EarthquakeCache(a.getFilesDir());location=new EarthquakeLocation(a,()->{updateReference();updateReferenceList();});}
 
     private int days(){int v=p.getInt("quake_days",7);for(int d:DAY_VALUES)if(v==d)return d;return 7;}
     private double global(){return EarthquakeOptions.magnitude(p.getFloat("quake_global_min",1));}
@@ -68,8 +71,16 @@ public final class EarthquakeScreen {
     }
     private void updateControls(){if(summary!=null)summary.setText(UiText.get("earthquake_016")+days()+UiText.get("earthquake_017")+areas()[area()].replace(UiText.get("color_default_suffix"),"")+(area()==2?" · "+p.getInt("quake_radius",1000)+" km":"")+UiText.get("earthquake_018")+String.format(Locale.ROOT,"%.1f",global())+UiText.get("earthquake_019")+String.format(Locale.ROOT,"%.1f",regional())+"\n"+sorts()[sort()].replace(UiText.get("color_default_suffix"),""));}
     private void updateLocationControls(){if(locationControls==null)return;locationControls.removeAllViews();if(!p.getBoolean("quake_manual_location",false)){a.gap(locationControls,10);locationControls.addView(a.button(UiText.get("earthquake_020"),false,()->location.start()));}}
-    private void updateReference(){if(referenceText!=null)referenceText.setText(referenceLabel()+(location.status.isEmpty()?"":"\n"+location.status));}
-    private String referenceKey(){double[] ref=reference();Location l=LocationService.last(a);return Arrays.toString(ref)+":"+(l==null?0:l.getTime());}
+    private void updateReference(){if(referenceText!=null){String text=referenceLabel()+(location.status.isEmpty()?"":"\n"+location.status);if(!text.contentEquals(referenceText.getText()))referenceText.setText(text);}}
+    private String referenceKey(){return Arrays.toString(reference());}
+    private void updateReferenceList(){
+        String key=referenceKey();if(key.equals(locationKey))return;
+        if(area()==2||sort()==2){updateList();return;}
+        locationKey=key;
+        // In ordinary time/magnitude order, a new position changes only distance
+        // labels. Keep all existing rows and layout instead of rebuilding the page.
+        a.updateReadingValues(()->{for(Map.Entry<EarthquakeData.Report,TextView> row:distanceRows.entrySet()){String value=facts(row.getKey());if(!value.contentEquals(row.getValue().getText()))row.getValue().setText(value);}});
+    }
     public void locationPermissionResult(){location.permissionResult(visible&&!dead);}
 
     private int dayIndex(){for(int i=0;i<DAY_VALUES.length;i++)if(DAY_VALUES[i]==days())return i;return 2;}
@@ -85,6 +96,7 @@ public final class EarthquakeScreen {
     private String referenceLabel(){if(p.getBoolean("quake_manual_location",false)&&(!p.contains("quake_ref_lat")||!p.contains("quake_ref_lon")))return UiText.get("earthquake_021");if(p.getBoolean("quake_manual_location",false))return UiText.get("earthquake_022")+CoordinateFormat.pair(p.getFloat("quake_ref_lon",0),p.getFloat("quake_ref_lat",0),5);Location l=LocationService.last(a);if(l==null)return UiText.get("earthquake_023");long age=LocationService.ageSeconds(l);return UiText.get("earthquake_024")+age+UiText.get("earthquake_025")+(age>300?UiText.get("earthquake_026"):"")+(" · "+CoordinateFormat.pair(l.getLongitude(),l.getLatitude(),5));}
 
     private String distance(EarthquakeData.Report r){double[] ref=reference();return ref==null?UiText.get("earthquake_027"):String.format(Locale.ROOT,UiText.get("earthquake_028"),p.getBoolean("quake_manual_location",false)?UiText.get("earthquake_029"):UiText.get("earthquake_030"),EarthquakeData.distance(ref[0],ref[1],r.latitude,r.longitude));}
+    private String facts(EarthquakeData.Report report){List<String> values=new ArrayList<>();if(p.getBoolean("quake_field_depth",true))values.add(depth(report));if(p.getBoolean("quake_field_distance",true))values.add(distance(report));return String.join(" · ",values);}
     private String depth(EarthquakeData.Report r){return Double.isFinite(r.depth)?String.format(Locale.ROOT,UiText.get("earthquake_031"),r.depth):UiText.get("earthquake_032");}
     private String intensity(EarthquakeData.Event event){return EarthquakeIntensity.summary(event);}
     private void updateStatus(){
@@ -97,14 +109,17 @@ public final class EarthquakeScreen {
         if(refresh!=null)refresh.setText(inFlight.isEmpty()?UiText.get("earthquake_014"):UiText.get("earthquake_015"));
     }
     private void updateList(){
-        if(!visible||listBox==null)return;listBox.removeAllViews();List<EarthquakeData.Report> all=new ArrayList<>();for(String source:EarthquakeData.SOURCES)if(enabled(source)&&data.containsKey(source))all.addAll(data.get(source).reports);
-        long now=System.currentTimeMillis();List<EarthquakeData.Event> events=EarthquakeData.filter(EarthquakeData.merge(all),now-days()*86400_000L,now,area(),global(),regional(),reference(),p.getInt("quake_radius",1000),sort());
+        if(!visible||listBox==null)return;locationKey=referenceKey();listBox.removeAllViews();distanceRows.clear();List<EarthquakeData.Report> all=new ArrayList<>();for(String source:EarthquakeData.SOURCES)if(enabled(source)&&data.containsKey(source))all.addAll(data.get(source).reports);
+        // New fix timestamps do not alter catalogue membership. Merge only when the
+        // underlying report objects/source selection change, not for each position.
+        if(!all.equals(mergedReports)){mergedReports=all;mergedEvents=EarthquakeData.merge(all);}
+        long now=System.currentTimeMillis();List<EarthquakeData.Event> events=EarthquakeData.filter(mergedEvents,now-days()*86400_000L,now,area(),global(),regional(),reference(),p.getInt("quake_radius",1000),sort());
         listBox.addView(a.text(UiText.get("earthquake_047")+events.size()+UiText.get("earthquake_048"),13,a.MUTED,false));a.gap(listBox,12);
         if(events.isEmpty()){listBox.addView(a.text(area()==2&&reference()==null?UiText.get("earthquake_049"):all.isEmpty()?UiText.get("earthquake_050"):UiText.get("earthquake_051"),14,a.INK,false));return;}
         for(int i=0;i<Math.min(shown,events.size());i++){
             EarthquakeData.Event event=events.get(i);EarthquakeData.Report r=event.main();LinearLayout item=a.column();item.setPadding(a.dp(14),a.dp(16),a.dp(14),a.dp(16));
             item.addView(a.text(r.magnitudeLabel()+" · "+region(r.region),17,r.magnitude>=6?0xFF9D4618:a.INK,true));a.gap(item,10);item.addView(a.text(UiText.get("earthquake_052")+time(r.time),14,a.INK,false));a.gap(item,7);
-            List<String> facts=new ArrayList<>();if(p.getBoolean("quake_field_depth",true))facts.add(depth(r));if(p.getBoolean("quake_field_distance",true))facts.add(distance(r));if(!facts.isEmpty())item.addView(a.text(String.join(" · ",facts),13,a.MUTED,false));
+            String facts=facts(r);if(!facts.isEmpty()){TextView value=a.text(facts,13,a.MUTED,false);item.addView(value);if(p.getBoolean("quake_field_distance",true))distanceRows.put(r,value);}
             if(p.getBoolean("quake_field_intensity",true)){a.gap(item,6);item.addView(a.text(intensity(event),13,a.MUTED,false));}
             if(p.getBoolean("quake_field_source",true)){a.gap(item,6);item.addView(a.text(UiText.get("earthquake_053")+EarthquakeDisplay.sources(event),12,a.MUTED,false));}
             if(p.getBoolean("quake_field_review",true)){a.gap(item,6);item.addView(a.text(EarthquakeDisplay.review(r),12,a.MUTED,false));}
@@ -126,13 +141,13 @@ public final class EarthquakeScreen {
         long now=System.currentTimeMillis(),since=now-days()*86400_000L;double min=Math.min(global(),regional());List<String> jobs=new ArrayList<>();
         for(String source:EarthquakeData.SOURCES){if(!enabled(source)||limits.getLong("until_"+source,0)>now)continue;EarthquakeCache.Entry e=data.get(source);boolean covers=e!=null&&(source.equals("Wolfx")||e.since<=since+60_000&&e.minimum<=min);long interval=p.getLong("quake_interval",900_000);String query=queryKey(source,days(),min);boolean sameQuery=query.equals(limits.getString("query_"+source,""));long previous=limits.getLong("attempt_"+source,0);if(!manual&&sameQuery&&previous>0&&now-previous<Math.max(60_000,interval))continue;if(manual||!covers||interval>0&&now-e.fetched>=interval)jobs.add(source);}
         if(jobs.isEmpty()){if(manual)a.toast(UiText.get("earthquake_083"));return;}
-        cycle++;int thisCycle=cycle;cycleGood=0;cycleTotal=jobs.size();cycleManual=manual;inFlight.addAll(jobs);updateStatus();int generation=cache.generation();
+        cycle++;int thisCycle=cycle;cycleGood=0;cycleTotal=jobs.size();cycleManual=manual;inFlight.addAll(jobs);updateStatus();int generation=cache.generation();final String requestFailure=UiText.get("earthquake_084");
         for(String source:jobs){String query=queryKey(source,days(),min);workers.execute(()->{
             // A queued job must recheck consent, source selection and foreground state before requesting.
             if(dead||!visible||!enabled(source)||generation!=cache.generation()){ui.post(()->{if(dead||generation!=cache.generation()||thisCycle!=cycle)return;inFlight.remove(source);cycleTotal--;updateStatus();});return;}
             limits.edit().putLong("attempt_"+source,System.currentTimeMillis()).putString("query_"+source,query).apply();
             EarthquakeCache.Entry entry=null;String failure=null;boolean saved=false;
-            try{EarthquakeApi.Result result=EarthquakeApi.fetch(source,since,min,new EarthquakeApi.Limits(){public long until(String s){return limits.getLong("until_"+s,0);}public void until(String s,long t){limits.edit().putLong("until_"+s,t).commit();}});entry=new EarthquakeCache.Entry();entry.raw=result.raw;entry.reports=result.reports;entry.fetched=System.currentTimeMillis();entry.since=since;entry.minimum=min;saved=cache.save(source,entry,generation);}catch(Exception ex){android.util.Log.w("Earthquake",source+" catalogue request failed",ex);String msg=ex.getMessage();failure=msg!=null&&msg.matches(".*[\\u4e00-\\u9fff].*")?msg:UiText.get("earthquake_084");}
+            try{EarthquakeApi.Result result=EarthquakeApi.fetch(source,since,min,new EarthquakeApi.Limits(){public long until(String s){return limits.getLong("until_"+s,0);}public void until(String s,long t){limits.edit().putLong("until_"+s,t).commit();}});if(dead||Thread.currentThread().isInterrupted()||generation!=cache.generation())return;entry=new EarthquakeCache.Entry();entry.raw=result.raw;entry.reports=result.reports;entry.fetched=System.currentTimeMillis();entry.since=since;entry.minimum=min;saved=cache.save(source,entry,generation);}catch(Exception ex){if(dead||Thread.currentThread().isInterrupted()||generation!=cache.generation())return;android.util.Log.w("Earthquake",source+" catalogue request failed",ex);String msg=ex.getMessage();failure=msg!=null&&msg.matches(".*[\\u4e00-\\u9fff].*")?msg:requestFailure;}
             final EarthquakeCache.Entry result=entry;final String error=failure;final boolean persisted=saved;
             ui.post(()->{if(dead||generation!=cache.generation()||thisCycle!=cycle)return;inFlight.remove(source);if(result!=null){data.put(source,result);fromCache.remove(source);cycleGood++;if(persisted)failures.remove(source);else failures.put(source,UiText.get("earthquake_085"));}else failures.put(source,error);updateStatus();updateList();if(inFlight.isEmpty()&&cycleManual)a.toast(cycleGood==cycleTotal?UiText.get("earthquake_086"):cycleGood>0?UiText.get("earthquake_087"):UiText.get("earthquake_088"));});
         });}

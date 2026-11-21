@@ -19,7 +19,7 @@ public final class SettingsScreen {
     private ScrollView scroll(LinearLayout c){ScrollView s=new ScrollView(a);s.addView(c);return s;}
     private AlertDialog dialog(String title,LinearLayout c){return new ToolDialog(a).setTitle(title).setView(scroll(c)).setNegativeButton(UiText.get("action_back"),null).show();}
     private TextView action(LinearLayout c,String label,Runnable click){TextView b=a.button(label,false,click);c.addView(b);a.gap(c,10);return b;}
-    public void show(){LinearLayout c=form();action(c,UiText.get("settings_014"),this::global);String[] names={"weather","weather-map","astronomy","status","earthquake","schedule","random","todo"};Runnable[] actions={this::weather,this::maps,this::astronomy,this::location,a::earthquakeSettings,a::scheduleSettings,a::randomChoiceSettings,a::todoSettings};for(int i=0;i<names.length;i++)if(a.apps.installed(names[i]))action(c,a.apps.title(names[i]),actions[i]);action(c,UiText.get("settings_015"),this::about);new ToolDialog(a).setTitle(UiText.get("action_settings")).setView(scroll(c)).setNegativeButton(UiText.get("action_close"),null).show();}
+    public void show(){LinearLayout c=form();action(c,UiText.get("settings_014"),this::global);String[] names={"weather","weather-map","astronomy","status","earthquake","schedule","random","todo"};Runnable[] actions={this::weather,this::maps,this::astronomy,this::location,a::earthquakeSettings,a::scheduleSettings,a::randomChoiceSettings,a::todoSettings};for(int i=0;i<names.length;i++)if(a.apps.installed(names[i]))action(c,a.apps.title(names[i]),actions[i]);for(String id:AppModules.EMBEDDED)if(a.apps.installed(id))action(c,a.apps.title(id),()->SettingsActivity.open(a,id));action(c,UiText.get("settings_015"),this::about);new ToolDialog(a).setTitle(UiText.get("action_settings")).setView(scroll(c)).setNegativeButton(UiText.get("action_close"),null).show();}
 
     private void resetDefaults(){new ToolDialog(a).setTitle(a.getString(R.string.settings_reset)).setMessage(a.getString(R.string.settings_reset_description)).setPositiveButton(a.getString(R.string.action_restore),(d,n)->{boolean iconRestored=a.restoreDefaults();ToolDialog.refresh(a);a.toast(a.getString(iconRestored?R.string.settings_reset_done:R.string.app_icon_reset_partial));}).setNegativeButton(a.getString(R.string.action_cancel),null).show();}
     private void global(){LinearLayout c=form();action(c,UiText.get("settings_016"),this::background);action(c,a.getString(R.string.app_icon_title),a::appIconSettings);action(c,UiText.get("settings_017"),this::outline);action(c,a.getString(R.string.theme_color_title),this::textColors);action(c,UiText.get("settings_018"),this::timeDisplay);action(c,UiText.get("language_title"),this::language);action(c,a.getString(R.string.settings_permissions),this::permissions);action(c,a.getString(R.string.launcher_customization),()->new LauncherScreen(a).order());action(c,a.getString(R.string.settings_cache),this::cache);action(c,a.getString(R.string.app_data_manager_title),this::internalData);action(c,a.getString(R.string.settings_reset),this::resetDefaults);action(c,a.getString(R.string.config_export_title),a::exportConfiguration);action(c,a.getString(R.string.config_import_title),a::importConfiguration);action(c,a.getString(R.string.module_transfer_title),this::moduleTransfer);note(c,a.getString(R.string.config_archive_note));dialog(UiText.get("settings_014"),c);}
@@ -78,12 +78,13 @@ public final class SettingsScreen {
     private void batteryOptimization(){
         android.os.PowerManager power=(android.os.PowerManager)a.getSystemService(Context.POWER_SERVICE);
         boolean exempt=power!=null&&power.isIgnoringBatteryOptimizations(a.getPackageName());
-        new ToolDialog(a).setTitle(a.getString(R.string.battery_optimization_title))
-            .setMessage(a.getString(exempt?R.string.battery_optimization_off:R.string.battery_optimization_on)+"\n\n"+a.getString(R.string.battery_optimization_note))
-            .setPositiveButton(a.getString(R.string.battery_optimization_open),(d,n)->{
-                try{a.startActivity(new Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));}
-                catch(Exception e){try{a.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,android.net.Uri.parse("package:"+a.getPackageName())));}catch(Exception unavailable){a.toast(a.getString(R.string.battery_optimization_unavailable));}}
-            }).setNegativeButton(a.getString(R.string.action_back),null).show();
+        LinearLayout c=form();
+        action(c,a.getString(R.string.battery_optimization_open),()->{
+            try{a.startActivity(new Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));}
+            catch(Exception e){try{a.startActivity(appDetails());}catch(Exception unavailable){a.toast(a.getString(R.string.battery_optimization_unavailable));}}
+        });
+        note(c,a.getString(exempt?R.string.battery_optimization_off:R.string.battery_optimization_on)+"\n\n"+a.getString(R.string.battery_optimization_note));
+        dialog(a.getString(R.string.battery_optimization_title),c);
     }
 
     public void maps(){FeatureAccess.settings(a,"weather-map");}

@@ -21,9 +21,16 @@
   <string name="cv_camera_error">相机无法启动，请重试或选择另一侧相机</string>
   <string name="cv_camera_failed">相机未启动：%1$s</string>
   <string name="cv_guide_title">使用说明与来源</string>
-  <string name="cv_guide">勾选需要显示的视图，可同时对照原图、红色盲、绿色盲和蓝色盲。一个视图单独显示，多个视图分屏显示；实时相机和本地图片均适用。\n\n使用 Machado、Oliveira 与 Fernandes（2009）的色觉缺陷近似模型，按线性 sRGB 计算完整缺陷模拟。模型不代表每个人的实际视觉，也不能用于诊断。\n\n图片和相机画面均在本机处理，不上传。导入图片按采样缩至长边不超过 2048 像素；按当前所选视图及布局导出 PNG 对照图，长边不超过 2048 像素，不覆盖原文件。相机离开应用即关闭。系统文件选择器中的云盘可能自行联网。\n\n矩阵参考 DaltonLens 的 MIT 许可实现，许可随安装包附带。论文：A Physiologically-based Model for Simulation of Color Vision Deficiency，IEEE TVCG 15(6)，2009，DOI: 10.1109/TVCG.2009.113。实现来源：https://github.com/DaltonLens/DaltonLens-Python</string>
+  <string name="cv_guide">勾选需要显示的视图，可同时对照原图、红色盲、绿色盲和蓝色盲。一个视图单独显示，多个视图分屏显示；实时相机和本地图片均适用。\n\n使用 Machado、Oliveira 与 Fernandes（2009）的色觉缺陷近似模型，按线性 sRGB 计算完整缺陷模拟。模型不代表每个人的实际视觉，也不能用于诊断。\n\n图片和相机画面均在本机处理，不上传。导入图片按采样缩至长边不超过 2048 像素；按当前所选视图及布局导出 PNG 对照图，长边不超过 2048 像素，不覆盖原文件。可随时关闭实时相机；离开应用也会关闭相机，主动关闭后返回应用不会自动开启。系统文件选择器中的云盘可能自行联网。\n\n矩阵参考 DaltonLens 的 MIT 许可实现，许可随安装包附带。论文：A Physiologically-based Model for Simulation of Color Vision Deficiency，IEEE TVCG 15(6)，2009，DOI: 10.1109/TVCG.2009.113。实现来源：https://github.com/DaltonLens/DaltonLens-Python</string>
   <string name="cv_views">对照视图（可多选）</string>
   <string name="cv_reference">原图</string>
   <string name="cv_one_view">请至少保留一个视图</string>
   <string name="cv_export_failed">无法导出图片，请检查可用存储空间和文件访问权限。</string>
+  <string name="cv_camera_start">开启实时相机</string>
+  <string name="cv_camera_stop">关闭实时相机</string>
+  <string name="cv_camera_stopped">实时相机已关闭</string>
+  <string name="cv_settings">设置</string>
+  <string name="cv_camera_direction">相机方向</string>
+  <string name="cv_camera_back">后置相机（默认）</string>
+  <string name="cv_camera_front">前置相机</string>
 </resources>

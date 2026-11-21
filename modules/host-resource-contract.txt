@@ -636,6 +636,7 @@ string/settings_reset_description
 string/settings_reset_done
 string/settings_route
 string/settings_sensors
+string/settings_update_required
 string/status_math_001
 string/status_math_002
 string/status_math_003
@@ -790,6 +791,8 @@ string/update_221_detail
 string/update_221_title
 string/update_300_detail
 string/update_300_title
+string/update_301_detail
+string/update_301_title
 string/update_history_001
 string/update_history_002
 string/update_history_003

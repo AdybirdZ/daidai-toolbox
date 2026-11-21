@@ -1,0 +1,5 @@
+<resources>
+  <string name="settings_update_required">此应用需要更新后才能使用集中设置</string>
+  <string name="update_301_title">3.0.1 · 性能修复与集中设置</string>
+  <string name="update_301_detail">修复应用商店全部更新、下载过程滚动跳动和卸载后返回桌面的问题。\n\n减少高频界面的资源文件访问，将电池、内存和存储查询移至后台，避免地震定位刷新反复重建目录，改进状态、天文和地震界面的响应。\n\n设置改为独立的完整页面，各内部应用的设置入口直达对应分组。修复窄屏课程编辑按钮裁切及设备通信消息滚动；色觉模拟器支持开启或关闭实时相机。</string>
+</resources>

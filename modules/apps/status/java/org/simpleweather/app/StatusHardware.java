@@ -19,6 +19,7 @@ public final class StatusHardware implements SensorEventListener {
     public int compassAccuracy=SensorManager.SENSOR_STATUS_UNRELIABLE;public long headingAt,gnssAt;
     public final List<Satellite> satellites=new ArrayList<>();
     private float[] gravity,magnetic;private int lastDisplay=-1;private boolean matrixReady;private final float[] rotation=new float[9],remapped=new float[9],angles=new float[3];
+    private double declinationLatitude=Double.NaN,declinationLongitude=Double.NaN,declinationAltitude=Double.NaN,cachedDeclination=Double.NaN;private long declinationAt;
     public static final int[] TYPES={Sensor.TYPE_GYROSCOPE,Sensor.TYPE_ACCELEROMETER,Sensor.TYPE_LINEAR_ACCELERATION,Sensor.TYPE_GRAVITY,Sensor.TYPE_MAGNETIC_FIELD,Sensor.TYPE_PRESSURE,Sensor.TYPE_LIGHT,Sensor.TYPE_PROXIMITY,Sensor.TYPE_AMBIENT_TEMPERATURE,Sensor.TYPE_RELATIVE_HUMIDITY};
     public static final class Satellite {
         public final int constellation,svid;public final float elevation,azimuth,cn0;public final boolean used;
@@ -73,7 +74,17 @@ public final class StatusHardware implements SensorEventListener {
     }
     public boolean headingAvailable(){return active&&Double.isFinite(magneticHeading)&&SystemClock.elapsedRealtime()-headingAt<5000&&Math.abs(pitch)<80&&Math.abs(roll)<80;}
     public String compassSource(){return rotationVector?UiText.get("status_hardware_004"):sensor(Sensor.TYPE_ACCELEROMETER)!=null&&sensor(Sensor.TYPE_MAGNETIC_FIELD)!=null?UiText.get("status_hardware_005"):UiText.get("status_hardware_006");}
-    public double declination(Location fix){if(fix==null||!StatusMath.coordinate(fix.getLongitude(),fix.getLatitude()))return Double.NaN;return new GeomagneticField((float)fix.getLatitude(),(float)fix.getLongitude(),fix.hasAltitude()?(float)fix.getAltitude():0,System.currentTimeMillis()).getDeclination();}
+    public double declination(Location fix){
+        if(fix==null||!StatusMath.coordinate(fix.getLongitude(),fix.getLatitude()))return Double.NaN;
+        double latitude=fix.getLatitude(),longitude=fix.getLongitude(),altitude=fix.hasAltitude()?fix.getAltitude():0;long now=System.currentTimeMillis();
+        // The model depends on position/date, not device attitude. Multiple live cards
+        // request the same value every display tick; reuse it until inputs change.
+        if(latitude!=declinationLatitude||longitude!=declinationLongitude||altitude!=declinationAltitude||now-declinationAt>=60_000||now<declinationAt){
+            cachedDeclination=new GeomagneticField((float)latitude,(float)longitude,(float)altitude,now).getDeclination();
+            declinationLatitude=latitude;declinationLongitude=longitude;declinationAltitude=altitude;declinationAt=now;
+        }
+        return cachedDeclination;
+    }
     public double trueHeading(Location fix){double d=declination(fix);return headingAvailable()&&Double.isFinite(d)?StatusMath.norm(magneticHeading+d):Double.NaN;}
     private final LocationListener fixes=new LocationListener(){public void onLocationChanged(Location l){if(active&&gnssRunning){LocationService.record(a,l);}}public void onStatusChanged(String p,int s,Bundle b){}public void onProviderEnabled(String p){gnssMessage=UiText.get("status_hardware_007");}public void onProviderDisabled(String p){satellites.clear();gnssAt=0;gnssMessage=UiText.get("status_hardware_008");}};
     private final GnssStatus.Callback callback=new GnssStatus.Callback(){

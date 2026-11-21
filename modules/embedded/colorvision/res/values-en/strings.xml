@@ -21,9 +21,16 @@
   <string name="cv_camera_error">Camera unavailable. Retry or switch cameras.</string>
   <string name="cv_camera_failed">Camera unavailable: %1$s</string>
   <string name="cv_guide_title">Guide and sources</string>
-  <string name="cv_guide">Select any combination of original, protanopia, deuteranopia and tritanopia. One view fills the area; multiple views appear side by side in a grid, for both live camera and imported images.\n\nUses the Machado, Oliveira and Fernandes (2009) approximation at full severity in linear sRGB. It cannot reproduce every individual’s vision or provide a diagnosis.\n\nImages and camera frames stay on the device. Imported images are sampled to a maximum edge of 2048 pixels. PNG export includes the selected views in the current layout, with a maximum edge of 2048 pixels, without overwriting the source. Leaving the app closes the camera. Cloud file providers may use their own network access.\n\nMatrices reference the MIT-licensed DaltonLens implementation; its license is bundled. Paper: A Physiologically-based Model for Simulation of Color Vision Deficiency, IEEE TVCG 15(6), 2009. DOI: 10.1109/TVCG.2009.113. Implementation: https://github.com/DaltonLens/DaltonLens-Python</string>
+  <string name="cv_guide">Select any combination of original, protanopia, deuteranopia and tritanopia. One view fills the area; multiple views appear side by side in a grid, for both live camera and imported images.\n\nUses the Machado, Oliveira and Fernandes (2009) approximation at full severity in linear sRGB. It cannot reproduce every individual’s vision or provide a diagnosis.\n\nImages and camera frames stay on the device. Imported images are sampled to a maximum edge of 2048 pixels. PNG export includes the selected views in the current layout, with a maximum edge of 2048 pixels, without overwriting the source. You can stop the live camera at any time. Leaving the app also closes it; a camera you stopped stays off when you return. Cloud file providers may use their own network access.\n\nMatrices reference the MIT-licensed DaltonLens implementation; its license is bundled. Paper: A Physiologically-based Model for Simulation of Color Vision Deficiency, IEEE TVCG 15(6), 2009. DOI: 10.1109/TVCG.2009.113. Implementation: https://github.com/DaltonLens/DaltonLens-Python</string>
   <string name="cv_views">Comparison views (select multiple)</string>
   <string name="cv_reference">Original</string>
   <string name="cv_one_view">Keep at least one view selected</string>
   <string name="cv_export_failed">Cannot export the image. Check storage space and file access.</string>
+  <string name="cv_camera_start">Start live camera</string>
+  <string name="cv_camera_stop">Stop live camera</string>
+  <string name="cv_camera_stopped">Live camera stopped</string>
+  <string name="cv_settings">Settings</string>
+  <string name="cv_camera_direction">Camera direction</string>
+  <string name="cv_camera_back">Rear camera (default)</string>
+  <string name="cv_camera_front">Front camera</string>
 </resources>

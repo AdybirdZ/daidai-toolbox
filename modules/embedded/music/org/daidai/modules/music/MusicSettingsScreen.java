@@ -14,7 +14,7 @@ public final class MusicSettingsScreen {
     private MusicSettingsScreen(){}
     private static String t(Activity a,String key,Object...args){return Texts.get(a,key,args);}
     private static LinearLayout box(Activity a){LinearLayout b=Ui.column(a);int d=Ui.dp(a,22);b.setPadding(d,Ui.dp(a,12),d,Ui.dp(a,12));return b;}
-    private static void show(Activity a,String key,LinearLayout b){ScrollView sc=new ScrollView(a);sc.addView(b);new AlertDialog.Builder(a).setTitle(t(a,key)).setView(sc).setPositiveButton(t(a,"music_close"),null).show();}
+    private static void show(Activity a,String key,LinearLayout b){ScrollView sc=new ScrollView(a);sc.addView(b);new org.simpleweather.app.ToolDialog(a).setTitle(t(a,key)).setView(sc).setPositiveButton(t(a,"music_close"),null).show();}
     public static void populate(Activity a,LinearLayout parent,Supplier<PlaybackService> playback,Runnable chooseFolder){
         SharedPreferences pref=a.getSharedPreferences("music_module",0);
         Ui.button(parent,t(a,"music_storage_settings"),()->{LinearLayout b=box(a);Ui.button(b,t(a,"music_choose_folder"),chooseFolder);b.addView(Ui.text(a,t(a,pref.getString("storage_tree_uri","").isEmpty()?"music_folder_unset":"music_folder_set"),14));b.addView(Ui.text(a,t(a,"music_storage_note"),13));show(a,"music_storage_settings",b);});

@@ -9,8 +9,8 @@ import json,zipfile,hashlib,shutil,subprocess,os
 IDS=['weather','schedule','status','weather-map','astronomy','earthquake','random','todo','music','messaging','colorvision']
 SCREENS=['WeatherScreen','ScheduleScreen','GpsScreen','MapScreen','AstronomyScreen','EarthquakeScreen','RandomChoiceScreen','TodoScreen','org.daidai.modules.music.MusicActivity','org.daidai.modules.messaging.MessagingActivity','org.daidai.modules.colorvision.ColorVisionActivity']
 API='daidai-toolbox/api-1'
-VERSION='3.0.0'
-VERSION_CODE=5
+VERSION='3.0.1'
+VERSION_CODE=6
 EMBEDDED={'music','messaging','colorvision'}
 GROUPS={'weather':['weather','toolbox'],'status':['toolbox','status_places','status_routes'],'schedule':['toolbox','timetable'],'todo':['toolbox','todos'],'random':['toolbox','random_choice']}
 PERMISSIONS={
@@ -62,9 +62,9 @@ def build(root,sdk,java,run):
         extra_assets=root/'modules/embedded'/id/'assets'
         if id in EMBEDDED and extra_assets.is_dir():shutil.copytree(extra_assets,assets,dirs_exist_ok=True)
         if id=='weather':shutil.copyfile(root/'app/src/main/assets/cities.json',assets/'cities.json')
-        descriptor={'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'minHostVersionCode':55,'minSdk':26,'versionCode':VERSION_CODE,'version':VERSION,'standaloneInstallable':False,'resourceProvider':'application' if id in EMBEDDED else 'mounted-stable-ids','dataRetention':'retain-on-uninstall','configurationGroups':[id+'_module'] if id in EMBEDDED else GROUPS.get(id,['toolbox']),'configurationContract':{'format':'daidai-toolbox-module-config','version':1,'toolboxKeyRules':KEY_RULES.get(id,[])},'permissions':['android.permission.'+v for v in PERMISSIONS[id]],'hostComponentBridges':BRIDGES.get(id,[]),'dependencies':['module-page-worker-api'] if id in EMBEDDED else ['host-api-1','shared-data-contracts','stable-resource-ids']}
+        descriptor={'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'minHostVersionCode':57,'minSdk':26,'versionCode':VERSION_CODE,'version':VERSION,'standaloneInstallable':False,'resourceProvider':'application' if id in EMBEDDED else 'mounted-stable-ids','dataRetention':'retain-on-uninstall','configurationGroups':[id+'_module'] if id in EMBEDDED else GROUPS.get(id,['toolbox']),'configurationContract':{'format':'daidai-toolbox-module-config','version':1,'toolboxKeyRules':KEY_RULES.get(id,[])},'permissions':['android.permission.'+v for v in PERMISSIONS[id]],'hostComponentBridges':BRIDGES.get(id,[]),'dependencies':['module-page-worker-api'] if id in EMBEDDED else ['host-api-1','shared-data-contracts','stable-resource-ids']}
         if id in EMBEDDED:
-            descriptor['pages']={'main':screen}
+            descriptor['pages']={'main':screen,'settings':screen}
             if id=='music':descriptor['pages']['artwork']='org.daidai.modules.music.ArtworkPreviewActivity'
             if id in ['music','messaging']:descriptor['worker']='org.daidai.modules.'+id+('.PlaybackService' if id=='music' else '.MessagingService')
         (assets/'module.json').write_text(json.dumps(descriptor,ensure_ascii=False,indent=2),'utf8')
@@ -84,8 +84,8 @@ def build(root,sdk,java,run):
         run([java,'-jar',tools/'lib/apksigner.jar','sign','--v4-signing-enabled','false','--ks',root/'.signing/development.jks','--ks-key-alias','simpleweather','--ks-pass','pass:android','--key-pass','pass:android','--out',package,aligned])
         run([java,'-jar',tools/'lib/apksigner.jar','verify',package])
         if id in ['weather','status']:shutil.copyfile(package,defaults/package.name)
-        apps.append({'id':id,'type':'signed-dex-app','version':VERSION,'versionCode':VERSION_CODE,'hostApi':API,'minHostVersionCode':55,'minSdk':26,'permissions':descriptor['permissions'],'description':{'zh':DESCRIPTIONS[id][0],'en':DESCRIPTIONS[id][1]},'releaseNotes':{'zh':'适配稳定宿主接口，独立交付应用代码与资源。','en':'Uses the stable host API with independently packaged app code and resources.'},'bytes':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/'+VERSION+'/'+package.name})
+        apps.append({'id':id,'type':'signed-dex-app','version':VERSION,'versionCode':VERSION_CODE,'hostApi':API,'minHostVersionCode':57,'minSdk':26,'permissions':descriptor['permissions'],'description':{'zh':DESCRIPTIONS[id][0],'en':DESCRIPTIONS[id][1]},'releaseNotes':{'zh':'适配稳定宿主接口，独立交付应用代码与资源。','en':'Uses the stable host API with independently packaged app code and resources.'},'bytes':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/'+VERSION+'/'+package.name})
     catalog={'format':'daidai-app-store','schemaVersion':1,'hostApi':API,'defaultInstalled':['weather','status'],'apps':apps}
-    for p in [store/'catalog.json',root/'app/src/main/assets/app-catalog.json']:p.write_text(json.dumps(catalog,indent=2)+'\n','utf8')
+    for p in [store/'catalog.json',root/'modules/store/catalog.json',root/'app/src/main/assets/app-catalog.json']:p.write_text(json.dumps(catalog,indent=2)+'\n','utf8')
     (store/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(store.iterdir()) if p.suffix in ['.ddapp','.json']),'utf8')
     return excluded
