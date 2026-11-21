@@ -16,10 +16,13 @@ public final class MessagingService extends org.simpleweather.app.ModuleWorker {
     public static final class Row{public final boolean mine;public final String text;public final long time;Row(boolean mine,String text){this.mine=mine;this.text=text;time=System.currentTimeMillis();}}
     private final LocalBinder binder=new LocalBinder();private final Handler main=new Handler(Looper.getMainLooper());
     private final ArrayList<Runnable> listeners=new ArrayList<>();private final ArrayDeque<Row> history=new ArrayDeque<>();
-    private String ownCode=SecureChannel.newCode(),state="idle";private MessagePeer peer;private boolean bluetooth,foreground,destroyed,hosting;
+    private String ownCode,state="idle";private MessagePeer peer;private boolean bluetooth,foreground,destroyed,hosting;
     private long generation;private PowerManager.WakeLock cpu;private WifiManager.WifiLock wifi;
     private String t(String key,Object... args){return Texts.get(this,"msg_"+key,args);}
-    @Override public void onCreate(){NotificationManager nm=getSystemService(NotificationManager.class);nm.createNotificationChannel(new NotificationChannel("messaging_connection",t("connection_channel"),NotificationManager.IMPORTANCE_LOW));nm.createNotificationChannel(new NotificationChannel("messaging_incoming",t("message_channel"),NotificationManager.IMPORTANCE_DEFAULT));}
+    @Override public void onCreate(){
+        ownCode=getSharedPreferences("messaging_device_identity",0).getString("pairing_code","");
+        if(ownCode.isEmpty())refreshCode();
+        NotificationManager nm=getSystemService(NotificationManager.class);nm.createNotificationChannel(new NotificationChannel("messaging_connection",t("connection_channel"),NotificationManager.IMPORTANCE_LOW));nm.createNotificationChannel(new NotificationChannel("messaging_incoming",t("message_channel"),NotificationManager.IMPORTANCE_DEFAULT));}
     @Override public IBinder onBind(Intent intent){return binder;}
     @Override public int onStartCommand(Intent intent,int flags,int id){if(intent==null)return START_NOT_STICKY;if("stop".equals(intent.getAction())){disconnect();return START_NOT_STICKY;}
         generation++;if(peer!=null){peer.close();peer=null;}release(false);bluetooth=intent.getBooleanExtra("bluetooth",false);hosting="wait".equals(intent.getAction());state="connecting";foreground=true;startForeground(240010,notification());long token=++generation;
@@ -30,6 +33,12 @@ public final class MessagingService extends org.simpleweather.app.ModuleWorker {
             if(bluetooth){BluetoothManager manager=getSystemService(BluetoothManager.class);BluetoothAdapter adapter=manager==null?null:manager.getAdapter();if(adapter==null)throw new IllegalStateException("Bluetooth unavailable");BluetoothPeer p=new BluetoothPeer(adapter,listener);peer=p;if(waiting)p.host(code);else p.connect(adapter.getRemoteDevice(intent.getStringExtra("address")),code);}
             else{LanPeer p=new LanPeer(listener);peer=p;if(waiting)p.host(code);else p.connect(intent.getStringExtra("address"),code);}
         }catch(Exception e){state="failed";if(peer!=null){peer.close();peer=null;}release();changed();}return START_NOT_STICKY;
+    }
+    public void refreshCode(){
+        if(active())return;
+        ownCode=SecureChannel.newCode();
+        getSharedPreferences("messaging_device_identity",0).edit().putString("pairing_code",ownCode).apply();
+        changed();
     }
     public String code(){return ownCode;}public String prettyCode(){return ownCode.substring(0,4)+"-"+ownCode.substring(4,8)+"-"+ownCode.substring(8,12)+"-"+ownCode.substring(12);}
     public boolean waitingForConnection(){return hosting&&active()&&!connected();}

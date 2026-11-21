@@ -36,7 +36,7 @@ public class MusicActivity extends org.simpleweather.app.ModulePage {
         LinearLayout page=Ui.page(activity,txt("music_title"),txt("music_subtitle"));LinearLayout body=Ui.scroll(page);
         if(tab==0)renderPlayback(body);else if(tab==1){Ui.button(body,txt("music_import"),this::importAudio);body.addView(MusicLibraryScreen.createPage(activity,this::libraryChanged,this::retryImport));}
         LinearLayout navigation=Ui.row(page);String[] names={"music_tab_playback","library_my_songs","music_tab_settings"};
-        for(int i=0;i<names.length;i++){final int next=i;Button button=Ui.cell(navigation,txt(names[i]),()->{if(next==2){org.simpleweather.app.SettingsActivity.open(activity,"music");return;}if(tab!=next){tab=next;render();}});if(tab==i){button.setTextColor(Color.WHITE);button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));}}
+        for(int i=0;i<names.length;i++){final int next=i;Button button=Ui.cell(navigation,txt(names[i]),()->{if(next==2){org.simpleweather.app.SettingsActivity.open(activity,"music");return;}if(tab!=next){tab=next;render();}});if(tab==i){Ui.styleButton(button,true);}}
         attachAnalysis();showList();update();
     }
     private void renderPlayback(LinearLayout body){
@@ -103,7 +103,7 @@ public class MusicActivity extends org.simpleweather.app.ModulePage {
     private void chooseFolder(){try{startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION),31);}catch(Exception e){Ui.error(activity,e);}}
     private void importAudio(){if(getSharedPreferences("music_module",0).getString("storage_tree_uri","").isEmpty()){new AlertDialog.Builder(activity).setMessage(txt("music_folder_required")).setNegativeButton(txt("music_cancel"),null).setPositiveButton(txt("music_choose_folder"),(d,w)->chooseFolder()).show();return;}Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("audio/*").addCategory(Intent.CATEGORY_OPENABLE).putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);try{startActivityForResult(i,11);}catch(Exception e){Ui.error(activity,e);}}
     private void storageSettings(){org.simpleweather.app.SettingsActivity.open(activity,"music");}
-    private void renderSettings(){LinearLayout content=Ui.column(activity);MusicSettingsScreen.populate(activity,content,()->service,this::chooseFolder);new org.simpleweather.app.ToolDialog(activity).setTitle(txt("music_tab_settings")).setView(content).setNegativeButton(txt("music_close"),null).show();}
+    private void renderSettings(){LinearLayout content=Ui.settingsForm(activity);MusicSettingsScreen.populate(activity,content,()->service,this::chooseFolder);new org.simpleweather.app.ToolDialog(activity).setTitle(txt("music_tab_settings")).setView(content).setNegativeButton(txt("music_close"),null).show();}
     private ScrollView wrap(LinearLayout c){ScrollView sc=new ScrollView(activity);sc.addView(c);return sc;}
     private void libraryChanged(){if(service!=null)service.reload();if(lyrics!=null)lyrics.refresh();showList();update();}
     @Override protected void onActivityResult(int request,int result,Intent data){

@@ -1,0 +1,5 @@
+<resources>
+  <string name="update_302_title">3.0.2 · Internal app navigation and appearance</string>
+  <string name="update_302_detail">Music, Device Messaging and Color Vision now share desktop navigation and global button styling. Settings open directly. The device pairing code can be refreshed manually. Status can start camera light measurement on entry when enabled.</string>
+  <string name="camera_auto_entry">Start camera light measurement when opening Status</string>
+</resources>

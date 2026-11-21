@@ -194,7 +194,7 @@ public final class GpsScreen {
     private String mode(){return network()?UiText.get("earthquake_location_005"):UiText.get("earthquake_location_006");}
     public void configurationChanged(){hardware.configurationChanged();lastSecond=-1;update();}
     public void destroy(){destroyed=true;pause();hardware.shutdown();systemReader.shutdownNow();}
-    public void prepareNextLaunch(){hardware.prepareNextLaunch();}
+    public void prepareNextLaunch(){hardware.resetCameraEntry();}
     public void stopForImport(){pause();hardware.shutdown();LocationService.stop(a);}
     public void modeChanged(){locationStarting=false;pendingPermission=false;pendingSatellite=false;LocationService.stop(a);hardware.stopGnss(UiText.get("gps_136"));}
     public void intervalChanged(){if(LocationService.running)startService();}
@@ -213,7 +213,7 @@ public final class GpsScreen {
     private void startService(){locationStarting=true;LocationService.status("gps_139");try{Intent i=new Intent(a,LocationService.class);if(LocationService.continuous(a))a.startForegroundService(i);else a.startService(i);}catch(Exception e){locationStarting=false;LocationService.status("gps_140");a.toast(LocationService.status());}handler.removeCallbacks(tick);if(visible)handler.post(tick);}
     public void resume(){visible=true;if(replay.loaded())updateReplay();lastSecond=-1;hardware.resume(compass!=null||treasure!=null,!sensorViews.isEmpty());if(hardware.gnssRunning&&!LocationService.running&&!locationStarting)start();if(pendingPermission&&allowed()){pendingPermission=false;start();}if(batteryViews.isEmpty()&&batteryRegistered){try{a.unregisterReceiver(batteryReceiver);}catch(Exception ignored){}batteryRegistered=false;}if(!batteryViews.isEmpty()&&!batteryRegistered){try{battery=a.registerReceiver(batteryReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));batteryRegistered=true;}catch(Exception ignored){}}if(pendingSatellite&&a.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED)startSatellites();handler.removeCallbacks(tick);handler.post(tick);}
     public void pause(){replay.pause();locationStarting=false;visible=false;hardware.pause();if(batteryRegistered){try{a.unregisterReceiver(batteryReceiver);}catch(Exception ignored){}batteryRegistered=false;}handler.removeCallbacks(tick);if(!LocationService.continuous(a)&&!pendingPermission)LocationService.stop(a);}
-    public void stopForNavigation(){pendingPermission=false;pendingSatellite=false;pause();}
+    public void stopForNavigation(){pendingPermission=false;pendingSatellite=false;pause();hardware.resetCameraEntry();}
     private void set(TextView view,String value){if(view!=null&&!value.contentEquals(view.getText()))view.setText(value);}
     private void update(){
         if(!visible)return;

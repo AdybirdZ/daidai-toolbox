@@ -20,7 +20,7 @@ public final class MessagingActivity extends org.simpleweather.app.ModulePage {
     private static final int BT=201,NOTIFICATIONS=203;
     private MessagingService session;private boolean bound,visible,bluetooth,settingsMode;private String pending;
     private BluetoothAdapter adapter;private BluetoothDevice selected;
-    private EditText host,code,message;private TextView status,myCode,device;private LinearLayout chat,lan;private Button send,waitForPeer;
+    private EditText host,code,message;private TextView status,myCode,device;private LinearLayout chat,lan;private Button send,refreshCode,waitForPeer;
     private HistoryScrollView historyScroll;private List<MessagingService.Row> renderedMessages=new ArrayList<>();
     private final Runnable changed=this::update;
     private final ServiceConnection connection=new ServiceConnection(){
@@ -35,6 +35,7 @@ public final class MessagingActivity extends org.simpleweather.app.ModulePage {
         for(int i=0;i<2;i++){RadioButton button=new RadioButton(activity);button.setId(410+i);button.setText(t(i==0?"lan":"bluetooth"));button.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));modes.addView(button,new RadioGroup.LayoutParams(0,-2,1));}
         modes.check(bluetooth?411:410);modes.setOnCheckedChangeListener((g,id)->{stop();bluetooth=id==411;getSharedPreferences("messaging_module",0).edit().putBoolean("bluetooth",bluetooth).apply();render();});
         LinearLayout box=Ui.card(body,t("connect_devices"));myCode=Ui.text(activity,"",18);box.addView(myCode);
+        refreshCode=Ui.button(box,t("refresh_code"),()->{if(session!=null)session.refreshCode();});
         Ui.button(box,t("copy_code"),()->{if(session!=null){ClipData clip=ClipData.newPlainText(t("pairing_code"),session.code());if(Build.VERSION.SDK_INT>=33){PersistableBundle extra=new PersistableBundle();extra.putBoolean("android.content.extra.IS_SENSITIVE",true);clip.getDescription().setExtras(extra);}getSystemService(android.content.ClipboardManager.class).setPrimaryClip(clip);Ui.toast(activity,t("copied"),0).show();}});
         lan=Ui.column(activity);box.addView(lan);lan.setVisibility(bluetooth?android.view.View.GONE:android.view.View.VISIBLE);
         lan.addView(Ui.text(activity,t("local_address",localIps(),LanPeer.PORT),14));host=Ui.input(lan,t("host"),InputType.TYPE_CLASS_PHONE);host.setText(getSharedPreferences("messaging_module",0).getString("last_host",""));
@@ -49,7 +50,7 @@ public final class MessagingActivity extends org.simpleweather.app.ModulePage {
     }
     private void settings(){org.simpleweather.app.SettingsActivity.open(activity,"messaging");}
     public static android.view.View settingsContent(Activity activity){
-        LinearLayout box=Ui.column(activity);CheckBox preview=new CheckBox(activity);
+        LinearLayout box=Ui.settingsForm(activity);CheckBox preview=new CheckBox(activity);
         preview.setText(Texts.get(activity,"msg_notification_preview"));preview.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));
         preview.setChecked(activity.getSharedPreferences("messaging_module",0).getBoolean("notification_preview",false));
         preview.setOnCheckedChangeListener((b,on)->activity.getSharedPreferences("messaging_module",0).edit().putBoolean("notification_preview",on).apply());
@@ -67,7 +68,7 @@ public final class MessagingActivity extends org.simpleweather.app.ModulePage {
     private void chooseDevice(){if(Build.VERSION.SDK_INT>=31&&checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED){requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},BT);return;}if(adapter==null||!adapter.isEnabled()){Ui.note(activity,t("bluetooth"),t("pair_first"));return;}ArrayList<BluetoothDevice> devices=new ArrayList<>(adapter.getBondedDevices());devices.sort(Comparator.comparing(this::deviceName));if(devices.isEmpty()){new AlertDialog.Builder(activity).setMessage(t("pair_first")).setNegativeButton(t("close"),null).setPositiveButton(t("bluetooth_settings"),(d,w)->activity.startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS))).show();return;}String[] names=new String[devices.size()];for(int i=0;i<names.length;i++)names[i]=deviceName(devices.get(i));new AlertDialog.Builder(activity).setTitle(t("choose_device")).setItems(names,(d,n)->{selected=devices.get(n);if(device!=null)device.setText(deviceName(selected));if(pending!=null)perform();}).setNegativeButton(t("close"),null).show();}
     private String deviceName(BluetoothDevice d){try{String name=d.getName();return (name==null?t("unnamed"):name)+" · "+d.getAddress();}catch(SecurityException e){return t("unnamed");}}
     private void stop(){pending=null;if(session!=null)session.disconnect();}
-    private void update(){if(status==null)return;if(waitForPeer!=null){waitForPeer.setText(t(session!=null&&session.waitingForConnection()?"stop_wait":"wait"));waitForPeer.setEnabled(session!=null);}status.setText(session==null?t("starting"):session.label());myCode.setText(t("my_code",session==null?"—":session.prettyCode()));send.setEnabled(session!=null&&session.connected());updateMessages(session==null?Collections.emptyList():session.messages());}
+    private void update(){if(status==null)return;if(refreshCode!=null)refreshCode.setEnabled(session!=null&&!session.active());if(waitForPeer!=null){waitForPeer.setText(t(session!=null&&session.waitingForConnection()?"stop_wait":"wait"));waitForPeer.setEnabled(session!=null);}status.setText(session==null?t("starting"):session.label());myCode.setText(t("my_code",session==null?"—":session.prettyCode()));send.setEnabled(session!=null&&session.connected());updateMessages(session==null?Collections.emptyList():session.messages());}
     /** Connection-state updates do not rebuild history or interrupt reading older messages. */
     private void updateMessages(List<MessagingService.Row> messages){
         if(renderedMessages.equals(messages))return;

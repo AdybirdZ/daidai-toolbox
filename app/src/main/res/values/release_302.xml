@@ -1,0 +1,5 @@
+<resources>
+  <string name="update_302_title">3.0.2 · 内部应用导航与外观</string>
+  <string name="update_302_detail">音乐、设备通信和色觉模拟器新增桌面按钮，统一按钮配色与设置布局。设置和内部应用直接打开。设备通信支持手动刷新配对码，状态支持在进入时自动开启相机环境光测量。</string>
+  <string name="camera_auto_entry">进入状态时自动开启相机环境光测量</string>
+</resources>

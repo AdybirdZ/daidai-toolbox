@@ -49,7 +49,7 @@ public final class ModuleRuntime {
         try{return isolatedResources(((ModuleResources)source).path,source.getDisplayMetrics(),merged);}
         catch(Exception failure){throw new IllegalStateException("Cannot configure application resources",failure);}
     }
-    public static Intent pageIntent(Context c,String id,String page){return new Intent(c,InternalAppActivity.class).putExtra("internal_app",id).putExtra("internal_page",page);}
+    public static Intent pageIntent(Context c,String id,String page){return new Intent(c,InternalAppActivity.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION).putExtra("internal_app",id).putExtra("internal_page",page);}
     public static String appVersion(Context c,String id){try{return AppModules.inspect(c,packageFile(c,id),id).getString("version");}catch(Exception e){return "";}}
     public static Intent serviceIntent(Context c,String id){if(id.equals("music"))return new Intent(c,MusicServiceBridge.class);if(id.equals("messaging"))return new Intent(c,MessagingServiceBridge.class);throw new IllegalArgumentException("No service bridge");}
     static ModulePage page(InternalAppActivity a,String id,String page)throws Exception{

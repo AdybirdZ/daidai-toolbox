@@ -32,7 +32,7 @@ public final class InternalAppsUiTests extends Instrumentation {
         host=startActivitySync(new Intent().setClassName(c,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();apps=field(host,"apps");
         for(String id:new String[]{"weather","schedule","status","weather-map","astronomy","earthquake","random","todo","music","messaging","colorvision"}){install(id);check((Boolean)call(apps,"installed",new Class[]{String.class},id),"installed "+id);File file=new File(c.getFilesDir(),"apps/"+id+".ddapp");check((android.system.Os.stat(file.getPath()).st_mode&0222)==0,"read-only "+id);}
         for(String n:new String[]{"org.daidai.modules.music.MusicActivity","org.daidai.modules.messaging.MessagingService","org.daidai.modules.colorvision.ColorVisionActivity","org.simpleweather.app.WeatherScreen"}){try{Class.forName(n,true,loader);throw new AssertionError("business bundled in host: "+n);}catch(ClassNotFoundException expected){checks++;}}
-        for(String id:new String[]{"music","messaging","colorvision"}){child=open(id);Object page=field(child,"page");check(page!=null,"page opened "+id);check(page.getClass().getClassLoader()!=loader,"separate classloader "+id);check(texts(child).size()>8,"real resource-backed UI "+id);String expected=lang.equals("en")?(id.equals("music")?"Playback":id.equals("messaging")?"Device Messaging":"Color Vision Simulator"):(id.equals("music")?"播放":id.equals("messaging")?"设备通信":"色觉模拟器");check(texts(child).toString().contains(expected),"localized UI "+id+" "+texts(child));ui(()->child.finish());child=null;}
+        for(String id:new String[]{"music","messaging","colorvision"}){child=open(id);Object page=field(child,"page");check(page!=null,"page opened "+id);check(page.getClass().getClassLoader()!=loader,"separate classloader "+id);check(texts(child).contains(lang.equals("en")?"Home":"桌面"),"desktop action "+id);check(texts(child).size()>8,"real resource-backed UI "+id);String expected=lang.equals("en")?(id.equals("music")?"Playback":id.equals("messaging")?"Device Messaging":"Color Vision Simulator"):(id.equals("music")?"播放":id.equals("messaging")?"设备通信":"色觉模拟器");check(texts(child).toString().contains(expected),"localized UI "+id+" "+texts(child));ui(()->child.finish());child=null;}
         child=open("music");ClassLoader musicLoader=field(child,"page").getClass().getClassLoader();for(String obsolete:new String[]{"MusicMigration","MusicMigrationUi"}){boolean absent=false;try{Class.forName("org.daidai.modules.music."+obsolete,true,musicLoader);}catch(ClassNotFoundException expected){absent=true;}check(absent,"standalone migration implementation removed: "+obsolete);}check(child.getResources().getIdentifier("music_migration_title","string","org.simpleweather.module.music")==0,"standalone migration setting and text are not packaged");Class<?> collections=Class.forName("org.daidai.modules.music.MusicCollections",true,musicLoader);check((Boolean)call(collections,"createPlaylist",new Class[]{Context.class,String.class},child,"Resource context check"),"playlist uses module resources across locales");call(collections,"deletePlaylist",new Class[]{Context.class,String.class},child,"Resource context check");check(!(Boolean)call(collections,"createPlaylist",new Class[]{Context.class,String.class},child,"All songs"),"English reserved playlist name remains protected");check(!(Boolean)call(collections,"createPlaylist",new Class[]{Context.class,String.class},child,"全部歌曲"),"Chinese reserved playlist name remains protected");ui(()->child.finish());child=null;
         packages();backup();notifications();messaging();
         result.putString("result","PASS: "+checks+" internal app behavior checks ("+lang+")");
@@ -57,6 +57,24 @@ public final class InternalAppsUiTests extends Instrumentation {
             call(type("ScheduleNotifier"),"refreshAt",new Class[]{Context.class,long.class,boolean.class},c,start-20*60000,true);
             await(()->{Notification note=courseNotification();return note!=null&&note.when==start&&note.extras.getBoolean(Notification.EXTRA_SHOW_CHRONOMETER)&&note.extras.getBoolean(Notification.EXTRA_CHRONOMETER_COUNT_DOWN);},"course countdown is published by notification service");
             Notification countdown=courseNotification();check(countdown!=null,"course reminder posted");check(countdown.when==start,"chronometer target is class start");check(countdown.extras.getBoolean(Notification.EXTRA_SHOW_CHRONOMETER),"system chronometer enabled");check(countdown.extras.getBoolean(Notification.EXTRA_CHRONOMETER_COUNT_DOWN),"system countdown enabled");
+            // Render the posted system template with a near-future start so the actual
+            // Chronometer widget can tick even when the fixture runs after 08:00.
+            Notification preview=countdown.clone();
+            preview.when=System.currentTimeMillis()+120000;
+            AtomicReference<Chronometer> clock=new AtomicReference<>();
+            AtomicReference<View> rendered=new AtomicReference<>();
+            ui(()->{
+                RemoteViews layout=Notification.Builder.recoverBuilder(c,preview).createContentView();
+                FrameLayout parent=host.findViewById(android.R.id.content);
+                View view=layout.apply(c,parent);parent.addView(view);rendered.set(view);
+                int id=c.getResources().getIdentifier("chronometer","id","android");
+                clock.set(view.findViewById(id));
+            });
+            try{
+                check(clock.get()!=null&&clock.get().isShown()&&clock.get().isCountDown(),"visible countdown in standard notification template");
+                String first=clock.get().getText().toString();
+                await(()->!first.contentEquals(clock.get().getText()),"visible countdown changes without reposting");
+            }finally{ui(()->((ViewGroup)rendered.get().getParent()).removeView(rendered.get()));}
             call(type("ScheduleNotifier"),"refreshAt",new Class[]{Context.class,long.class,boolean.class},c,start+60000,true);
             String startedText=(String)call(type("UiText"),"get",new Class[]{String.class},"course_notify_started");
             await(()->{Notification note=courseNotification();return note!=null&&"Countdown test".contentEquals(note.extras.getCharSequence(Notification.EXTRA_TITLE,""))&&!note.extras.getBoolean(Notification.EXTRA_SHOW_CHRONOMETER)&&!note.extras.getBoolean(Notification.EXTRA_CHRONOMETER_COUNT_DOWN)&&startedText.contentEquals(note.extras.getCharSequence(Notification.EXTRA_TEXT,""));},"class start changes notification state and text");

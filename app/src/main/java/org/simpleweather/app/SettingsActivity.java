@@ -18,8 +18,9 @@ public final class SettingsActivity extends MainActivity {
             intent=new Intent(origin,InternalAppActivity.class).putExtra("internal_app",app).putExtra("internal_page","settings").putExtra("settings_mode",true);
         }
         else intent=new Intent(origin,SettingsActivity.class).putExtra("settings_target",app==null?"":app);
-        origin.startActivityForResult(intent,REQUEST);
+        origin.startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION),REQUEST);origin.overridePendingTransition(0,0);
     }
+    @Override public void finish(){super.finish();overridePendingTransition(0,0);}
     @Override protected void onShellReady(Bundle state){pages=new SettingsNavigation(this);setResult(RESULT_OK);if(state==null||!state.containsKey("toolbox_ui_session")&&state.getInt("toolbox_language_settings",0)==0){new SettingsScreen(this).show();openTarget(getIntent().getStringExtra("settings_target"));}getWindow().getDecorView().post(()->getWindow().getDecorView().post(()->{if(pages.empty()&&!isFinishing())new SettingsScreen(this).show();}));}
     private void openTarget(String id){if(id==null||id.isEmpty())return;if(!apps.installed(id))return;
         if(java.util.Arrays.asList(AppModules.EMBEDDED).contains(id)){open(this,id);return;}

@@ -10,10 +10,10 @@
     {
       "id": "weather",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.INTERNET"
@@ -27,16 +27,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 152083,
-      "sha256": "6be4b2ed727fd16655126badb24969725608ae98ab7b7f03df7ff4b64b6f42f9",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/weather.ddapp"
+      "sha256": "b637a266eb602d6704deb0948f248d3b2a245a688e9c88e745e0cdaf502147d0",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/weather.ddapp"
     },
     {
       "id": "schedule",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.POST_NOTIFICATIONS",
@@ -52,16 +52,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 57811,
-      "sha256": "1cbc609d569715ad0df59dad5ce72314faba2013c5d3acf2b44920df6614a60b",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/schedule.ddapp"
+      "sha256": "ac617f0657d05dfbffb76bbbde6b0d173127d3a6361b5dc235fd6d980b3642f8",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/schedule.ddapp"
     },
     {
       "id": "status",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
@@ -79,17 +79,17 @@
         "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
-      "bytes": 164307,
-      "sha256": "deadd4f8a583048de751e248f95d495669b649a393cbf8a37c8d7eaeb6cda78e",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/status.ddapp"
+      "bytes": 168403,
+      "sha256": "9773b776fb315fe5d8f08c28f2df877d4827175f379a61af18c4929668d3f17f",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/status.ddapp"
     },
     {
       "id": "weather-map",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.INTERNET"
@@ -103,16 +103,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 37331,
-      "sha256": "f6dc8a261012edb41d23635af3b1b4738a5f227873c0c578d6be92945683c7a2",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/weather-map.ddapp"
+      "sha256": "f7534d65f5e2aabb8fd722e92c6e32d5a3b672da5a0db452d839c5c70c0556b4",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/weather-map.ddapp"
     },
     {
       "id": "astronomy",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [],
       "description": {
@@ -124,16 +124,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 82387,
-      "sha256": "d9da4d5f260efbcbfe7ea74cf57b110198c635cca3cc8f3c3328aad81fb88598",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/astronomy.ddapp"
+      "sha256": "90fa92272d351bb19734d404f4bc42704e06fab08d32d14a54ce42f929ed58b5",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/astronomy.ddapp"
     },
     {
       "id": "earthquake",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.INTERNET",
@@ -149,16 +149,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 119251,
-      "sha256": "d57c6e99553a0ac56e892024822ecf810f7334a1dd2e7aff5a5f553f4ca2653f",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/earthquake.ddapp"
+      "sha256": "a42bf0835e6fc1c65fc09dc8205f1d6d8fd49e2f02a31abd1905565990fe7b99",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/earthquake.ddapp"
     },
     {
       "id": "random",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [],
       "description": {
@@ -170,16 +170,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 41427,
-      "sha256": "4dcb8f37f38c62cdbe3e4c26d247433b21bc217542e01657b7aba6d572cddad0",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/random.ddapp"
+      "sha256": "bb5ee92bd6dc82bf7918517a932218e2fa64ad7197cf86a907e96486e15a7aba",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/random.ddapp"
     },
     {
       "id": "todo",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.POST_NOTIFICATIONS",
@@ -195,16 +195,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 78291,
-      "sha256": "d913e74f9b426cb48ce5bdb1ed796f79c89d832ec1cd89d5cb3ea19a2d34d3db",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/todo.ddapp"
+      "sha256": "b47a44d70b94eab8c24b03a0882eb1be19f2df235930b709394970d396d7cd0e",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/todo.ddapp"
     },
     {
       "id": "music",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.FOREGROUND_SERVICE",
@@ -221,16 +221,16 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 1331828,
-      "sha256": "b69505343ddb4710ece5823b8d7f484b8f79224f40ea2e4973da164107355f65",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/music.ddapp"
+      "sha256": "f6be0372dedb7b0ac36a430d345786ba8dfd85fce48ce0f611b6ab92eccc5eb5",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/music.ddapp"
     },
     {
       "id": "messaging",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.INTERNET",
@@ -249,17 +249,17 @@
         "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
-      "bytes": 45593,
-      "sha256": "e96ce1783c956f70fd18ae74243f5e6165ea1fe58e3d74c2f76dfdb306be61b2",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/messaging.ddapp"
+      "bytes": 49689,
+      "sha256": "97c757717181b3de851e127a0ea23bb21813c005d4fb5ec1db556c84c84bcced",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/messaging.ddapp"
     },
     {
       "id": "colorvision",
       "type": "signed-dex-app",
-      "version": "3.0.1",
-      "versionCode": 6,
+      "version": "3.0.2",
+      "versionCode": 7,
       "hostApi": "daidai-toolbox/api-1",
-      "minHostVersionCode": 57,
+      "minHostVersionCode": 58,
       "minSdk": 26,
       "permissions": [
         "android.permission.CAMERA"
@@ -273,8 +273,8 @@
         "en": "Uses the stable host API with independently packaged app code and resources."
       },
       "bytes": 41577,
-      "sha256": "8c7056221dacc1216bcf0a2cb8edfc35194521a3d3f131b8e72688d7452fc837",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.1/colorvision.ddapp"
+      "sha256": "36ec137c63515b6a60a53cd6056ce17024ccf9597043eedada1d8cd12b34adce",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.2/colorvision.ddapp"
     }
   ]
 }

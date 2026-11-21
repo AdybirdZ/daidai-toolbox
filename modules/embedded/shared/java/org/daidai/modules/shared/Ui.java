@@ -26,14 +26,17 @@ public final class Ui {
     public static LinearLayout page(Activity a, String title, String subtitle) {
         LinearLayout page=column(a); page.setPadding(dp(a,18),dp(a,12),dp(a,18),dp(a,12));
         page.setBackgroundColor(Color.rgb(244,246,250));
-        a.setContentView(page);
+        LinearLayout shell=column(a);
+        shell.addView(page,new LinearLayout.LayoutParams(-1,0,1));
+        button(shell,org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.launcher_home),()->org.simpleweather.app.SettingsNavigation.desktop(a));
+        a.setContentView(shell);
         if(Build.VERSION.SDK_INT>=30) {
             a.getWindow().setDecorFitsSystemWindows(false);
-            page.setOnApplyWindowInsetsListener((v,i)->{
+            shell.setOnApplyWindowInsetsListener((v,i)->{
                 android.graphics.Insets bars=i.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.ime());
-                v.setPadding(dp(a,18)+bars.left,dp(a,12)+bars.top,dp(a,18)+bars.right,dp(a,12)+bars.bottom); return i;
+                v.setPadding(bars.left,bars.top,bars.right,bars.bottom); return i;
             });
-        } else page.setFitsSystemWindows(true);
+        } else shell.setFitsSystemWindows(true);
         TextView heading=text(a,title,25); heading.setTypeface(null,Typeface.BOLD); page.addView(heading);
         page.addView(text(a,subtitle,13)); return page;
     }
@@ -55,12 +58,26 @@ public final class Ui {
     public static Button button(LinearLayout p,String label,Runnable action) {
         Button b=new Button(p.getContext()); b.setText(label);b.setTextSize(15);b.setAllCaps(false);
         b.setMinWidth(0); b.setMinimumWidth(0);b.setMinHeight(dp(p.getContext(),46));b.setMinimumHeight(dp(p.getContext(),46));
-        b.setTextColor(new android.content.res.ColorStateList(new int[][]{new int[]{-android.R.attr.state_enabled},new int[]{}},new int[]{0xff8995a6,BLUE}));
-        GradientDrawable shape=new GradientDrawable();shape.setColor(0xffedf3fd);shape.setCornerRadius(dp(p.getContext(),10));shape.setStroke(dp(p.getContext(),1),0xffdce6f5);
-        b.setBackground(new android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x22246bce),shape,null));
-        b.setPadding(dp(p.getContext(),6),dp(p.getContext(),8),dp(p.getContext(),6),dp(p.getContext(),8));
+        styleButton(b,false);
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(dp(p.getContext(),3),dp(p.getContext(),3),dp(p.getContext(),3),dp(p.getContext(),3));
+        if(p.getContext() instanceof Activity && ((Activity)p.getContext()).getIntent().getBooleanExtra("settings_mode",false)){
+            b.setMinHeight(dp(p.getContext(),48));b.setMinimumHeight(dp(p.getContext(),48));
+            b.setTextSize(14);b.setTypeface(null,Typeface.BOLD);
+            lp.setMargins(0,0,0,dp(p.getContext(),10));
+        }
         p.addView(b,lp); b.setOnClickListener(v->action.run());return b;
+    }
+    public static void styleButton(Button b,boolean selected){
+        b.setTag(selected?"theme-primary":"theme-secondary");
+        b.setBackgroundTintList(null);
+        b.setStateListAnimator(null);
+        b.setElevation(0);
+        org.simpleweather.app.UiColors.decorate(b.getContext(),b);
+    }
+    public static LinearLayout settingsForm(Activity a){
+        LinearLayout form=column(a);
+        form.setPadding(dp(a,18),dp(a,8),dp(a,18),dp(a,16));
+        return form;
     }
     public static LinearLayout row(LinearLayout p) {LinearLayout r=new LinearLayout(p.getContext());r.setGravity(Gravity.CENTER_VERTICAL);p.addView(r);return r;}
     public static Button cell(LinearLayout r,String label,Runnable action) {

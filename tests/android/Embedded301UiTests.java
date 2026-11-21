@@ -26,6 +26,12 @@ public final class Embedded301UiTests extends Instrumentation {
     private void add(Object service,String text){ui(()->{try{call(service,"add",new Class[]{boolean.class,String.class},false,text);}catch(Exception failure){throw new RuntimeException(failure);}});}
     private void messaging()throws Exception{
         child=open("messaging");Object page=field(child,"page");await(()->{try{return field(page,"session")!=null;}catch(Exception failure){return false;}},"messaging service bound");Object service=field(page,"session");
+        String original=(String)call(service,"code",new Class[]{});
+        Button refresh=(Button)field(page,"refreshCode");
+        ui(refresh::performClick);
+        String rotated=(String)call(service,"code",new Class[]{});
+        check(!rotated.equals(original),"manual rotation changes code");
+        check(rotated.equals(context.getSharedPreferences("messaging_device_identity",0).getString("pairing_code","")),"new code persists locally");
         for(int i=0;i<30;i++)add(service,"Scroll regression message "+i+"\nSecond line "+i);
         ScrollView history=(ScrollView)field(page,"historyScroll");LinearLayout rows=(LinearLayout)field(page,"chat");
         await(()->history.canScrollVertically(-1),"new history follows the latest message");
@@ -45,6 +51,9 @@ public final class Embedded301UiTests extends Instrumentation {
         ui(()->history.scrollTo(0,rows.getHeight()));add(service,"Follow latest message");SystemClock.sleep(100);waitForIdleSync();check(!history.canScrollVertically(1),"reader already at the end follows a new message");
         for(int i=0;i<80;i++)add(service,"Retention regression "+i);
         check(rows.getChildCount()==100,"retained history remains bounded to 100 messages");
+        ui(()->child.finish());child=null;
+        child=open("messaging");Object reopened=field(child,"page");
+        await(()->{try{Object next=field(reopened,"session");return next!=null&&rotated.equals(call(next,"code",new Class[]{}));}catch(Exception e){return false;}},"code survives reopening");
         ui(()->child.finish());child=null;
     }
     private void shell(String command)throws Exception{try(ParcelFileDescriptor fd=getUiAutomation().executeShellCommand(command);InputStream in=new FileInputStream(fd.getFileDescriptor())){while(in.read()!=-1){}}}

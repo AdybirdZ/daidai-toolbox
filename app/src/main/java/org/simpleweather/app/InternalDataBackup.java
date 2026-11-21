@@ -15,7 +15,7 @@ import org.daidai.contracts.MusicDataContract;
 final class InternalDataBackup {
     static final long MAX=256L*1024*1024,MAX_FILE=16L*1024*1024;
     private static final String[] IDS={"music","messaging","colorvision"};
-    static void erase(Context c,String id)throws Exception{if(!Arrays.asList(IDS).contains(id))throw new IOException();try{ModuleRuntime.beginChange(c,id);if(!c.getSharedPreferences(id+"_module",0).edit().clear().commit())throw new IOException();removeChecked(ModuleRuntime.dataDirectory(c,id));removeChecked(new File(c.getCacheDir(),"internal-"+id));}finally{ModuleRuntime.endChange(id);}}
+    static void erase(Context c,String id)throws Exception{if(!Arrays.asList(IDS).contains(id))throw new IOException();try{ModuleRuntime.beginChange(c,id);if(!c.getSharedPreferences(id+"_module",0).edit().clear().commit())throw new IOException();if(id.equals("messaging"))c.getSharedPreferences("messaging_device_identity",0).edit().clear().commit();removeChecked(ModuleRuntime.dataDirectory(c,id));removeChecked(new File(c.getCacheDir(),"internal-"+id));}finally{ModuleRuntime.endChange(id);}}
     static final class Part {String id,oldRoot;Map<String,Object> preferences;File staged,backup;Map<String,?> before;boolean touched;}
     static final class Prepared implements Closeable {
         final ConfigurationData.Document document;final List<Part> parts;final File stage;final int fileCount;boolean changing;String moduleId="";

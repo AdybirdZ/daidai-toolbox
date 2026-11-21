@@ -29,10 +29,11 @@ public final class StatusHardware implements SensorEventListener {
         public boolean validAngles(){return StatusMath.satelliteAngles(elevation,azimuth);}
         public boolean plotted(){return validAngles()&&elevation>=0;}
     }
-    public StatusHardware(MainActivity a){this.a=a;sensors=(SensorManager)a.getSystemService(Context.SENSOR_SERVICE);locations=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);if(a.preferences.getBoolean("status_camera_pause_on_launch",false)){cameraPaused=true;a.preferences.edit().remove("status_camera_pause_on_launch").apply();}}
+    public StatusHardware(MainActivity a){this.a=a;sensors=(SensorManager)a.getSystemService(Context.SENSOR_SERVICE);locations=(LocationManager)a.getSystemService(Context.LOCATION_SERVICE);resetCameraEntry();}
     public Sensor sensor(int type){return sensors==null?null:sensors.getDefaultSensor(type);}
     private boolean compassWanted,allSensorsWanted,cameraWanted;private String cameraFacing="";private int cameraIso,cameraExposure,cameraOutdoorIso,cameraOutdoorExposure;private boolean cameraPaused;
     public void resume(boolean compass,boolean allSensors){
+        if(entering){resetCameraEntry();entering=false;}
         int iso=a.preferences.getInt("status_camera_iso",CameraExposure.DEFAULT_ISO),exposure=a.preferences.getInt("status_camera_exposure_ms",CameraExposure.DEFAULT_MS);int outdoorIso=a.preferences.getInt("status_camera_outdoor_iso",CameraExposure.OUTDOOR_ISO),outdoorExposure=a.preferences.getInt("status_camera_outdoor_exposure_ms",CameraExposure.OUTDOOR_MS);String facing=a.preferences.getString("status_light_camera","back");boolean requestedCamera=allSensors&&sensorEnabled(Sensor.TYPE_LIGHT)&&"camera".equals(a.preferences.getString("status_light_source","sensor"));
         if(active&&compass==compassWanted&&allSensors==allSensorsWanted&&requestedCamera==cameraWanted&&facing.equals(cameraFacing)&&iso==cameraIso&&exposure==cameraExposure&&outdoorIso==cameraOutdoorIso&&outdoorExposure==cameraOutdoorExposure)return;
         if(sensors!=null)sensors.unregisterListener(this);if(cameraReader!=null){cameraReader.stop();cameraReader=null;}active=true;compassWanted=compass;allSensorsWanted=allSensors;cameraWanted=requestedCamera;cameraFacing=facing;cameraIso=iso;cameraExposure=exposure;cameraOutdoorIso=outdoorIso;cameraOutdoorExposure=outdoorExposure;magneticHeading=Double.NaN;headingAt=0;gravity=null;magnetic=null;matrixReady=false;lastDisplay=-1;
@@ -47,7 +48,9 @@ public final class StatusHardware implements SensorEventListener {
         if(cameraReader!=null){cameraReader.stop();cameraReader=null;}
         if(!cameraPaused&&active&&cameraWanted)startCamera();
     }
-    public void prepareNextLaunch(){if("camera".equals(a.preferences.getString("status_light_source","sensor")))a.preferences.edit().putBoolean("status_camera_pause_on_launch",true).apply();}
+    private boolean entering;
+    public void resetCameraEntry(){entering=true;cameraPaused=!a.preferences.getBoolean("status_camera_auto_start",false);}
+
     public int sensorDelay(){return SensorManager.SENSOR_DELAY_FASTEST;}
     public boolean sensorEnabled(int type){return a.preferences.getBoolean("status_sensor_show_"+type,true);}
     public void shutdown(){pause(false);if(cameraReader!=null){cameraReader.stop();cameraReader=null;}}

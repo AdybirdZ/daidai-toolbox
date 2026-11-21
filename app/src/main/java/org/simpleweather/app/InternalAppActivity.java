@@ -9,6 +9,7 @@ import java.io.File;
 /** Host-owned window, using the signed app's resources and page implementation. */
 public final class InternalAppActivity extends Activity {
     private String appId,activityLanguage;private Resources moduleResources;private Resources.Theme moduleTheme;private ModulePage page;private SettingsNavigation settingsPages;
+    @Override public void finish(){super.finish();overridePendingTransition(0,0);}
     @Override protected void attachBaseContext(Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     @Override public Resources getResources(){return moduleResources==null?super.getResources():moduleResources;}
     @Override public AssetManager getAssets(){return moduleResources==null?super.getAssets():moduleResources.getAssets();}

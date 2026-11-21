@@ -78,7 +78,7 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
  private int stageHeight(){return Math.max(Ui.dp(activity,280),Math.min(Ui.dp(activity,520),(int)(getResources().getDisplayMetrics().heightPixels*.58f)));}
  @Override public void onConfigurationChanged(Configuration configuration){super.onConfigurationChanged(configuration);if(frame==null)return;frame.getLayoutParams().height=stageHeight();frame.requestLayout();if(camera!=null)camera.requestRender();}
  public static android.view.View settingsContent(Activity activity){
-  LinearLayout content=Ui.column(activity);content.addView(Ui.text(activity,Texts.get(activity,"cv_camera_direction"),17));RadioGroup choices=new RadioGroup(activity);content.addView(choices);
+  LinearLayout content=Ui.settingsForm(activity);content.addView(Ui.text(activity,Texts.get(activity,"cv_camera_direction"),17));RadioGroup choices=new RadioGroup(activity);content.addView(choices);
   for(int i=0;i<2;i++){RadioButton choice=new RadioButton(activity);choice.setId(7200+i);choice.setText(Texts.get(activity,i==0?"cv_camera_back":"cv_camera_front"));choice.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));choices.addView(choice);}
   choices.check(activity.getSharedPreferences("colorvision_module",0).getBoolean("front_camera",false)?7201:7200);
   choices.setOnCheckedChangeListener((group,id)->activity.getSharedPreferences("colorvision_module",0).edit().putBoolean("front_camera",id==7201).apply());return content;

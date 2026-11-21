@@ -29,7 +29,12 @@ public final class StatusSettings {
     private void indoorExposure(){cameraExposure(0);}
     private void outdoorExposure(){cameraExposure(1);}
     private void positionSettings(){LinearLayout c=form();action(c,UiText.get("settings_057"),this::locationProvider);action(c,a.getString(R.string.location_interval_title),this::locationInterval);action(c,UiText.get("settings_058"),this::locationLifecycle);dialog(a.getString(R.string.settings_location),c);}
-    private void sensorSettings(){LinearLayout c=form();action(c,a.getString(R.string.settings_display_order),this::statusSensors);action(c,UiText.get("settings_059"),this::lightSource);dialog(a.getString(R.string.settings_sensors),c);}
+    private void sensorSettings(){LinearLayout c=form();action(c,a.getString(R.string.settings_display_order),this::statusSensors);action(c,UiText.get("settings_059"),this::lightSource);
+        Switch start=new Switch(a);
+        start.setText(a.getString(R.string.camera_auto_entry));
+        start.setChecked(prefs.getBoolean("status_camera_auto_start",false));
+        start.setOnCheckedChangeListener((button,on)->prefs.edit().putBoolean("status_camera_auto_start",on).apply());
+        c.addView(start,a.lp(-1,58));dialog(a.getString(R.string.settings_sensors),c);}
     private void batterySettings(){LinearLayout c=form();action(c,a.getString(R.string.settings_display_order),this::batteryFields);action(c,a.getString(R.string.battery_readings_settings),this::batteryReadings);dialog(a.getString(R.string.settings_battery),c);}
     private void batteryReadings(){
         LinearLayout c=form();

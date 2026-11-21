@@ -155,6 +155,7 @@
   "org.simpleweather.app.InternalAppActivity": [
     "public final class org.simpleweather.app.InternalAppActivity extends android.app.Activity {",
     "public org.simpleweather.app.InternalAppActivity();",
+    "public void finish();",
     "public android.content.res.Resources getResources();",
     "public android.content.res.AssetManager getAssets();",
     "public android.content.Context createConfigurationContext(android.content.res.Configuration);",
@@ -560,6 +561,7 @@
     "public static android.app.Activity owner(android.content.Context);",
     "public static java.lang.String hostText(android.content.Context, int);",
     "public static void open(android.app.Activity, java.lang.String);",
+    "public void finish();",
     "public void refreshScreen();",
     "public void changeLanguage(java.lang.String);",
     "public boolean restoreDefaults();",
