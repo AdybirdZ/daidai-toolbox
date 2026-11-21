@@ -25,18 +25,81 @@ public final class MusicMigration {
         @Override public synchronized void close(){if(assets!=null)remove(assets);assets=null;}
     }
     public static File exportData(Context c)throws Exception{
-        SharedPreferences prefs=c.getSharedPreferences("music_module",0);String tree=prefs.getString("storage_tree_uri","");
-        List<MusicLibrary.Track> songs=MusicLibrary.catalogue(c);if(!songs.isEmpty()&&tree.isEmpty())throw new IOException("Choose the original music folder first");
-        Map<String,FileRef> files=tree.isEmpty()?new LinkedHashMap<>():scan(c,tree);JSONObject root=new JSONObject().put("format","daidai-music-same-device").put("version",1).put("audioIncluded",false).put("preferences",encode(prefs.getAll()));
+        return exportData(c, Collections.emptyMap(), Collections.emptySet());
+    }
+
+    static final class Unlinked extends IOException {
+        final MusicLibrary.Track track;
+        Unlinked(MusicLibrary.Track track, String reason) {
+            super(reason);
+            this.track = track;
+        }
+    }
+
+    static File exportData(Context c, Map<String,String> choices, Set<String> skipped) throws Exception {
+        SharedPreferences prefs = c.getSharedPreferences("music_module", 0);
+        String tree = prefs.getString("storage_tree_uri", "");
+        List<MusicLibrary.Track> songs = MusicLibrary.catalogue(c);
+        if (!songs.isEmpty() && tree.isEmpty()) throw new IOException("Choose the original music folder first");
+        Map<String,FileRef> files = tree.isEmpty() ? Collections.emptyMap() : scan(c, tree);
+        Map<String,FileRef> selected = new LinkedHashMap<>();
+        Set<String> reserved = new HashSet<>();
+        for (MusicLibrary.Track song : songs) {
+            if (files.containsKey(identity(song.uri))) reserved.add(identity(song.uri));
+        }
+        Map<String,String> links = new HashMap<>();
+        JSONArray catalogue = new JSONArray();
+        for (MusicLibrary.Track song : songs) {
+            if (skipped.contains(song.uri)) continue;
+            String target = identity(choices.getOrDefault(song.uri, song.uri));
+            FileRef ref = files.get(target);
+            if (ref == null) throw new Unlinked(song, choices.containsKey(song.uri) ? "outside" : "unlinked");
+            if (!target.equals(identity(song.uri)) && !reserved.add(target)) throw new Unlinked(song, "occupied");
+            selected.put(song.uri, ref);
+            links.put(identity(song.uri), ref.uri.toString());
+            catalogue.put(MusicLibrary.encode(song).put("uri", ref.uri.toString()));
+        }
+        Map<String,Object> values = new HashMap<>(prefs.getAll());
+        values.put("catalogue", catalogue.toString());
+        values.put("queue", linkedReferences(new JSONArray(prefs.getString("queue", "[]")), links).toString());
+        JSONObject lists = new JSONObject(prefs.getString("collections", "{}"));
+        Iterator<String> names = lists.keys();
+        while (names.hasNext()) {
+            String name = names.next();
+            if (!name.equals("playlistOrder")) lists.put(name, linkedReferences(lists.getJSONArray(name), links));
+        }
+        values.put("collections", lists.toString());
+        Set<String> edited = new HashSet<>();
+        for (String old : prefs.getStringSet("metadata_manually_edited", Collections.emptySet())) {
+            String uri = links.get(identity(old));
+            if (uri != null) edited.add(identity(uri));
+        }
+        values.put("metadata_manually_edited", edited);
+        JSONObject root=new JSONObject().put("format","daidai-music-same-device").put("version",1).put("audioIncluded",false).put("preferences",encode(values));
         JSONArray records=new JSONArray(),assets=new JSONArray();File output=File.createTempFile("music-transfer-",".zip",c.getCacheDir());boolean success=false;
         try(ZipOutputStream zip=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(output)))){
             Map<String,String> stored=new HashMap<>();
-            for(MusicLibrary.Track song:songs){FileRef ref=files.get(identity(song.uri));if(ref==null)throw new IOException("Music file is missing from the selected folder: "+song.title);Fingerprint fingerprint=fingerprint(c,ref.uri);
-                records.put(new JSONObject().put("uri",song.uri).put("identity",identity(song.uri)).put("relativePath",ref.path).put("bytes",fingerprint.bytes).put("sha256",fingerprint.hash));
+            for(MusicLibrary.Track song:songs){
+                FileRef ref = selected.get(song.uri);
+                if (ref == null) continue;
+                Fingerprint fingerprint;
+                try { fingerprint = fingerprint(c,ref.uri); }
+                catch (FileNotFoundException | SecurityException e) { throw new Unlinked(song, "unreadable"); }
+                records.put(new JSONObject().put("uri",ref.uri.toString()).put("identity",identity(ref.uri.toString())).put("relativePath",ref.path).put("bytes",fingerprint.bytes).put("sha256",fingerprint.hash));
                 addAsset(c,zip,assets,stored,song.coverPath,"artwork");addAsset(c,zip,assets,stored,song.lrcPath,"lyrics");
             }
             root.put("songs",records).put("assets",assets);byte[] manifest=root.toString().getBytes("UTF-8");if(manifest.length>16*1024*1024)throw new IOException("Too much music metadata");zip.putNextEntry(new ZipEntry("music.json"));zip.write(manifest);zip.closeEntry();success=true;
         }finally{if(!success)output.delete();}if(output.length()>MAX_ARCHIVE){output.delete();throw new IOException("Music transfer exceeds 256 MiB; audio is not included");}return output;
+    }
+    private static JSONArray linkedReferences(JSONArray rows, Map<String,String> links) throws JSONException {
+        JSONArray result = new JSONArray();
+        for (int i = 0; i < rows.length(); i++) {
+            Object row = rows.get(i);
+            String old = row instanceof JSONObject ? ((JSONObject)row).getString("uri") : rows.getString(i);
+            String target = links.get(identity(old));
+            if (target != null) result.put(target);
+        }
+        return result;
     }
     private static void addAsset(Context c,ZipOutputStream zip,JSONArray list,Map<String,String> stored,String source,String kind)throws Exception{
         if(source==null||source.isEmpty()||stored.containsKey(source))return;String entry="files/"+list.length()+".bin";byte[] bytes;

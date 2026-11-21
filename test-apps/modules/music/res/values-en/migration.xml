@@ -5,7 +5,7 @@
   <string name="music_migration_note">Transfers playlists, favourites, queue, ratings, notes, tags, BPM, credits, lyrics, artwork and settings on the same device. Audio files are excluded. Keep the original music folder and grant access again during import. A file mismatch leaves existing data unchanged.</string>
   <string name="music_migration_working">Checking and processing music data…</string>
   <string name="music_migration_failed">Transfer could not be completed. Existing data has not been replaced.</string>
-  <string name="music_migration_exported">Music data exported. Install Music inside the toolbox, then open Settings → Music data transfer → Import music data. Select this file and grant access to the original music folder. Keep the old app until data and playback have been checked.</string>
+  <string name="music_migration_exported">Music data exported. Open Music in toolbox pre-3.0.0-3, then open Settings → Music data transfer → Import music data. Select this file and grant access to the original music folder. Keep the old app until data and playback have been checked.</string>
   <string name="music_migration_folder_title">Link the original music folder</string>
   <string name="music_migration_folder_note">Select the music storage folder used by the old app. Files are verified and linked without copying or modifying audio.</string>
   <string name="music_migration_choose_folder">Choose original music folder</string>
@@ -17,4 +17,11 @@
   <string name="music_migration_close">Close</string>
   <string name="music_migration_imported">Music data imported. Check playlists, lyrics and artwork and test playback before uninstalling the old music app.</string>
   <string name="music_migration_missing">%1$d audio files are missing or have changed. No data was imported. Check that the original folder was selected:\n%2$s</string>
+  <string name="music_migration_link_title">Locate audio file</string>
+  <string name="music_migration_link">Choose audio</string>
+  <string name="music_migration_skip">Skip this song</string>
+  <string name="music_migration_unlinked">%1$s\n%2$s\n\nThe old file reference no longer resolves. Choose the matching audio in the music folder, or omit this song and its playlist entries from this export.</string>
+  <string name="music_migration_outside">%1$s\n%2$s\n\nChoose a file inside the original music folder. Choose the matching audio in the music folder, or omit this song and its playlist entries from this export.</string>
+  <string name="music_migration_occupied">%1$s\n%2$s\n\nThis file is already linked to another entry. Choose the matching audio in the music folder, or omit this song and its playlist entries from this export.</string>
+  <string name="music_migration_unreadable">%1$s\n%2$s\n\nThe audio file could not be opened. Choose the matching audio in the music folder, or omit this song and its playlist entries from this export.</string>
 </resources>

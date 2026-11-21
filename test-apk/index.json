@@ -48,6 +48,19 @@
       "purpose": "same-device-export-only",
       "originalSignature": true,
       "audioIncludedInExport": false
+    },
+    {
+      "name": "呆呆音乐同机迁移辅助包",
+      "version": "0.7.2-migration",
+      "versionCode": 9,
+      "packageName": "org.daidai.prototype.music",
+      "apk": "DaidaiMusic-0.7.2-migration.apk",
+      "size": 1331764,
+      "sha256": "fb7077c241aeba767466225092a53cc722785ea2fd576a2346423c7303c0b904",
+      "purpose": "same-device-export-only",
+      "originalSignature": true,
+      "audioIncludedInExport": false,
+      "targetHost": "pre-3.0.0-3"
     }
   ]
 }

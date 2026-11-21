@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "developmentSource": "prototypes/",
   "apps": {
-    "music": "0.7.1-migration",
+    "music": "0.7.2-migration",
     "messaging": "0.2.0",
     "colorvision": "0.2.0"
   },
@@ -39,8 +39,8 @@
     },
     {
       "file": "launchers/music/AndroidManifest.xml",
-      "developmentSource": "prototypes/launchers/music/AndroidManifest.xml",
-      "sha256": "3c0c4b20c7604fed788f9cd0e5f0e1808f4b5fea9d243ed099c8398700f537ae"
+      "developmentSource": "source/test-apps/launchers/music/AndroidManifest.xml",
+      "sha256": "dc4e0417df13f8654c1072e33d82447f978aa25d25d241ece53730a050dfbf17"
     },
     {
       "file": "launchers/music/java/org/daidai/prototype/music/MainActivity.java",
@@ -199,8 +199,8 @@
     },
     {
       "file": "modules/music/org/daidai/modules/music/MusicLibrary.java",
-      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicLibrary.java",
-      "sha256": "1f4928e92e62b1c93328cccd60ecf34504a2337f52f7675e0ed1f8890b6892c4"
+      "developmentSource": "source/test-apps/modules/music/org/daidai/modules/music/MusicLibrary.java",
+      "sha256": "aeef9e222fbea6e6a7d08431d1a5620632a767513b4705eb5999a3ee6eb6a8f9"
     },
     {
       "file": "modules/music/org/daidai/modules/music/MusicLibraryScreen.java",
@@ -224,13 +224,13 @@
     },
     {
       "file": "modules/music/org/daidai/modules/music/MusicMigration.java",
-      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicMigration.java",
-      "sha256": "29791907a5c87a2823e3e083b0d8f5329bdec7586a3525b091c24601ae186548"
+      "developmentSource": "source/test-apps/modules/music/org/daidai/modules/music/MusicMigration.java",
+      "sha256": "3c7263a513db629d789eab9a426c333931062bb4c5fcebd1301d2cd859a541e8"
     },
     {
       "file": "modules/music/org/daidai/modules/music/MusicMigrationUi.java",
-      "developmentSource": "prototypes/modules/music/org/daidai/modules/music/MusicMigrationUi.java",
-      "sha256": "473b94bb4166c883079d244ec0e9f0e9e1b6f3c438b8b44274b89e554334a3d6"
+      "developmentSource": "source/test-apps/modules/music/org/daidai/modules/music/MusicMigrationUi.java",
+      "sha256": "332a65f6c60fc9ee54759eddd0f9e191cf8590573c2440bcb4003caa12244759"
     },
     {
       "file": "modules/music/org/daidai/modules/music/MusicPeople.java",
@@ -339,8 +339,8 @@
     },
     {
       "file": "modules/music/res/values-en/migration.xml",
-      "developmentSource": "prototypes/modules/music/res/values-en/migration.xml",
-      "sha256": "364ce2e49cf53982b38e33f7490a3cd533b0512216fe94b02975c2fa578b3205"
+      "developmentSource": "source/test-apps/modules/music/res/values-en/migration.xml",
+      "sha256": "73861708fb4adc15e6ba5ca585a4959c9e6c2c7a667aeec94b9e3f460ba76e0b"
     },
     {
       "file": "modules/music/res/values-en/music050_analysis.xml",
@@ -414,8 +414,8 @@
     },
     {
       "file": "modules/music/res/values-zh/migration.xml",
-      "developmentSource": "prototypes/modules/music/res/values-zh/migration.xml",
-      "sha256": "a2c3b95483a833ed2461f57f62bddd85983d8c5ba605b75f9ff0b79591457977"
+      "developmentSource": "source/test-apps/modules/music/res/values-zh/migration.xml",
+      "sha256": "2dbffc969abad00734b897f03f6bd2cd467fdd782fac633544dbc003926110f6"
     },
     {
       "file": "modules/music/res/values-zh/music050_analysis.xml",
@@ -489,8 +489,8 @@
     },
     {
       "file": "modules/music/res/values/migration.xml",
-      "developmentSource": "prototypes/modules/music/res/values/migration.xml",
-      "sha256": "a2c3b95483a833ed2461f57f62bddd85983d8c5ba605b75f9ff0b79591457977"
+      "developmentSource": "source/test-apps/modules/music/res/values/migration.xml",
+      "sha256": "2dbffc969abad00734b897f03f6bd2cd467fdd782fac633544dbc003926110f6"
     },
     {
       "file": "modules/music/res/values/music050_analysis.xml",
@@ -728,6 +728,6 @@
       "sha256": "cf8907fea50098ae916d4a8e58115fad2913c658d16035b73e9303764af7b608"
     }
   ],
-  "updated": "2026-11-17",
+  "updated": "2026-11-21",
   "status": "historical-with-final-music-migration-helper"
 }
