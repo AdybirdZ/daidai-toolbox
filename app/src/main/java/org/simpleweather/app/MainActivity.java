@@ -145,7 +145,7 @@ public class MainActivity extends Activity {
         if(tab==3){pageScroll=null;body.setPadding(dp(12),dp(12),dp(12),0);frame.addView(body,new FrameLayout.LayoutParams(-1,-1));}
         else{pageScroll=new ReadingScrollView(this);pageScroll.setFillViewport(true);pageScroll.setClipToPadding(false);pageScroll.setVerticalScrollBarEnabled(false);final int restore=pendingScrollY;pendingScrollY=-1;pageScroll.addOnLayoutChangeListener(new View.OnLayoutChangeListener(){public void onLayoutChange(View v,int l,int t,int r,int b,int ol,int ot,int or,int ob){if(restore>=0){v.scrollTo(0,restore);v.removeOnLayoutChangeListener(this);}}});FrameLayout.LayoutParams fit=new FrameLayout.LayoutParams(Math.min(getResources().getDisplayMetrics().widthPixels,dp(620)),-1,Gravity.CENTER_HORIZONTAL);frame.addView(pageScroll,fit);pageScroll.addView(body);}
         pageHeader();
-        navigation=row();navigation.setPadding(dp(8),dp(6),dp(8),dp(6));navigation.setBackground(shape(0xF2FFFFFF,0));host.addView(navigation,lp(-1,-2));renderNavigation();
+        navigation=row();host.addView(navigation,lp(-1,-2));renderNavigation();
     }
     public static final int[] TAB_NAME_IDS={R.string.tab_weather,R.string.tab_schedule,R.string.tab_status,R.string.tab_weather_map,R.string.tab_astronomy,R.string.tab_earthquake,R.string.tab_random,R.string.tab_todo};
     public static final int[] WEATHER_NAME_IDS={R.string.weather_area,R.string.weather_current,R.string.weather_hourly,R.string.weather_daily,R.string.weather_details,R.string.weather_sources};
@@ -182,7 +182,7 @@ public class MainActivity extends Activity {
         if(tab<0)return;LinearLayout actions=row();if(tab==0||tab==4){actions.addView(button(getString(R.string.weather_area),false,this::showPicker));gapHorizontal(actions,8);}actions.addView(button(getString(R.string.action_settings),false,this::settings));if(tab==1){gapHorizontal(actions,8);actions.addView(button(getString(R.string.action_add_course),true,()->{ScreenHandle s=screen(1);if(s!=null)s.call("addCourse");}));}body.addView(actions);gap(body,16);
     }
     public void gapHorizontal(LinearLayout parent,int width){parent.addView(new View(this),lp(width,1));}
-    private void renderNavigation(){navigation.removeAllViews();navigation.setVisibility(tab==-1?View.GONE:View.VISIBLE);if(tab!=-1){navigation.addView(button(getString(R.string.launcher_home),false,()->switchTab(-1)),new LinearLayout.LayoutParams(0,dp(48),1));}}
+    private void renderNavigation(){navigation.removeAllViews();navigation.setVisibility(tab==-1?View.GONE:View.VISIBLE);if(tab!=-1){TextView home=button(getString(R.string.launcher_home),false,()->switchTab(-1));navigation.addView(home);SettingsNavigation.layoutDesktopBar(navigation,home);}}
     private ScreenHandle screen(int id){
         if(id<0||id>=8||!apps.installed(AppModules.IDS[id]))return null;
         ScreenHandle value=screens.get(id);if(value!=null)return value;
@@ -333,6 +333,7 @@ public class MainActivity extends Activity {
     }
     public void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_303_title),getString(R.string.update_303_detail));
         updateEntry(c,getString(R.string.update_302_title),getString(R.string.update_302_detail));
         updateEntry(c,getString(R.string.update_301_title),getString(R.string.update_301_detail));
         updateEntry(c,getString(R.string.update_300_title),getString(R.string.update_300_detail));

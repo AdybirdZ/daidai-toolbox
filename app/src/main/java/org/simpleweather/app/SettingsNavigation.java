@@ -51,5 +51,12 @@ public final class SettingsNavigation {
     }
     private View matchingButton(View view,String title){if(view instanceof TextView&&view.isClickable()&&title.contentEquals(((TextView)view).getText()))return view;if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View found=matchingButton(group.getChildAt(i),title);if(found!=null)return found;}}return null;}
     public void close(){closing=true;for(SettingsPanel panel:new ArrayList<>(stack))panel.dismiss();HOSTS.remove(activity);}
+    public static void layoutDesktopBar(LinearLayout bar,View button){
+        float density=bar.getResources().getDisplayMetrics().density;
+        int side=Math.round(8*density), vertical=Math.round(6*density);
+        bar.setPadding(side,vertical,side,vertical);
+        bar.setBackgroundColor(0xF2FFFFFF);
+        button.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.round(48*density)));
+    }
     public static void desktop(Activity activity){Intent intent=new Intent(activity,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);intent.putExtra("last_tab",-1);activity.startActivity(intent);activity.finish();}
 }

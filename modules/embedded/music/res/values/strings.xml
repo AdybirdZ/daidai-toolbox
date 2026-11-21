@@ -29,7 +29,7 @@
   <string name="music_export_failed">无法写入目标文件</string>
   <string name="music_exported">音频片段已导出</string>
   <string name="music_title">音乐</string>
-  <string name="music_subtitle">工具箱内部应用 · 本地音乐播放器</string>
+  <string name="music_subtitle">本地音乐播放器</string>
   <string name="music_now_playing">正在播放</string>
   <string name="music_no_track">还没有选择歌曲</string>
   <string name="music_previous">上一首</string>
@@ -64,7 +64,7 @@
   <string name="music_audio">音频</string>
   <string name="music_storage_settings">歌曲存储</string>
   <string name="music_choose_folder">选择歌曲存储文件夹</string>
-  <string name="music_storage_note">导入歌曲会复制到所选文件夹，并使用该副本播放；如果原文件已在该文件夹内，则直接使用，不重复复制。同名文件添加序号，已有文件不会被覆盖。修改歌曲名称只更新曲库资料，不重命名音频文件。</string>
+  <string name="music_storage_note">导入的音频会复制到所选文件夹。同名副本以序号区分，文件夹内已有的音频直接播放。编辑歌名只更改曲库中的显示名称。</string>
   <string name="music_cover_show">播放时显示曲绘</string>
   <string name="music_cover_clarity">曲绘不透明度</string>
   <string name="music_search_hint">搜索歌曲名、时长、演唱者、作曲、编曲、备注或标签</string>

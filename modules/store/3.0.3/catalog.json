@@ -1,0 +1,280 @@
+{
+  "format": "daidai-app-store",
+  "schemaVersion": 1,
+  "hostApi": "daidai-toolbox/api-1",
+  "defaultInstalled": [
+    "weather",
+    "status"
+  ],
+  "apps": [
+    {
+      "id": "weather",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.INTERNET"
+      ],
+      "description": {
+        "zh": "\u5730\u533a\u5929\u6c14\u3001\u9010\u65f6\u9884\u62a5\u4e0e\u5929\u6c14\u8be6\u60c5\u3002",
+        "en": "Local weather, hourly forecasts and weather details."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 152083,
+      "sha256": "7a68f5fabf93f16793f45bc7636844dc33272ad17e2865ad347a06ad76973a25",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/weather.ddapp"
+    },
+    {
+      "id": "schedule",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ],
+      "description": {
+        "zh": "\u8bfe\u7a0b\u5b89\u6392\u3001\u5b66\u671f\u8bbe\u7f6e\u4e0e\u6bcf\u65e5\u8bfe\u7a0b\u63d0\u793a\u3002",
+        "en": "Courses, semester settings and daily class notifications."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 57811,
+      "sha256": "704c229538301a1aaee73c6c71ac5468a7d37fa55ea73e05a04f4752fcb78a93",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/schedule.ddapp"
+    },
+    {
+      "id": "status",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "description": {
+        "zh": "\u4f4d\u7f6e\u3001\u536b\u661f\u3001\u4f20\u611f\u5668\u3001\u5730\u70b9\u4e0e\u8def\u7ebf\u8bb0\u5f55\u3002",
+        "en": "Location, satellites, sensors, places and route recording."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 168403,
+      "sha256": "a068ff2ef4f7e20670b338028e56a02bcc213673039a77c8d9b012096103cac0",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/status.ddapp"
+    },
+    {
+      "id": "weather-map",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.INTERNET"
+      ],
+      "description": {
+        "zh": "\u67e5\u770b\u5b98\u65b9\u5929\u6c14\u56fe\u4e0e\u96f7\u8fbe\u7f51\u9875\u3002",
+        "en": "View official weather maps and radar pages."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 37331,
+      "sha256": "7e5bade6cf1d1f75c75a7c81a327dd182b3b2744b1ee6a4d855a7a589a8ee9cb",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/weather-map.ddapp"
+    },
+    {
+      "id": "astronomy",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [],
+      "description": {
+        "zh": "\u5f53\u5730\u661f\u7a7a\u3001\u5929\u4f53\u8d44\u6599\u4e0e\u8bbe\u5907\u6307\u5411\u3002",
+        "en": "Local sky chart, celestial information and device pointing."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 82387,
+      "sha256": "7078c146618aeb13c8d8b32ed63fe3d26a8d619e4102391149382aa9391112f2",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/astronomy.ddapp"
+    },
+    {
+      "id": "earthquake",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "description": {
+        "zh": "\u8fd1\u671f\u5730\u9707\u76ee\u5f55\u3001\u8ddd\u79bb\u4e0e\u70c8\u5ea6\u53c2\u8003\u3002",
+        "en": "Recent earthquakes, distances and reference intensities."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 119251,
+      "sha256": "25fc2e8c42229700ac39e5453a1358c437895c0054d482f804aea6f6b3b9030e",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/earthquake.ddapp"
+    },
+    {
+      "id": "random",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [],
+      "description": {
+        "zh": "\u540d\u5355\u7ba1\u7406\u3001\u968f\u673a\u62bd\u53d6\u4e0e\u62bd\u53d6\u8fdb\u5ea6\u3002",
+        "en": "Saved lists, random draws and draw progress."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 41427,
+      "sha256": "a6432e8197a737bd98e28ef2989624b29c4f7524d5b1be38542205e13fdbf3ce",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/random.ddapp"
+    },
+    {
+      "id": "todo",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ],
+      "description": {
+        "zh": "\u4e8b\u9879\u3001\u91cd\u590d\u5b89\u6392\u3001\u63d0\u9192\u4e0e\u5b8c\u6210\u8bb0\u5f55\u3002",
+        "en": "Tasks, recurring schedules, reminders and completion history."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 78291,
+      "sha256": "7007eb7ef1a1f4a31b5466647d88a63ebd1822440a2e5d4e47a3bfc24e39659e",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/todo.ddapp"
+    },
+    {
+      "id": "music",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.WAKE_LOCK",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "description": {
+        "zh": "\u672c\u5730\u6b4c\u66f2\u3001\u6b4c\u8bcd\u3001\u6b4c\u5355\u4e0e\u97f3\u9891\u5206\u6790\u3002",
+        "en": "Local music, lyrics, playlists and audio analysis."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 1331828,
+      "sha256": "712ffa011a48e660c73cbe6e35559116dfe0868f3d2cef63364b1d614607683a",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/music.ddapp"
+    },
+    {
+      "id": "messaging",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING",
+        "android.permission.WAKE_LOCK",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "description": {
+        "zh": "\u901a\u8fc7\u84dd\u7259\u6216\u5c40\u57df\u7f51\u4e0e\u9644\u8fd1\u8bbe\u5907\u901a\u4fe1\u3002",
+        "en": "Communicate with nearby devices over Bluetooth or a local network."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 45593,
+      "sha256": "9e08a14edd58d943bc407dba1c7bc9500e79feae97cf9dfc2443839f443800b5",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/messaging.ddapp"
+    },
+    {
+      "id": "colorvision",
+      "type": "signed-dex-app",
+      "version": "3.0.3",
+      "versionCode": 8,
+      "hostApi": "daidai-toolbox/api-1",
+      "minHostVersionCode": 59,
+      "minSdk": 26,
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
+      "description": {
+        "zh": "\u56fe\u7247\u4e0e\u76f8\u673a\u753b\u9762\u7684\u8272\u89c9\u6a21\u62df\u3002",
+        "en": "Color vision simulation for images and camera views."
+      },
+      "releaseNotes": {
+        "zh": "\u9002\u914d\u7a33\u5b9a\u5bbf\u4e3b\u63a5\u53e3\uff0c\u72ec\u7acb\u4ea4\u4ed8\u5e94\u7528\u4ee3\u7801\u4e0e\u8d44\u6e90\u3002",
+        "en": "Uses the stable host API with independently packaged app code and resources."
+      },
+      "bytes": 41577,
+      "sha256": "f3db4551ed073d9bc338788ba405a506a7f0d6268caa8288d02abf7eeaee40cc",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.3/colorvision.ddapp"
+    }
+  ]
+}

@@ -578,6 +578,7 @@
     "public void captureState(android.os.Bundle);",
     "public void restoreState(android.os.Bundle, java.lang.String);",
     "public void close();",
+    "public static void layoutDesktopBar(android.widget.LinearLayout, android.view.View);",
     "public static void desktop(android.app.Activity);"
   ],
   "org.simpleweather.app.SettingsScreen": [

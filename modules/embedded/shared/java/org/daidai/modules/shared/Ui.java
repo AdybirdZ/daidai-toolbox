@@ -28,7 +28,9 @@ public final class Ui {
         page.setBackgroundColor(Color.rgb(244,246,250));
         LinearLayout shell=column(a);
         shell.addView(page,new LinearLayout.LayoutParams(-1,0,1));
-        button(shell,org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.launcher_home),()->org.simpleweather.app.SettingsNavigation.desktop(a));
+        LinearLayout bar=row(shell);
+        Button home=button(bar,org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.launcher_home),()->org.simpleweather.app.SettingsNavigation.desktop(a));
+        org.simpleweather.app.SettingsNavigation.layoutDesktopBar(bar,home);
         a.setContentView(shell);
         if(Build.VERSION.SDK_INT>=30) {
             a.getWindow().setDecorFitsSystemWindows(false);

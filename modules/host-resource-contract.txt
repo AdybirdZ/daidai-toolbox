@@ -795,6 +795,8 @@ string/update_301_detail
 string/update_301_title
 string/update_302_detail
 string/update_302_title
+string/update_303_detail
+string/update_303_title
 string/update_history_001
 string/update_history_002
 string/update_history_003

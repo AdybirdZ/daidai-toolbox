@@ -1,0 +1,4 @@
+<resources>
+  <string name="update_303_title">3.0.3 · Desktop button alignment and clearer wording</string>
+  <string name="update_303_detail">The Home buttons in Music, Device Messaging and Color Vision now align with Weather and Status. Shorter music storage and device pairing instructions explain how to handle duplicate filenames and connect two devices.</string>
+</resources>

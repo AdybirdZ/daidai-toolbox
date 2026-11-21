@@ -29,7 +29,7 @@
   <string name="music_export_failed">Cannot write the destination file</string>
   <string name="music_exported">Audio segment exported</string>
   <string name="music_title">Music</string>
-  <string name="music_subtitle">Toolbox app · Local music player</string>
+  <string name="music_subtitle">Local music player</string>
   <string name="music_now_playing">Now playing</string>
   <string name="music_no_track">No track selected</string>
   <string name="music_previous">Previous</string>
@@ -64,7 +64,7 @@
   <string name="music_audio">Audio</string>
   <string name="music_storage_settings">Song storage</string>
   <string name="music_choose_folder">Choose storage folder</string>
-  <string name="music_storage_note">Imported songs are copied into the selected folder and played from that copy. Files already inside the folder are used directly. Duplicate filenames receive a numbered suffix without overwriting existing files. Editing a song title updates library metadata without renaming the audio file.</string>
+  <string name="music_storage_note">Imported audio is copied to the selected folder. Files already there are played directly. A numbered suffix distinguishes copies with the same filename. Editing a title changes its library entry only.</string>
   <string name="music_cover_show">Show cover while playing</string>
   <string name="music_cover_clarity">Artwork opacity</string>
   <string name="music_search_hint">Search title, duration, vocalist, composer, arranger, notes or tags</string>

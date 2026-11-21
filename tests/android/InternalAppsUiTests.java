@@ -27,12 +27,33 @@ public final class InternalAppsUiTests extends Instrumentation {
     private void install(String id)throws Exception{try(InputStream in=new FileInputStream("/data/local/tmp/internal-apps/"+id+".ddapp")){call(apps,"install",new Class[]{InputStream.class,String.class,String.class},in,id,null);}}
     private Activity open(String id)throws Exception{Intent intent=(Intent)type("ModuleRuntime").getMethod("pageIntent",Context.class,String.class,String.class).invoke(null,host,id,"main");Activity a=startActivitySync(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();return a;}
     private void await(java.util.function.BooleanSupplier condition,String label)throws Exception{long end=SystemClock.elapsedRealtime()+10000;while(!condition.getAsBoolean()&&SystemClock.elapsedRealtime()<end)Thread.sleep(50);check(condition.getAsBoolean(),label);}
+    private TextView homeButton(View v,String label){
+        if(v instanceof TextView && label.contentEquals(((TextView)v).getText()) && v.isClickable())return (TextView)v;
+        if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++){TextView found=homeButton(g.getChildAt(i),label);if(found!=null)return found;}}
+        return null;
+    }
+    private int[] desktopEdges(Activity a,String label)throws Exception{
+        waitForIdleSync();
+        TextView home=homeButton(a.getWindow().getDecorView(),label);
+        check(home!=null&&home.isShown(),"desktop action is visible");
+        int[] pos=new int[2];home.getLocationOnScreen(pos);
+        float density=a.getResources().getDisplayMetrics().density;
+        int[] edges={pos[0],pos[0]+home.getWidth(),home.getHeight()};
+        check(edges[0]==Math.round(8*density)&&a.getWindow().getDecorView().getWidth()-edges[1]==edges[0]&&edges[2]==Math.round(48*density),"measured desktop margins and height: "+Arrays.toString(edges));
+        android.util.Log.i("DesktopEdges",a.getLocalClassName()+" "+Arrays.toString(edges));
+        return edges;
+    }
     @Override public void onStart(){Bundle result=new Bundle();try{
         c=getTargetContext();loader=c.getClassLoader();String lang=args.getString("language","zh-CN");c.getSharedPreferences("toolbox",0).edit().putString("app_language",lang).putInt("seen_version",Integer.MAX_VALUE).commit();
         host=startActivitySync(new Intent().setClassName(c,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();apps=field(host,"apps");
         for(String id:new String[]{"weather","schedule","status","weather-map","astronomy","earthquake","random","todo","music","messaging","colorvision"}){install(id);check((Boolean)call(apps,"installed",new Class[]{String.class},id),"installed "+id);File file=new File(c.getFilesDir(),"apps/"+id+".ddapp");check((android.system.Os.stat(file.getPath()).st_mode&0222)==0,"read-only "+id);}
         for(String n:new String[]{"org.daidai.modules.music.MusicActivity","org.daidai.modules.messaging.MessagingService","org.daidai.modules.colorvision.ColorVisionActivity","org.simpleweather.app.WeatherScreen"}){try{Class.forName(n,true,loader);throw new AssertionError("business bundled in host: "+n);}catch(ClassNotFoundException expected){checks++;}}
-        for(String id:new String[]{"music","messaging","colorvision"}){child=open(id);Object page=field(child,"page");check(page!=null,"page opened "+id);check(page.getClass().getClassLoader()!=loader,"separate classloader "+id);check(texts(child).contains(lang.equals("en")?"Home":"桌面"),"desktop action "+id);check(texts(child).size()>8,"real resource-backed UI "+id);String expected=lang.equals("en")?(id.equals("music")?"Playback":id.equals("messaging")?"Device Messaging":"Color Vision Simulator"):(id.equals("music")?"播放":id.equals("messaging")?"设备通信":"色觉模拟器");check(texts(child).toString().contains(expected),"localized UI "+id+" "+texts(child));ui(()->child.finish());child=null;}
+        String label=lang.equals("en")?"Home":"桌面";
+        ui(()->{try{call(host,"switchTab",new Class[]{int.class},0);}catch(Exception e){throw new RuntimeException(e);}});
+        int[] weather=desktopEdges(host,label);
+        ui(()->{try{call(host,"switchTab",new Class[]{int.class},2);}catch(Exception e){throw new RuntimeException(e);}});
+        check(Arrays.equals(weather,desktopEdges(host,label)),"Status matches Weather");
+        for(String id:new String[]{"music","messaging","colorvision"}){child=open(id);check(Arrays.equals(weather,desktopEdges(child,label)),id+" matches Weather");Object page=field(child,"page");check(page!=null,"page opened "+id);check(page.getClass().getClassLoader()!=loader,"separate classloader "+id);check(texts(child).contains(lang.equals("en")?"Home":"桌面"),"desktop action "+id);check(texts(child).size()>8,"real resource-backed UI "+id);String expected=lang.equals("en")?(id.equals("music")?"Playback":id.equals("messaging")?"Device Messaging":"Color Vision Simulator"):(id.equals("music")?"播放":id.equals("messaging")?"设备通信":"色觉模拟器");check(texts(child).toString().contains(expected),"localized UI "+id+" "+texts(child));ui(()->child.finish());child=null;}
         child=open("music");ClassLoader musicLoader=field(child,"page").getClass().getClassLoader();for(String obsolete:new String[]{"MusicMigration","MusicMigrationUi"}){boolean absent=false;try{Class.forName("org.daidai.modules.music."+obsolete,true,musicLoader);}catch(ClassNotFoundException expected){absent=true;}check(absent,"standalone migration implementation removed: "+obsolete);}check(child.getResources().getIdentifier("music_migration_title","string","org.simpleweather.module.music")==0,"standalone migration setting and text are not packaged");Class<?> collections=Class.forName("org.daidai.modules.music.MusicCollections",true,musicLoader);check((Boolean)call(collections,"createPlaylist",new Class[]{Context.class,String.class},child,"Resource context check"),"playlist uses module resources across locales");call(collections,"deletePlaylist",new Class[]{Context.class,String.class},child,"Resource context check");check(!(Boolean)call(collections,"createPlaylist",new Class[]{Context.class,String.class},child,"All songs"),"English reserved playlist name remains protected");check(!(Boolean)call(collections,"createPlaylist",new Class[]{Context.class,String.class},child,"全部歌曲"),"Chinese reserved playlist name remains protected");ui(()->child.finish());child=null;
         packages();backup();notifications();messaging();
         result.putString("result","PASS: "+checks+" internal app behavior checks ("+lang+")");
