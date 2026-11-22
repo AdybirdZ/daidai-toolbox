@@ -18,6 +18,9 @@
   <string name="library_added_to_queue">已加入播放列表</string>
   <string name="library_add_to_playlist">加入歌单</string>
   <string name="library_no_songs">暂无歌曲。可导入歌曲，或选择歌曲存储文件夹。</string>
+  <string name="library_no_favorite_songs">“我喜欢的音乐”中还没有歌曲。</string>
+  <string name="library_no_playlist_songs">这个歌单中还没有歌曲。</string>
+  <string name="library_no_folder_songs">歌曲文件夹中还没有可用歌曲。</string>
   <string name="library_add_to_queue">加入播放列表</string>
   <string name="library_unfavorite">取消喜欢</string>
   <string name="library_favorite">我喜欢</string>

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="music_tab_playback">Playback</string>
+  <string name="music_tab_now_playing">Now Playing</string>
   <string name="music_tab_settings">Settings</string>
   <string name="music_queue_remove">Remove songs</string>
   <string name="music_queue_remove_done">Finish removing songs</string>

@@ -5,6 +5,9 @@
   <string name="library_create_playlist">新建歌单</string>
   <string name="library_favorites">我喜欢的音乐</string>
   <string name="library_no_playlists">尚无自建歌单。</string>
+  <string name="library_no_favorite_songs">“我喜欢的音乐”中还没有歌曲。</string>
+  <string name="library_no_playlist_songs">这个歌单中还没有歌曲。</string>
+  <string name="library_no_folder_songs">歌曲文件夹中还没有可用歌曲。</string>
   <string name="library_playlists">歌单</string>
   <string name="library_open_playlist">查看歌曲</string>
   <string name="library_rename_playlist">重命名歌单</string>

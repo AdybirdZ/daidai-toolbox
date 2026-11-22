@@ -35,7 +35,7 @@ public class MusicActivity extends org.simpleweather.app.ModulePage {
         closeAnalysis();if(lyrics!=null){lyrics.close();lyrics=null;}sleepTimerButton=null;title=null;list=null;volume=null;analysisSlot=null;displayedCover="";
         LinearLayout page=Ui.page(activity,txt("music_title"),txt("music_subtitle"));LinearLayout body=Ui.scroll(page);
         if(tab==0)renderPlayback(body);else if(tab==1){Ui.button(body,txt("music_import"),this::importAudio);body.addView(MusicLibraryScreen.createPage(activity,this::libraryChanged,this::retryImport));}
-        LinearLayout navigation=Ui.row(page);String[] names={"music_tab_playback","library_my_songs","music_tab_settings"};
+        LinearLayout navigation=Ui.row(page);String[] names={"music_tab_now_playing","library_my_songs","music_tab_settings"};
         for(int i=0;i<names.length;i++){final int next=i;Button button=Ui.cell(navigation,txt(names[i]),()->{if(next==2){org.simpleweather.app.SettingsActivity.open(activity,"music");return;}if(tab!=next){tab=next;render();}});if(tab==i){Ui.styleButton(button,true);}}
         attachAnalysis();showList();update();
     }

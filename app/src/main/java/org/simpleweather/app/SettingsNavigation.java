@@ -53,10 +53,17 @@ public final class SettingsNavigation {
     public void close(){closing=true;for(SettingsPanel panel:new ArrayList<>(stack))panel.dismiss();HOSTS.remove(activity);}
     public static void layoutDesktopBar(LinearLayout bar,View button){
         float density=bar.getResources().getDisplayMetrics().density;
-        int side=Math.round(8*density), vertical=Math.round(6*density);
+        int side=Math.round(8*density), vertical=Math.round(4*density);
         bar.setPadding(side,vertical,side,vertical);
         bar.setBackgroundColor(0xF2FFFFFF);
-        button.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.round(48*density)));
+        bar.setGravity(Gravity.CENTER);
+        TextView label=(TextView)button;
+        label.setMinWidth(0);
+        button.setMinimumWidth(0);
+        label.setTextSize(14);
+        button.setPadding(Math.round(8*density),0,Math.round(8*density),0);
+        label.setGravity(Gravity.CENTER);
+        button.setLayoutParams(new LinearLayout.LayoutParams(Math.round(112*density),Math.round(48*density)));
     }
     public static void desktop(Activity activity){Intent intent=new Intent(activity,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);intent.putExtra("last_tab",-1);activity.startActivity(intent);activity.finish();}
 }

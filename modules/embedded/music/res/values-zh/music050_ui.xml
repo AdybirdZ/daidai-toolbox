@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="music_tab_playback">播放</string>
+  <string name="music_tab_now_playing">当前播放</string>
   <string name="music_tab_settings">设置</string>
   <string name="music_queue_remove">移除歌曲</string>
   <string name="music_queue_remove_done">完成移除歌曲</string>

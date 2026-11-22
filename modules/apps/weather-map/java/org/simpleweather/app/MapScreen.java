@@ -26,7 +26,7 @@ public final class MapScreen {
             for(int n=line*3;n<line*3+3;n++){final int product=n;TextView pick=mapButton(captions[n],()->select(product));pick.setContentDescription(labels[n]);choices[n]=pick;buttons.addView(pick,cell());}
             controls.addView(buttons);
         }
-        LinearLayout row=a.row();TextView note=a.text(UiText.get("map_016"),11,a.MUTED,false);
+        a.gap(controls,14);LinearLayout row=a.row();TextView note=a.text(UiText.get("map_016"),11,a.MUTED,false);
         LinearLayout.LayoutParams noteParams=new LinearLayout.LayoutParams(0,-2,2);noteParams.setMargins(a.dp(2),a.dp(2),a.dp(6),a.dp(2));row.addView(note,noteParams);
         TextView browser=a.text(UiText.get("map_017")+" ↗",12,a.BLUE,false);browser.setMinHeight(a.dp(48));browser.setPadding(a.dp(8),a.dp(6),a.dp(8),a.dp(6));browser.setGravity(Gravity.CENTER);a.markLink(browser);a.tap(browser,android.graphics.Color.TRANSPARENT,8,()->{if(url!=null)a.open(url);else a.toast(UiText.get("map_018"));});row.addView(browser,new LinearLayout.LayoutParams(-2,-2));controls.addView(row);
         a.body.addView(controls);a.gap(a.body,6);status=a.text(UiText.get("map_019"),12,a.MUTED,false);a.body.addView(status);a.gap(a.body,4);

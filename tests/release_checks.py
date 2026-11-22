@@ -29,3 +29,6 @@ subprocess.run([sys.executable,str(root / "tests/internal_resource_checks.py")],
 for client in ("WeatherApi.java","EarthquakeApi.java"):
     text=next(root.glob('modules/apps/*/java/org/simpleweather/app/'+client)).read_text(encoding="utf8")
     assert "DaidaiToolbox/"+name+" " in text, "HTTP client version mismatch: "+client
+host_updates=(root/'app/src/main/java/org/simpleweather/app/HostUpdateManager.java').read_text(encoding='utf8')
+assert 'DaidaiToolbox/'+name+' Android' in host_updates, 'Host update HTTP client version mismatch'
+assert 'parseLatestRelease' in host_updates and 'expectedUrl.equals(url)' in host_updates, 'Host updates must validate the official versioned release asset URL'

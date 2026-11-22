@@ -218,5 +218,25 @@
     <string name="module_transfer_title">应用资料导入与导出</string>
     <string name="module_export_short">导出</string><string name="module_import_short">导入</string>
     <string name="module_transfer_note">状态等应用及全局设置使用 JSON 文件；音乐、设备通信与色觉模拟器使用包含私有附属文件的 ZIP 资料包。状态资料包含地点和路线；全局设置包含颜色、语言、时间及桌面布局。导入会覆盖所选应用的资料，不导入程序、系统授权、外部歌曲或运行中的任务。</string>
-    <string name="module_import_title">导入应用资料</string><string name="module_import_summary">即将覆盖“%1$s”的本机资料。请确认文件来自可信来源。</string><string name="module_exported">应用资料已导出</string></resources>
+    <string name="module_import_title">导入应用资料</string><string name="module_import_summary">即将覆盖“%1$s”的本机资料。请确认文件来自可信来源。</string><string name="module_exported">应用资料已导出</string>    <string name="host_update_checking">正在检查工具箱本体更新…</string>
+    <string name="host_update_check">检查工具箱更新</string>
+    <string name="host_update_latest">工具箱本体已是最新版本</string>
+    <string name="host_update_check_failed">暂时无法检查工具箱更新，请重试</string>
+    <string name="host_update_note">仅检查 GitHub 正式版；下载后由 Android 系统确认安装</string>
+    <string name="host_update_available">发现工具箱新版本 %1$s</string>
+    <string name="host_update_download">下载工具箱更新</string>
+    <string name="host_update_downloading_button">正在下载…</string>
+    <string name="host_update_cancel">取消下载</string>
+    <string name="host_update_cancelling">正在取消下载…</string>
+    <string name="host_update_cancelled">下载已取消</string>
+    <string name="host_update_downloading">正在下载工具箱更新：%1$s / %2$s</string>
+    <string name="host_update_download_failed">工具箱更新下载或校验失败，请重试</string>
+    <string name="host_update_downloaded">工具箱 %1$s 已下载并验证</string>
+    <string name="host_update_install">安装工具箱更新</string>
+    <string name="host_update_permission_needed">请允许呆呆工具箱安装本次更新</string>
+    <string name="host_update_confirmation">请在系统确认界面完成安装</string>
+    <string name="host_update_install_complete">工具箱更新已完成</string>
+    <string name="host_update_install_failed">工具箱更新安装失败</string>
+    <string name="host_update_permission_unavailable">无法打开安装权限设置</string>
+</resources>
 

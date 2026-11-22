@@ -18,6 +18,9 @@
   <string name="library_added_to_queue">Added to playback queue</string>
   <string name="library_add_to_playlist">Add to playlist</string>
   <string name="library_no_songs">No songs yet. Import audio or choose a music storage folder.</string>
+  <string name="library_no_favorite_songs">There are no songs in Liked music yet.</string>
+  <string name="library_no_playlist_songs">There are no songs in this playlist yet.</string>
+  <string name="library_no_folder_songs">There are no available songs in the music folder.</string>
   <string name="library_add_to_queue">Add to playback queue</string>
   <string name="library_unfavorite">Unlike</string>
   <string name="library_favorite">Like</string>

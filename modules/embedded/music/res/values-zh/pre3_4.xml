@@ -5,6 +5,7 @@
     <string name="music_import_phase_metadata">正在读取歌曲资料…</string>
     <string name="music_import_phase_artwork">正在读取曲绘…</string>
     <string name="music_import_phase_save">正在保存歌曲资料…</string>
+    <string name="music_import_phase_complete">已完成</string>
     <string name="music_import_position">第 %1$d / %2$d 个文件</string>
     <string name="music_import_slow_operation">当前操作已持续 %1$d 秒。文件提供方或音频解析器可能响应较慢。</string>
     <string name="music_import_cancelling">正在取消，等待当前系统操作返回…</string>

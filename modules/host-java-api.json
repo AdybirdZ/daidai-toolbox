@@ -152,6 +152,23 @@
     "public static void settings(org.simpleweather.app.MainActivity, java.lang.String);",
     "public static void earthquakeInfo(org.simpleweather.app.MainActivity, android.widget.LinearLayout, boolean);"
   ],
+  "org.simpleweather.app.HostUpdateManager": [
+    "public final class org.simpleweather.app.HostUpdateManager {",
+    "public static org.simpleweather.app.HostUpdateManager$Release latest(android.content.Context) throws java.lang.Exception;",
+    "public static java.io.File download(android.content.Context, org.simpleweather.app.HostUpdateManager$Release, org.simpleweather.app.HostUpdateManager$DownloadTask) throws java.lang.Exception;",
+    "public static void verify(android.content.Context, java.io.File, java.lang.String) throws java.lang.Exception;",
+    "public static boolean hasInstallPermission(android.content.Context);",
+    "public static void requestInstallPermission(android.app.Activity);",
+    "public static int installPermissionRequestCode();",
+    "public static java.io.File pendingFile(android.content.Context);",
+    "public static void installPending(android.app.Activity) throws java.lang.Exception;",
+    "public static void install(android.app.Activity, java.io.File) throws java.lang.Exception;"
+  ],
+  "org.simpleweather.app.HostUpdateReceiver": [
+    "public final class org.simpleweather.app.HostUpdateReceiver extends android.content.BroadcastReceiver {",
+    "public org.simpleweather.app.HostUpdateReceiver();",
+    "public void onReceive(android.content.Context, android.content.Intent);"
+  ],
   "org.simpleweather.app.InternalAppActivity": [
     "public final class org.simpleweather.app.InternalAppActivity extends android.app.Activity {",
     "public org.simpleweather.app.InternalAppActivity();",
@@ -366,6 +383,7 @@
   "org.simpleweather.app.ModuleCompatibility": [
     "public final class org.simpleweather.app.ModuleCompatibility {",
     "public static boolean accepts(java.lang.String, java.lang.String, int, int, int, int);",
+    "public static boolean releaseAllowed(java.lang.String, java.lang.String);",
     "public static boolean validLength(long, long, long);"
   ],
   "org.simpleweather.app.ModulePage": [

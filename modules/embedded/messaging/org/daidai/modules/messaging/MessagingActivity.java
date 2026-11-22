@@ -24,7 +24,7 @@ public final class MessagingActivity extends org.simpleweather.app.ModulePage {
     private HistoryScrollView historyScroll;private List<MessagingService.Row> renderedMessages=new ArrayList<>();
     private final Runnable changed=this::update;
     private final ServiceConnection connection=new ServiceConnection(){
-        public void onServiceConnected(ComponentName name,IBinder binder){session=((MessagingService.LocalBinder)binder).session();bluetooth=session.active()?session.bluetooth():getSharedPreferences("messaging_module",0).getBoolean("bluetooth",false);render();if(visible)session.addListener(changed);update();}
+        public void onServiceConnected(ComponentName name,IBinder binder){session=((MessagingService.LocalBinder)binder).session();bluetooth=session.active()?session.bluetooth():getSharedPreferences("messaging_module",0).getBoolean("bluetooth",false);if(visible)session.addListener(changed);update();}
         public void onServiceDisconnected(ComponentName name){session=null;update();}
     };
     private String t(String key,Object... args){return Texts.get(activity,"msg_"+key,args);}

@@ -842,7 +842,7 @@
     <string name="main_058" formatted="false">"Early builds originally labeled 1.0.0 are classified as test releases: region search/favorites, current weather, 24-hour and 7-day forecasts, and offline cache."</string>
     <string name="main_059" formatted="false">"Cache cleared"</string>
     <string name="main_060" formatted="false">"Some cache files could not be deleted. Try again."</string>
-    <string name="main_061" formatted="false">"Weather data is provided by Open-Meteo and location search is based on GeoNames, with CC BY 4.0 attribution. The app formats descriptions, rounding and units for display.\n\nCurrent weather is a numerical-model estimate, not an on-site station observation or a replacement for official warnings. Current and hourly timestamps follow the time-display setting; daily forecasts and sunrise and sunset retain the selected location\'s time zone.\n\nNo account, advertisements, analytics or app-operated server is used. Weather and location searches require network access; providers may receive IP addresses, search terms and selected location coordinates. The free Open-Meteo API is limited to noncommercial use; commercial use requires separate authorization. Weather is cached for 15 minutes, manual requests are at least one minute apart, and rate limits pause requests.\n\nPrecipitation, temperature, radar, satellite and weather charts are viewed on official pages within the app. Copyright belongs to the National Meteorological Centre and other original rights holders, and those sites process visits under their own policies. Astronomy results are approximated locally."</string>
+    <string name="main_061" formatted="false">"Weather data is provided by Open-Meteo and location search is based on GeoNames, with CC BY 4.0 attribution. The app formats descriptions, rounding and units for display.\n\nCurrent weather is a numerical-model estimate, not an on-site station observation or a replacement for official warnings. Current and hourly timestamps follow the time-display setting; daily forecasts and sunrise and sunset retain the selected location\'s time zone.\n\nNo account, advertisements, analytics or app-operated server is used. Weather and location searches require network access; providers may receive IP addresses, search terms and selected location coordinates. The free Open-Meteo API is limited to noncommercial use; commercial use requires separate authorization. Weather is cached for 15 minutes, manual requests are at least one minute apart, and rate limits pause requests.\n\nPrecipitation, temperature, radar, satellite and weather charts are viewed on official pages within the app. Copyright belongs to the National Meteorological Centre and other original rights holders, and those sites process visits under their own policies. Astronomy results are approximated locally. Chinese traditional star names added in this release are adapted from Stellarium's Chinese sky-culture data under CC BY-SA 4.0, with changes noted. Associated HIP positions and magnitudes are based on the Stellarium HIP–Gaia3 catalogue, which credits Hipparcos and Gaia. The app makes no astronomy network requests."</string>
     <string name="main_062" formatted="false">"Timetables, backgrounds, favorites, places, routes, random selection lists and draw records, and the most recent location are stored on this device. Earthquake distances, place bearings and configuration imports are processed locally; these data are not uploaded. Clearing cache or restoring defaults retains saved places, routes, random selection lists and progress, and the selected target. Uninstalling an internal app retains its data; uninstalling the toolbox deletes its local data.\n\nStatus uses Android system APIs for orientation, sensors, battery and satellite reception. Satellite status requires precise location permission. Reception away from the Status app follows your settings. Continuous location must be enabled explicitly and runs as a foreground service. System network and assisted location may send IP, cell tower or Wi-Fi information to service providers under their own policies. The app does not connect to third-party ephemeris services or read device serial numbers, IMEI or MAC addresses.\n\nCamera ambient-light sampling requires camera permission and processes brightness samples only in memory, without saving or uploading images. You can pause sampling to close the camera. Sampling stops by default when leaving Status; allowing background sampling remains subject to system restrictions.\n\nJSON files you choose to export may contain coordinates, timestamps, names and other personal settings. Place files also contain colors and visibility. You choose the destination through the system file picker; cloud providers and other file providers apply their own privacy policies. Compass bearings, place directions and route diagrams are affected by sensors, magnetic fields, location and model errors, and are not intended for professional surveying or safety navigation."</string>
     <string name="main_063" formatted="false">"Open-Meteo · Weather data"</string>
     <string name="main_064" formatted="false">"Open-Meteo · Terms and privacy"</string>
@@ -859,6 +859,10 @@
     <string name="main_075" formatted="false">"Shiguang Schedule · GitHub"</string>
     <string name="main_076" formatted="false">"Daidai Toolbox · GitHub"</string>
     <string name="main_077" formatted="false">"No browser available to open this link"</string>
+    <string name="main_078" formatted="false">"Stellarium · Chinese sky culture and CC BY-SA 4.0"</string>
+    <string name="main_079" formatted="false">"Stellarium · HIP–Gaia3 star-catalogue documentation"</string>
+    <string name="main_080" formatted="false">"Stellarium · Star-data credits"</string>
+    <string name="main_081" formatted="false">"CC BY-SA 4.0 · License text"</string>
     <string name="map_001" formatted="false">"Nationwide"</string>
     <string name="map_002" formatted="false">"North China"</string>
     <string name="map_003" formatted="false">"East China"</string>
@@ -1305,4 +1309,25 @@
     <string name="course_notify_in" formatted="false">Starts in %1$d minutes</string>
     <string name="update_214_title" formatted="false">2.1.4 · To-do and course-order fixes</string>
     <string name="update_214_detail" formatted="false">Repeating all-day tasks now generate occurrences within their specified date range. Fixed editor page jumps when controls change. The default retention after enabling automatic deletion is now 3 days, reminder lead times use minutes, hours or days as appropriate, and today’s courses are sorted from earliest to latest period.</string>
+
+    <string name="astronomy_208" formatted="false">"Tu Si Kong (HIP 3419)"</string>
+    <string name="astronomy_209" formatted="false">"Wu Che San (HIP 28360)"</string>
+    <string name="astronomy_210" formatted="false">"Ge Dao San (HIP 6686)"</string>
+    <string name="astronomy_211" formatted="false">"Tian Chuan San (HIP 15863)"</string>
+    <string name="astronomy_212" formatted="false">"Tian Chuan Er (HIP 14328)"</string>
+    <string name="astronomy_213" formatted="false">"Tian Chuan Wu (HIP 17358)"</string>
+    <string name="astronomy_214" formatted="false">"Da Ling Wu (HIP 14576)"</string>
+    <string name="astronomy_215" formatted="false">"Kui Su Wu (HIP 3092)"</string>
+    <string name="astronomy_216" formatted="false">"Tian Da Jiang Jun Jiu (HIP 10064)"</string>
+    <string name="astronomy_217" formatted="false">"Tian Gou Wu (HIP 105199)"</string>
+    <string name="astronomy_218" formatted="false">"Kui Su Jiu (HIP 5447)"</string>
+    <string name="astronomy_219" formatted="false">"Lou Su Er (HIP 8832)"</string>
+    <string name="astronomy_220" formatted="false">"Lou Su Yi (HIP 8903)"</string>
+    <string name="astronomy_221" formatted="false">"Li Gong Si (HIP 112158)"</string>
+    <string name="astronomy_222" formatted="false">"Tian Qun Yi (HIP 14135)"</string>
+    <string name="astronomy_223" formatted="false">"Tian Qun Er (HIP 15619)"</string>
+    <string name="astronomy_224" formatted="false">"Tian Jin Wu (HIP 103413)"</string>
+    <string name="astronomy_225" formatted="false">"Tian Jin Er (HIP 97165)"</string>
+    <string name="astronomy_226" formatted="false">"Tian Bang San (HIP 85670)"</string>
+    <string name="astronomy_227" formatted="false">"Shang Wei Zeng Yi (HIP 106032)"</string>
 </resources>

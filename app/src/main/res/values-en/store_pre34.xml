@@ -18,7 +18,7 @@
     <string name="store_batch_complete">Finished installing or updating %1$d apps</string>
     <string name="store_batch_cancelled">Cancelled after completing %1$d apps; remaining apps are unchanged</string>
     <string name="store_batch_failed">Completed %1$d apps; %2$d unfinished. %3$s</string>
-    <string name="store_no_updates">No app updates available</string>
+    <string name="store_no_updates">No compatible app updates are available. If an app requires a toolbox update, update the toolbox first.</string>
     <string name="store_failure_cancelled">Download cancelled</string>
     <string name="store_failure_network">Connection failed or timed out; check the connection and retry</string>
     <string name="store_failure_signature">Untrusted package signature; use a package published by the developer</string>

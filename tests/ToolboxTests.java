@@ -126,7 +126,12 @@ public final class ToolboxTests {
         Set<String> allNames=new HashSet<>();boolean catalogValid=true;
         for(Astronomy.Star star:Astronomy.STARS)catalogValid&=allNames.add(star.name)&&Double.isFinite(star.ra)&&star.ra>=0&&star.ra<360&&Math.abs(star.dec)<=90&&Double.isFinite(star.mag);
         check(catalogValid&&Astronomy.STARS.length>=40,"Expanded stellar catalogue has unique names and finite physical values");
+        Set<String> requestedStars=new HashSet<>(Arrays.asList("土司空","五车二","五车三","王良四","王良一","策","阁道三","天船三","天船二","天船五","大陵五","天大将军一","奎宿五","天大将军九","天钩五","上卫增一","壁宿二","奎宿九","娄宿三","娄宿二","娄宿一","室宿一","室宿二","离宫四","天囷一","天囷二","织女一","天津一","天津四","天津五","天津二","天棓四","天棓三"));
+        check(allNames.containsAll(requestedStars),"Every requested star and deep-sky object is present without duplicate identities");
+        check(UiText.label("勾陈一").equals("勾陈一（北极星）"),"Polaris is shown once under its Chinese star name with the requested alias");
+        check(starNames.contains("勾陈一")&&Astronomy.STARS[18].ra==37.955,"Polaris remains one existing star with its stable identity");
         for(Astronomy.Star object:Astronomy.DEEP_SKY)check(allNames.add(object.name)&&object.name.matches("M[0-9]+ .+")&&Double.isFinite(object.mag)&&object.mag<=7.0,"Bright deep-sky object has unique name and approximate integrated magnitude: "+object.name);
+        check(allNames.containsAll(Arrays.asList("M45 昴星团","M31 仙女座星系")),"Existing Pleiades and Andromeda objects are retained without duplicate points");
         check(allNames.containsAll(Arrays.asList("参宿一","参宿二","参宿三","参宿四","参宿五","参宿六","参宿七")),"All seven principal Orion stars are included");
         int dipperCount=0;for(Astronomy.Star star:Astronomy.STARS)if(Astronomy.isDipper(star.name))dipperCount++;
         check(dipperCount==7&&!Astronomy.isDipper("北极星"),"Big Dipper membership identifies precisely seven stars");

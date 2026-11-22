@@ -10,8 +10,8 @@ import java.util.*;
 /** Reads only the granted SAF tree, including subfolders. Call from a worker thread. */
 public final class MusicFolder {
     private MusicFolder() {}
-    /** Per-screen cache: unchanged files missing optional tags are not reparsed on every visit. */
-    static final class ScanCache {final Map<String,String> stamps=new HashMap<>();}
+    /** Cached file stamps survive screen rebuilds and app upgrades to avoid rereading unchanged metadata. */
+    static final class ScanCache {final Map<String,String> stamps=new HashMap<>();ScanCache(){}ScanCache(Context context){stamps.putAll(MusicLibrary.metadataStamps(context));}}
     /** Provider identities are used, never display titles or coordinate-like path guesses. */
     public static boolean contains(Context context,String treeUri,String songUri){
         if(treeUri==null||treeUri.isEmpty()||songUri==null||songUri.isEmpty())return false;
@@ -29,10 +29,10 @@ public final class MusicFolder {
     }
     public static ArrayList<MusicLibrary.Track> load(Context context,String treeUri){try{return loadChecked(context,treeUri);}catch(Exception ignored){return new ArrayList<>();}}
     public static ArrayList<MusicLibrary.Track> loadChecked(Context context,String treeUri)throws IOException,InterruptedException{
-        return loadChecked(context,treeUri,null,new ScanCache());
+        return loadChecked(context,treeUri,null,new ScanCache(context));
     }
     static ArrayList<MusicLibrary.Track> loadChecked(Context context,String treeUri,MusicImportProgress progress,ScanCache cache)throws IOException,InterruptedException{
-        ArrayList<MusicLibrary.Track> result=new ArrayList<>();if(treeUri==null||treeUri.trim().isEmpty())return result;
+        ArrayList<MusicLibrary.Track> result=new ArrayList<>();if(treeUri==null||treeUri.trim().isEmpty())return result;if(cache==null)cache=new ScanCache(context);HashMap<String,String> scannedStamps=new HashMap<>();HashSet<String> refreshedMetadata=new HashSet<>();
         try{
             Uri tree=Uri.parse(treeUri);String root=DocumentsContract.getTreeDocumentId(tree);ArrayDeque<String> pending=new ArrayDeque<>();pending.add(root);
             HashMap<String,String> folderNames=new HashMap<>();folderNames.put(root,MusicLibrary.title(context,DocumentsContract.buildDocumentUriUsingTree(tree,root)));
@@ -51,26 +51,36 @@ public final class MusicFolder {
                         if(progress!=null)progress.file(file==null?"":file,result.size()+1,0);
                         try{
                             int size=cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE),modified=cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED);
-                            String stamp=(size<0||cursor.isNull(size)?"?":cursor.getString(size))+":"+(modified<0||cursor.isNull(modified)?"?":cursor.getString(modified));
-                            MusicLibrary.Track t=known.get(key);boolean cached=stamp.equals(cache.stamps.get(key));
-                            if(t==null||!cached&&(MusicLibrary.needsMetadataRefresh(context,t)||cache.stamps.containsKey(key)))t=MusicLibrary.readMetadataChecked(context,uri,progress);
-                            if(progress!=null)progress.check();result.add(t);cache.stamps.put(key,stamp);if(progress!=null)progress.success(uri.toString(),uri.toString(),file);
+                            String stamp=(size<0||cursor.isNull(size)?"?":cursor.getString(size))+":"+(modified<0||cursor.isNull(modified)?"?":cursor.getString(modified))+":"+file+":"+type;
+                            String stampKey=MusicLibrary.metadataStampKey(uri.toString());MusicLibrary.Track t=known.get(key);boolean hadStamp=cache.stamps.containsKey(stampKey),cached=stamp.equals(cache.stamps.get(stampKey));
+                            if(t==null||hadStamp&&!cached&&MusicLibrary.needsMetadataRefresh(context,t)){t=MusicLibrary.readMetadataChecked(context,uri,progress);if(hadStamp&&!cached)refreshedMetadata.add(key);}
+                            if(progress!=null)progress.check();result.add(t);scannedStamps.put(stampKey,stamp);if(progress!=null)progress.success(uri.toString(),uri.toString(),file);
                         }catch(java.io.InterruptedIOException e){throw e;}catch(Exception e){if(progress==null)throw e;progress.failed(uri.toString(),uri.toString(),file,e);}
                     }
                 }catch(java.io.InterruptedIOException e){throw e;}catch(InterruptedException e){throw e;}catch(Exception e){if(progress==null)throw e;progress.phase(MusicImportReport.Phase.SCAN);progress.failed(treeUri,treeUri,folderName,e);}
             }
-            java.text.Collator collator=java.text.Collator.getInstance(Locale.getDefault());result.sort((x,y)->collator.compare(x.title,y.title));return result;
+            cache.stamps.putAll(scannedStamps);MusicLibrary.saveMetadataStamps(context,scannedStamps);java.text.Collator collator=java.text.Collator.getInstance(Locale.getDefault());result.sort((x,y)->collator.compare(x.title,y.title));if(progress!=null)progress.refreshedMetadata(refreshedMetadata);return result;
         }catch(InterruptedException e){throw e;}catch(IOException e){throw e;}catch(Exception e){throw new IOException(e);}
     }
     /** Retry exact failed audio files; directory failures require a fresh tree scan. */
     static ArrayList<MusicLibrary.Track> retryChecked(Context context,String treeUri,List<MusicImportReport.Entry> failures,MusicImportProgress progress,ScanCache cache)throws IOException,InterruptedException{
         for(MusicImportReport.Entry entry:failures)if(entry.phase==MusicImportReport.Phase.SCAN)return loadChecked(context,treeUri,progress,cache);
-        ArrayList<MusicLibrary.Track> rows=new ArrayList<>();int index=0;Uri tree=Uri.parse(treeUri);
+        ArrayList<MusicLibrary.Track> rows=new ArrayList<>();int index=0;Uri tree=Uri.parse(treeUri);HashMap<String,String> scannedStamps=new HashMap<>();
         for(MusicImportReport.Entry entry:failures){
             progress.file(entry.name,++index,failures.size());
-            try{Uri source=Uri.parse(entry.retryUri);if(!Objects.equals(tree.getAuthority(),source.getAuthority())||!contains(context,treeUri,entry.retryUri))throw new SecurityException();Uri uri=DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getDocumentId(source));MusicLibrary.Track song=MusicLibrary.readMetadataChecked(context,uri,progress);progress.check();rows.add(song);progress.success(entry.source,uri.toString(),entry.name);}
+            try{Uri source=Uri.parse(entry.retryUri);if(!Objects.equals(tree.getAuthority(),source.getAuthority())||!contains(context,treeUri,entry.retryUri))throw new SecurityException();Uri uri=DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getDocumentId(source));String stamp=readStamp(context,uri);String stampKey=MusicLibrary.metadataStampKey(uri.toString());boolean changed=cache!=null&&cache.stamps.containsKey(stampKey)&&!cache.stamps.get(stampKey).equals(stamp);MusicLibrary.Track song=MusicLibrary.readMetadataChecked(context,uri,progress);progress.check();rows.add(song);if(changed){progress.refreshedMetadata(MusicLibrary.identity(uri.toString()));scannedStamps.put(stampKey,stamp);if(cache!=null)cache.stamps.put(stampKey,stamp);}progress.success(entry.source,uri.toString(),entry.name);}
             catch(java.io.InterruptedIOException e){throw e;}catch(Exception e){progress.failed(entry.source,entry.retryUri,entry.name,e);}
         }
+        MusicLibrary.saveMetadataStamps(context,scannedStamps);
         return rows;
     }
+    private static String readStamp(Context context,Uri uri)throws IOException{
+        String[] columns={DocumentsContract.Document.COLUMN_DISPLAY_NAME,DocumentsContract.Document.COLUMN_MIME_TYPE,DocumentsContract.Document.COLUMN_SIZE,DocumentsContract.Document.COLUMN_LAST_MODIFIED};
+        try(Cursor cursor=context.getContentResolver().query(uri,columns,null,null,null)){
+            if(cursor==null||!cursor.moveToFirst())throw new IOException("File is no longer available");
+            String name=value(cursor,columns[0]),mime=value(cursor,columns[1]),size=value(cursor,columns[2]),modified=value(cursor,columns[3]);
+            return size+":"+modified+":"+name+":"+mime;
+        }
+    }
+    private static String value(Cursor cursor,String column){int index=cursor.getColumnIndex(column);return index<0||cursor.isNull(index)?"?":cursor.getString(index);}
 }

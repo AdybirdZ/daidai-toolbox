@@ -5,6 +5,7 @@
     <string name="music_import_phase_metadata">Reading track information…</string>
     <string name="music_import_phase_artwork">Reading artwork…</string>
     <string name="music_import_phase_save">Saving track information…</string>
+    <string name="music_import_phase_complete">Complete</string>
     <string name="music_import_position">File %1$d of %2$d</string>
     <string name="music_import_slow_operation">This operation has taken %1$d seconds. The file provider or audio parser may be responding slowly.</string>
     <string name="music_import_cancelling">Cancelling; waiting for the current system operation…</string>

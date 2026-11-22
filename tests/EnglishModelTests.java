@@ -7,6 +7,8 @@ public final class EnglishModelTests {
         check(WeatherData.condition(95).equals("Slight or moderate thunderstorm"),"Weather model labels use English XML");
         check(UiText.label(Astronomy.STARS[4].name).equals("Vega"),"Stable star identity has an English display label");
         check(Astronomy.STARS[4].name.equals("织女一"),"Saved Chinese star identity remains stable");
+        Set<String> newStarLabels=new HashSet<>();for(Astronomy.Star star:Astronomy.STARS)if(star.name.equals("土司空")||star.name.equals("五车三")||star.name.equals("阁道三")||star.name.equals("天船三")||star.name.equals("天船二")||star.name.equals("天船五")||star.name.equals("大陵五")||star.name.equals("奎宿五")||star.name.equals("天大将军九")||star.name.equals("天钩五")||star.name.equals("奎宿九")||star.name.equals("娄宿二")||star.name.equals("娄宿一")||star.name.equals("离宫四")||star.name.equals("天囷一")||star.name.equals("天囷二")||star.name.equals("天津五")||star.name.equals("天津二")||star.name.equals("天棓三")||star.name.equals("上卫增一"))newStarLabels.add(UiText.label(star.name));
+        check(newStarLabels.size()==20,"Every added Chinese star has its own English display label");
         check(Astronomy.planets(Instant.parse("2026-10-31T12:00:00Z"))[0].name.equals("水星"),"Planet calculation identities remain stable");
         int dipper=0;for(Astronomy.Star star:Astronomy.STARS)if(Astronomy.isDipper(star.name))dipper++;
         check(dipper==7,"Big Dipper grouping uses stable identities, not localized names");

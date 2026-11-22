@@ -24,7 +24,7 @@ public final class Ui {
         LinearLayout v=new LinearLayout(c); v.setOrientation(1); return v;
     }
     public static LinearLayout page(Activity a, String title, String subtitle) {
-        LinearLayout page=column(a); page.setPadding(dp(a,18),dp(a,12),dp(a,18),dp(a,12));
+        LinearLayout page=column(a); page.setPadding(dp(a,18),dp(a,12),dp(a,18),dp(a,6));
         page.setBackgroundColor(Color.rgb(244,246,250));
         LinearLayout shell=column(a);
         shell.addView(page,new LinearLayout.LayoutParams(-1,0,1));

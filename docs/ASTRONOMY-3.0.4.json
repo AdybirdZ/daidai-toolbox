@@ -1,0 +1,62 @@
+{
+  "release": "3.0.4",
+  "retrievedOn": "2026-11-22",
+  "dataLicenses": {
+    "Chinese star names and HIP mapping": "CC-BY-SA-4.0",
+    "catalogue positions and magnitudes": "See the cited ESA Hipparcos and Gaia catalogue terms; no separate licence is asserted for these numerical facts."
+  },
+  "nameSource": {
+    "repository": "Stellarium/stellarium",
+    "commit": "568d88df8126c45949e19564fe312de577340e5c",
+    "path": "skycultures/chinese/star_names.zh_CN.fab",
+    "license": "CC-BY-SA-4.0",
+    "licenseEvidence": "skycultures/chinese/description.md"
+  },
+  "starCatalogSource": {
+    "repository": "Stellarium/stellarium",
+    "commit": "568d88df8126c45949e19564fe312de577340e5c",
+    "catalogue": "stars/hip_gaia3",
+    "documentation": "guide/app_star_catalogue.tex",
+    "credits": "CREDITS.md",
+    "underlyingCatalogues": ["ESA Hipparcos", "Gaia"]
+  },
+  "coordinates": {
+    "unit": "degrees",
+    "rightAscensionRange": "[0,360)",
+    "declinationRange": "[-90,90]",
+    "note": "Values are stored as static reference coordinates in the existing local sky chart. Proper motion and atmospheric refraction are not calculated for these entries."
+  },
+  "magnitude": {
+    "field": "visualMagnitude",
+    "note": "Values are copied from the cited Stellarium HIP–Gaia3 catalogue records and are used as static apparent-magnitude references."
+  },
+  "changes": "Selected 20 names from the Chinese sky-culture file, linked each to its HIP catalogue record, and placed the corresponding numerical values in the local sky catalogue. No upstream source code, binary catalogue, star-chart image, or runtime service is included.",
+  "ambiguousNameResolution": "The source file lists 上卫增一 for both HIP 29490 and HIP 106032. This release uses HIP 106032 once; it does not add both same-name entries.",
+  "addedStars": [
+    {"name": "土司空", "hip": 3419, "raDegrees": 10.89737874, "decDegrees": -17.98660632, "visualMagnitude": 2.2061},
+    {"name": "五车三", "hip": 28360, "raDegrees": 89.88217887, "decDegrees": 44.94743257, "visualMagnitude": 1.9038},
+    {"name": "阁道三", "hip": 6686, "raDegrees": 21.45396446, "decDegrees": 60.23528404, "visualMagnitude": 2.7146},
+    {"name": "天船三", "hip": 15863, "raDegrees": 51.08070872, "decDegrees": 49.8611793, "visualMagnitude": 1.8972},
+    {"name": "天船二", "hip": 14328, "raDegrees": 46.19912808, "decDegrees": 53.50643576, "visualMagnitude": 3.0586},
+    {"name": "天船五", "hip": 17358, "raDegrees": 55.73126774, "decDegrees": 47.78754851, "visualMagnitude": 2.9703},
+    {"name": "大陵五", "hip": 14576, "raDegrees": 47.04221855, "decDegrees": 40.95564668, "visualMagnitude": 2.0969},
+    {"name": "奎宿五", "hip": 3092, "raDegrees": 9.83197992, "decDegrees": 30.86102175, "visualMagnitude": 3.4328},
+    {"name": "天大将军九", "hip": 10064, "raDegrees": 32.38594634, "decDegrees": 34.98729707, "visualMagnitude": 3.0625},
+    {"name": "天钩五", "hip": 105199, "raDegrees": 319.64488469, "decDegrees": 62.58557447, "visualMagnitude": 2.5141},
+    {"name": "奎宿九", "hip": 5447, "raDegrees": 17.43301617, "decDegrees": 35.62055765, "visualMagnitude": 2.1741},
+    {"name": "娄宿二", "hip": 8832, "raDegrees": 28.38256162, "decDegrees": 19.29385527, "visualMagnitude": 3.8584},
+    {"name": "娄宿一", "hip": 8903, "raDegrees": 28.66004579, "decDegrees": 20.80803147, "visualMagnitude": 2.7044},
+    {"name": "离宫四", "hip": 112158, "raDegrees": 340.75057261, "decDegrees": 30.22124505, "visualMagnitude": 3.0897},
+    {"name": "天囷一", "hip": 14135, "raDegrees": 45.5698878, "decDegrees": 4.08973877, "visualMagnitude": 2.6196},
+    {"name": "天囷二", "hip": 15619, "raDegrees": 50.27834502, "decDegrees": 3.67562065, "visualMagnitude": 5.85},
+    {"name": "天津五", "hip": 103413, "raDegrees": 314.29341278, "decDegrees": 41.16713864, "visualMagnitude": 3.9504},
+    {"name": "天津二", "hip": 97165, "raDegrees": 296.24366059, "decDegrees": 45.13081002, "visualMagnitude": 2.8683},
+    {"name": "天棓三", "hip": 85670, "raDegrees": 262.60817373, "decDegrees": 52.30138871, "visualMagnitude": 2.9466},
+    {"name": "上卫增一", "hip": 106032, "raDegrees": 322.16498688042, "decDegrees": 70.56071518917, "visualMagnitude": 3.23}
+  ],
+  "alreadyPresent": [
+    "北极星 is the alias of the existing 勾陈一 star and is not added as a duplicate point.",
+    "五车二、王良四、王良一、策、天大将军一、壁宿二、娄宿三、室宿一、室宿二、织女一、天津一、天津四 and 天棓四 were already present.",
+    "昴星团 and 仙女座星系 were already present as M45 昴星团 and M31 仙女座星系."
+  ]
+}

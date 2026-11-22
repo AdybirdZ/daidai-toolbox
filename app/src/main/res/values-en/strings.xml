@@ -228,5 +228,25 @@
     <string name="language_note">Changes the app interface language only. User-entered content, saved data and external websites retain their original text. Unsupported system languages fall back to Chinese.</string>
     <string name="update_200_title">2.0.0 · English and language selection</string>
     <string name="update_200_detail">Adds English throughout the interface. Choose Simplified Chinese, English or the system default under Global settings → Language. Switching takes effect immediately and preserves the current section and saved data. Language preferences are included in configuration import and export. Major versions mark changes to underlying code or usability.</string>
-    <string name="module_transfer_title">App data transfer</string><string name="module_export_short">Export</string><string name="module_import_short">Import</string><string name="module_transfer_note">Weather, Status and the other toolbox tools use JSON data files, as do global settings. Music, Device Messaging and Color Vision Simulator use ZIP archives with private attachments. Status includes places and routes; global settings include colors, language, time and home layout. Import replaces the selected app data, excluding programs, system grants, external audio and running tasks.</string><string name="module_import_title">Import app data</string><string name="module_import_summary">This will replace the corresponding local data for “%1$s”. Confirm that the file is trusted.</string><string name="module_exported">App data exported</string></resources>
+    <string name="module_transfer_title">App data transfer</string><string name="module_export_short">Export</string><string name="module_import_short">Import</string><string name="module_transfer_note">Weather, Status and the other toolbox tools use JSON data files, as do global settings. Music, Device Messaging and Color Vision Simulator use ZIP archives with private attachments. Status includes places and routes; global settings include colors, language, time and home layout. Import replaces the selected app data, excluding programs, system grants, external audio and running tasks.</string><string name="module_import_title">Import app data</string><string name="module_import_summary">This will replace the corresponding local data for “%1$s”. Confirm that the file is trusted.</string><string name="module_exported">App data exported</string>    <string name="host_update_checking">Checking for a toolbox update…</string>
+    <string name="host_update_check">Check for toolbox updates</string>
+    <string name="host_update_latest">The toolbox is up to date</string>
+    <string name="host_update_check_failed">Could not check for a toolbox update. Try again.</string>
+    <string name="host_update_note">Checks stable GitHub releases only. Android confirms the installation.</string>
+    <string name="host_update_available">Toolbox version %1$s is available</string>
+    <string name="host_update_download">Download toolbox update</string>
+    <string name="host_update_downloading_button">Downloading…</string>
+    <string name="host_update_cancel">Cancel download</string>
+    <string name="host_update_cancelling">Cancelling download…</string>
+    <string name="host_update_cancelled">Download cancelled</string>
+    <string name="host_update_downloading">Downloading toolbox update: %1$s / %2$s</string>
+    <string name="host_update_download_failed">Toolbox update download or verification failed. Try again.</string>
+    <string name="host_update_downloaded">Toolbox %1$s is downloaded and verified</string>
+    <string name="host_update_install">Install toolbox update</string>
+    <string name="host_update_permission_needed">Allow Daidai Toolbox to install this update</string>
+    <string name="host_update_confirmation">Complete installation in the system confirmation screen</string>
+    <string name="host_update_install_complete">Toolbox update completed</string>
+    <string name="host_update_install_failed">Toolbox update installation failed</string>
+    <string name="host_update_permission_unavailable">Could not open install-permission settings</string>
+</resources>
 

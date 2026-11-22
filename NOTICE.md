@@ -138,6 +138,12 @@ Historical independent APKs and the final music migration helper are retained in
 
 天文、音乐、天气地图、色觉模拟器、状态、设置、地震和课程表图标使用用户提供并指定的图片，原图及来源记录见 `modules/icons/ASSETS.md`。这些图片不据此纳入代码 MIT 许可，也不声称由本项目原创。其余 5 个 SVG 及对应 Android VectorDrawable 为本项目原创几何图形，按项目许可证发布。
 
+## 3.0.4 中国传统星名与星表数据
+
+本版新增的 20 个中国传统星名和对应 HIP 标识采用 Stellarium 中文星空文化资料，固定来源为提交 `568d88df8126c45949e19564fe312de577340e5c` 的 `skycultures/chinese/star_names.zh_CN.fab`。Stellarium 将该星空文化标注为 CC BY-SA 4.0。本项目对条目进行筛选并适配至离线星图。新增对象的名称、HIP 对应关系和修改范围见 `docs/ASTRONOMY-3.0.4.json` 与 `docs/ASTRONOMY-3.0.4.md`。该资料按 CC BY-SA 4.0 提供，许可文本见 https://creativecommons.org/licenses/by-sa/4.0/ 。
+
+赤经、赤纬和视觉星等值参照相同 Stellarium 提交中的 `stars/hip_gaia3` 星表。Stellarium 的星表指南和 `CREDITS.md` 记载该目录基于 ESA Hipparcos 与 Gaia 数据。本项目只使用所列恒星数值，不包含上游程序代码、二进制星表或图片，也不进行运行时请求。此数据署名不改变独立实现的应用代码许可。
+
 ## pre-3.0.0-2 内部应用
 
 Music, Messenger and Color Vision now execute as signed internal app packages. No new third-party runtime dependency or data service is added. Color Vision retains the DaltonLens MIT notice in its downloadable package at assets/licenses/DaltonLens-MIT.txt. See modules/embedded/colorvision/assets/licenses/ and test-apps/NOTICE.md for the underlying model attribution. The user-supplied default music artwork retains its separate asset terms in modules/embedded/music/ASSETS.md; the code MIT licence does not grant a general licence to that image. Local encrypted messaging has no cloud relay, and system networking/power restrictions still apply.

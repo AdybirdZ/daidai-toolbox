@@ -6,14 +6,14 @@ import java.util.*;
 /** Local operation results. Display text is resolved by the UI, never from raw provider errors. */
 final class MusicImportReport {
     enum Mode {COPY,FOLDER}
-    enum Phase {SCAN,COPY,METADATA,ARTWORK,SAVE}
+    enum Phase {SCAN,COPY,METADATA,ARTWORK,SAVE,COMPLETE}
     enum Result {SUCCESS,SKIPPED,FAILED}
     static final class Entry {
         final String name,source,retryUri,reason;
         final Phase phase;
         final Result result;
         Entry(String name,String source,String retryUri,Phase phase,Result result,String reason){
-            this.name=name==null?"":name;this.source=source==null?"":source;this.retryUri=retryUri==null?this.source:retryUri;this.phase=phase;this.result=result;this.reason=reason==null?"":reason;
+            this.name=name==null?"":name;this.source=source==null?"":source;this.retryUri=retryUri==null?this.source:retryUri;this.phase=result==Result.SUCCESS?Phase.COMPLETE:phase;this.result=result;this.reason=reason==null?"":reason;
         }
     }
     final Mode mode;

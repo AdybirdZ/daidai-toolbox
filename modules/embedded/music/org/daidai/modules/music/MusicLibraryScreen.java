@@ -36,12 +36,12 @@ public final class MusicLibraryScreen {
     private MusicSearchScreen.State searchState=new MusicSearchScreen.State();
     private int songsGeneration;
     private MusicImportProgress scanProgress;
-    private final MusicFolder.ScanCache scanCache=new MusicFolder.ScanCache();
+    private final MusicFolder.ScanCache scanCache;
     private String pendingUri,filter=MusicCollections.ALL;
     private Runnable afterEdit;
     private LinearLayout pageRoot,songsHost;
 
-    private MusicLibraryScreen(Activity activity,Runnable callback){a=activity;changed=callback;}
+    private MusicLibraryScreen(Activity activity,Runnable callback){a=activity;changed=callback;scanCache=new MusicFolder.ScanCache(activity);}
     private static MusicLibraryScreen get(Activity a,Runnable changed){MusicLibraryScreen screen=INSTANCES.get(a);if(screen==null){screen=new MusicLibraryScreen(a,changed);INSTANCES.put(a,screen);}else if(changed!=null)screen.changed=changed;return screen;}
     private String t(String key,Object...args){return Texts.get(a,key,args);}
     public static View createPage(Activity a,Runnable changed){MusicLibraryScreen screen=get(a,changed);return screen.createContent();}
@@ -83,7 +83,7 @@ public final class MusicLibraryScreen {
         worker.execute(()->{
             ArrayList<MusicLibrary.Track> rows=new ArrayList<>();ArrayList<String> canonical=new ArrayList<>();boolean failed=false;
             try{
-                rows=retry==null?MusicFolder.loadChecked(a,tree,progress,scanCache):MusicFolder.retryChecked(a,tree,retry.failures(),progress,scanCache);progress.saving();MusicLibrary.discover(a,rows);
+                rows=retry==null?MusicFolder.loadChecked(a,tree,progress,scanCache):MusicFolder.retryChecked(a,tree,retry.failures(),progress,scanCache);progress.saving();MusicLibrary.discover(a,rows,progress.refreshedMetadata());
                 ArrayList<String> uris=new ArrayList<>();for(MusicLibrary.Track song:rows)uris.add(song.uri);
                 for(MusicLibrary.Track song:MusicLibrary.findAll(a,uris))canonical.add(song.uri);
             }catch(java.io.InterruptedIOException e){/* User cancellation keeps the existing folder view. */}
@@ -103,13 +103,17 @@ public final class MusicLibraryScreen {
     private void renderSongs(){
         final int generation=++songsGeneration;if(songsHost==null)return;final LinearLayout target=songsHost;songsHost.removeAllViews();ArrayList<MusicLibrary.Track> rows=visibleTracks();HashSet<String> available=new HashSet<>();for(MusicLibrary.Track song:rows)available.add(song.uri);selected.retainAll(available);
         LinearLayout heading=Ui.row(songsHost);TextView name=Ui.text(a,filterName(),18);name.setTag("music060_playlist_heading");heading.addView(name,new LinearLayout.LayoutParams(0,-2,1));Button settings=Ui.button(heading,"⚙",this::managePlaylist);settings.setContentDescription(t("music060_manage_playlist",filterName()));settings.setEnabled(!MusicCollections.builtIn(filter));((LinearLayout.LayoutParams)settings.getLayoutParams()).width=Ui.dp(a,48);
-        if(a.getSharedPreferences("music_module",0).getString("storage_tree_uri","").isEmpty()){songsHost.addView(Ui.text(a,t("music_folder_required"),15));return;}
+        if(a.getSharedPreferences("music_module",0).getString("storage_tree_uri","").isEmpty()){
+            if(rows.isEmpty()&&MusicCollections.FAVORITES.equals(filter)&&MusicCollections.favorites(a).isEmpty())songsHost.addView(Ui.text(a,t("library_no_favorite_songs"),15));
+            else if(rows.isEmpty()&&!MusicCollections.builtIn(filter)&&MusicCollections.playlist(a,filter).isEmpty())songsHost.addView(Ui.text(a,t("library_no_playlist_songs"),15));
+            else songsHost.addView(Ui.text(a,t("music_folder_required"),15));return;
+        }
         Button addPlaylist=Ui.button(songsHost,t("music060_selected_to_playlist"),()->chooseDestination(new ArrayList<>(selected)));
         Button addQueue=Ui.button(songsHost,t("library_add_selected"),()->{MusicLibrary.addToQueue(a,tracks(selected));notifyChanged();toast("library_added_to_queue");});Button delete=Ui.button(songsHost,t("music060_delete_selected"),()->deleteFiles(new ArrayList<>(selected),this::renderSongs));
         CheckBox all=new CheckBox(a);all.setText(t("music060_select_all"));all.setTextColor(Ui.INK);all.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));songsHost.addView(all,new LinearLayout.LayoutParams(-1,-2));
         final boolean[] syncing={false};ArrayList<CheckBox> checks=new ArrayList<>();Runnable update=()->{syncing[0]=true;all.setChecked(!rows.isEmpty()&&selected.containsAll(available));all.setEnabled(!rows.isEmpty());syncing[0]=false;addQueue.setEnabled(!selected.isEmpty());addPlaylist.setEnabled(!selected.isEmpty());delete.setEnabled(!selected.isEmpty());};
         all.setOnCheckedChangeListener((button,on)->{if(syncing[0])return;if(on)selected.addAll(available);else selected.removeAll(available);syncing[0]=true;try{for(int i=0;i<checks.size();i++)checks.get(i).setChecked(selected.contains(rows.get(i).uri));}finally{syncing[0]=false;}update.run();});
-        LinearLayout list=Ui.column(a);songsHost.addView(list);if(rows.isEmpty())list.addView(Ui.text(a,t("library_no_songs"),15));
+        LinearLayout list=Ui.column(a);songsHost.addView(list);if(rows.isEmpty()){String empty=MusicCollections.FAVORITES.equals(filter)?"library_no_favorite_songs":MusicCollections.ALL.equals(filter)?"library_no_folder_songs":"library_no_playlist_songs";list.addView(Ui.text(a,t(empty),15));}
         MusicRows.append(list,rows.size(),()->!closed&&songsHost==target&&songsGeneration==generation,i->{MusicLibrary.Track song=rows.get(i);LinearLayout row=Ui.row(list);CheckBox check=new CheckBox(a);check.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));check.setContentDescription(t("music060_select_song",song.title));check.setChecked(selected.contains(song.uri));checks.add(check);row.addView(check);check.setOnCheckedChangeListener((button,on)->{if(syncing[0])return;if(on)selected.add(song.uri);else selected.remove(song.uri);update.run();});LinearLayout content=Ui.column(a);row.addView(content,new LinearLayout.LayoutParams(0,-2,1));MusicCredits.songRow(content,song,song.title,()->songActions(song));});update.run();
     }
 
@@ -166,7 +170,7 @@ public final class MusicLibraryScreen {
                 if(request==PICK_LYRICS)lyrics=MusicLyricsImport.copyToFolder(a,source);
                 else{File dir=new File(a.getFilesDir(),"covers");if(!dir.isDirectory()&&!dir.mkdirs())throw new IOException();cover=File.createTempFile("song-",".cover",dir);try(InputStream in=a.getContentResolver().openInputStream(source);OutputStream out=new FileOutputStream(cover)){if(in==null)throw new IOException();byte[] bytes=new byte[8192];int size;while((size=in.read(bytes))!=-1){if(Thread.currentThread().isInterrupted())throw new InterruptedException();out.write(bytes,0,size);}}}
                 if(Thread.currentThread().isInterrupted())throw new InterruptedException();
-                synchronized(MusicLibrary.class){MusicLibrary.Track song=MusicLibrary.find(a,trackUri);if(song==null)return;MusicLibrary.update(a,song.withMeta(song.title,song.vocalist,song.composer,song.arranger,song.notes,song.tags,song.bpmText,song.rating,song.instrumental,lyrics==null?song.lrcPath:lyrics.uri.toString(),cover==null?song.coverPath:cover.getAbsolutePath()));committed=true;}
+                synchronized(MusicLibrary.class){MusicLibrary.Track song=MusicLibrary.find(a,trackUri);if(song==null)return;MusicLibrary.update(a,song.withMeta(song.title,song.vocalist,song.composer,song.arranger,song.notes,song.tags,song.bpmText,song.rating,song.instrumental,lyrics==null?song.lrcPath:lyrics.uri.toString(),cover==null?song.coverPath:cover.getAbsolutePath()));MusicLibrary.markMetadataEdited(a,trackUri);committed=true;}
                 main.post(()->{if(!a.isDestroyed()){notifyChanged();if(callback!=null)callback.run();renderSongs();toast("library_file_imported");}});
             }catch(Exception error){if(!(error instanceof InterruptedException)&&!Thread.currentThread().isInterrupted())main.post(()->{if(!a.isDestroyed())Ui.error(a,error);});}
             finally{if(!committed){if(cover!=null)cover.delete();if(lyrics!=null)lyrics.discard(a);}}

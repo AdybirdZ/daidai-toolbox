@@ -19,6 +19,7 @@ final class MusicImportProgress implements AutoCloseable {
     private volatile String name="";
     private volatile int completed,total;
     private volatile boolean metadataWarning;
+    private volatile java.util.Set<String> refreshedMetadata=java.util.Collections.emptySet();
     final MusicImportReport report;
     private boolean closed;
     private final Runnable refresh=new Runnable(){public void run(){
@@ -39,11 +40,14 @@ final class MusicImportProgress implements AutoCloseable {
         dialog.show();main.post(refresh);
     }
     void file(String name,int completed,int total)throws InterruptedIOException {
-        check();this.name=name==null?"":name;this.completed=completed;this.total=total;metadataWarning=false;phaseStarted=SystemClock.elapsedRealtime();
+        check();this.name=name==null?"":name;this.completed=completed;this.total=total;metadataWarning=false;phase=MusicImportReport.Phase.SCAN;phaseStarted=SystemClock.elapsedRealtime();
     }
     void phase(MusicImportReport.Phase phase)throws InterruptedIOException{check();this.phase=phase;phaseStarted=SystemClock.elapsedRealtime();}
     void warning(){metadataWarning=true;}
-    void success(String source,String stored,String name){report.add(new MusicImportReport.Entry(name,source,stored,phase,MusicImportReport.Result.SUCCESS,metadataWarning?"music_import_reason_optional":""));}
+    void refreshedMetadata(java.util.Set<String> values){refreshedMetadata=new java.util.HashSet<>(values);}
+    void refreshedMetadata(String identity){java.util.HashSet<String> values=new java.util.HashSet<>(refreshedMetadata);values.add(identity);refreshedMetadata=values;}
+    java.util.Set<String> refreshedMetadata(){return new java.util.HashSet<>(refreshedMetadata);}
+    void success(String source,String stored,String name){report.add(new MusicImportReport.Entry(name,source,stored,MusicImportReport.Phase.COMPLETE,MusicImportReport.Result.SUCCESS,metadataWarning?"music_import_reason_optional":""));}
     void skipped(String source,String name){report.add(new MusicImportReport.Entry(name,source,source,MusicImportReport.Phase.SCAN,MusicImportReport.Result.SKIPPED,"music_import_reason_non_audio"));}
     void failed(String source,String stored,String name,Throwable error){report.add(new MusicImportReport.Entry(name,source,stored,phase,MusicImportReport.Result.FAILED,MusicImportReport.reason(error)));}
     void saving()throws InterruptedIOException {phase(MusicImportReport.Phase.SAVE);}

@@ -1,4 +1,10 @@
-> 本文按版本保留许可核查记录，早期章节描述当时行为，不代表当前默认值。当前功能见 [README](../README.md)，城市目录现状见 [CITY-CATALOG.md](CITY-CATALOG.md)。本轮 3.0.1 未新增在线数据来源，未重新核验历史全部条款。
+> 本文按版本保留许可核查记录，早期章节描述当时行为，不代表当前默认值。当前功能见 [README](../README.md)，城市目录现状见 [CITY-CATALOG.md](CITY-CATALOG.md)。各版本仅核查所列数据，不代表重新核验所有历史来源。
+
+# 3.0.4 天文星表资料
+
+新增的 20 个中国传统星名取自 Stellarium 中文星空文化资料 `skycultures/chinese/star_names.zh_CN.fab`，来源提交为 [`568d88df8126c45949e19564fe312de577340e5c`](https://github.com/Stellarium/stellarium/tree/568d88df8126c45949e19564fe312de577340e5c/skycultures/chinese)。该文化说明标注 CC BY-SA 4.0。应用对星名与所选星表对象作了筛选和显示适配，具体条目及修改范围见 [ASTRONOMY-3.0.4.md](ASTRONOMY-3.0.4.md) 和 [ASTRONOMY-3.0.4.json](ASTRONOMY-3.0.4.json)。相关名称数据按 CC BY-SA 4.0 提供，许可链接为 https://creativecommons.org/licenses/by-sa/4.0/ 。
+
+对应 HIP 编号、赤经、赤纬与星等值参考同一 Stellarium 提交中的 HIP–Gaia3 星表说明和数据。Stellarium 的 `CREDITS.md` 将 Hipparcos 数据归于 European Space Agency；目录指南说明其亮星目录基于 Hipparcos 与 Gaia。该应用仅取所列数值和身份对应关系，不包含上游二进制星表、程序代码或图片。恒星数据离线使用，不增加运行时请求。
 
 # 1.1.1 数据补充
 

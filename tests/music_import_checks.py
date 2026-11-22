@@ -13,7 +13,8 @@ public final class Uri {private final String raw;private Uri(String s){raw=s;}pu
 'android/database/Cursor.java': r'''package android.database;
 public interface Cursor extends AutoCloseable {boolean moveToNext();boolean moveToFirst();String getString(int i);int getColumnIndex(String s);boolean isNull(int i);void close();}''',
 'android/content/SharedPreferences.java': r'''package android.content;
-public final class SharedPreferences {public String tree="";public String getString(String key,String fallback){return tree;}}''',
+import java.util.*;
+public final class SharedPreferences {public String tree="";public final Map<String,String> strings=new HashMap<>();public String getString(String key,String fallback){return strings.getOrDefault(key,fallback);}public Editor edit(){return new Editor(this);}public static final class Editor {private final SharedPreferences owner;private final Map<String,String> updates=new HashMap<>();Editor(SharedPreferences p){owner=p;}public Editor putString(String k,String v){updates.put(k,v);return this;}public void apply(){owner.strings.putAll(updates);}}}''',
 'android/content/ContentResolver.java': r'''package android.content;
 import android.net.Uri;import android.database.Cursor;import java.io.*;
 public abstract class ContentResolver {public abstract Cursor query(Uri u,String[] columns,String s,String[] args,String order);public abstract String getType(Uri u);public abstract InputStream openInputStream(Uri u)throws IOException;public abstract OutputStream openOutputStream(Uri u,String mode)throws IOException;public abstract Uri create(Uri parent,String mime,String name)throws IOException;public abstract boolean delete(Uri u);}''',
@@ -36,10 +37,14 @@ public final class DocumentsContract {
 import java.io.*;import java.util.*;
 final class MusicImportProgress {
  final List<String> names=new ArrayList<>();final MusicImportReport report=new MusicImportReport(MusicImportReport.Mode.FOLDER);MusicImportReport.Phase current=MusicImportReport.Phase.SCAN;boolean cancel;int checks,cancelAfter=Integer.MAX_VALUE;
+ java.util.Set<String> refreshed=java.util.Collections.emptySet();
  void check()throws InterruptedIOException{if(cancel||++checks>=cancelAfter||Thread.currentThread().isInterrupted())throw new InterruptedIOException();}
- void file(String name,int done,int total)throws InterruptedIOException{check();names.add(name);}
+ void file(String name,int done,int total)throws InterruptedIOException{check();names.add(name);current=MusicImportReport.Phase.SCAN;}
  void phase(MusicImportReport.Phase phase)throws InterruptedIOException{check();current=phase;}
- void success(String source,String stored,String name){report.add(new MusicImportReport.Entry(name,source,stored,current,MusicImportReport.Result.SUCCESS,""));}
+ void refreshedMetadata(java.util.Set<String> values){refreshed=new java.util.HashSet<>(values);}
+ void refreshedMetadata(String identity){java.util.HashSet<String> values=new java.util.HashSet<>(refreshed);values.add(identity);refreshed=values;}
+ java.util.Set<String> refreshedMetadata(){return new java.util.HashSet<>(refreshed);}
+ void success(String source,String stored,String name){report.add(new MusicImportReport.Entry(name,source,stored,MusicImportReport.Phase.COMPLETE,MusicImportReport.Result.SUCCESS,""));}
  void skipped(String source,String name){report.add(new MusicImportReport.Entry(name,source,source,current,MusicImportReport.Result.SKIPPED,"music_import_reason_non_audio"));}
  void failed(String source,String stored,String name,Throwable error){report.add(new MusicImportReport.Entry(name,source,stored,current,MusicImportReport.Result.FAILED,MusicImportReport.reason(error)));}
 }''',
@@ -47,10 +52,14 @@ final class MusicImportProgress {
 'org/daidai/modules/music/MusicLibrary.java': r'''package org.daidai.modules.music;
 import android.content.Context;import android.net.Uri;import android.provider.DocumentsContract;import java.util.*;
 public final class MusicLibrary {
- static int metadataReads;static final Set<String> denied=new HashSet<>();static final ArrayList<Track> saved=new ArrayList<>();
+ static int metadataReads;static final Set<String> denied=new HashSet<>(),manuallyEdited=new HashSet<>();static final ArrayList<Track> saved=new ArrayList<>();
+ static final String SCAN_STAMPS="metadata_scan_stamps";
  public static final class Track {public final String uri,title;Track(String u,String n){uri=u;title=n;}}
  static String identity(String raw){try{return Uri.parse(raw).getAuthority()+":"+DocumentsContract.getDocumentId(Uri.parse(raw));}catch(Exception e){return raw;}}
- public static ArrayList<Track> catalogue(Context c){return new ArrayList<>(saved);}public static boolean needsMetadataRefresh(Context c,Track t){return true;}
+ static String metadataStampKey(String uri){return Integer.toHexString(identity(uri).hashCode());}
+ static Map<String,String> metadataStamps(Context c){Map<String,String> result=new HashMap<>();String raw=c.getSharedPreferences("music_module",0).getString(SCAN_STAMPS,"");for(String line:raw.split("\\n")){int split=line.indexOf('=');if(split>0)result.put(line.substring(0,split),line.substring(split+1));}return result;}
+ static void saveMetadataStamps(Context c,Map<String,String> updates){Map<String,String> values=metadataStamps(c);values.putAll(updates);StringBuilder saved=new StringBuilder();for(Map.Entry<String,String> entry:values.entrySet())saved.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');c.getSharedPreferences("music_module",0).edit().putString(SCAN_STAMPS,saved.toString()).apply();}
+ public static ArrayList<Track> catalogue(Context c){return new ArrayList<>(saved);}public static boolean needsMetadataRefresh(Context c,Track t){return !manuallyEdited.contains(identity(t.uri));}
  public static Track readMetadata(Context c,Uri u){metadataReads++;return new Track(u.toString(),title(c,u));}
  public static Track readMetadataChecked(Context c,Uri u,MusicImportProgress progress)throws java.io.IOException{if(progress!=null)progress.phase(MusicImportReport.Phase.METADATA);if(denied.contains(DocumentsContract.getDocumentId(u)))throw new java.io.FileNotFoundException();return readMetadata(c,u);}
  public static String title(Context c,Uri u){try(android.database.Cursor row=c.getContentResolver().query(u,new String[]{"name"},null,null,null)){return row.moveToFirst()?row.getString(0):"audio";}}
@@ -75,16 +84,21 @@ public final class BulkImportChecks {
   for(String extension:new String[]{"MP3","m4a","flac","ogg","wav","opus","aac","midi"})ok(MusicAudioFiles.accepts("song."+extension,"application/octet-stream"),"audio extension: "+extension);
   for(String extension:new String[]{"txt","lrc","png","jpg","json","pdf","zip","ddapp"})ok(!MusicAudioFiles.accepts("file."+extension,"audio/mpeg"),"bad MIME sidecar: "+extension);
   ok(!MusicAudioFiles.accepts("unknown.bin","application/octet-stream"),"unknown binary skipped");ok(!MusicAudioFiles.accepts("image.mp3","image/png"),"explicit image MIME skipped");ok(MusicAudioFiles.accepts("track","audio/flac; charset=binary"),"audio MIME with no extension");
-  Provider p=new Provider();Context c=new Context(p);String tree="content://files/tree/root";c.prefs.tree=tree;
+  Provider p=new Provider();Context c=new Context(p);String tree="content://files/tree/root";c.prefs.tree=tree;c.prefs.strings.put("storage_tree_uri",tree);
   p.add("root","","Music","dir");p.add("root/sub","root","sub","dir");p.add("root/cycle","root/sub","cycle","dir");
   for(int i=0;i<600;i++)p.add("root/song"+i,i%2==0?"root":"root/sub","song"+i+".mp3","audio/mpeg");
   p.add("root/art","root","art.jpg","audio/mpeg");p.add("root/lyrics","root","song.lrc","text/plain");p.add("root/readme","root/sub","notes.txt","text/plain");
   MusicFolder.ScanCache cache=new MusicFolder.ScanCache();MusicImportProgress progress=new MusicImportProgress();
   ArrayList<MusicLibrary.Track> songs=MusicFolder.loadChecked(c,tree,progress,cache);ok(songs.size()==600,"mixed folder has only 600 audio files");ok(progress.names.size()==603&&progress.names.contains("song599.mp3"),"filenames reported for every song");ok(MusicLibrary.metadataReads==600,"read each new song once");
   ok(progress.report.count(MusicImportReport.Result.SUCCESS)==600&&progress.report.count(MusicImportReport.Result.SKIPPED)==3,"report includes every accepted and skipped file");
+  ok(progress.report.entries().get(0).phase==MusicImportReport.Phase.COMPLETE,"successful report entries show completion instead of the prior scan phase");ok(new MusicImportReport.Entry("legacy","source","target",MusicImportReport.Phase.SCAN,MusicImportReport.Result.SUCCESS,"").phase==MusicImportReport.Phase.COMPLETE,"restored successful report entries normalize old in-progress phases");
   ok(progress.report.failures().isEmpty(),"successful scan has no retry candidates");
-  MusicLibrary.saved.addAll(songs);MusicFolder.loadChecked(c,tree,new MusicImportProgress(),cache);ok(MusicLibrary.metadataReads==600,"unchanged missing optional tags are cached");
-  p.docs.get("root/song0").modified++;MusicFolder.loadChecked(c,tree,new MusicImportProgress(),cache);ok(MusicLibrary.metadataReads==601,"changed file refreshed alone");
+  MusicLibrary.saved.addAll(songs);MusicFolder.loadChecked(c,tree,new MusicImportProgress(),cache);ok(MusicLibrary.metadataReads==600,"unchanged missing optional tags are cached in the active screen");
+  c.prefs.strings.remove(MusicLibrary.SCAN_STAMPS);MusicFolder.loadChecked(c,tree,new MusicImportProgress(),new MusicFolder.ScanCache(c));ok(MusicLibrary.metadataReads==600,"legacy catalogue entries avoid a one-time full metadata reread after upgrade");
+  MusicFolder.loadChecked(c,tree,new MusicImportProgress(),new MusicFolder.ScanCache(c));ok(MusicLibrary.metadataReads==600,"unchanged metadata cache survives a new screen cache");
+  MusicImportProgress changedFile=new MusicImportProgress();p.docs.get("root/song0").modified++;MusicFolder.loadChecked(c,tree,changedFile,new MusicFolder.ScanCache(c));ok(MusicLibrary.metadataReads==601,"changed file refreshes alone across screen caches");ok(changedFile.refreshedMetadata().contains(MusicLibrary.identity("content://files/document/root/song0")),"changed file is marked so refreshed tags replace stale embedded values");
+  MusicLibrary.manuallyEdited.add(MusicLibrary.identity("content://files/document/root/song1"));p.docs.get("root/song1").modified++;MusicFolder.loadChecked(c,tree,new MusicImportProgress(),new MusicFolder.ScanCache(c));ok(MusicLibrary.metadataReads==601,"user-edited metadata is protected when the audio file changes");
+  MusicImportProgress stage=new MusicImportProgress();stage.phase(MusicImportReport.Phase.METADATA);stage.file("next.mp3",2,0);ok(stage.current==MusicImportReport.Phase.SCAN,"each filename starts a fresh scan progress stage");
   MusicImportProgress cancel=new MusicImportProgress();cancel.cancel=true;try{MusicFolder.loadChecked(c,tree,cancel,cache);throw new AssertionError("scan cancellation");}catch(InterruptedIOException expected){checks++;}
   MusicLibrary.denied.add("root/song9");p.docs.get("root/song9").modified++;MusicImportProgress failed=new MusicImportProgress();
   ArrayList<MusicLibrary.Track> partialRows=MusicFolder.loadChecked(c,tree,failed,cache);
@@ -93,6 +107,7 @@ public final class BulkImportChecks {
   MusicLibrary.denied.clear();int metadataBefore=MusicLibrary.metadataReads;MusicImportProgress retried=new MusicImportProgress();
   ArrayList<MusicLibrary.Track> retriedRows=MusicFolder.retryChecked(c,tree,failed.report.failures(),retried,cache);
   ok(retriedRows.size()==1&&MusicLibrary.metadataReads==metadataBefore+1,"retry reparses only the failed song");
+  ok(retried.refreshedMetadata().contains(MusicLibrary.identity("content://files/document/root/song9")),"retry marks changed audio metadata so discovered values refresh the catalogue");
   ok(retried.report.count(MusicImportReport.Result.SUCCESS)==1&&retried.report.failures().isEmpty(),"retry success replaces failure state");
   ok(MusicImportReport.reason(new IOException(new SecurityException("private provider path"))).equals("music_import_reason_permission"),"permission diagnostics do not leak raw exception text");
   ok(MusicImportReport.reason(new IOException()).equals("music_import_reason_io"),"I/O failures have a distinct cause");

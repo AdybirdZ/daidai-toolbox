@@ -1,0 +1,5 @@
+DAIDAI TOOLBOX 3.0.4 STAR DATA NOTICE
+
+Chinese traditional star-name and HIP-identifier mappings in this internal application are adapted from the Chinese Sky Culture in Stellarium, commit 568d88df8126c45949e19564fe312de577340e5c. The sky-culture data is marked CC BY-SA 4.0. This application selects 20 entries and adapts their representation for its local chart. License: https://creativecommons.org/licenses/by-sa/4.0/ . Source file: https://github.com/Stellarium/stellarium/blob/568d88df8126c45949e19564fe312de577340e5c/skycultures/chinese/star_names.zh_CN.fab .
+
+The corresponding HIP positions and visual magnitudes are based on the Stellarium HIP-Gaia3 catalogue documentation and data, which credits ESA Hipparcos and Gaia. This package contains only the listed numerical facts, not Stellarium code, its binary star catalogue, or images. See docs/ASTRONOMY-3.0.4.md and docs/ASTRONOMY-3.0.4.json for the entries and changes.

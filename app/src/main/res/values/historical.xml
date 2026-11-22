@@ -81,7 +81,7 @@
     <string name="astronomy_079" formatted="false">"北落师门"</string>
     <string name="astronomy_080" formatted="false">"天津四"</string>
     <string name="astronomy_081" formatted="false">"轩辕十四"</string>
-    <string name="astronomy_082" formatted="false">"勾陈一"</string>
+    <string name="astronomy_082" formatted="false">"勾陈一（北极星）"</string>
     <string name="astronomy_083" formatted="false">"壁宿二"</string>
     <string name="astronomy_084" formatted="false">"娄宿三"</string>
     <string name="astronomy_085" formatted="false">"轩辕十二"</string>
@@ -842,7 +842,7 @@
     <string name="main_058" formatted="false">"早期版本（原标注 1.0.0）统一归为测试版：地区搜索与收藏、当前天气、24 小时及 7 日预报、离线缓存。"</string>
     <string name="main_059" formatted="false">"缓存已清除"</string>
     <string name="main_060" formatted="false">"部分缓存未能删除，请重试"</string>
-    <string name="main_061" formatted="false">"天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。"</string>
+    <string name="main_061" formatted="false">"天气数据由 Open-Meteo 提供，地区检索基于 GeoNames，均按 CC BY 4.0 署名。本应用对返回数据进行中文描述、取整、单位标注和排版。\n\n当前天气为数值模型估算，不是台站现场观测，也不替代官方预警。当前天气的数据时刻和逐小时预报按时间显示设置转换；每日预报及日出日落按所选地区时区显示。\n\n应用无需账号，不含广告、统计或自建服务器。天气查询和地区搜索需要联网，服务方可接收 IP 地址、搜索词及所选地区坐标。Open-Meteo 免费 API 仅限非商业使用，商业用途须另行取得授权。天气缓存有效期为 15 分钟，手动请求至少间隔 1 分钟；服务限流时暂停请求。\n\n全国降水、气温、雷达、卫星云图和天气图通过应用内官方网页查看，版权归中央气象台等原始权利人。官方网页按其自身规则处理访问数据。天文结果由本地近似算法计算。本次新增的中国传统星名参考 Stellarium 中国星空文化资料，按 CC BY-SA 4.0 署名并标注修改；对应 HIP 星表的位置和星等参考 Stellarium 的 HIP–Gaia3 目录，该目录注明其 Hipparcos 与 Gaia 数据来源。应用不请求天文网络服务。"</string>
     <string name="main_062" formatted="false">"课程表、背景、收藏、地点、路线、随机抽取名单与抽取记录及最近定位保存在本机；地震距离、地点方位和配置导入也在本机处理，不上传这些资料。清除缓存或恢复默认设置会保留已保存地点、路线、随机抽取名单与抽取进度及目标选择。卸载内部应用会保留其资料；卸载工具箱将删除其本机资料。\n\n状态功能通过 Android 系统接口读取方向、传感器、电池及卫星接收信息。卫星状态需精确定位权限，离开“状态”应用后的接收行为按设置执行；持续定位须主动开启，以前台服务运行。系统网络定位及辅助定位可能向服务商发送 IP、基站或 Wi-Fi 信息，适用其规则。应用不连接第三方星历服务，不读取设备序列号、IMEI 或 MAC 地址。\n\n相机环境光采集需相机权限，仅在内存中处理亮度样本，不保存或上传画面。可随时暂停采集以关闭摄像头；离开“状态”应用后默认停止，允许后台采集时仍受系统限制。\n\n主动导出的 JSON 文件可能包含坐标、时刻、名称及其他个人配置；地点文件还包含颜色和显示状态。保存位置由系统文件选择器指定，云盘等提供方适用其自身隐私规则。指南针、地点方位及路线示意受传感器、磁场、定位和模型误差影响，不用于专业测绘或安全导航。"</string>
     <string name="main_063" formatted="false">"Open-Meteo · 天气数据来源"</string>
     <string name="main_064" formatted="false">"Open-Meteo · 使用条款与隐私"</string>
@@ -859,6 +859,10 @@
     <string name="main_075" formatted="false">"拾光课程表 · GitHub"</string>
     <string name="main_076" formatted="false">"呆呆工具箱 · GitHub"</string>
     <string name="main_077" formatted="false">"未找到可打开链接的浏览器"</string>
+    <string name="main_078" formatted="false">"Stellarium · 中国星空文化与 CC BY-SA 4.0"</string>
+    <string name="main_079" formatted="false">"Stellarium · HIP–Gaia3 恒星目录说明"</string>
+    <string name="main_080" formatted="false">"Stellarium · 恒星数据来源署名"</string>
+    <string name="main_081" formatted="false">"CC BY-SA 4.0 · 许可文本"</string>
     <string name="map_001" formatted="false">"全国"</string>
     <string name="map_002" formatted="false">"华北"</string>
     <string name="map_003" formatted="false">"华东"</string>
@@ -1305,4 +1309,25 @@
     <string name="course_notify_in" formatted="false">将在 %1$d 分钟后开始</string>
     <string name="update_214_title" formatted="false">2.1.4 · 待办与课程顺序修复</string>
     <string name="update_214_detail" formatted="false">支持全天事项在指定日期范围内按重复规则生成安排；修复编辑事项时控件变化引起的页面跳动。自动删除启用后的默认保留天数改为 3 天，提醒提前时间使用分钟、小时或天的合适单位显示。今日课程按开始节次从早到晚排列。</string>
+
+    <string name="astronomy_208" formatted="false">"土司空"</string>
+    <string name="astronomy_209" formatted="false">"五车三"</string>
+    <string name="astronomy_210" formatted="false">"阁道三"</string>
+    <string name="astronomy_211" formatted="false">"天船三"</string>
+    <string name="astronomy_212" formatted="false">"天船二"</string>
+    <string name="astronomy_213" formatted="false">"天船五"</string>
+    <string name="astronomy_214" formatted="false">"大陵五"</string>
+    <string name="astronomy_215" formatted="false">"奎宿五"</string>
+    <string name="astronomy_216" formatted="false">"天大将军九"</string>
+    <string name="astronomy_217" formatted="false">"天钩五"</string>
+    <string name="astronomy_218" formatted="false">"奎宿九"</string>
+    <string name="astronomy_219" formatted="false">"娄宿二"</string>
+    <string name="astronomy_220" formatted="false">"娄宿一"</string>
+    <string name="astronomy_221" formatted="false">"离宫四"</string>
+    <string name="astronomy_222" formatted="false">"天囷一"</string>
+    <string name="astronomy_223" formatted="false">"天囷二"</string>
+    <string name="astronomy_224" formatted="false">"天津五"</string>
+    <string name="astronomy_225" formatted="false">"天津二"</string>
+    <string name="astronomy_226" formatted="false">"天棓三"</string>
+    <string name="astronomy_227" formatted="false">"上卫增一"</string>
 </resources>
