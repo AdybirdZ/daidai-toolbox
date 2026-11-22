@@ -26,6 +26,8 @@
 
 设计对话只在 `modules/prototypes/ball-elimination/` 下新增或修改小球游戏原型、设计资料和专属测试。建议按职责分开竞速模型、赛道绘制和宿主页面，避免把模拟逻辑、动画时钟和 UI 状态写成一个难以测试的类。目录中的源码暂不参与常规宿主构建。
 
+当前工作区另有草稿 `modules/embedded/ballrace/org/daidai/modules/ballrace/RaceCourse.java`。`build.py` 会编译 `modules/embedded/` 下的源码，而现有执行包构建器没有登记 `ballrace`，所以该位置不适合作为长期原型目录。设计对话继续编码前，应先核对这个草稿并保留其内容，迁移到上述预留目录；确认迁移完整且有测试后，再清理旧位置。不要覆盖或丢弃这份已有草稿。
+
 不要为了让原型暂时出现在应用商店而修改 `AppModules`、宿主入口白名单、`modules/build_executable.py`、商店目录、桌面图标注册、应用配置转移或当前 11 个应用。不要改动 `modules/host-java-api.json`、稳定资源编号或现有应用源码。若原型发现缺少宿主 API，记录最小需求和调用场景，留待宿主集成时评估；不得私自破坏或扩大 `api-1`。
 
 不要把签名密钥、密码、SDK、构建缓存、模拟器数据或临时生成的签名包提交进 Git。发布时使用的密钥不得通过聊天、源码或测试资产传递。原型分支应提交源码、测试和说明，写明提交 SHA，便于多年后按提交取回。
@@ -66,4 +68,4 @@
 
 ## 给设计对话的启动指令
 
-先阅读本指南、`modules/prototypes/ball-elimination/README.md`、`docs/MODULE-HOST.md`、`docs/DEVELOPER-RULES.md` 和仓库 `AGENTS.md`。随后仅在 `modules/prototypes/ball-elimination/` 完成小球淘汰赛设计与原型代码、模型测试及中英文资源。维持其为尚未注册、尚未发布的内部应用原型，不修改宿主注册、现有应用、API、商店和发布文件。结束时列出文件、测试实际结果、未验证项和 Git 提交 SHA，供以后宿主集成对话取用。
+先阅读本指南、`modules/prototypes/ball-elimination/README.md`、`docs/MODULE-HOST.md`、`docs/DEVELOPER-RULES.md` 和仓库 `AGENTS.md`。先检查 `modules/embedded/ballrace/` 中已有赛道草稿，保留并迁移有用实现到原型目录，再继续开发。随后仅在 `modules/prototypes/ball-elimination/` 完成小球淘汰赛设计与原型代码、模型测试及中英文资源。维持其为尚未注册、尚未发布的内部应用原型，不修改宿主注册、现有应用、API、商店和发布文件。结束时列出文件、测试实际结果、未验证项和 Git 提交 SHA，供以后宿主集成对话取用。
