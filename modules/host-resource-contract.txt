@@ -325,8 +325,10 @@ string/host_update_downloading
 string/host_update_install
 string/host_update_install_complete
 string/host_update_install_failed
+string/host_update_install_failed_detail
 string/host_update_latest
 string/host_update_note
+string/host_update_permission_denied
 string/host_update_permission_needed
 string/host_update_permission_unavailable
 string/identity_astronomy_001
@@ -868,6 +870,8 @@ string/update_304_detail
 string/update_304_title
 string/update_305_detail
 string/update_305_title
+string/update_306_detail
+string/update_306_title
 string/update_history_001
 string/update_history_002
 string/update_history_003

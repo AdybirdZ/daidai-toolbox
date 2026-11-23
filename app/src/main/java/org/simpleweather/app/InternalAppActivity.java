@@ -46,7 +46,7 @@ public final class InternalAppActivity extends Activity {
     private void releasePage(){if(page!=null){page.dispatch("destroy",null);page=null;}}
     void closeModule(){if(page!=null){page.dispatch("pause",null);page.dispatch("stop",null);releasePage();}if(!isFinishing())finish();}
     @Override protected void onSaveInstanceState(Bundle state){if(page!=null)page.dispatch("save",state);if(settingsPages!=null)settingsPages.captureState(state);super.onSaveInstanceState(state);}
-    @Override protected void onActivityResult(int request,int result,Intent data){super.onActivityResult(request,result,data);if(request==SettingsActivity.REQUEST&&!java.util.Objects.equals(activityLanguage,AppLanguage.choice(this))){recreate();return;}if(page!=null)page.result(request,result,data);}
+    @Override protected void onActivityResult(int request,int result,Intent data){super.onActivityResult(request,result,data);if(request==SettingsActivity.REQUEST&&!java.util.Objects.equals(activityLanguage,AppLanguage.choice(this))){recreate();overridePendingTransition(0,0);return;}if(page!=null)page.result(request,result,data);}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){super.onRequestPermissionsResult(request,permissions,grants);if(page!=null)page.onRequestPermissionsResult(request,permissions,grants);}
     @Override public void onConfigurationChanged(Configuration config){super.onConfigurationChanged(config);try{moduleResources=ModuleRuntime.resources(getBaseContext(),appId);}catch(Exception ignored){}if(page!=null)page.onConfigurationChanged(config);}
 }

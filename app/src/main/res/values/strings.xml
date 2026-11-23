@@ -237,6 +237,8 @@
     <string name="host_update_confirmation">请在系统确认界面完成安装</string>
     <string name="host_update_install_complete">工具箱更新已完成</string>
     <string name="host_update_install_failed">工具箱更新安装失败</string>
+    <string name="host_update_install_failed_detail">工具箱更新安装失败（状态 %1$d）：%2$s</string>
+    <string name="host_update_permission_denied">未开启安装权限，工具箱更新未安装</string>
     <string name="host_update_permission_unavailable">无法打开安装权限设置</string>
 </resources>
 

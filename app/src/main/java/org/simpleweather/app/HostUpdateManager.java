@@ -102,9 +102,12 @@ public final class HostUpdateManager {
     }
     public static int installPermissionRequestCode(){return REQUEST_INSTALL_SOURCE;}
     public static File pendingFile(Context context){return new File(new File(context.getFilesDir(),"host-update"),"host.apk");}
-    public static void installPending(Activity activity)throws Exception{install(activity,pendingFile(activity));}
+    public static void installPending(Activity activity)throws Exception{
+        if(!hasInstallPermission(activity))throw new SecurityException("Install permission is not enabled");
+        install(activity,pendingFile(activity));
+    }
     public static void install(Activity activity,File apk)throws Exception{
-        if(!hasInstallPermission(activity)){requestInstallPermission(activity);return;}
+        if(!hasInstallPermission(activity))throw new SecurityException("Install permission is not enabled");
         verifyPending(activity,apk);PackageInstaller installer=activity.getPackageManager().getPackageInstaller();PackageInstaller.SessionParams params=new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);params.setAppPackageName(activity.getPackageName());
         int sessionId=installer.createSession(params);
         try(PackageInstaller.Session session=installer.openSession(sessionId);InputStream input=new FileInputStream(apk);OutputStream output=session.openWrite("base.apk",0,apk.length())){
@@ -121,7 +124,7 @@ public final class HostUpdateManager {
     }
     private static HttpURLConnection open(String address)throws IOException{
         URL url=new URL(address);if(!"https".equalsIgnoreCase(url.getProtocol()))throw new IOException("HTTPS required");
-        HttpURLConnection connection=(HttpURLConnection)url.openConnection();connection.setConnectTimeout(12000);connection.setReadTimeout(20000);connection.setInstanceFollowRedirects(true);connection.setRequestProperty("User-Agent","DaidaiToolbox/3.0.5 Android");return connection;
+        HttpURLConnection connection=(HttpURLConnection)url.openConnection();connection.setConnectTimeout(12000);connection.setReadTimeout(20000);connection.setInstanceFollowRedirects(true);connection.setRequestProperty("User-Agent","DaidaiToolbox/3.0.6 Android");return connection;
     }
     private static void checkResponse(HttpURLConnection connection)throws IOException{
         int code=connection.getResponseCode();if(code<200||code>=300){connection.disconnect();throw new IOException("HTTP "+code);}

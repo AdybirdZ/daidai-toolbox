@@ -2064,3 +2064,7 @@ org.simpleweather.app:string/astronomy_122 = 0x7f0500a2
 org.simpleweather.app:array/seven_colors = 0x7f010003
 org.simpleweather.app:string/identity_astronomy_098 = 0x7f0507dd
 org.simpleweather.app:string/gps_102 = 0x7f0502ea
+org.simpleweather.app:string/update_306_detail = 0x7f0507f8
+org.simpleweather.app:string/update_306_title = 0x7f0507f9
+org.simpleweather.app:string/host_update_permission_denied = 0x7f0507fb
+org.simpleweather.app:string/host_update_install_failed_detail = 0x7f0507fa

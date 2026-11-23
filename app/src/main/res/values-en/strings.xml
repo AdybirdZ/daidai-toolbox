@@ -247,6 +247,8 @@
     <string name="host_update_confirmation">Complete installation in the system confirmation screen</string>
     <string name="host_update_install_complete">Toolbox update completed</string>
     <string name="host_update_install_failed">Toolbox update installation failed</string>
+    <string name="host_update_install_failed_detail">Toolbox update installation failed (status %1$d): %2$s</string>
+    <string name="host_update_permission_denied">Install permission was not enabled. The toolbox update was not installed.</string>
     <string name="host_update_permission_unavailable">Could not open install-permission settings</string>
 </resources>
 

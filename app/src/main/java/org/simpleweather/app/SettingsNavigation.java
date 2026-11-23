@@ -74,5 +74,5 @@ public final class SettingsNavigation {
         button.setLayoutParams(layout);
         UiColors.decorate(bar.getContext(),button);
     }
-    public static void desktop(Activity activity){Intent intent=new Intent(activity,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);intent.putExtra("last_tab",-1);activity.startActivity(intent);activity.finish();}
+    public static void desktop(Activity activity){Intent intent=new Intent(activity,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);intent.putExtra("last_tab",-1);activity.startActivity(intent);activity.overridePendingTransition(0,0);activity.finish();activity.overridePendingTransition(0,0);}
 }

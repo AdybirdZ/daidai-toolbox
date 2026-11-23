@@ -9,8 +9,8 @@ import json,zipfile,hashlib,shutil,subprocess,os
 IDS=['weather','schedule','status','weather-map','astronomy','earthquake','random','todo','music','messaging','colorvision']
 SCREENS=['WeatherScreen','ScheduleScreen','GpsScreen','MapScreen','AstronomyScreen','EarthquakeScreen','RandomChoiceScreen','TodoScreen','org.daidai.modules.music.MusicActivity','org.daidai.modules.messaging.MessagingActivity','org.daidai.modules.colorvision.ColorVisionActivity']
 API='daidai-toolbox/api-1'
-VERSION='3.0.5'
-VERSION_CODE=10
+VERSION='3.0.6'
+VERSION_CODE=11
 EMBEDDED={'music','messaging','colorvision'}
 GROUPS={'weather':['weather','toolbox'],'status':['toolbox','status_places','status_routes'],'schedule':['toolbox','timetable'],'todo':['toolbox','todos'],'random':['toolbox','random_choice']}
 PERMISSIONS={
@@ -35,17 +35,17 @@ DESCRIPTIONS={
  'messaging':['通过蓝牙或局域网与附近设备通信。','Communicate with nearby devices over Bluetooth or a local network.'],
  'colorvision':['图片与相机画面的色觉模拟。','Color vision simulation for images and camera views.']}
 RELEASE_NOTES={
- 'weather':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
- 'schedule':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
- 'status':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
+ 'weather':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
+ 'schedule':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
+ 'status':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
  'weather-map':['增加天气图种和浏览器链接之间的间距。','Increased spacing between map choices and the browser link.'],
  'astronomy':['新增五车一和壁宿一；星名显示、星图缩放及天体升落信息已更新。','Added Iota Aurigae and Gamma Pegasi, with updated names, chart zoom and rise/set information.'],
- 'earthquake':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
- 'random':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
- 'todo':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
- 'music':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
- 'messaging':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.'],
- 'colorvision':['更新到 3.0.5 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.5.']}
+ 'earthquake':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
+ 'random':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
+ 'todo':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
+ 'music':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
+ 'messaging':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.'],
+ 'colorvision':['更新到 3.0.6 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.6.']}
 
 KEY_RULES={'weather':['weather_*'],'weather-map':['radar_region','map_product'],'status':['status_*','location_*','route_interval'],'astronomy':['astro_*'],'earthquake':['quake_*'],'schedule':['course_*'],'random':['random_*'],'todo':['todo_*']}
 BRIDGES={'status':['LocationService'],'todo':['TodoReceiver','TodoScheduler'],'schedule':['TodoReceiver','ScheduleNotifier'],'weather-map':['OfficialPageActivity']}
@@ -76,7 +76,7 @@ def build(root,sdk,java,run):
         feature_assets=root/'modules/apps'/id/'assets'
         if feature_assets.is_dir():shutil.copytree(feature_assets,assets,dirs_exist_ok=True)
         if id=='weather':shutil.copyfile(root/'app/src/main/assets/cities.json',assets/'cities.json')
-        descriptor={'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'minHostVersionCode':61,'minSdk':26,'versionCode':VERSION_CODE,'version':VERSION,'standaloneInstallable':False,'resourceProvider':'application' if id in EMBEDDED else 'mounted-stable-ids','dataRetention':'retain-on-uninstall','configurationGroups':[id+'_module'] if id in EMBEDDED else GROUPS.get(id,['toolbox']),'configurationContract':{'format':'daidai-toolbox-module-config','version':1,'toolboxKeyRules':KEY_RULES.get(id,[])},'permissions':['android.permission.'+v for v in PERMISSIONS[id]],'hostComponentBridges':BRIDGES.get(id,[]),'dependencies':['module-page-worker-api'] if id in EMBEDDED else ['host-api-1','shared-data-contracts','stable-resource-ids']}
+        descriptor={'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'minHostVersionCode':62,'minSdk':26,'versionCode':VERSION_CODE,'version':VERSION,'standaloneInstallable':False,'resourceProvider':'application' if id in EMBEDDED else 'mounted-stable-ids','dataRetention':'retain-on-uninstall','configurationGroups':[id+'_module'] if id in EMBEDDED else GROUPS.get(id,['toolbox']),'configurationContract':{'format':'daidai-toolbox-module-config','version':1,'toolboxKeyRules':KEY_RULES.get(id,[])},'permissions':['android.permission.'+v for v in PERMISSIONS[id]],'hostComponentBridges':BRIDGES.get(id,[]),'dependencies':['module-page-worker-api'] if id in EMBEDDED else ['host-api-1','shared-data-contracts','stable-resource-ids']}
         if id in EMBEDDED:
             descriptor['pages']={'main':screen,'settings':screen}
             if id=='music':descriptor['pages']['artwork']='org.daidai.modules.music.ArtworkPreviewActivity'
@@ -98,7 +98,7 @@ def build(root,sdk,java,run):
         run([java,'-jar',tools/'lib/apksigner.jar','sign','--v4-signing-enabled','false','--ks',root/'.signing/development.jks','--ks-key-alias','simpleweather','--ks-pass','pass:android','--key-pass','pass:android','--out',package,aligned])
         run([java,'-jar',tools/'lib/apksigner.jar','verify',package])
         if id in ['weather','status']:shutil.copyfile(package,defaults/package.name)
-        apps.append({'id':id,'type':'signed-dex-app','version':VERSION,'versionCode':VERSION_CODE,'hostApi':API,'minHostVersionCode':61,'minSdk':26,'permissions':descriptor['permissions'],'description':{'zh':DESCRIPTIONS[id][0],'en':DESCRIPTIONS[id][1]},'releaseNotes':{'zh':RELEASE_NOTES[id][0],'en':RELEASE_NOTES[id][1]},'bytes':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/'+VERSION+'/'+package.name})
+        apps.append({'id':id,'type':'signed-dex-app','version':VERSION,'versionCode':VERSION_CODE,'hostApi':API,'minHostVersionCode':62,'minSdk':26,'permissions':descriptor['permissions'],'description':{'zh':DESCRIPTIONS[id][0],'en':DESCRIPTIONS[id][1]},'releaseNotes':{'zh':RELEASE_NOTES[id][0],'en':RELEASE_NOTES[id][1]},'bytes':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/'+VERSION+'/'+package.name})
     catalog={'format':'daidai-app-store','schemaVersion':1,'hostApi':API,'defaultInstalled':['weather','status'],'apps':apps}
     for p in [store/'catalog.json',root/'modules/store/catalog.json',root/'app/src/main/assets/app-catalog.json']:p.write_text(json.dumps(catalog,indent=2)+'\n','utf8')
     (store/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(store.iterdir()) if p.suffix in ['.ddapp','.json']),'utf8')

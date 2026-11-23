@@ -1,0 +1,4 @@
+<resources>
+  <string name="update_306_title">3.0.6 · Update installation, transitions and weather refresh</string>
+  <string name="update_306_detail">Fixes host update installation after enabling the Android install permission and preserves a diagnosable result when an install session fails. Language changes, returning to the desktop and app recreation no longer use slide or flash transitions. Every app uses the Settings desktop button size, position and corner radius. A short retry handles transient network failures on the first weather refresh. Documentation version state and the English app attribution are updated.</string>
+</resources>
