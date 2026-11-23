@@ -217,8 +217,8 @@
         "en": "Local music, lyrics, playlists and audio analysis."
       },
       "releaseNotes": {
-        "zh": "\u4fee\u590d\u4ece\u8bbe\u7f6e\u8fd4\u56de\u65f6\u97f3\u4e50\u754c\u9762\u77ed\u6682\u7a7a\u767d\u3002",
-        "en": "Fixed a brief blank music screen when returning from Settings."
+        "zh": "\u82f1\u6587\u526f\u6807\u9898\u4e2d\u7684\u201c\u5446\u5446\u9e1f\u201d\u7edf\u4e00\u6539\u4e3a Dull Bird\u3002",
+        "en": "The English subtitle now uses Dull Bird as the app attribution."
       },
       "bytes": 1335924,
       "sha256": "ba1cb1b5ed287aa9b712f9389d404eb61a9b8aebc0c1717152915706c5d4933c",

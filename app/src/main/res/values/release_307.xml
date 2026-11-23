@@ -1,4 +1,4 @@
 <resources>
-  <string name="update_307_title">3.0.7 · 音乐设置返回与英文署名</string>
-  <string name="update_307_detail">修复从音乐设置返回时音乐界面短暂空白的问题，将界面刷新推迟到音乐应用恢复前台后执行。英文副标题中“呆呆鸟”统一为 Dull Bird。内部应用包更新至 3.0.7，并要求宿主版本代码至少为 63。</string>
+  <string name="update_307_title">3.0.7 · 英文署名更新</string>
+  <string name="update_307_detail">英文副标题中的“呆呆鸟”统一改为 Dull Bird。</string>
 </resources>

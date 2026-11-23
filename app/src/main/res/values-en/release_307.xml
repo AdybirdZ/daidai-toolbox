@@ -1,4 +1,4 @@
 <resources>
-  <string name="update_307_title">3.0.7 · Music settings return and English attribution</string>
-  <string name="update_307_detail">Fixes the brief blank music screen when returning from Music settings by refreshing the page after the Music app resumes. The English subtitle now uses Dull Bird as the app attribution. Internal app packages are updated to 3.0.7 and require host version code 63 or later.</string>
+  <string name="update_307_title">3.0.7 · English attribution</string>
+  <string name="update_307_detail">The English subtitle now uses Dull Bird as the app attribution.</string>
 </resources>
