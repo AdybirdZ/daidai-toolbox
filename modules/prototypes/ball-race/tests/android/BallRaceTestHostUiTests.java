@@ -611,6 +611,7 @@ public final class BallRaceTestHostUiTests extends Instrumentation {
             try { return (Boolean) field(page, "rankingFinalized"); }
             catch (Exception ignored) { return false; }
         }, "finished state expands the result ranking");
+        waitForIdleSync();
         check((Boolean) call(canvas, "finished", new Class<?>[]{}), "completed race exposes a stable finished state");
         check((Boolean) field(page, "rankingFinalized")
                 && ((View) field(page, "raceStatus")).getVisibility() == View.GONE
