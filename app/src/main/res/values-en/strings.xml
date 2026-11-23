@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">"Daidai Toolbox"</string>
-    <string name="app_footer">"Made with Codex by Daidai Bird"</string>
+    <string name="app_footer">"Made with Codex by Dull Bird"</string>
     <string name="tab_weather">"Weather"</string>
     <string name="tab_schedule">"Timetable"</string>
     <string name="tab_status">"Status"</string>

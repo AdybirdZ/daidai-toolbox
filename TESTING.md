@@ -1,3 +1,16 @@
+# 3.0.7 提测记录
+
+日期：2026-11-23。包名 `org.simpleweather.app`，versionCode 63，versionName 3.0.7。
+
+- 修复音乐设置返回时的短暂空白：从结果回调中移除完整页面重建，恢复前台后只同步曲绘、音频分析和播放状态。
+- 英文应用页脚统一为 “Made with Codex by Dull Bird”。
+- 资源及中英文格式检查通过；音乐混合目录导入 155 项、桌面布局 41 项通过。
+- 宿主与 11 个内部应用包构建通过；APK v2/v3 原签名有效。APK SHA-256：`139b72311bcb67817b46335bc037a7d253f783853929c0860c163bb4d428e6b2`。
+
+等待用户人工验证：打开音乐 → 设置 → 返回，确认音乐内容立即保持显示且不出现背景独占的闪白；切换英语，确认标题下方显示 “Made with Codex by Dull Bird”。本轮未发布。
+
+---
+
 # 3.0.6 提测记录
 
 日期：2026-11-23。包名 `org.simpleweather.app`，versionCode 62，versionName 3.0.6。
