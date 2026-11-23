@@ -17,6 +17,12 @@ public final class EnglishModelTests {
         EarthquakeData.Event e=new EarthquakeData.Event();e.reports.add(other);e.reports.add(cn);
         check(e.main()==cn,"Localization cannot change reviewed Chinese-source priority");
         check(EarthquakeDisplay.review(cn).equals("Reviewed"),"Stable source status translates for display");
+        check(EarthquakeDisplay.region("XIZANG").equals("Xizang")&&EarthquakeDisplay.region("SICHUAN, CHINA").equals("Sichuan"),"English region labels omit source suffixes");
+        check(EarthquakeDisplay.region("TAIWAN REGION").equals("Taiwan area")&&EarthquakeDisplay.region("TAIWAN").equals("Taiwan area"),"Taiwan source variants share one English area label");
+        check(EarthquakeDisplay.region("NEAR EAST COAST OF HONSHU, JAPAN").equals("East coast of Honshu"),"English Honshu label omits country wording");
+        check(EarthquakeDisplay.region("XIZANG").equals("Xizang")&&EarthquakeDisplay.region("SICHUAN, CHINA").equals("Sichuan"),"English earthquake region labels omit source-name suffixes");
+        check(EarthquakeDisplay.region("TAIWAN REGION").equals("Taiwan area")&&EarthquakeDisplay.region("TAIWAN").equals("Taiwan area"),"English Taiwan source variants share a geographic label");
+        check(EarthquakeDisplay.region("NEAR EAST COAST OF HONSHU, JAPAN").equals("East coast of Honshu"),"English Honshu label omits country wording");
         check(EarthquakeAgencies.name(UiText.raw("identity_earthquake_data_004")).contains("National Earthquake Information Center"),"Stored agency text maps to English name");
         check(CameraExposure.DEFAULT_ISO==1000&&CameraExposure.DEFAULT_MS==200,"Camera defaults");
         check(!CameraExposure.valid(0,50)&&!CameraExposure.valid(300,1001)&&CameraExposure.valid(640,25),"Camera input boundaries");

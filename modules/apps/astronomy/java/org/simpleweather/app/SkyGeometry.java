@@ -4,7 +4,13 @@ import java.time.Instant;
 
 /** Normalized full-sky chart projections; no Android or remote ephemeris dependency. */
 public final class SkyGeometry {
+    public static final int ZOOM_STEPS=1000;
+    public static final float MIN_ZOOM=.65f,MAX_ZOOM=2.6f;
     private SkyGeometry(){}
+    public static float zoomAt(int progress){return MIN_ZOOM+(MAX_ZOOM-MIN_ZOOM)*Math.max(0,Math.min(ZOOM_STEPS,progress))/(float)ZOOM_STEPS;}
+    public static int zoomProgress(float zoom){if(!Float.isFinite(zoom))zoom=MIN_ZOOM;return Math.round(ZOOM_STEPS*(Math.max(MIN_ZOOM,Math.min(MAX_ZOOM,zoom))-MIN_ZOOM)/(MAX_ZOOM-MIN_ZOOM));}
+    public static float labelMagnitudeLimit(float zoom){return 1f+5f*(Math.max(0,Math.min(1,(zoom-MIN_ZOOM)/(MAX_ZOOM-MIN_ZOOM))));}
+    public static boolean insideViewport(float x,float y,float centerX,float centerY,float radius){return Float.isFinite(x)&&Float.isFinite(y)&&Math.hypot(x-centerX,y-centerY)<=radius;}
     /** Zenith center, horizon radius 1, north up and east left. */
     public static double[] horizontal(double altitude,double azimuth){double r=(90-altitude)/90,a=Math.toRadians(azimuth);return new double[]{-r*Math.sin(a),-r*Math.cos(a)};}
     /** North celestial pole center, south pole boundary; RA 0h up, 6h left. */

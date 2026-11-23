@@ -12,25 +12,32 @@ public final class SettingsNavigation {
     private static final WeakHashMap<Activity,SettingsNavigation> HOSTS=new WeakHashMap<>();
     private final Activity activity;
     private final FrameLayout frame;
+    private final FrameLayout content;
     private final ArrayList<SettingsPanel> stack=new ArrayList<>();
     private boolean closing;
     public SettingsNavigation(Activity activity){
-        this.activity=activity;frame=new FrameLayout(activity);frame.setBackgroundColor(MainActivity.BG);
-        frame.setOnApplyWindowInsetsListener((v,insets)->{
-            if(Build.VERSION.SDK_INT>=30){android.graphics.Insets bars=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout());frame.setPadding(bars.left,bars.top,bars.right,Math.max(bars.bottom,insets.getInsets(WindowInsets.Type.ime()).bottom));}
-            else frame.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
+        this.activity=activity;frame=new FrameLayout(activity);SettingsActivity.addBackground(activity,frame);
+        content=new FrameLayout(activity);content.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        frame.addView(content,new FrameLayout.LayoutParams(-1,-1));
+        if(Build.VERSION.SDK_INT>=30){activity.getWindow().setDecorFitsSystemWindows(false);}
+        if(Build.VERSION.SDK_INT>=29){activity.getWindow().setNavigationBarContrastEnforced(false);activity.getWindow().setStatusBarContrastEnforced(false);}
+        activity.getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);activity.getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+        activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        content.setOnApplyWindowInsetsListener((v,insets)->{
+            if(Build.VERSION.SDK_INT>=30){android.graphics.Insets bars=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout());content.setPadding(bars.left,bars.top,bars.right,Math.max(bars.bottom,insets.getInsets(WindowInsets.Type.ime()).bottom));}
+            else content.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
             return insets;
         });
-        activity.setContentView(frame);frame.requestApplyInsets();HOSTS.put(activity,this);
+        activity.setContentView(frame);content.requestApplyInsets();HOSTS.put(activity,this);
     }
     static SettingsNavigation find(Context context){for(int i=0;i<10&&context!=null;i++){if(context instanceof Activity)return HOSTS.get((Activity)context);if(!(context instanceof ContextWrapper))break;Context next=((ContextWrapper)context).getBaseContext();if(next==context)break;context=next;}return null;}
     void push(SettingsPanel panel,View view){
         if(!stack.isEmpty())stack.get(stack.size()-1).pageView().setVisibility(View.GONE);
-        stack.add(panel);frame.addView(view,new FrameLayout.LayoutParams(-1,-1));
+        stack.add(panel);content.addView(view,new FrameLayout.LayoutParams(-1,-1));
     }
     void remove(SettingsPanel panel){
         int index=stack.indexOf(panel);if(index<0)return;
-        stack.remove(index);frame.removeView(panel.pageView());
+        stack.remove(index);content.removeView(panel.pageView());
         if(!stack.isEmpty())stack.get(stack.size()-1).pageView().setVisibility(View.VISIBLE);
         else if(!closing&&!activity.isFinishing())activity.finish();
     }
@@ -53,17 +60,19 @@ public final class SettingsNavigation {
     public void close(){closing=true;for(SettingsPanel panel:new ArrayList<>(stack))panel.dismiss();HOSTS.remove(activity);}
     public static void layoutDesktopBar(LinearLayout bar,View button){
         float density=bar.getResources().getDisplayMetrics().density;
-        int side=Math.round(8*density), vertical=Math.round(4*density);
-        bar.setPadding(side,vertical,side,vertical);
-        bar.setBackgroundColor(0xF2FFFFFF);
+        bar.setPadding(0,0,0,0);
+        bar.setClipChildren(false);bar.setClipToPadding(false);
+        bar.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         bar.setGravity(Gravity.CENTER);
-        TextView label=(TextView)button;
-        label.setMinWidth(0);
         button.setMinimumWidth(0);
-        label.setTextSize(14);
-        button.setPadding(Math.round(8*density),0,Math.round(8*density),0);
-        label.setGravity(Gravity.CENTER);
-        button.setLayoutParams(new LinearLayout.LayoutParams(Math.round(112*density),Math.round(48*density)));
+        button.setMinimumHeight(Math.round(52*density));
+        button.setTag("theme-secondary");
+        if(button instanceof TextView){TextView label=(TextView)button;label.setTextSize(14);label.setGravity(Gravity.CENTER);}
+        button.setStateListAnimator(null);button.setElevation(0);button.setTranslationZ(0);
+        LinearLayout.LayoutParams layout=new LinearLayout.LayoutParams(-1,LinearLayout.LayoutParams.WRAP_CONTENT);
+        layout.setMargins(Math.round(18*density),Math.round(4*density),Math.round(18*density),Math.round(4*density));
+        button.setLayoutParams(layout);
+        UiColors.decorate(bar.getContext(),button);
     }
     public static void desktop(Activity activity){Intent intent=new Intent(activity,MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);intent.putExtra("last_tab",-1);activity.startActivity(intent);activity.finish();}
 }

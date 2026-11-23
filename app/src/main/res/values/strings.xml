@@ -63,8 +63,8 @@
     <string name="settings_bottom_tabs">底部栏目</string>
     <string name="settings_cache">缓存管理</string>
     <string name="settings_reset_description">恢复全局设置、栏目设置、定位方式、课程信息前缀、学期和上课时间等默认设置。已保存的课程、地点、路线、随机抽取名单、收藏地区及天气缓存不受影响。若已有课程超出默认周次或节次范围，将保留所需范围及对应上课时间。</string>
-    <string name="sky_objects_note">只绘制地平线上方的天体；白天仅作方位示意。点击天体中心查看详情；旋转的断开十字表示选中。</string>
-    <string name="sky_aim_note">对准天空仅适用于地平坐标系和不显示坐标网格模式。星图保持固定，红色实体十字标示设备指向在天球上的位置；指向地平线下方时不显示。默认采用外置相机朝向，也可在天文设置中选择手机上沿方向。方向由旋转矢量传感器计算，并按所选地区估算磁偏角修正为真北；应选择实际观测地区。结果受磁场、传感器精度和设备坐标影响，仅作观测辅助，不用于导航。</string>
+    <string name="sky_objects_note">只绘制地平线上方的天体；白天仅作方位示意。点击天体查看详情，旋转的断开十字表示选中。单指拖动星图平移，使用图下滑块缩放，不支持双指缩放。</string>
+    <string name="sky_aim_note">对准天空仅适用于地平坐标系和不显示坐标网格模式。红色实体十字标示设备指向在天球上的位置，缩放时大小保持不变；视野外时以红色实心三角箭头标出方向。默认采用外置相机朝向，也可在天文设置中选择手机上沿方向。方向由旋转矢量传感器计算，并按所选地区估算磁偏角修正为真北；应选择实际观测地区。结果受磁场、传感器精度和设备坐标影响，仅作观测辅助，不用于导航。</string>
     <string name="camera_unavailable">相机亮度采样不可用，请检查权限及摄像头状态</string>
     <string name="camera_waiting">等待相机亮度样本</string>
     <string name="camera_manual">手动曝光固定</string>

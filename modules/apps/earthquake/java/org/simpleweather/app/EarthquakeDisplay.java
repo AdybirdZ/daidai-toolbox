@@ -18,6 +18,23 @@ public final class EarthquakeDisplay {
             return UiText.get("earthquake_display_004")+name+UiText.get("earthquake_api_004");
         return name;
     }
+    public static String region(String value){
+        String normalized=value.toUpperCase(java.util.Locale.ROOT);
+        String[][] names={
+            {"XIZANG","earthquake_072"},
+            {"XIZANG-QINGHAI BORDER REGION","earthquake_073"},
+            {"SOUTHERN XINJIANG, CHINA","earthquake_074"},
+            {"NORTHERN XINJIANG, CHINA","earthquake_075"},
+            {"SICHUAN, CHINA","earthquake_076"},
+            {"QINGHAI, CHINA","earthquake_077"},
+            {"YUNNAN, CHINA","earthquake_078"},
+            {"TAIWAN REGION","earthquake_079"},
+            {"TAIWAN","earthquake_080"},
+            {"NEAR EAST COAST OF HONSHU, JAPAN","earthquake_081"}
+        };
+        for(String[] name:names)if(normalized.equals(name[0]))return UiText.get(name[1]);
+        return value;
+    }
     public static String sources(EarthquakeData.Event event){
         java.util.Set<String> names=new java.util.LinkedHashSet<>();
         names.add(source(event.main()));

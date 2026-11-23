@@ -23,7 +23,7 @@ public final class AstronomyScreen {
     public void render(){
         a.body.addView(a.text(city.label()+" · "+at.atZone(zone).format(DateTimeFormatter.ofPattern(UiText.get("astronomy_115")))+" · "+EarthquakeOptions.offset(zone,at.toEpochMilli()),14,a.MUTED,false));a.gap(a.body,12);
         // Create the selection model before either card, so arbitrary ordering remains valid.
-        Sky view=new Sky(a,at,city.latitude,city.longitude,at.atZone(zone).toLocalDate(),description->{if(selectedInfo!=null)selectedInfo.setText(description);});
+        Sky view=new Sky(a,at,city.latitude,city.longitude,at.atZone(zone).toLocalDate(),zone,description->{if(selectedInfo!=null)selectedInfo.setText(description);});
         selectedInfo=a.text(view.selectionDescription(),13,a.MUTED,false);
         for(int id:DisplayOrder.parse(a.preferences.getString("astro_order",""),sectionNames().length)){
             if(!a.preferences.getBoolean("astro_show_"+id,true))continue;
@@ -46,7 +46,8 @@ public final class AstronomyScreen {
         LinearLayout sky=a.card();sky.addView(a.text(UiText.get("astronomy_116"),17,a.TITLE,true));a.gap(sky,12);
         TextView toggle=a.button(a.preferences.getBoolean("astro_align_sky",false)?UiText.get("astronomy_117"):UiText.get("astronomy_118"),false,()->{});
         toggle.setOnClickListener(v->a.updateReadingValues(()->{boolean on=!a.preferences.getBoolean("astro_align_sky",false);a.preferences.edit().putBoolean("astro_align_sky",on).apply();view.setAligned(on);toggle.setText(on?UiText.get("astronomy_117"):UiText.get("astronomy_118"));}));
-        sky.addView(toggle,a.lp(-1,48));a.gap(sky,8);sky.addView(view,a.lp(-1,-2));a.gap(sky,10);TextParagraphs.append(a,sky,view.chartNote(),12,a.MUTED);
+        sky.addView(toggle,a.lp(-1,48));a.gap(sky,8);sky.addView(view,a.lp(-1,-2));a.gap(sky,8);
+        LinearLayout zoomRow=a.row();zoomRow.addView(a.text(UiText.get("astronomy_189"),13,a.INK,false));SeekBar zoom=new SeekBar(a);zoom.setMax(SkyGeometry.ZOOM_STEPS);zoom.setProgress(SkyGeometry.zoomProgress(view.zoom()));zoom.setContentDescription(UiText.get("astronomy_189"));zoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onProgressChanged(SeekBar b,int progress,boolean user){if(user)view.setZoom(SkyGeometry.zoomAt(progress));}public void onStartTrackingTouch(SeekBar b){}public void onStopTrackingTouch(SeekBar b){}});zoomRow.addView(zoom,new LinearLayout.LayoutParams(0,a.dp(48),1));sky.addView(zoomRow);a.gap(sky,8);TextParagraphs.append(a,sky,view.chartNote(),12,a.MUTED);
     }
     private void timeControl(){
         LinearLayout card=a.card();card.addView(a.text(UiText.get("astronomy_106"),17,a.TITLE,true));a.gap(card,12);
@@ -120,10 +121,10 @@ public final class AstronomyScreen {
     }
     private static final class Hit {public final Target target;public final float x,y;public Hit(Target t,float x,float y){target=t;this.x=x;this.y=y;}}
     private static final class Sky extends View implements SensorEventListener {
-        private final MainActivity a;private final Instant at;private final LocalDate localDate;private final double lat,lon;private final Paint p=new Paint(3);private final Consumer<String> select;private final List<Hit> hits=new ArrayList<>();private final List<Target> targets=new ArrayList<>();private final List<SkyLabels.Box> labelBoxes=new ArrayList<>();private final List<SkyLabels.Candidate> labels=new ArrayList<>();private final Map<String,Integer> labelColors=new HashMap<>();private final int mode;
-        private String selected;private float downX,downY;private boolean dragged;private double aimAltitude=Double.NaN,aimAzimuth=Double.NaN;private SensorManager sensors;private boolean aligned;
+        private final MainActivity a;private final Instant at;private final LocalDate localDate;private final ZoneId zone;private final double lat,lon;private final Paint p=new Paint(3);private final Consumer<String> select;private final List<Hit> hits=new ArrayList<>();private final List<Target> targets=new ArrayList<>();private final List<SkyLabels.Box> labelBoxes=new ArrayList<>();private final List<SkyLabels.Candidate> labels=new ArrayList<>();private final Map<String,Integer> labelColors=new HashMap<>();private final int mode;
+        private String selected;private float downX,downY,lastX,lastY,zoom,panX,panY;private boolean dragged,multiTouch;private double aimAltitude=Double.NaN,aimAzimuth=Double.NaN;private SensorManager sensors;private boolean aligned;
         private final float[] pointingRotation=new float[9];private long declinationMinute=Long.MIN_VALUE;private double pointingDeclination;
-        public Sky(MainActivity a,Instant at,double lat,double lon,LocalDate localDate,Consumer<String> select){super(a);this.a=a;this.at=at;this.localDate=localDate;this.lat=lat;this.lon=lon;this.select=select;mode=Math.max(0,Math.min(2,a.preferences.getInt("astro_coordinates",0)));selected=a.preferences.getString("astro_selected","");
+        public Sky(MainActivity a,Instant at,double lat,double lon,LocalDate localDate,ZoneId zone,Consumer<String> select){super(a);this.a=a;this.at=at;this.localDate=localDate;this.zone=zone;this.lat=lat;this.lon=lon;this.select=select;zoom=SkyGeometry.zoomAt(a.preferences.getInt("astro_chart_zoom",0));panX=a.preferences.getFloat("astro_chart_pan_x",0);panY=a.preferences.getFloat("astro_chart_pan_y",0);mode=Math.max(0,Math.min(2,a.preferences.getInt("astro_coordinates",0)));selected=a.preferences.getString("astro_selected","");
             for(Astronomy.Star s:Astronomy.STARS)targets.add(new Target(s.name,"astro_star_"+s.name,s.ra,s.dec,s.mag,0,true,at,lat,lon));
             for(Astronomy.Planet planet:Astronomy.planets(at))targets.add(new Target(planet.name,"astro_planet_"+planet.name,planet.ra,planet.dec,planet.magnitude,1,true,at,lat,lon));
             for(Astronomy.Star object:Astronomy.DEEP_SKY)targets.add(new Target(object.name,"astro_deep_"+object.name,object.ra,object.dec,object.mag,2,true,at,lat,lon));
@@ -137,18 +138,30 @@ public final class AstronomyScreen {
             if(aligned){sensors=(SensorManager)a.getSystemService(android.content.Context.SENSOR_SERVICE);Sensor rotation=sensors==null?null:sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);if(rotation!=null)sensors.registerListener(this,rotation,SensorManager.SENSOR_DELAY_GAME);}
             invalidate();
         }
+        public float zoom(){return zoom;}
+        public void setZoom(float value){zoom=Math.max(SkyGeometry.MIN_ZOOM,Math.min(SkyGeometry.MAX_ZOOM,value));a.preferences.edit().putInt("astro_chart_zoom",SkyGeometry.zoomProgress(zoom)).apply();invalidate();}
         private void updateDescription(){setContentDescription(UiText.get("astronomy_167")+(mode==1?UiText.get("astronomy_168"):mode==2?UiText.get("astronomy_169"):UiText.get("astronomy_170"))+(selected.isEmpty()?"":UiText.get("astronomy_171")+UiText.label(selected)));}
         public String chartNote(){return (mode==1?UiText.get("astronomy_172"):mode==2?UiText.get("astronomy_173"):UiText.get("astronomy_174"))+"\n\n"+a.getString(R.string.sky_objects_note)+"\n\n"+a.getString(R.string.sky_aim_note);}
         private boolean enabled(Target t){return SkyVisibility.visible(a.preferences.getInt("astro_visibility_mode",0)==1,t.key==null||a.preferences.getBoolean(t.key,true),t.mag,a.preferences.getFloat("astro_magnitude_limit",6),t.key==null);}
         private Target selection(){for(Target t:targets)if(t.name.equals(selected)&&t.selectable)return t;return null;}
         public String selectionDescription(){Target t=selection();if(t==null)return UiText.get("astronomy_175");
-            return UiText.label(t.name)+(t.kind==2?UiText.get("astronomy_176"):"")+UiText.get("astronomy_177")+String.format(Locale.ROOT,"%.1f°",t.alt)+UiText.get("astronomy_159")+String.format(Locale.ROOT,"%.1f°",t.az)+" "+Astronomy.compass(t.az)+UiText.get("astronomy_178")+String.format(Locale.ROOT,"%.2fh",t.ra/15)+UiText.get("astronomy_179")+String.format(Locale.ROOT,"%.2f°",t.dec)+(t.kind==3?"":t.kind==4?(Double.isFinite(t.mag)?UiText.get("astronomy_180")+String.format(Locale.ROOT,"%.1f",t.mag)+UiText.get("astronomy_181"):UiText.get("astronomy_182")):(t.kind==2?UiText.get("astronomy_183")+SkyVisibility.magnitude(t.mag)+UiText.get("astronomy_184"):UiText.get("astronomy_185")+String.format(Locale.ROOT,"%.2f",t.mag)))+(t.alt<0?UiText.get("astronomy_186"):!enabled(t)?UiText.get("astronomy_187"):"");}
-        private float[] xy(float cx,float cy,float r,double ra,double dec,double alt,double az){double[] q=mode==1?SkyGeometry.northPolar(ra,dec):SkyGeometry.horizontal(alt,az);return new float[]{cx+(float)q[0]*r,cy+(float)q[1]*r};}
+            StringBuilder text=new StringBuilder(UiText.label(t.name));if(t.kind==2)text.append(UiText.get("astronomy_176"));text.append(UiText.get("astronomy_177")).append(String.format(Locale.ROOT,"%.1f°",t.alt)).append(UiText.get("astronomy_159")).append(String.format(Locale.ROOT,"%.1f°",t.az)).append(" ").append(Astronomy.compass(t.az)).append(UiText.get("astronomy_178")).append(String.format(Locale.ROOT,"%.2fh",t.ra/15)).append(UiText.get("astronomy_179")).append(String.format(Locale.ROOT,"%.2f°",t.dec));
+            if(t.kind==3){}else if(t.kind==4)text.append(Double.isFinite(t.mag)?UiText.get("astronomy_180")+String.format(Locale.ROOT,"%.1f",t.mag)+UiText.get("astronomy_181"):UiText.get("astronomy_182"));else if(t.kind==2)text.append(UiText.get("astronomy_183")).append(SkyVisibility.magnitude(t.mag)).append(UiText.get("astronomy_184"));else text.append(UiText.get("astronomy_185")).append(String.format(Locale.ROOT,"%.2f",t.mag));
+            if(t.kind==0){int state=SkyVisibility.horizonClass(lat,t.dec);appendRiseSet(text,state==0?Astronomy.objectCrossings(localDate,zone,lat,lon,t.ra,t.dec):Collections.emptyList(),state,t.kind);}
+            else if(t.kind==1)appendRiseSet(text,Astronomy.planetCrossings(localDate,zone,lat,lon,t.name),Astronomy.planetHorizonState(localDate,zone,lat,lon,t.name),t.kind);
+            else if(t.kind==2)appendRiseSet(text,Astronomy.objectCrossings(localDate,zone,lat,lon,t.ra,t.dec),Astronomy.objectHorizonState(localDate,zone,lat,lon,t.ra,t.dec),t.kind);
+            else if(t.kind==3)appendRiseSet(text,Astronomy.crossings(localDate,zone,lat,lon,false,-.833),Astronomy.sunHorizonState(localDate,zone,lat,lon),t.kind);
+            else if(t.kind==4)appendRiseSet(text,Astronomy.crossings(localDate,zone,lat,lon,true,-.3),Astronomy.moonHorizonState(localDate,zone,lat,lon),t.kind);
+            if(t.alt<0)text.append(UiText.get("astronomy_186"));else if(!enabled(t))text.append(UiText.get("astronomy_187"));return text.toString();}
+        private String eventTime(List<Astronomy.Event> events,boolean rise){for(Astronomy.Event item:events)if(item.rising==rise)return item.at.atZone(zone).format(DateTimeFormatter.ofPattern("HH:mm"));return UiText.get("astronomy_149");}
+        private void appendRiseSet(StringBuilder text,List<Astronomy.Event> events,int horizon,int kind){text.append("\n");if(!events.isEmpty()){text.append(String.format(Locale.ROOT,UiText.get("astronomy_191"),eventTime(events,true),eventTime(events,false)));return;}if(horizon>0)text.append(UiText.get(kind==0?"astronomy_192":kind==2?"astronomy_194":"astronomy_199"));else if(horizon<0)text.append(UiText.get(kind==0?"astronomy_193":"astronomy_195"));else text.append(UiText.get("astronomy_198"));}
+        private float centerX(float cx,float r){return cx+panX*r;}private float centerY(float cy,float r){return cy+panY*r;}
+        private float[] xy(float cx,float cy,float r,double ra,double dec,double alt,double az){double[] q=mode==1?SkyGeometry.northPolar(ra,dec):SkyGeometry.horizontal(alt,az);return new float[]{centerX(cx,r)+(float)q[0]*r*zoom,centerY(cy,r)+(float)q[1]*r*zoom};}
         private void label(Canvas c,String text,float x,float y,int color,float size){p.setColor(color);p.setStyle(Paint.Style.FILL);p.setTextSize(size*getResources().getDisplayMetrics().scaledDensity);p.setTextAlign(x>getWidth()*.8f?Paint.Align.RIGHT:x<getWidth()*.2f?Paint.Align.LEFT:Paint.Align.CENTER);c.drawText(text,x,y,p);float w=p.measureText(text),left=p.getTextAlign()==Paint.Align.RIGHT?x-w:p.getTextAlign()==Paint.Align.LEFT?x:x-w/2;labelBoxes.add(new SkyLabels.Box(left-a.dp(2),y+p.getFontMetrics().ascent-a.dp(1),left+w+a.dp(2),y+p.getFontMetrics().descent+a.dp(1)));}
-        private void objectLabel(String text,float x,float y,int color){p.setTextSize((mode==1?9:10)*getResources().getDisplayMetrics().scaledDensity);labels.add(new SkyLabels.Candidate(text,x,y,p.measureText(text),p.getFontMetrics().ascent,p.getFontMetrics().descent));labelColors.put(text,color);}
+        private void objectLabel(String text,float x,float y,int color,double magnitude,boolean alwaysShow){p.setTextSize((mode==1?9:10)*getResources().getDisplayMetrics().scaledDensity);labels.add(new SkyLabels.Candidate(text,x,y,p.measureText(text),p.getFontMetrics().ascent,p.getFontMetrics().descent,magnitude,alwaysShow));labelColors.put(text,color);}
         private void drawObjectLabels(Canvas c){
             p.setTextAlign(Paint.Align.CENTER);p.setStyle(Paint.Style.FILL);p.setTextSize((mode==1?9:10)*getResources().getDisplayMetrics().scaledDensity);
-            for(SkyLabels.Placed label:SkyLabels.place(labels,labelBoxes,getWidth(),getHeight(),a.dp(8),a.dp(2),a.dp(1))){p.setColor(labelColors.get(label.candidate.id));c.drawText(label.candidate.id,label.candidate.x,label.baseline,p);}
+            for(SkyLabels.Placed label:SkyLabels.placeAdaptive(labels,labelBoxes,getWidth(),getHeight(),a.dp(8),a.dp(2),a.dp(1),SkyGeometry.labelMagnitudeLimit(zoom),getWidth()/2f,getHeight()/2f,chartRadius())){p.setColor(labelColors.get(label.candidate.id));c.drawText(label.candidate.id,label.candidate.x,label.baseline,p);}
         }
         private float chartRadius(){
             float radius=Math.min(getWidth(),getHeight())*.43f;
@@ -157,31 +170,55 @@ public final class AstronomyScreen {
         }
         @Override protected void onMeasure(int widthSpec,int heightSpec){int width=MeasureSpec.getSize(widthSpec);if(width==0)width=a.dp(300);setMeasuredDimension(width,width);}
         private void grid(Canvas c,float cx,float cy,float r){p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(1));p.setColor(0xFF4D627A);c.drawCircle(cx,cy,r,p);
-            if(mode==0){for(int i=1;i<=2;i++)c.drawCircle(cx,cy,r*i/3,p);for(int i=0;i<4;i++){double z=Math.toRadians(i*90);c.drawLine(cx,cy,cx+(float)Math.sin(z)*r,cy+(float)Math.cos(z)*r,p);}label(c,UiText.get("astronomy_026"),cx,cy-r-a.dp(5),0xFFADC7E7,11);label(c,UiText.get("astronomy_030"),cx,cy+r+a.dp(15),0xFFADC7E7,11);label(c,UiText.get("astronomy_028"),cx-r-a.dp(12),cy,0xFFADC7E7,11);label(c,UiText.get("astronomy_032"),cx+r+a.dp(12),cy,0xFFADC7E7,11);}
-            if(mode==1){for(int d=-60;d<=60;d+=30){p.setStyle(Paint.Style.STROKE);p.setColor(0xFF4D627A);c.drawCircle(cx,cy,r*(90-d)/180,p);label(c,d+"°",cx+a.dp(3),cy-r*(90-d)/180,0xFF7E96B2,9);}for(int h=0;h<24;h+=3){double z=Math.toRadians(h*15);p.setStyle(Paint.Style.STROKE);p.setColor(0xFF4D627A);c.drawLine(cx,cy,cx-(float)Math.sin(z)*r,cy-(float)Math.cos(z)*r,p);label(c,h+"h",cx-(float)Math.sin(z)*(r+a.dp(12)),cy-(float)Math.cos(z)*(r+a.dp(12))+a.dp(3),0xFFADC7E7,9);}label(c,UiText.get("astronomy_188"),cx,cy+a.dp(11),0xFFADC7E7,9);
+            if(mode==0){for(int i=1;i<=2;i++)c.drawCircle(cx,cy,r*i/3,p);for(int i=0;i<4;i++){double z=Math.toRadians(i*90);c.drawLine(cx,cy,cx+(float)Math.sin(z)*r,cy+(float)Math.cos(z)*r,p);}}
+            if(mode==1){for(int d=-60;d<=60;d+=30){p.setStyle(Paint.Style.STROKE);p.setColor(0xFF4D627A);c.drawCircle(cx,cy,r*(90-d)/180,p);}for(int h=0;h<24;h+=3){double z=Math.toRadians(h*15);p.setStyle(Paint.Style.STROKE);p.setColor(0xFF4D627A);c.drawLine(cx,cy,cx-(float)Math.sin(z)*r,cy-(float)Math.cos(z)*r,p);}
                 Path horizon=new Path();for(int az=0;az<=360;az+=2){double[] eq=SkyGeometry.equatorial(0,az,at,lat,lon);float[] q=xy(cx,cy,r,eq[0],eq[1],0,az);if(az==0)horizon.moveTo(q[0],q[1]);else horizon.lineTo(q[0],q[1]);}p.setStyle(Paint.Style.STROKE);p.setColor(0xFF66CFC4);c.drawPath(horizon,p);
             }p.setStyle(Paint.Style.FILL);
         }
-        @Override protected void onDraw(Canvas c){float cx=getWidth()/2f,cy=getHeight()/2f,r=chartRadius();hits.clear();labelBoxes.clear();labels.clear();labelColors.clear();c.drawColor(0xFF13253D);grid(c,cx,cy,r);
+        private void gridLabels(Canvas c,float cx,float cy,float r){
+            if(mode==0){label(c,UiText.get("astronomy_026"),cx,cy-r-a.dp(5),0xFFADC7E7,11);label(c,UiText.get("astronomy_030"),cx,cy+r+a.dp(15),0xFFADC7E7,11);label(c,UiText.get("astronomy_028"),cx-r-a.dp(12),cy,0xFFADC7E7,11);label(c,UiText.get("astronomy_032"),cx+r+a.dp(12),cy,0xFFADC7E7,11);}
+            if(mode==1){for(int d=-60;d<=60;d+=30)label(c,d+"°",cx+a.dp(3),cy-r*(90-d)/180,0xFF7E96B2,9);for(int h=0;h<24;h+=3){double z=Math.toRadians(h*15);label(c,h+"h",cx-(float)Math.sin(z)*(r+a.dp(12)),cy-(float)Math.cos(z)*(r+a.dp(12))+a.dp(3),0xFFADC7E7,9);}label(c,UiText.get("astronomy_188"),cx,cy+a.dp(11),0xFFADC7E7,9);}
+        }
+        @Override protected void onDraw(Canvas c){float cx=getWidth()/2f,cy=getHeight()/2f,r=chartRadius();hits.clear();labelBoxes.clear();labels.clear();labelColors.clear();c.drawColor(0xFF13253D);Path viewport=new Path();viewport.addCircle(cx,cy,r,Path.Direction.CW);float gridCx=centerX(cx,r),gridCy=centerY(cy,r),gridRadius=r*zoom;c.save();c.clipPath(viewport);grid(c,gridCx,gridCy,gridRadius);c.restore();gridLabels(c,gridCx,gridCy,gridRadius);c.save();c.clipPath(viewport);
             Hit chosen=null;
-            for(Target t:targets){if(!enabled(t)||t.alt<0)continue;float[] q=xy(cx,cy,r,t.ra,t.dec,t.alt,t.az);p.setStyle(Paint.Style.FILL);p.setColor(t.kind==3?0xFFFFCB67:t.kind==4?0xFFBCD3FF:t.kind==1?0xFFFFD36B:t.kind==2?0xFF92E4D6:0xFFE9F2FF);
+            for(Target t:targets){if(!enabled(t)||t.alt<0)continue;float[] q=xy(cx,cy,r,t.ra,t.dec,t.alt,t.az);if(!SkyGeometry.insideViewport(q[0],q[1],cx,cy,r))continue;p.setStyle(Paint.Style.FILL);p.setColor(t.kind==3?0xFFFFCB67:t.kind==4?0xFFBCD3FF:t.kind==1?0xFFFFD36B:t.kind==2?0xFF92E4D6:0xFFE9F2FF);
                 if(t.kind==2){p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(1));if(t.name.contains(UiText.raw("identity_astronomy_083")))c.drawCircle(q[0],q[1],a.dp(5),p);else c.drawOval(q[0]-a.dp(7),q[1]-a.dp(3),q[0]+a.dp(7),q[1]+a.dp(3),p);p.setStyle(Paint.Style.FILL);}else c.drawCircle(q[0],q[1],a.dp(t.kind>=3?4:t.kind==1?3:(float)Math.max(1.2,2.4-t.mag*.3)),p);
-                objectLabel(UiText.label(t.name),q[0],q[1],t.name.equals(selected)?0xFF8CEAF5:p.getColor());
+                objectLabel(UiText.label(t.name),q[0],q[1],t.name.equals(selected)?0xFF8CEAF5:p.getColor(),t.mag,t.kind>=3);
                 if(t.selectable){Hit hit=new Hit(t,q[0],q[1]);hits.add(hit);if(t.name.equals(selected))chosen=hit;}
             }
-            for(Astronomy.Shower meteor:Astronomy.SHOWERS){if(!meteor.activeOn(localDate))continue;double[] h=Astronomy.horizontal(meteor.ra,meteor.dec,at,lat,lon);if(h[0]<0)continue;float[] q=xy(cx,cy,r,meteor.ra,meteor.dec,h[0],h[1]);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(1));p.setColor(0xFFFF9B54);c.drawCircle(q[0],q[1],a.dp(5),p);c.drawLine(q[0]-a.dp(7),q[1],q[0]+a.dp(7),q[1],p);c.drawLine(q[0],q[1]-a.dp(7),q[0],q[1]+a.dp(7),p);objectLabel(String.format(Locale.ROOT,UiText.get("meteor_radiant_label"),UiText.label(meteor.name)),q[0],q[1],0xFFFF9B54);}
-            drawObjectLabels(c);
+            for(Astronomy.Shower meteor:Astronomy.SHOWERS){if(!meteor.activeOn(localDate))continue;double[] h=Astronomy.horizontal(meteor.ra,meteor.dec,at,lat,lon);if(h[0]<0)continue;float[] q=xy(cx,cy,r,meteor.ra,meteor.dec,h[0],h[1]);if(!SkyGeometry.insideViewport(q[0],q[1],cx,cy,r))continue;p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(1));p.setColor(0xFFFF9B54);c.drawCircle(q[0],q[1],a.dp(5),p);c.drawLine(q[0]-a.dp(7),q[1],q[0]+a.dp(7),q[1],p);c.drawLine(q[0],q[1]-a.dp(7),q[0],q[1]+a.dp(7),p);objectLabel(String.format(Locale.ROOT,UiText.get("meteor_radiant_label"),UiText.label(meteor.name)),q[0],q[1],0xFFFF9B54,Double.NaN,false);}
             double[] aim=aligned?SkyPointing.marker(mode,aimAltitude,aimAzimuth):null;
-            if(aim!=null){float x=cx+(float)aim[0]*r,y=cy+(float)aim[1]*r;p.setStyle(Paint.Style.STROKE);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeWidth(a.dp(1.5f));p.setColor(0xFFE53935);c.drawLine(x-a.dp(14),y,x+a.dp(14),y,p);c.drawLine(x,y-a.dp(14),x,y+a.dp(14),p);p.setStyle(Paint.Style.FILL);}
+            boolean aimOutside=false;float aimX=cx,aimY=cy;if(aim!=null){aimX=centerX(cx,r)+(float)aim[0]*r*zoom;aimY=centerY(cy,r)+(float)aim[1]*r*zoom;aimOutside=aimAltitude<0||!SkyGeometry.insideViewport(aimX,aimY,cx,cy,r);if(!aimOutside){p.setStyle(Paint.Style.STROKE);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeWidth(a.dp(1.5f));p.setColor(0xFFE53935);c.drawLine(aimX-a.dp(14),aimY,aimX+a.dp(14),aimY,p);c.drawLine(aimX,aimY-a.dp(14),aimX,aimY+a.dp(14),p);p.setStyle(Paint.Style.FILL);}}
             if(chosen!=null){c.save();c.rotate(SkyGeometry.selectionAngle(android.os.SystemClock.uptimeMillis()),chosen.x,chosen.y);p.setColor(0xFF8CEAF5);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(a.dp(1.5f));for(int arm=0;arm<4;arm++){c.drawLine(chosen.x+a.dp(8),chosen.y,chosen.x+a.dp(16),chosen.y,p);c.rotate(90,chosen.x,chosen.y);}c.restore();p.setStyle(Paint.Style.FILL);if(isShown()&&hasWindowFocus()&&getWindowVisibility()==VISIBLE)postInvalidateDelayed(33);}
+            c.restore();
+            drawObjectLabels(c);
+            if(aim!=null&&aimOutside)drawAimArrow(c,cx,cy,r,aimX,aimY);
         }
+        private void drawAimArrow(Canvas c,float cx,float cy,float r,float x,float y){double dx=x-cx,dy=y-cy,length=Math.hypot(dx,dy);if(length<1){dx=0;dy=-1;length=1;}float ux=(float)(dx/length),uy=(float)(dy/length),px=-uy,py=ux;float edge=r-a.dp(2),base=Math.max(0,edge-a.dp(15)),half=a.dp(7);Path arrow=new Path();arrow.moveTo(cx+ux*edge,cy+uy*edge);arrow.lineTo(cx+ux*base+px*half,cy+uy*base+py*half);arrow.lineTo(cx+ux*base-px*half,cy+uy*base-py*half);arrow.close();p.setStyle(Paint.Style.FILL);p.setColor(0xFFE53935);c.drawPath(arrow,p);}
         @Override public void onWindowFocusChanged(boolean focused){super.onWindowFocusChanged(focused);if(focused)invalidate();}
         @Override public void onSensorChanged(SensorEvent event){if(!aligned||event.sensor.getType()!=Sensor.TYPE_ROTATION_VECTOR)return;SensorManager.getRotationMatrixFromVector(pointingRotation,event.values);updatePointing(pointingRotation);}
         private void updatePointing(float[] matrix){long now=System.currentTimeMillis(),minute=now/60_000;if(minute!=declinationMinute){pointingDeclination=new GeomagneticField((float)lat,(float)lon,0,now).getDeclination();declinationMinute=minute;}double[] direction=SkyPointing.direction(matrix,"top".equals(a.preferences.getString("astro_orientation_reference","camera")),a.getWindowManager().getDefaultDisplay().getRotation(),pointingDeclination);aimAltitude=direction[0];aimAzimuth=direction[1];postInvalidateOnAnimation();}
         @Override public void onAccuracyChanged(Sensor sensor,int accuracy){}
         @Override protected void onDetachedFromWindow(){if(sensors!=null)sensors.unregisterListener(this);super.onDetachedFromWindow();}
-        @Override public boolean onTouchEvent(MotionEvent e){if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getX();downY=e.getY();dragged=false;return true;}if(e.getActionMasked()==MotionEvent.ACTION_MOVE){if(Math.hypot(e.getX()-downX,e.getY()-downY)>ViewConfiguration.get(getContext()).getScaledTouchSlop())dragged=true;return true;}if(e.getActionMasked()==MotionEvent.ACTION_CANCEL){dragged=true;return true;}if(e.getActionMasked()!=MotionEvent.ACTION_UP)return true;if(dragged)return true;
-            Hit best=null;float d=Float.MAX_VALUE;for(Hit h:hits){float dx=e.getX()-h.x,dy=e.getY()-h.y,dist=dx*dx+dy*dy;if(dist<d){d=dist;best=h;}}float threshold=a.dp(24);if(best!=null&&d<=threshold*threshold){selected=best.target.name;a.preferences.edit().putString("astro_selected",selected).apply();select.accept(selectionDescription());updateDescription();invalidate();performClick();}return true;}
+        @Override public boolean onTouchEvent(MotionEvent e){
+            int action=e.getActionMasked();
+            if(action==MotionEvent.ACTION_DOWN){downX=lastX=e.getX();downY=lastY=e.getY();dragged=false;multiTouch=false;ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(true);return true;}
+            if(action==MotionEvent.ACTION_POINTER_DOWN){multiTouch=true;dragged=true;return true;}
+            if(action==MotionEvent.ACTION_MOVE){
+                if(multiTouch)return true;
+                if(Math.hypot(e.getX()-downX,e.getY()-downY)>ViewConfiguration.get(getContext()).getScaledTouchSlop())dragged=true;
+                if(dragged){float radius=chartRadius();if(radius>0){panX=Math.max(-1f,Math.min(1f,panX+(e.getX()-lastX)/radius));panY=Math.max(-1f,Math.min(1f,panY+(e.getY()-lastY)/radius));lastX=e.getX();lastY=e.getY();invalidate();}}
+                return true;
+            }
+            if(action==MotionEvent.ACTION_CANCEL){releaseTouch();return true;}
+            if(action!=MotionEvent.ACTION_UP)return true;
+            releaseTouch();
+            if(multiTouch)return true;
+            if(dragged){a.preferences.edit().putFloat("astro_chart_pan_x",panX).putFloat("astro_chart_pan_y",panY).apply();return true;}
+            List<Hit> nearby=new ArrayList<>();float threshold=a.dp(24);for(Hit h:hits)if(Math.hypot(e.getX()-h.x,e.getY()-h.y)<=threshold)nearby.add(h);if(nearby.size()==1)select(nearby.get(0).target);else if(nearby.size()>1){String[] names=new String[nearby.size()];for(int i=0;i<nearby.size();i++)names[i]=UiText.label(nearby.get(i).target.name);new ToolDialog(a).setTitle(UiText.get("astronomy_190")).setItems(names,(d,n)->select(nearby.get(n).target)).setNegativeButton(UiText.get("action_back"),null).show();}performClick();return true;
+        }
+        private void releaseTouch(){ViewParent parent=getParent();if(parent!=null)parent.requestDisallowInterceptTouchEvent(false);}
+        private void select(Target target){selected=target.name;a.preferences.edit().putString("astro_selected",selected).apply();select.accept(selectionDescription());updateDescription();invalidate();}
         @Override public boolean performClick(){super.performClick();return true;}
 
     }

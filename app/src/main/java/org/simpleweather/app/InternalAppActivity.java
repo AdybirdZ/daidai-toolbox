@@ -3,6 +3,7 @@ package org.simpleweather.app;
 import android.app.*;
 import android.content.*;
 import android.content.res.*;
+import android.graphics.Color;
 import android.os.*;
 import java.io.File;
 
@@ -21,12 +22,20 @@ public final class InternalAppActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);activityLanguage=AppLanguage.choice(this);String id=getIntent().getStringExtra("internal_app");
         if(!java.util.Arrays.asList(AppModules.EMBEDDED).contains(id)){finish();return;}appId=id;
-        try{ModuleLaunch.begin(this,id);moduleResources=ModuleRuntime.resources(getBaseContext(),id);moduleTheme=moduleResources.newTheme();int theme=moduleResources.getIdentifier("PrototypeTheme","style","org.simpleweather.module."+id);moduleTheme.applyStyle(theme==0?android.R.style.Theme_Material_Light_NoActionBar:theme,true);
+        try{ModuleLaunch.begin(this,id);moduleResources=ModuleRuntime.resources(getBaseContext(),id);moduleTheme=moduleResources.newTheme();int theme=moduleResources.getIdentifier("PrototypeTheme","style","org.simpleweather.module."+id);moduleTheme.applyStyle(theme==0?android.R.style.Theme_Material_Light_NoActionBar:theme,true);configureTransparentSystemBars();
             if(getIntent().getBooleanExtra("settings_mode",false)){settingsPages=new SettingsNavigation(this);setResult(RESULT_OK);}
             page=ModuleRuntime.page(this,id,getIntent().getStringExtra("internal_page")==null?"main":getIntent().getStringExtra("internal_page"));page.dispatch("create",state);if(settingsPages!=null)settingsPages.restoreState(state,appId);
             if(getSharedPreferences("toolbox",0).getBoolean("keep_screen_awake",false))getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             ModuleLaunch.observe(this,id,getWindow().getDecorView(),()->page!=null);
         }catch(Throwable e){android.util.Log.e("InternalApp","Cannot open "+id,e);boolean recovered=false;try{recovered=AppModules.recoverPrevious(this,id);}catch(Exception recovery){android.util.Log.e("InternalApp","Cannot recover "+id,recovery);}android.widget.Toast.makeText(getBaseContext(),getBaseContext().getString(recovered?R.string.module_recovered:R.string.module_open_failed),1).show();finish();}
+    }
+    private void configureTransparentSystemBars(){
+        if(Build.VERSION.SDK_INT>=30)getWindow().setDecorFitsSystemWindows(false);
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        if(Build.VERSION.SDK_INT>=26)getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE|android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        if(Build.VERSION.SDK_INT>=28)getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
+        if(Build.VERSION.SDK_INT>=29){getWindow().setNavigationBarContrastEnforced(false);getWindow().setStatusBarContrastEnforced(false);}
     }
     @Override protected void onStart(){super.onStart();if(page!=null)page.dispatch("start",null);}
     @Override protected void onResume(){super.onResume();if(page!=null)page.dispatch("resume",null);ModuleLaunch.resume(this);}

@@ -21,7 +21,7 @@ final class SettingsPanel extends AlertDialog {
     SettingsPanel(Context context,ToolDialog spec,SettingsNavigation navigation){super(context,android.R.style.Theme_Material_Light_NoActionBar);this.spec=spec;this.navigation=navigation;}
     private int dp(float n){return Math.round(n*getContext().getResources().getDisplayMetrics().density);}
     @Override protected void onCreate(Bundle state){
-        super.onCreate(state);Context c=getContext();root=new LinearLayout(c);root.setOrientation(LinearLayout.VERTICAL);root.setBackgroundColor(MainActivity.BG);
+        super.onCreate(state);Context c=getContext();root=new LinearLayout(c);root.setOrientation(LinearLayout.VERTICAL);root.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         LinearLayout header=new LinearLayout(c);header.setGravity(Gravity.CENTER_VERTICAL);header.setPadding(dp(16),dp(10),dp(16),dp(10));
         Button back=new Button(c);back.setText("‹");back.setContentDescription(SettingsActivity.hostText(c,R.string.action_back));back.setOnClickListener(v->cancel());header.addView(back,new LinearLayout.LayoutParams(dp(48),dp(48)));
         TextView title=new TextView(c);title.setText(spec.pageTitle);title.setTextSize(23);title.setTypeface(null,1);title.setTag(UiColors.TITLE);title.setPadding(dp(12),0,0,0);header.addView(title,new LinearLayout.LayoutParams(0,-2,1));root.addView(header);
@@ -41,7 +41,8 @@ final class SettingsPanel extends AlertDialog {
         LinearLayout actions=new LinearLayout(c);actions.setOrientation(LinearLayout.VERTICAL);actions.setPadding(dp(18),dp(6),dp(18),dp(8));
         for(int which:new int[]{BUTTON_POSITIVE,BUTTON_NEUTRAL,BUTTON_NEGATIVE}){CharSequence label=spec.pageButtons.get(which);if(label==null||label.equals(SettingsActivity.hostText(c,R.string.action_close))||label.equals(SettingsActivity.hostText(c,R.string.action_back)))continue;Button b=new Button(c);b.setText(label);b.setMinHeight(dp(48));b.setAllCaps(false);b.setOnClickListener(v->{DialogInterface.OnClickListener listener=spec.pageListeners.get(which);if(listener!=null)listener.onClick(this,which);dismiss();});buttons.put(which,b);LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);p.topMargin=dp(4);p.bottomMargin=dp(4);actions.addView(b,p);}
         if(actions.getChildCount()>0)root.addView(actions);
-        Button desktop=new Button(c);desktop.setText(SettingsActivity.hostText(c,R.string.launcher_home));desktop.setAllCaps(false);desktop.setOnClickListener(v->{Activity owner=SettingsActivity.owner(c);if(owner!=null)SettingsNavigation.desktop(owner);});LinearLayout.LayoutParams home=new LinearLayout.LayoutParams(-1,dp(52));home.setMargins(dp(18),0,dp(18),dp(4));root.addView(desktop,home);
+        LinearLayout desktopBar=new LinearLayout(c);desktopBar.setGravity(Gravity.CENTER);
+        Button desktop=new Button(c);desktop.setText(SettingsActivity.hostText(c,R.string.launcher_home));desktop.setAllCaps(false);desktop.setOnClickListener(v->{Activity owner=SettingsActivity.owner(c);if(owner!=null)SettingsNavigation.desktop(owner);});desktopBar.addView(desktop);SettingsNavigation.layoutDesktopBar(desktopBar,desktop);root.addView(desktopBar,new LinearLayout.LayoutParams(-1,-2));
         flatten(root);
         UiColors.decorate(c,root);
     }

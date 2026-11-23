@@ -39,8 +39,8 @@ public final class StatusTransferTests {
         bad=new JSONObject(places.getJSONObject(0).toString()).put("lat","-31");reject(file("places",new JSONArray().put(bad)),"places","coordinate must be numeric");
         reject(file("places",new JSONArray().put(places.get(0)).put(places.get(0))),"places","duplicate IDs inside file rejected");
         check(StatusTransferData.parse("\uFEFF"+file("places",places),"places").rows.length()==1,"UTF-8 BOM accepted");
-        near(RouteViewport.metersAt(0),30,"left edge is 30 meters");near(RouteViewport.metersAt(1000),10000,"right edge is 10 kilometers");
-        double previous=0;for(int n=0;n<=1000;n+=10){double meters=RouteViewport.metersAt(n);check(meters>previous,"slider range grows monotonically");check(RouteViewport.progressAt(meters)==n,"slider preserves scale round trip");previous=meters;}
+        near(RouteViewport.metersAt(0),10000,"left edge zooms out to 10 kilometers");near(RouteViewport.metersAt(1000),30,"right edge zooms in to 30 meters");
+        double previous=10001;for(int n=0;n<=1000;n+=10){double meters=RouteViewport.metersAt(n);check(meters<previous,"slider zooms in monotonically from left to right");check(RouteViewport.progressAt(meters)==n,"slider preserves scale round trip");previous=meters;}
         RouteViewport v=new RouteViewport();v.sideMeters(30);near(v.sideMeters(),30,"minimum range clamped");v.sideMeters(10000);near(v.sideMeters(),10000,"maximum range clamped");v.sideMeters(10);near(v.sideMeters(),30,"too-small range clamps to minimum");v.sideMeters(30000);near(v.sideMeters(),10000,"too-large range clamps to maximum");
         near(StatusMath.placeRange(50,100000),100,"nearby selected target ignores far visible place");near(StatusMath.placeRange(500,100000),1000,"selected target controls kilometer range");near(StatusMath.placeRange(Double.NaN,100000),100000,"no target falls back to farthest visible place");
         System.out.println("StatusTransferTests: "+checks+" checks passed");

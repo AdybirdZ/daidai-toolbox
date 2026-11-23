@@ -2,12 +2,30 @@ package org.simpleweather.app;
 
 import android.app.*;
 import android.content.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 /** Dedicated settings application window, shared by all installed internal applications. */
 public final class SettingsActivity extends MainActivity {
     public static final int REQUEST=7301;
     private SettingsNavigation pages;
+    public static void addBackground(Activity activity,FrameLayout container){
+        // InternalAppActivity uses an app-specific files directory for module data;
+        // the selected toolbox background remains in the host files directory.
+        Bitmap image=BitmapFactory.decodeFile(new java.io.File(activity.getApplicationInfo().dataDir,"files/background.jpg").getPath());
+        if(image==null){container.setBackgroundColor(MainActivity.BG);return;}
+        ImageView background=new ImageView(activity);background.setScaleType(ImageView.ScaleType.CENTER_CROP);background.setImageBitmap(image);
+        container.addView(background,new FrameLayout.LayoutParams(-1,-1));
+        int brightness=Math.max(0,Math.min(100,activity.getSharedPreferences("toolbox",0).getInt("background_brightness",20)));
+        View shade=new View(activity);shade.setBackgroundColor(Color.argb((100-brightness)*255/100,245,247,251));
+        container.addView(shade,new FrameLayout.LayoutParams(-1,-1));
+        container.setBackgroundColor(MainActivity.BG);
+    }
     public static Activity owner(Context context){for(int i=0;i<10&&context!=null;i++){if(context instanceof Activity)return (Activity)context;if(!(context instanceof ContextWrapper))break;Context next=((ContextWrapper)context).getBaseContext();if(next==context)break;context=next;}return null;}
     public static String hostText(Context context,int id){Activity a=owner(context);return (a==null?context:a.getBaseContext()).getString(id);}
     public static void open(Activity origin,String app){

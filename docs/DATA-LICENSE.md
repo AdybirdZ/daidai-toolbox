@@ -1,5 +1,11 @@
 > 本文按版本保留许可核查记录，早期章节描述当时行为，不代表当前默认值。当前功能见 [README](../README.md)，城市目录现状见 [CITY-CATALOG.md](CITY-CATALOG.md)。各版本仅核查所列数据，不代表重新核验所有历史来源。
 
+# 3.0.5 天文星表资料
+
+3.0.5 新增五车一（HIP 23015）和壁宿一（HIP 1067），并将 HIP 86032 的中文显示名称规范为“侯”。中文星名及其 HIP 对应关系取自 Stellarium 中文星空文化资料 `skycultures/chinese/star_names.zh_CN.fab`，来源提交为 [`568d88df8126c45949e19564fe312de577340e5c`](https://github.com/Stellarium/stellarium/tree/568d88df8126c45949e19564fe312de577340e5c/skycultures/chinese)，该文化资料标注 CC BY-SA 4.0。许可链接为 https://creativecommons.org/licenses/by-sa/4.0/ 。
+
+五车一和壁宿一的 HIP 编号、赤经、赤纬及 V 波段视星等取自同一提交中的 HIP–Gaia3 星表说明和数据。星表资料将目录追溯至 ESA Hipparcos 与 Gaia。应用只使用所列身份和静态数值，不包含上游二进制星表、程序代码或图片，也不在运行时访问 Stellarium。完整字段、来源版本和显示处理见 [ASTRONOMY-3.0.5.md](ASTRONOMY-3.0.5.md) 与 [ASTRONOMY-3.0.5.json](ASTRONOMY-3.0.5.json)。
+
 # 3.0.4 天文星表资料
 
 新增的 20 个中国传统星名取自 Stellarium 中文星空文化资料 `skycultures/chinese/star_names.zh_CN.fab`，来源提交为 [`568d88df8126c45949e19564fe312de577340e5c`](https://github.com/Stellarium/stellarium/tree/568d88df8126c45949e19564fe312de577340e5c/skycultures/chinese)。该文化说明标注 CC BY-SA 4.0。应用对星名与所选星表对象作了筛选和显示适配，具体条目及修改范围见 [ASTRONOMY-3.0.4.md](ASTRONOMY-3.0.4.md) 和 [ASTRONOMY-3.0.4.json](ASTRONOMY-3.0.4.json)。相关名称数据按 CC BY-SA 4.0 提供，许可链接为 https://creativecommons.org/licenses/by-sa/4.0/ 。

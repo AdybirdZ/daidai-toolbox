@@ -133,7 +133,7 @@ public final class EarthquakeScreen {
         c.addView(a.text(EarthquakeIntensity.label(event),14,a.INK,false));a.gap(c,10);c.addView(a.text(UiText.get("earthquake_070"),13,a.MUTED,false));dialog(UiText.get("earthquake_071"),c);
     }
 
-    private static String region(String value){String v=value.toUpperCase(Locale.ROOT);String[][] names={{"XIZANG",UiText.get("earthquake_072")},{"XIZANG-QINGHAI BORDER REGION",UiText.get("earthquake_073")},{"SOUTHERN XINJIANG, CHINA",UiText.get("earthquake_074")},{"NORTHERN XINJIANG, CHINA",UiText.get("earthquake_075")},{"SICHUAN, CHINA",UiText.get("earthquake_076")},{"QINGHAI, CHINA",UiText.get("earthquake_077")},{"YUNNAN, CHINA",UiText.get("earthquake_078")},{"TAIWAN REGION",UiText.get("earthquake_079")},{"TAIWAN",UiText.get("earthquake_080")},{"NEAR EAST COAST OF HONSHU, JAPAN",UiText.get("earthquake_081")}};for(String[] n:names)if(v.equals(n[0]))return n[1]+UiText.get("earthquake_info_005")+value+UiText.get("earthquake_api_004");return value;}
+    private static String region(String value){return EarthquakeDisplay.region(value);}
 
     public void refresh(boolean manual){
         if(dead||!cacheLoaded||!visible||cleared&&!manual)return;if(manual)cleared=false;if(!inFlight.isEmpty()){if(manual)a.toast(UiText.get("earthquake_082"));return;}

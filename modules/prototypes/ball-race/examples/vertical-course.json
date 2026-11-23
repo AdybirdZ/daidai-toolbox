@@ -1,0 +1,92 @@
+{
+  "format": "ball-race-course",
+  "schemaVersion": 1,
+  "coordinateUnit": "level-unit",
+  "id": "course-practice",
+  "name": "竖向练习赛道",
+  "startLevelId": "level-a",
+  "levels": [
+    {
+      "id": "level-a",
+      "width": 360,
+      "height": 480,
+      "originX": 0,
+      "originY": 0,
+      "rotationDeg": 0,
+      "ports": [
+        { "id": "entry", "kind": "entry", "side": "top", "offset": 180, "label": "vertical-center" },
+        { "id": "exit", "kind": "exit", "side": "bottom", "offset": 180, "label": "vertical-center" }
+      ],
+      "objects": [
+        {
+          "id": "beam-1", "type": "rectangle", "x": 180, "y": 120,
+          "rotationDeg": 25, "width": 84, "height": 14, "radius": 0,
+          "color": -12018252, "collision": true, "elasticity": 0.65, "friction": 0.35,
+          "vertices": []
+        },
+        {
+          "id": "bumper-1", "type": "circle", "x": 92, "y": 255,
+          "rotationDeg": 0, "width": 0, "height": 0, "radius": 18,
+          "color": -11010080, "collision": true, "elasticity": 0.8, "friction": 0.4,
+          "vertices": []
+        },
+        {
+          "id": "rail-1", "type": "segment", "x": 260, "y": 345,
+          "rotationDeg": 90, "width": 92, "height": 10, "radius": 0,
+          "color": -10921639, "collision": true, "elasticity": 0.5, "friction": 0.25,
+          "vertices": []
+        }
+      ]
+    },
+    {
+      "id": "level-b",
+      "width": 360,
+      "height": 480,
+      "originX": 0,
+      "originY": 480,
+      "rotationDeg": 0,
+      "ports": [
+        { "id": "entry", "kind": "entry", "side": "top", "offset": 180, "label": "vertical-center" },
+        { "id": "exit", "kind": "exit", "side": "bottom", "offset": 180, "label": "vertical-center" }
+      ],
+      "objects": [
+        {
+          "id": "beam-2", "type": "rectangle", "x": 120, "y": 145,
+          "rotationDeg": 332, "width": 112, "height": 12, "radius": 0,
+          "color": -10921639, "collision": true, "elasticity": 0.55, "friction": 0.3,
+          "vertices": []
+        },
+        {
+          "id": "bumper-2", "type": "circle", "x": 255, "y": 302,
+          "rotationDeg": 0, "width": 0, "height": 0, "radius": 22,
+          "color": -11684180, "collision": true, "elasticity": 0.7, "friction": 0.4,
+          "vertices": []
+        }
+      ]
+    },
+    {
+      "id": "level-c",
+      "width": 360,
+      "height": 480,
+      "originX": 0,
+      "originY": 960,
+      "rotationDeg": 0,
+      "ports": [
+        { "id": "entry", "kind": "entry", "side": "top", "offset": 180, "label": "vertical-center" },
+        { "id": "finish", "kind": "exit", "side": "bottom", "offset": 180, "label": "finish-center" }
+      ],
+      "objects": [
+        {
+          "id": "triangle-1", "type": "polygon", "x": 180, "y": 236,
+          "rotationDeg": 0, "width": 0, "height": 0, "radius": 0,
+          "color": -14020378, "collision": true, "elasticity": 0.6, "friction": 0.35,
+          "vertices": [[-22, -16], [24, -8], [2, 25]]
+        }
+      ]
+    }
+  ],
+  "connections": [
+    { "fromLevelId": "level-a", "exitPortId": "exit", "toLevelId": "level-b", "entryPortId": "entry", "type": "walkable" },
+    { "fromLevelId": "level-b", "exitPortId": "exit", "toLevelId": "level-c", "entryPortId": "entry", "type": "walkable" }
+  ]
+}

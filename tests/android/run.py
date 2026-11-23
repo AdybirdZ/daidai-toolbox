@@ -4,7 +4,7 @@ if hasattr(sys.stdout,"reconfigure"):sys.stdout.reconfigure(encoding="utf-8")
 from pathlib import Path
 root=Path(__file__).resolve().parents[2]
 workspace=root.parent
-parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['StoreBatchOnline301UiTests','SettingsData301UiTests','Settings301UiTests','Store301UiTests','Embedded301UiTests','Performance301UiTests','ButtonStyleUiTests','ModuleLaunchUiTests','ModuleEnduranceUiTests','StoreUpgradeUiTests','AppDataManagerUiTests','ArchitectureUiTests','LauncherUiTests','MusicDiagnosticsUiTests','UiSessionUiTests','Pre3UpdateUiTests','InternalAppsUiTests','ModuleStoreOnlineTests','ModuleHostUiTests','Release221UiTests','AppIconPinUiTests','AppIconUiTests','TodoUiTests','StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','Release130UiTests','EnglishPreviewUiTests','LanguageUiTests'],default='StatusUiTests');parser.add_argument('--language',choices=['zh-CN','en'],default='zh-CN');opts=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--serial',default='emulator-5580');parser.add_argument('--suite',choices=['StoreBatchOnline301UiTests','SettingsData301UiTests','Settings301UiTests','Store301UiTests','Embedded301UiTests','Performance301UiTests','ButtonStyleUiTests','ModuleLaunchUiTests','ModuleEnduranceUiTests','StoreUpgradeUiTests','AppDataManagerUiTests','ArchitectureUiTests','LauncherUiTests','MusicDiagnosticsUiTests','UiSessionUiTests','Pre3UpdateUiTests','InternalAppsUiTests','ModuleStoreOnlineTests','ModuleHostUiTests','BallRaceTestHostUiTests','Release221UiTests','AppIconPinUiTests','AppIconUiTests','TodoUiTests','StatusUiTests','ConfigurationUiTests','Release1212UiTests','Release1213UiTests','Release1214UiTests','Release1215UiTests','Release130UiTests','EnglishPreviewUiTests','LanguageUiTests'],default='StatusUiTests');parser.add_argument('--language',choices=['zh-CN','en'],default='zh-CN');parser.add_argument('--target-package',default='org.simpleweather.app');opts=parser.parse_args()
 if not opts.serial.startswith('emulator-'):raise SystemExit('Use an isolated Android emulator, not a personal device.')
 sdk=workspace/'tools/android-sdk';tools=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar'
 java_dir=Path(shutil.which('javac')).parent
@@ -14,13 +14,21 @@ def run(args,**kwargs):
  command=[os.path.relpath(x,workspace) if i>0 and isinstance(x,Path) else str(x) for i,x in enumerate(args)]
  return subprocess.run(command,cwd=workspace,check=True,**kwargs)
 manifest=out/'AndroidManifest.xml'
-manifest.write_text('''<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.simpleweather.qa" android:versionCode="1"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/><application android:label="Status regression tests"/><instrumentation android:name="org.simpleweather.qa.StatusUiTests" android:targetPackage="org.simpleweather.app"/></manifest>'''.replace('StatusUiTests',opts.suite),encoding='utf-8')
+manifest.write_text('''<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.simpleweather.qa" android:versionCode="1"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/><queries><package android:name="org.simpleweather.app"/></queries><application android:label="Status regression tests"/><instrumentation android:name="org.simpleweather.qa.StatusUiTests" android:targetPackage="org.simpleweather.app"/></manifest>'''.replace('StatusUiTests',opts.suite).replace('android:targetPackage="org.simpleweather.app"','android:targetPackage="'+opts.target_package+'"'),encoding='utf-8')
 if opts.suite=='MusicDiagnosticsUiTests':
     value=manifest.read_text('utf8').replace('<application android:label="Status regression tests"/>','<queries><package android:name="org.simpleweather.app"/></queries><application android:label="Music regression tests"><provider android:name="org.simpleweather.qa.MusicDiagnosticsUiTests$TestDocuments" android:authorities="org.simpleweather.qa.musicdocuments" android:exported="true" android:grantUriPermissions="true" android:permission="android.permission.MANAGE_DOCUMENTS"/><activity android:name="org.simpleweather.qa.MusicDiagnosticsUiTests$GrantActivity" android:exported="true" android:theme="@android:style/Theme.NoDisplay"/></application>')
     manifest.write_text(value,encoding='utf8')
 unsigned=out/'unsigned.apk';aligned=out/'aligned.apk';apk=out/'tests.apk'
 run([tools/'aapt2.exe','link','-o',unsigned,'-I',platform,'--manifest',manifest])
-run([java_dir/'javac.exe','-encoding','UTF-8','--release','8','-cp',platform,'-d',out/'classes',root/('tests/android/'+opts.suite+'.java')])
+if opts.suite=='BallRaceTestHostUiTests':
+    test_source=root/'modules/prototypes/ball-race/tests/android/BallRaceTestHostUiTests.java'
+    fixture=workspace/'work/builds/3.0.5-test-host/BallRace.ddapp'
+    if not fixture.is_file():raise SystemExit('Build the local test host before running this suite.')
+    run([sdk/'platform-tools/adb.exe','-s',opts.serial,'shell','mkdir','-p','/data/local/tmp/internal-apps'])
+    run([sdk/'platform-tools/adb.exe','-s',opts.serial,'push',fixture,'/data/local/tmp/internal-apps/ballrace.ddapp'])
+else:
+    test_source=root/('tests/android/'+opts.suite+'.java')
+run([java_dir/'javac.exe','-encoding','UTF-8','--release','8','-cp',platform,'-d',out/'classes',test_source])
 run([java_dir/'java.exe','-cp',tools/'lib/d8.jar','com.android.tools.r8.D8','--lib',platform,'--min-api','26','--output',out/'dex',*list((out/'classes').rglob('*.class'))])
 with zipfile.ZipFile(unsigned,'a',zipfile.ZIP_DEFLATED) as z:
  for p in (out/'dex').glob('*.dex'):z.write(p,p.name)

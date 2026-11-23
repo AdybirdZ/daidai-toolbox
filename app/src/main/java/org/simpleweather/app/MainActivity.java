@@ -99,6 +99,7 @@ public class MainActivity extends Activity {
         if(state==null&&getIntent().hasExtra("last_tab"))tab=getIntent().getIntExtra("last_tab",-1);
         if(state==null&&getIntent().getBooleanExtra("open_location",false))tab=2;
         if(state==null&&getIntent().getBooleanExtra("open_todo",false))tab=7;
+        if(HostBuildProfile.BALL_RACE_TEST_HOST)tab=-1;
         if(getIntent().getBooleanExtra("configuration_applied",false)){tab=-1;getIntent().removeExtra("configuration_applied");}
         switchTab(tab);if(tab==0)load(false);LauncherScreen.openRequested(this,getIntent());
 
@@ -106,7 +107,7 @@ public class MainActivity extends Activity {
         onShellReady(state);
         boolean languageReopen=reopenSettings>0;if(languageReopen){int level=reopenSettings;reopenSettings=0;new SettingsScreen(this).settingsPath(level==2);}
         if(!languageReopen)UiSession.restore(this,state,id->{int index=Arrays.asList(AppModules.IDS).indexOf(id);return index<0?null:screen(index);});
-        if(state==null&&preferences.getInt("seen_version",0)<versionCode())main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",versionCode()).apply();}},700);
+        if(!HostBuildProfile.BALL_RACE_TEST_HOST&&state==null&&preferences.getInt("seen_version",0)<versionCode())main.postDelayed(()->{if(!dead){updates();preferences.edit().putInt("seen_version",versionCode()).apply();}},700);
     }
     protected void onShellReady(Bundle state){}
     public int dp(float n) {return Math.round(n*getResources().getDisplayMetrics().density);}
@@ -333,6 +334,7 @@ public class MainActivity extends Activity {
     }
     public void updates(){
         LinearLayout c=column();c.setPadding(dp(20),dp(8),dp(20),dp(16));
+        updateEntry(c,getString(R.string.update_305_title),getString(R.string.update_305_detail));
         updateEntry(c,getString(R.string.update_304_title),getString(R.string.update_304_detail));
         updateEntry(c,getString(R.string.update_303_title),getString(R.string.update_303_detail));
         updateEntry(c,getString(R.string.update_302_title),getString(R.string.update_302_detail));

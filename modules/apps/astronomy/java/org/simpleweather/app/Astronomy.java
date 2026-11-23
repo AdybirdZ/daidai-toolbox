@@ -128,12 +128,47 @@ public final class Astronomy {
     public static String compass(double az){return new String[]{UiText.get("astronomy_026"),UiText.get("astronomy_027"),UiText.get("astronomy_028"),UiText.get("astronomy_029"),UiText.get("astronomy_030"),UiText.get("astronomy_031"),UiText.get("astronomy_032"),UiText.get("astronomy_033")}[(int)Math.floor((norm(az)+22.5)/45)%8];}
     public static final class Event {public final Instant at;public final boolean rising;public Event(Instant t,boolean r){at=t;rising=r;}}
     public static List<Event> crossings(LocalDate date,ZoneId zone,double lat,double lon,boolean lunar,double altitude){
-        List<Event> out=new ArrayList<>();Instant start=date.atStartOfDay(zone).toInstant(),end=date.plusDays(1).atStartOfDay(zone).toInstant();Instant prev=start;double last=(lunar?moonPosition(prev,lat,lon):sunPosition(prev,lat,lon))[0]-altitude;
+        return crossings(date,zone,t->(lunar?moonPosition(t,lat,lon):sunPosition(t,lat,lon))[0],altitude);
+    }
+    public static List<Event> objectCrossings(LocalDate date,ZoneId zone,double lat,double lon,double ra,double dec){
+        return crossings(date,zone,t->horizontal(ra,dec,t,lat,lon)[0],0);
+    }
+    public static List<Event> planetCrossings(LocalDate date,ZoneId zone,double lat,double lon,String name){
+        return crossings(date,zone,t->{for(Planet planet:planets(t))if(planet.name.equals(name))return horizontal(planet.ra,planet.dec,t,lat,lon)[0];return Double.NaN;},0);
+    }
+    public static int objectHorizonState(LocalDate date,ZoneId zone,double lat,double lon,double ra,double dec){
+        return horizonState(date,zone,t->horizontal(ra,dec,t,lat,lon)[0],0);
+    }
+    public static int planetHorizonState(LocalDate date,ZoneId zone,double lat,double lon,String name){
+        return horizonState(date,zone,t->{for(Planet planet:planets(t))if(planet.name.equals(name))return horizontal(planet.ra,planet.dec,t,lat,lon)[0];return Double.NaN;},0);
+    }
+    public static int sunHorizonState(LocalDate date,ZoneId zone,double lat,double lon){
+        return horizonState(date,zone,t->sunPosition(t,lat,lon)[0],-.833);
+    }
+    public static int moonHorizonState(LocalDate date,ZoneId zone,double lat,double lon){
+        return horizonState(date,zone,t->moonPosition(t,lat,lon)[0],-.3);
+    }
+    private interface AltitudeAt {double value(Instant at);}
+    private static List<Event> crossings(LocalDate date,ZoneId zone,AltitudeAt altitudeAt,double altitude){
+        List<Event> out=new ArrayList<>();Instant start=date.atStartOfDay(zone).toInstant(),end=date.plusDays(1).atStartOfDay(zone).toInstant();Instant prev=start;double last=altitudeAt.value(prev)-altitude;
         for(Instant t=start.plusSeconds(600);;t=t.plusSeconds(600)){
-            if(t.isAfter(end))t=end;double value=(lunar?moonPosition(t,lat,lon):sunPosition(t,lat,lon))[0]-altitude;
-            if((last<0&&value>=0)||(last>=0&&value<0)){long lo=prev.toEpochMilli(),hi=t.toEpochMilli();boolean rising=value>last;for(int j=0;j<20;j++){long mid=lo+(hi-lo)/2;double a=(lunar?moonPosition(Instant.ofEpochMilli(mid),lat,lon):sunPosition(Instant.ofEpochMilli(mid),lat,lon))[0]-altitude;if((a<0)==rising)lo=mid;else hi=mid;}out.add(new Event(Instant.ofEpochMilli(lo+(hi-lo)/2),rising));}
+            if(t.isAfter(end))t=end;double value=altitudeAt.value(t)-altitude;
+            if((last<0&&value>=0)||(last>=0&&value<0)){long lo=prev.toEpochMilli(),hi=t.toEpochMilli();boolean rising=value>last;for(int j=0;j<20;j++){long mid=lo+(hi-lo)/2;double a=altitudeAt.value(Instant.ofEpochMilli(mid))-altitude;if((a<0)==rising)lo=mid;else hi=mid;}out.add(new Event(Instant.ofEpochMilli(lo+(hi-lo)/2),rising));}
             if(!t.isBefore(end))break;prev=t;last=value;
         }return out;
+    }
+    private static int horizonState(LocalDate date,ZoneId zone,AltitudeAt altitudeAt,double threshold){
+        Instant start=date.atStartOfDay(zone).toInstant(),end=date.plusDays(1).atStartOfDay(zone).toInstant();
+        boolean above=true,below=true;
+        for(Instant at=start;;){
+            double value=altitudeAt.value(at)-threshold;
+            if(!Double.isFinite(value))return 0;
+            if(value<0)above=false;else below=false;
+            if(!above&&!below)return 0;
+            if(!at.isBefore(end))break;
+            Instant next=at.plusSeconds(600);at=next.isAfter(end)?end:next;
+        }
+        return above?1:below?-1:0;
     }
     public static final class Star {
         public final String name;public final double ra,dec,mag;
@@ -198,5 +233,6 @@ public final class Astronomy {
         new Star(UiText.raw("identity_astronomy_077"),84.053388941,-1.201919136,1.69),
         new Star(UiText.raw("identity_astronomy_078"),83.001667056,-0.299095107,2.41),
         new Star(UiText.raw("identity_astronomy_079"),81.282763557,6.349703264,1.64),
-        new Star(UiText.raw("identity_astronomy_080"),86.93912016833,-9.66960491861,2.06),new Star(UiText.raw("identity_astronomy_084"),10.89737874,-17.98660632,2.2061),new Star(UiText.raw("identity_astronomy_085"),89.88217887,44.94743257,1.9038),new Star(UiText.raw("identity_astronomy_086"),21.45396446,60.23528404,2.7146),new Star(UiText.raw("identity_astronomy_087"),51.08070872,49.8611793,1.8972),new Star(UiText.raw("identity_astronomy_088"),46.19912808,53.50643576,3.0586),new Star(UiText.raw("identity_astronomy_089"),55.73126774,47.78754851,2.9703),new Star(UiText.raw("identity_astronomy_090"),47.04221855,40.95564668,2.0969),new Star(UiText.raw("identity_astronomy_091"),9.83197992,30.86102175,3.4328),new Star(UiText.raw("identity_astronomy_092"),32.38594634,34.98729707,3.0625),new Star(UiText.raw("identity_astronomy_093"),319.64488469,62.58557447,2.5141),new Star(UiText.raw("identity_astronomy_094"),17.43301617,35.62055765,2.1741),new Star(UiText.raw("identity_astronomy_095"),28.38256162,19.29385527,3.8584),new Star(UiText.raw("identity_astronomy_096"),28.66004579,20.80803147,2.7044),new Star(UiText.raw("identity_astronomy_097"),340.75057261,30.22124505,3.0897),new Star(UiText.raw("identity_astronomy_098"),45.5698878,4.08973877,2.6196),new Star(UiText.raw("identity_astronomy_099"),50.27834502,3.67562065,5.85),new Star(UiText.raw("identity_astronomy_100"),314.29341278,41.16713864,3.9504),new Star(UiText.raw("identity_astronomy_101"),296.24366059,45.13081002,2.8683),new Star(UiText.raw("identity_astronomy_102"),262.60817373,52.30138871,2.9466),new Star(UiText.raw("identity_astronomy_103"),322.16498688042,70.56071518917,3.23)};
+        new Star(UiText.raw("identity_astronomy_080"),86.93912016833,-9.66960491861,2.06),new Star(UiText.raw("identity_astronomy_084"),10.89737874,-17.98660632,2.2061),new Star(UiText.raw("identity_astronomy_085"),89.88217887,44.94743257,1.9038),new Star(UiText.raw("identity_astronomy_086"),21.45396446,60.23528404,2.7146),new Star(UiText.raw("identity_astronomy_087"),51.08070872,49.8611793,1.8972),new Star(UiText.raw("identity_astronomy_088"),46.19912808,53.50643576,3.0586),new Star(UiText.raw("identity_astronomy_089"),55.73126774,47.78754851,2.9703),new Star(UiText.raw("identity_astronomy_090"),47.04221855,40.95564668,2.0969),new Star(UiText.raw("identity_astronomy_091"),9.83197992,30.86102175,3.4328),new Star(UiText.raw("identity_astronomy_092"),32.38594634,34.98729707,3.0625),new Star(UiText.raw("identity_astronomy_093"),319.64488469,62.58557447,2.5141),new Star(UiText.raw("identity_astronomy_094"),17.43301617,35.62055765,2.1741),new Star(UiText.raw("identity_astronomy_095"),28.38256162,19.29385527,3.8584),new Star(UiText.raw("identity_astronomy_096"),28.66004579,20.80803147,2.7044),new Star(UiText.raw("identity_astronomy_097"),340.75057261,30.22124505,3.0897),new Star(UiText.raw("identity_astronomy_098"),45.5698878,4.08973877,2.6196),new Star(UiText.raw("identity_astronomy_099"),50.27834502,3.67562065,5.85),new Star(UiText.raw("identity_astronomy_100"),314.29341278,41.16713864,3.9504),new Star(UiText.raw("identity_astronomy_101"),296.24366059,45.13081002,2.8683),new Star(UiText.raw("identity_astronomy_102"),262.60817373,52.30138871,2.9466),new Star(UiText.raw("identity_astronomy_103"),322.16498688042,70.56071518917,3.23),new Star(UiText.raw("identity_astronomy_104"),74.24843701788,33.16601473369,2.69),new Star(UiText.raw("identity_astronomy_105"),3.30897038983,15.18355073109,2.84)};
+    public static Star[] starsByMagnitude(){Star[] sorted=STARS.clone();Arrays.sort(sorted,Comparator.comparingDouble((Star star)->star.mag).thenComparing(star->star.name));return sorted;}
 }

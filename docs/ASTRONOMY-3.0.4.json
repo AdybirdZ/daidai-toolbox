@@ -55,8 +55,8 @@
     {"name": "上卫增一", "hip": 106032, "raDegrees": 322.16498688042, "decDegrees": 70.56071518917, "visualMagnitude": 3.23}
   ],
   "alreadyPresent": [
-    "北极星 is the alias of the existing 勾陈一 star and is not added as a duplicate point.",
+    "北极星与勾陈一使用同一稳定星表身份。",
     "五车二、王良四、王良一、策、天大将军一、壁宿二、娄宿三、室宿一、室宿二、织女一、天津一、天津四 and 天棓四 were already present.",
-    "昴星团 and 仙女座星系 were already present as M45 昴星团 and M31 仙女座星系."
+    "昴星团和仙女座星系分别对应 M45 昴星团与 M31 仙女座星系，每个对象使用一个星表条目。"
   ]
 }

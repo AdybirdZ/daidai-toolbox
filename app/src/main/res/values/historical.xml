@@ -81,11 +81,11 @@
     <string name="astronomy_079" formatted="false">"北落师门"</string>
     <string name="astronomy_080" formatted="false">"天津四"</string>
     <string name="astronomy_081" formatted="false">"轩辕十四"</string>
-    <string name="astronomy_082" formatted="false">"勾陈一（北极星）"</string>
+    <string name="astronomy_082" formatted="false">"勾陈一"</string>
     <string name="astronomy_083" formatted="false">"壁宿二"</string>
     <string name="astronomy_084" formatted="false">"娄宿三"</string>
     <string name="astronomy_085" formatted="false">"轩辕十二"</string>
-    <string name="astronomy_086" formatted="false">"蛇夫座α"</string>
+    <string name="astronomy_086" formatted="false">"侯"</string>
     <string name="astronomy_087" formatted="false">"天棓四"</string>
     <string name="astronomy_088" formatted="false">"王良四"</string>
     <string name="astronomy_089" formatted="false">"王良一"</string>
@@ -118,7 +118,7 @@
     <string name="astronomy_116" formatted="false">"当地星空 · 仰视示意"</string>
     <string name="astronomy_117" formatted="false">"停止对准天空"</string>
     <string name="astronomy_118" formatted="false">"对准天空"</string>
-    <string name="astronomy_119" formatted="false">"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。"</string>
+    <string name="astronomy_119" formatted="false">"日月、行星和星图采用本地低精度近似计算，不请求第三方天文服务。计算未完整考虑地形遮挡、大气变化和轨道摄动，不用于测量或导航。\n\n恒星及深空天体的坐标与视星等为内置近似参考；深空天体的总视星等不直接代表肉眼可见程度。\n\n恒星升落时刻按所选日期、地区和几何地平线近似计算，不包含大气折射及地形遮挡。"</string>
     <string name="astronomy_120" formatted="false">"计算公式与方法参考"</string>
     <string name="astronomy_121" formatted="false">"内置天体坐标与星等 · CC0"</string>
     <string name="astronomy_122" formatted="false">"−15 分钟"</string>
@@ -438,14 +438,14 @@
     <string name="earthquake_071" formatted="false">"地震详情"</string>
     <string name="earthquake_072" formatted="false">"西藏"</string>
     <string name="earthquake_073" formatted="false">"西藏—青海交界地区"</string>
-    <string name="earthquake_074" formatted="false">"中国新疆南部"</string>
-    <string name="earthquake_075" formatted="false">"中国新疆北部"</string>
-    <string name="earthquake_076" formatted="false">"中国四川"</string>
-    <string name="earthquake_077" formatted="false">"中国青海"</string>
-    <string name="earthquake_078" formatted="false">"中国云南"</string>
-    <string name="earthquake_079" formatted="false">"台湾地区"</string>
-    <string name="earthquake_080" formatted="false">"台湾"</string>
-    <string name="earthquake_081" formatted="false">"日本本州东岸附近"</string>
+    <string name="earthquake_074" formatted="false">"新疆南部"</string>
+    <string name="earthquake_075" formatted="false">"新疆北部"</string>
+    <string name="earthquake_076" formatted="false">"四川"</string>
+    <string name="earthquake_077" formatted="false">"青海"</string>
+    <string name="earthquake_078" formatted="false">"云南"</string>
+    <string name="earthquake_079" formatted="false">"台湾周边"</string>
+    <string name="earthquake_080" formatted="false">"台湾周边"</string>
+    <string name="earthquake_081" formatted="false">"本州东岸附近"</string>
     <string name="earthquake_082" formatted="false">"正在更新，请稍候"</string>
     <string name="earthquake_083" formatted="false">"尚未达到请求间隔或数据源限流，请稍后重试"</string>
     <string name="earthquake_084" formatted="false">"连接失败，请检查网络后重试"</string>
@@ -1330,4 +1330,15 @@
     <string name="astronomy_225" formatted="false">"天津二"</string>
     <string name="astronomy_226" formatted="false">"天棓三"</string>
     <string name="astronomy_227" formatted="false">"上卫增一"</string>
+    <string name="astronomy_189" formatted="false">"星图缩放（左缩小，右放大）"</string>
+    <string name="astronomy_190" formatted="false">"选择附近天体"</string>
+    <string name="astronomy_191" formatted="false">"升起 %1$s · 落下 %2$s"</string>
+    <string name="astronomy_192" formatted="false">"拱极星"</string>
+    <string name="astronomy_193" formatted="false">"恒隐星"</string>
+    <string name="astronomy_194" formatted="false">"拱极天体"</string>
+    <string name="astronomy_195" formatted="false">"当天未升起"</string>
+    <string name="astronomy_198" formatted="false">"当天没有升落交点"</string>
+    <string name="astronomy_199" formatted="false">"全天在地平线上方"</string>
+    <string name="astronomy_196" formatted="false">"五车一"</string>
+    <string name="astronomy_197" formatted="false">"壁宿一"</string>
 </resources>

@@ -171,6 +171,8 @@ string/astronomy_113
 string/astronomy_114
 string/astronomy_165
 string/astronomy_166
+string/astronomy_196
+string/astronomy_197
 string/astronomy_208
 string/astronomy_209
 string/astronomy_210
@@ -430,6 +432,8 @@ string/identity_astronomy_100
 string/identity_astronomy_101
 string/identity_astronomy_102
 string/identity_astronomy_103
+string/identity_astronomy_104
+string/identity_astronomy_105
 string/identity_earthquake_data_001
 string/identity_earthquake_data_002
 string/identity_earthquake_data_003
@@ -862,6 +866,8 @@ string/update_303_detail
 string/update_303_title
 string/update_304_detail
 string/update_304_title
+string/update_305_detail
+string/update_305_title
 string/update_history_001
 string/update_history_002
 string/update_history_003

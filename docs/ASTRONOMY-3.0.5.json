@@ -1,0 +1,61 @@
+{
+  "release": "3.0.5",
+  "retrievedOn": "2026-11-22",
+  "dataLicenses": {
+    "Chinese traditional star names and HIP mapping": "CC-BY-SA-4.0",
+    "positions and visual magnitudes": "Stellarium HIP–Gaia3 catalogue numerical records sourced from ESA Hipparcos and Gaia; this project does not assert an additional licence for those numerical facts."
+  },
+  "source": {
+    "repository": "Stellarium/stellarium",
+    "commit": "568d88df8126c45949e19564fe312de577340e5c",
+    "nameFile": "skycultures/chinese/star_names.zh_CN.fab",
+    "nameFileLicense": "CC-BY-SA-4.0",
+    "catalogueFiles": [
+      "stars/hip_gaia3/stars_0_0v0_19.cat",
+      "guide/app_star_catalogue.tex"
+    ],
+    "catalogueDescription": "HIP–Gaia3, HIP catalogue identifiers, right ascension, declination and V-band magnitude."
+  },
+  "coordinates": {
+    "unit": "degrees",
+    "rightAscensionRange": "[0,360)",
+    "declinationRange": "[-90,90]",
+    "epoch": "J2016 catalogue epoch as stored in the cited catalogue",
+    "note": "The local chart treats these values as fixed references and does not propagate proper motion or model atmospheric refraction."
+  },
+  "changes": [
+    {
+      "displayName": "五车一",
+      "hip": 23015,
+      "catalogueName": "Iota Aurigae",
+      "raDegrees": 74.24843701788,
+      "decDegrees": 33.16601473369,
+      "visualMagnitude": 2.69
+    },
+    {
+      "displayName": "壁宿一",
+      "hip": 1067,
+      "catalogueName": "Gamma Pegasi",
+      "raDegrees": 3.30897038983,
+      "decDegrees": 15.18355073109,
+      "visualMagnitude": 2.84
+    }
+  ],
+  "existingIdentityDisplayChange": {
+    "displayName": "侯",
+    "hip": 86032,
+    "catalogueName": "Alpha Ophiuchi / Rasalhague",
+    "raDegrees": 263.7341968525,
+    "decDegrees": 12.55900985151,
+    "visualMagnitude": 2.07,
+    "note": "This is the existing star identity previously displayed as 蛇夫座α. Its preference key remains unchanged."
+  },
+  "displayAndSelection": {
+    "starSettingsOrder": "Ascending V-band magnitude (brighter first), with name as a stable tie-breaker.",
+    "nearbySelection": "When more than one visible object lies within the tap radius, offer all candidates in a selection list.",
+    "zoom": "Circular viewport uses a slider with zoom-out at left and zoom-in at right. One-finger drag pans; pinch zoom is disabled. The screen-space radius of stars and the alignment marker does not change with zoom.",
+    "labelDensity": "When all visible labels fit, use the existing placement algorithm. Under crowding, the minimum zoom shows stars at magnitude 1.0 or brighter and the Sun and Moon, then progressively reveals fainter labels up to magnitude 6.0.",
+    "riseSet": "Selected-object rise and set events are approximated for the selected local date. Circumpolar and never-rising stars use those labels. The Sun, Moon, planets and deep-sky objects report when they remain above the horizon all day or do not rise that date."
+  }
+}
+

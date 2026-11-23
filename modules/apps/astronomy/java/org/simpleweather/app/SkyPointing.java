@@ -12,5 +12,5 @@ public final class SkyPointing {
         double alt=Math.toDegrees(Math.asin(Math.max(-1,Math.min(1,up/length))));
         double az=StatusMath.norm(Math.toDegrees(Math.atan2(east,north))+declination);return new double[]{alt,az};
     }
-    public static double[] marker(int mode,double altitude,double azimuth){if(!supported(mode)||!Double.isFinite(altitude)||!Double.isFinite(azimuth)||altitude<0||altitude>90)return null;return SkyGeometry.horizontal(altitude,azimuth);}
+    public static double[] marker(int mode,double altitude,double azimuth){if(!supported(mode)||!Double.isFinite(altitude)||!Double.isFinite(azimuth)||altitude< -90||altitude>90)return null;return SkyGeometry.horizontal(altitude,azimuth);}
 }

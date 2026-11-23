@@ -24,13 +24,14 @@ public final class LauncherScreen {
     private List<String> installed(){List<String> out=new ArrayList<>();for(String id:LauncherLayout.APPS)if(a.apps.installed(id))out.add(id);return out;}
     public List<String> ordered(){List<String> result=new ArrayList<>();for(String id:layout.visible(installed())){if(layout.folders.containsKey(id))result.addAll(layout.visibleFolder(id,installed()));else result.add(id);}return result;}
     public void render(){
+        if(HostBuildProfile.BALL_RACE_TEST_HOST){grid=a.column();a.body.addView(grid);drawDesktop();return;}
         a.gap(a.body,14);LinearLayout controls=a.row();TextView edit=a.button(a.getString(R.string.launcher_edit),false,()->{});
         edit.setOnClickListener(v->{editing=!editing;edit.setText(a.getString(editing?R.string.launcher_finish_edit:R.string.launcher_edit));drawDesktop();});
         controls.addView(edit,new LinearLayout.LayoutParams(0,-2,1));a.gapHorizontal(controls,8);controls.addView(a.button(a.getString(R.string.launcher_customization),false,this::order),new LinearLayout.LayoutParams(0,-2,1));a.body.addView(controls);a.gap(a.body,12);grid=a.column();a.body.addView(grid);drawDesktop();
     }
     private void drawDesktop(){
-        if(grid==null)return;grid.removeAllViews();List<String> ids=layout.visible(installed());ids.add("store");ids.add("settings");drawGrid(grid,ids,null,null);
-        if(editing){a.gap(grid,10);grid.addView(a.button(a.getString(R.string.launcher_new_folder),false,()->folderEditor(layout,tablet,null,null)));a.gap(grid,10);TextParagraphs.append(a,grid,a.getString(R.string.launcher_drag_note),13,a.MUTED);}
+        if(grid==null)return;grid.removeAllViews();List<String> ids;if(HostBuildProfile.BALL_RACE_TEST_HOST){ids=new ArrayList<>();if(a.apps.installed("ballrace"))ids.add("ballrace");}else{ids=layout.visible(installed());ids.add("store");ids.add("settings");}drawGrid(grid,ids,null,null);
+        if(editing&&!HostBuildProfile.BALL_RACE_TEST_HOST){a.gap(grid,10);grid.addView(a.button(a.getString(R.string.launcher_new_folder),false,()->folderEditor(layout,tablet,null,null)));a.gap(grid,10);TextParagraphs.append(a,grid,a.getString(R.string.launcher_drag_note),13,a.MUTED);}
     }
     private void drawGrid(LinearLayout parent,List<String> ids,String folder,Runnable redraw){
         int widthDp=Math.max(220,Math.min(a.getResources().getConfiguration().screenWidthDp,620)-40),columns=Math.min(layout.columns,Math.max(2,widthDp/64));
@@ -39,7 +40,7 @@ public final class LauncherScreen {
             for(int col=0;col<columns;col++){
                 if(col>0)a.gapHorizontal(row,10);if(start+col>=ids.size()){row.addView(new View(a),new LinearLayout.LayoutParams(0,1,1));continue;}
                 String id=ids.get(start+col);LauncherLayout.Folder f=layout.folders.get(id);boolean fixed=id.equals("settings")||id.equals("store");LinearLayout tile=a.column();tile.setGravity(Gravity.CENTER);tile.setPadding(a.dp(4),a.dp(12),a.dp(4),a.dp(12));
-                View icon;if(f!=null)icon=new FolderIcon(f);else{ImageView image=new ImageView(a);image.setImageResource(AppIcons.resource(id));image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);icon=image;}tile.addView(icon,a.lp(iconSize,iconSize));a.gap(tile,10);
+                View icon;if(f!=null)icon=new FolderIcon(f);else{ImageView image=new ImageView(a);int resource=id.equals("ballrace")?a.getResources().getIdentifier("app_ballrace","drawable","org.simpleweather.app"):0;if(resource==0&&id.equals("ballrace"))resource=a.getResources().getIdentifier("app_ballrace","drawable",a.getPackageName());image.setImageResource(resource==0?AppIcons.resource(id):resource);image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);icon=image;}tile.addView(icon,a.lp(iconSize,iconSize));a.gap(tile,10);
                 String title=f==null?a.apps.title(id):f.name;TextView name=a.text(title,layout.text,a.INK,true);name.setGravity(Gravity.CENTER);name.setMinHeight(a.dp(38));name.setMaxLines(3);tile.addView(name,a.lp(-1,-2));
                 a.tap(tile,editing&&!fixed?0x225286C2:Color.TRANSPARENT,20,()->{if(f!=null)openFolder(id);else if(editing&&!fixed)appMenu(id,folder,redraw);else open(a,id);});tile.setContentDescription(title);
                 if(!fixed){
@@ -51,6 +52,7 @@ public final class LauncherScreen {
     }
     public static boolean openRequested(MainActivity a,Intent intent){if(intent==null||!intent.hasExtra(LauncherShortcuts.EXTRA))return false;String id=intent.getStringExtra(LauncherShortcuts.EXTRA);intent.removeExtra(LauncherShortcuts.EXTRA);if(!LauncherLayout.application(id))return false;open(a,id);return true;}
     public static void open(MainActivity a,String id){
+        if(HostBuildProfile.BALL_RACE_TEST_HOST){if(id.equals("ballrace"))a.apps.openInternal(id);return;}
         if(id.equals("settings")){a.settings();return;}if(id.equals("store")){a.switchTab(-2);return;}if(!LauncherLayout.application(id))return;
         if(!a.apps.installed(id)){new ToolDialog(a).setTitle(a.apps.title(id)).setMessage(a.getString(R.string.launcher_shortcut_missing)).setPositiveButton(a.getString(R.string.launcher_store),(d,w)->a.switchTab(-2)).setNegativeButton(a.getString(R.string.action_cancel),null).show();return;}
         if(Arrays.asList(AppModules.EMBEDDED).contains(id))a.apps.openInternal(id);else a.switchTab(Arrays.asList(AppModules.IDS).indexOf(id));

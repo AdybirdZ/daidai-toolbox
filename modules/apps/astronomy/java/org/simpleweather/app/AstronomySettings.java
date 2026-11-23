@@ -28,7 +28,7 @@ public final class AstronomySettings {
         modes.check(prefs.getInt("astro_visibility_mode",0)==1?711:710);c.addView(modes);a.gap(c,12);
         LinearLayout manual=a.column(),magnitude=a.column();
         manual.addView(a.text(UiText.get("settings_045"),16,a.INK,true));
-        for(Astronomy.Star star:Astronomy.STARS)skyToggle(manual,UiText.label(star.name)+" · "+SkyVisibility.magnitude(star.mag),"astro_star_"+star.name);
+        for(Astronomy.Star star:Astronomy.starsByMagnitude())skyToggle(manual,UiText.label(star.name)+" · "+SkyVisibility.magnitude(star.mag),"astro_star_"+star.name);
         a.gap(manual,12);manual.addView(a.text(UiText.get("settings_046"),16,a.INK,true));for(Astronomy.Planet planet:Astronomy.planets(java.time.Instant.now()))skyToggle(manual,UiText.label(planet.name),"astro_planet_"+planet.name);
         a.gap(manual,12);manual.addView(a.text(UiText.get("settings_047"),16,a.INK,true));for(Astronomy.Star object:Astronomy.DEEP_SKY)skyToggle(manual,UiText.label(object.name)+" · "+SkyVisibility.magnitude(object.mag),"astro_deep_"+object.name);
         TextView value=a.text("",16,a.INK,true);magnitude.addView(value);SeekBar slider=new SeekBar(a);slider.setMax(100);slider.setKeyProgressIncrement(1);slider.setProgress(Math.round((SkyVisibility.limit(prefs.getFloat("astro_magnitude_limit",6))+2)*10));

@@ -24,14 +24,25 @@ public final class Ui {
         LinearLayout v=new LinearLayout(c); v.setOrientation(1); return v;
     }
     public static LinearLayout page(Activity a, String title, String subtitle) {
-        LinearLayout page=column(a); page.setPadding(dp(a,18),dp(a,12),dp(a,18),dp(a,6));
-        page.setBackgroundColor(Color.rgb(244,246,250));
+        if(Build.VERSION.SDK_INT>=30)a.getWindow().setDecorFitsSystemWindows(false);
+        if(Build.VERSION.SDK_INT>=29){a.getWindow().setNavigationBarContrastEnforced(false);a.getWindow().setStatusBarContrastEnforced(false);}
+        a.getWindow().setStatusBarColor(Color.TRANSPARENT);
+        a.getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        a.getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|
+                View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        LinearLayout page=column(a); page.setPadding(dp(a,20),dp(a,18),dp(a,20),dp(a,6));
+        page.setBackgroundColor(Color.TRANSPARENT);
         LinearLayout shell=column(a);
         shell.addView(page,new LinearLayout.LayoutParams(-1,0,1));
         LinearLayout bar=row(shell);
         Button home=button(bar,org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.launcher_home),()->org.simpleweather.app.SettingsNavigation.desktop(a));
         org.simpleweather.app.SettingsNavigation.layoutDesktopBar(bar,home);
-        a.setContentView(shell);
+        android.widget.FrameLayout backgroundRoot=new android.widget.FrameLayout(a);
+        org.simpleweather.app.SettingsActivity.addBackground(a,backgroundRoot);
+        backgroundRoot.addView(shell,new android.widget.FrameLayout.LayoutParams(-1,-1));
+        a.setContentView(backgroundRoot);
         if(Build.VERSION.SDK_INT>=30) {
             a.getWindow().setDecorFitsSystemWindows(false);
             shell.setOnApplyWindowInsetsListener((v,i)->{
@@ -39,8 +50,9 @@ public final class Ui {
                 v.setPadding(bars.left,bars.top,bars.right,bars.bottom); return i;
             });
         } else shell.setFitsSystemWindows(true);
-        TextView heading=text(a,title,25); heading.setTypeface(null,Typeface.BOLD); page.addView(heading);
-        page.addView(text(a,subtitle,13)); return page;
+        String hostTitle=org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.app_name)+" · "+title;
+        TextView heading=text(a,hostTitle,25); heading.setTypeface(null,Typeface.BOLD); page.addView(heading);
+        page.addView(text(a,org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.app_footer),13)); return page;
     }
     public static TextView text(android.content.Context c,String s,float size) {
         TextView v=new TextView(c); v.setText(s); v.setTextSize(size); v.setTextColor(INK);

@@ -55,7 +55,7 @@ public final class MusicSearchScreen {
             dialog=new Dialog(activity,android.R.style.Theme_Material_Light_NoActionBar);
         }
         Dialog show(){
-            LinearLayout page=Ui.column(activity);page.setPadding(Ui.dp(activity,18),Ui.dp(activity,12),Ui.dp(activity,18),Ui.dp(activity,12));page.setBackgroundColor(0xfff4f6fa);
+            LinearLayout page=Ui.column(activity);page.setPadding(Ui.dp(activity,18),Ui.dp(activity,12),Ui.dp(activity,18),Ui.dp(activity,12));page.setBackgroundColor(Color.TRANSPARENT);
             if(android.os.Build.VERSION.SDK_INT>=30){page.setOnApplyWindowInsetsListener((v,i)->{android.graphics.Insets bars=i.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.ime());v.setPadding(Ui.dp(activity,18)+bars.left,Ui.dp(activity,12)+bars.top,Ui.dp(activity,18)+bars.right,Ui.dp(activity,12)+bars.bottom);return i;});}
             page.addView(Ui.text(activity,text(activity,"music_search_title"),22));
             EditText query=Ui.input(page,text(activity,"music_search_input"),android.text.InputType.TYPE_CLASS_TEXT);query.setSingleLine(true);query.setImeOptions(EditorInfo.IME_ACTION_SEARCH);query.setPadding(Ui.dp(activity,12),Ui.dp(activity,10),Ui.dp(activity,12),Ui.dp(activity,10));
@@ -69,7 +69,8 @@ public final class MusicSearchScreen {
             Runnable apply=()->{applied=query.getText().toString().trim();state.applied=applied;render();};search.setOnClickListener(v->apply.run());clear.setOnClickListener(v->{query.setText("");applied="";state.applied="";render();});query.setOnEditorActionListener((v,id,event)->{if(id==EditorInfo.IME_ACTION_SEARCH){apply.run();return true;}return false;});updateButtons(categories,category);
             Ui.button(page,text(activity,"music_search_back"),dialog::dismiss);
             state.open=true;state.refresher=this::render;dialog.setOnDismissListener(d->{closed=true;state.open=false;state.refresher=null;generation++;checks.clear();if(returned!=null)returned.run();});
-            dialog.setContentView(page);render();dialog.show();if(dialog.getWindow()!=null){dialog.getWindow().setLayout(-1,-1);dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);}
+            FrameLayout backgroundRoot=new FrameLayout(activity);org.simpleweather.app.SettingsActivity.addBackground(activity,backgroundRoot);backgroundRoot.addView(page,new FrameLayout.LayoutParams(-1,-1));
+            dialog.setContentView(backgroundRoot);render();dialog.show();if(dialog.getWindow()!=null){dialog.getWindow().setLayout(-1,-1);dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);}
             return dialog;
         }
         void syncSelection(){

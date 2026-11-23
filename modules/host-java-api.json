@@ -576,6 +576,7 @@
     "public final class org.simpleweather.app.SettingsActivity extends org.simpleweather.app.MainActivity {",
     "public static final int REQUEST;",
     "public org.simpleweather.app.SettingsActivity();",
+    "public static void addBackground(android.app.Activity, android.widget.FrameLayout);",
     "public static android.app.Activity owner(android.content.Context);",
     "public static java.lang.String hostText(android.content.Context, int);",
     "public static void open(android.app.Activity, java.lang.String);",
@@ -629,7 +630,10 @@
     "public final float width;",
     "public final float ascent;",
     "public final float descent;",
-    "public org.simpleweather.app.SkyLabels$Candidate(java.lang.String, float, float, float, float, float);"
+    "public final double magnitude;",
+    "public final boolean alwaysShow;",
+    "public org.simpleweather.app.SkyLabels$Candidate(java.lang.String, float, float, float, float, float);",
+    "public org.simpleweather.app.SkyLabels$Candidate(java.lang.String, float, float, float, float, float, double, boolean);"
   ],
   "org.simpleweather.app.SkyLabels$Placed": [
     "public final class org.simpleweather.app.SkyLabels$Placed {",
@@ -640,7 +644,9 @@
   ],
   "org.simpleweather.app.SkyLabels": [
     "public final class org.simpleweather.app.SkyLabels {",
-    "public static java.util.List<org.simpleweather.app.SkyLabels$Placed> place(java.util.List<org.simpleweather.app.SkyLabels$Candidate>, java.util.List<org.simpleweather.app.SkyLabels$Box>, float, float, float, float, float);"
+    "public static java.util.List<org.simpleweather.app.SkyLabels$Placed> place(java.util.List<org.simpleweather.app.SkyLabels$Candidate>, java.util.List<org.simpleweather.app.SkyLabels$Box>, float, float, float, float, float);",
+    "public static java.util.List<org.simpleweather.app.SkyLabels$Placed> placeAdaptive(java.util.List<org.simpleweather.app.SkyLabels$Candidate>, java.util.List<org.simpleweather.app.SkyLabels$Box>, float, float, float, float, float, double);",
+    "public static java.util.List<org.simpleweather.app.SkyLabels$Placed> placeAdaptive(java.util.List<org.simpleweather.app.SkyLabels$Candidate>, java.util.List<org.simpleweather.app.SkyLabels$Box>, float, float, float, float, float, double, float, float, float);"
   ],
   "org.simpleweather.app.StatusMath": [
     "public final class org.simpleweather.app.StatusMath {",

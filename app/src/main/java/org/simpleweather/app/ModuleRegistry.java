@@ -5,7 +5,9 @@ import java.util.*;
 /** Stable module identities used by the 3.0.0 package boundary. */
 final class ModuleRegistry {
     static final class Module { final String id, title; final String[] groups; Module(String id,String title,String...groups){this.id=id;this.title=title;this.groups=groups;} }
-    static final List<Module> ALL=Collections.unmodifiableList(Arrays.asList(
+    static final List<Module> ALL=createAll();
+    private static List<Module> createAll(){
+        List<Module> modules=new ArrayList<>(Arrays.asList(
         new Module("weather","tab_weather","weather","toolbox"),
         new Module("schedule","tab_schedule","timetable","toolbox"),
         new Module("status","tab_status","status_places","status_routes","toolbox"),
@@ -18,6 +20,9 @@ final class ModuleRegistry {
         new Module("messaging","module_messaging","messaging_module"),
         new Module("colorvision","module_colorvision","colorvision_module"),
         new Module("global","settings_014","toolbox")));
+        if(HostBuildProfile.BALL_RACE_TEST_HOST){modules.clear();modules.add(new Module("ballrace","module_ballrace","ballrace_module"));}
+        return Collections.unmodifiableList(modules);
+    }
     static boolean embedded(String id){return Arrays.asList(AppModules.EMBEDDED).contains(id);}
     static Module find(String id){for(Module m:ALL)if(m.id.equals(id))return m;return null;}
     static boolean allowed(Module m,String group,String key){

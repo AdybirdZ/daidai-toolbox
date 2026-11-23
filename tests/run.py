@@ -12,6 +12,7 @@ p = argparse.ArgumentParser()
 p.add_argument('--json-jar', required=True, help='JSON-java 20240303 jar; not included in the APK')
 opts = p.parse_args()
 subprocess.run([sys.executable, str(root / 'tests/music_import_checks.py')], check=True)
+subprocess.run([sys.executable, str(root / 'modules/prototypes/ball-race/tests/run.py')], check=True)
 subprocess.run([sys.executable, str(root / 'tests/launcher_layout_checks.py'), '--json-jar', opts.json_jar], check=True)
 jar = Path(opts.json_jar).resolve()
 output = root / 'build/tests'

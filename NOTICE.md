@@ -1,5 +1,11 @@
 # 数据署名
 
+## 天文星表资料 · 3.0.5
+
+3.0.5 新增五车一（HIP 23015）和壁宿一（HIP 1067），并将 HIP 86032 的中文显示名称规范为“侯”。中文星名与 HIP 对应关系改编自 Stellarium 中文星空文化文件，固定提交 `568d88df8126c45949e19564fe312de577340e5c`，资料标注 CC BY-SA 4.0：[来源文件](https://github.com/Stellarium/stellarium/blob/568d88df8126c45949e19564fe312de577340e5c/skycultures/chinese/star_names.zh_CN.fab) · [许可](https://creativecommons.org/licenses/by-sa/4.0/)。
+
+新增对象的赤经、赤纬和 V 波段视星等取自同一提交中的 Stellarium HIP–Gaia3 星表记录，资料说明追溯至 ESA Hipparcos 与 Gaia。具体数值、星表身份和处理范围见 [ASTRONOMY-3.0.5.md](docs/ASTRONOMY-3.0.5.md) 与 [ASTRONOMY-3.0.5.json](docs/ASTRONOMY-3.0.5.json)。应用只使用所列静态数值，不包含 Stellarium 程序、二进制星表或图像。
+
 Weather data: Open-Meteo, https://open-meteo.com/ — CC BY 4.0.
 
 Location data: GeoNames, https://www.geonames.org/ , supplied through the Open-Meteo Geocoding API — CC BY 4.0.

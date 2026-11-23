@@ -118,7 +118,7 @@
     <string name="astronomy_116" formatted="false">"Local sky · Looking upward"</string>
     <string name="astronomy_117" formatted="false">"Stop sky alignment"</string>
     <string name="astronomy_118" formatted="false">"Point at sky"</string>
-    <string name="astronomy_119" formatted="false">"Solar, lunar, planetary and sky-chart positions are calculated locally using low-precision approximations, without third-party astronomy services. Terrain obstruction, atmospheric changes and orbital perturbations are not fully modeled. Do not use these results for surveying or navigation.\n\nBuilt-in stellar and deep-sky coordinates and apparent magnitudes are approximate references. A deep-sky object\'s integrated apparent magnitude does not directly indicate naked-eye visibility."</string>
+    <string name="astronomy_119" formatted="false">"Solar, lunar, planetary and sky-chart positions are calculated locally using low-precision approximations, without third-party astronomy services. Terrain obstruction, atmospheric changes and orbital perturbations are not fully modeled. Do not use these results for surveying or navigation.\n\nBuilt-in stellar and deep-sky coordinates and apparent magnitudes are approximate references. A deep-sky object\'s integrated apparent magnitude does not directly indicate naked-eye visibility.\n\nStellar rise and set times are approximate geometric-horizon crossings for the selected date and location; atmospheric refraction and terrain obstruction are not modeled."</string>
     <string name="astronomy_120" formatted="false">"Formula and method references"</string>
     <string name="astronomy_121" formatted="false">"Built-in coordinates and magnitudes · CC0"</string>
     <string name="astronomy_122" formatted="false">"−15 min"</string>
@@ -438,14 +438,14 @@
     <string name="earthquake_071" formatted="false">"Earthquake details"</string>
     <string name="earthquake_072" formatted="false">"Xizang"</string>
     <string name="earthquake_073" formatted="false">"Xizang–Qinghai border region"</string>
-    <string name="earthquake_074" formatted="false">"Southern Xinjiang, China"</string>
-    <string name="earthquake_075" formatted="false">"Northern Xinjiang, China"</string>
-    <string name="earthquake_076" formatted="false">"Sichuan, China"</string>
-    <string name="earthquake_077" formatted="false">"Qinghai, China"</string>
-    <string name="earthquake_078" formatted="false">"Yunnan, China"</string>
-    <string name="earthquake_079" formatted="false">"Taiwan region"</string>
-    <string name="earthquake_080" formatted="false">"Taiwan"</string>
-    <string name="earthquake_081" formatted="false">"Near the east coast of Honshu, Japan"</string>
+    <string name="earthquake_074" formatted="false">"Southern Xinjiang"</string>
+    <string name="earthquake_075" formatted="false">"Northern Xinjiang"</string>
+    <string name="earthquake_076" formatted="false">"Sichuan"</string>
+    <string name="earthquake_077" formatted="false">"Qinghai"</string>
+    <string name="earthquake_078" formatted="false">"Yunnan"</string>
+    <string name="earthquake_079" formatted="false">"Taiwan area"</string>
+    <string name="earthquake_080" formatted="false">"Taiwan area"</string>
+    <string name="earthquake_081" formatted="false">"East coast of Honshu"</string>
     <string name="earthquake_082" formatted="false">"Updating. Please wait."</string>
     <string name="earthquake_083" formatted="false">"Request interval not reached or source rate-limited. Try later."</string>
     <string name="earthquake_084" formatted="false">"Connection failed. Check your network and retry."</string>
@@ -1330,4 +1330,15 @@
     <string name="astronomy_225" formatted="false">"Tian Jin Er (HIP 97165)"</string>
     <string name="astronomy_226" formatted="false">"Tian Bang San (HIP 85670)"</string>
     <string name="astronomy_227" formatted="false">"Shang Wei Zeng Yi (HIP 106032)"</string>
+    <string name="astronomy_189" formatted="false">"Sky chart zoom (left: out, right: in)"</string>
+    <string name="astronomy_190" formatted="false">"Choose a nearby object"</string>
+    <string name="astronomy_191" formatted="false">"Rise %1$s · Set %2$s"</string>
+    <string name="astronomy_192" formatted="false">"Circumpolar"</string>
+    <string name="astronomy_193" formatted="false">"Never rises"</string>
+    <string name="astronomy_194" formatted="false">"Circumpolar object"</string>
+    <string name="astronomy_195" formatted="false">"Does not rise on this date"</string>
+    <string name="astronomy_198" formatted="false">"No horizon crossing on this date"</string>
+    <string name="astronomy_199" formatted="false">"Above the horizon all day"</string>
+    <string name="astronomy_196" formatted="false">"Iota Aurigae"</string>
+    <string name="astronomy_197" formatted="false">"Gamma Pegasi"</string>
 </resources>

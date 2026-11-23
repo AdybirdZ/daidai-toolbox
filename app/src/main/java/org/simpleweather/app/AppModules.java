@@ -22,7 +22,8 @@ public final class AppModules {
     public static final String CATALOG="https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/catalog.json";
     public static final String[] IDS={"weather","schedule","status","weather-map","astronomy","earthquake","random","todo"};
     public static final String[] CLASSES={"WeatherScreen","ScheduleScreen","GpsScreen","MapScreen","AstronomyScreen","EarthquakeScreen","RandomChoiceScreen","TodoScreen"};
-    public static final String[] EMBEDDED={"music","messaging","colorvision"};
+    public static final String[] EMBEDDED=HostBuildProfile.BALL_RACE_TEST_HOST
+        ?new String[]{"ballrace"}:new String[]{"music","messaging","colorvision"};
     public static final int PICK=91;
     public static final long MAX=32L*1024*1024;
     private final MainActivity a;
@@ -30,14 +31,14 @@ public final class AppModules {
     private static final String PROCESS=UUID.randomUUID().toString();
     public static volatile boolean busy;
     public AppModules(MainActivity a){this.a=a;directory=new File(a.getFilesDir(),"apps");directory.mkdirs();}
-    public static boolean known(String id){return Arrays.asList(IDS).contains(id)||Arrays.asList(EMBEDDED).contains(id);}
+    public static boolean known(String id){if(HostBuildProfile.BALL_RACE_TEST_HOST)return "ballrace".equals(id);return Arrays.asList(IDS).contains(id)||Arrays.asList(EMBEDDED).contains(id);}
     public static boolean present(Context c,String id){if(!known(id))return false;try(ZipFile zip=new ZipFile(ModuleRuntime.packageFile(c,id))){ZipEntry e=zip.getEntry("assets/module.json");return e!=null&&API.equals(new JSONObject(new String(read(zip.getInputStream(e),65536),"UTF-8")).optString("hostApi"));}catch(Exception e){return false;}}
-    public String title(String id){int n=Arrays.asList(IDS).indexOf(id);if(n>=0)return a.tabName(n);return a.getString(id.equals("music")?R.string.module_music:id.equals("messaging")?R.string.module_messaging:id.equals("colorvision")?R.string.module_colorvision:id.equals("settings")?R.string.action_settings:R.string.launcher_store);}
+    public String title(String id){if(HostBuildProfile.BALL_RACE_TEST_HOST&&id.equals("ballrace")){try{android.content.res.Resources resources=ModuleRuntime.resources(a,id);int resource=resources.getIdentifier("ballrace_title","string","org.simpleweather.module.ballrace");if(resource!=0)return resources.getString(resource);}catch(Exception ignored){}return "Ball Race";}int n=Arrays.asList(IDS).indexOf(id);if(n>=0)return a.tabName(n);return a.getString(id.equals("music")?R.string.module_music:id.equals("messaging")?R.string.module_messaging:id.equals("colorvision")?R.string.module_colorvision:id.equals("settings")?R.string.action_settings:R.string.launcher_store);}
     private static int flags(){return Build.VERSION.SDK_INT>=28?PackageManager.GET_SIGNING_CERTIFICATES:PackageManager.GET_SIGNATURES;}
     private static byte[] certificate(PackageInfo info)throws Exception{if(info==null)throw new IOException("Invalid package");android.content.pm.Signature[] sig=Build.VERSION.SDK_INT>=28?info.signingInfo.getApkContentsSigners():info.signatures;if(sig==null||sig.length!=1)throw new IOException("Invalid signer");return sig[0].toByteArray();}
     public boolean installed(String id){return present(a,id);}
     public boolean reconcile(){boolean changed=false;SharedPreferences p=a.getSharedPreferences("apps_host",0);for(String id:allIds())if(p.getBoolean("launching_"+id,false)&&!PROCESS.equals(p.getString("launch_process_"+id,""))){try{changed|=recoverPrevious(a,id);}catch(Exception ignored){}clearLaunch(p.edit(),id).commit();}return changed;}
-    public static List<String> allIds(){List<String> ids=new ArrayList<>(Arrays.asList(IDS));ids.addAll(Arrays.asList(EMBEDDED));return ids;}
+    public static List<String> allIds(){if(HostBuildProfile.BALL_RACE_TEST_HOST)return new ArrayList<>(Arrays.asList(EMBEDDED));List<String> ids=new ArrayList<>(Arrays.asList(IDS));ids.addAll(Arrays.asList(EMBEDDED));return ids;}
     public static int hostVersion(Context c){try{return c.getPackageManager().getPackageInfo(c.getPackageName(),0).versionCode;}catch(Exception e){return 0;}}
     public boolean compatible(JSONObject item){return ModuleCompatibility.accepts(item.optString("hostApi",API),API,item.optInt("minHostVersionCode",0),hostVersion(a),item.optInt("minSdk",26),Build.VERSION.SDK_INT)&&ModuleCompatibility.releaseAllowed(item.optString("version"),a.versionName());}
     public static void beginLaunch(Context c,String id){beginTrackedLaunch(c,id);}
@@ -58,7 +59,7 @@ public final class AppModules {
         if(previous.isFile()&&a.getSharedPreferences("apps_host",0).contains("pending_"+id))return;
         File stage=new File(directory,id+".previous.pending");stage.delete();try{Files.copy(current.toPath(),stage.toPath(),StandardCopyOption.REPLACE_EXISTING);if(!stage.setReadOnly())throw new IOException("Cannot protect executable");Files.move(stage.toPath(),previous.toPath(),StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);}finally{stage.delete();}
     }
-    public void initialize(){SharedPreferences p=a.getSharedPreferences("apps_host",0);boolean first=!p.getBoolean("initialized",false);if(!first&&API.equals(p.getString("api","")))return;try{for(String id:new String[]{"weather","status"})if(first||ModuleRuntime.packageFile(a,id).exists()){try(InputStream in=a.getAssets().open("default-apps/"+id+".ddapp")){install(in,id,null);}}if(!p.edit().putBoolean("initialized",true).putString("api",API).remove("pending_external").commit())throw new IOException("Cannot commit defaults");}catch(Exception e){a.toast(a.getString(R.string.module_install_failed));}}
+    public void initialize(){SharedPreferences p=a.getSharedPreferences("apps_host",0);boolean first=!p.getBoolean("initialized",false);if(!first&&API.equals(p.getString("api","")))return;try{if(HostBuildProfile.BALL_RACE_TEST_HOST){try(InputStream in=a.getAssets().open("default-apps/ballrace.ddapp")){install(in,"ballrace",null);}}else for(String id:new String[]{"weather","status"})if(first||ModuleRuntime.packageFile(a,id).exists()){try(InputStream in=a.getAssets().open("default-apps/"+id+".ddapp")){install(in,id,null);}}if(!p.edit().putBoolean("initialized",true).putString("api",API).remove("pending_external").commit())throw new IOException("Cannot commit defaults");}catch(Exception e){a.toast(a.getString(R.string.module_install_failed));}}
     public static JSONObject inspect(Context c,File file,String id)throws Exception{
         if(!known(id)||file.length()>MAX)throw new IOException("Unsupported app");
         PackageInfo info=c.getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),flags());
@@ -70,7 +71,7 @@ public final class AppModules {
             if(!ModuleCompatibility.accepts(m.optString("hostApi"),API,m.optInt("minHostVersionCode",0),hostVersion(c),m.optInt("minSdk",26),Build.VERSION.SDK_INT)||!ModuleCompatibility.releaseAllowed(m.optString("version"),hostRelease)||!m.optString("version").equals(info.versionName)||!id.equals(m.optString("id"))||!"signed-dex-app".equals(m.optString("format"))||m.optInt("versionCode")<=0||m.optInt("versionCode")!=info.versionCode||!entryName(id).equals(m.optString("entry")))throw new IOException("Incompatible app");return m;
         }
     }
-    private static String entryName(String id){int n=Arrays.asList(IDS).indexOf(id);return n>=0?CLASSES[n]:"org.daidai.modules."+id+"."+(id.equals("music")?"MusicActivity":id.equals("messaging")?"MessagingActivity":"ColorVisionActivity");}
+    private static String entryName(String id){if(HostBuildProfile.BALL_RACE_TEST_HOST&&id.equals("ballrace"))return "org.daidai.modules.ballrace.BallRaceActivity";int n=Arrays.asList(IDS).indexOf(id);return n>=0?CLASSES[n]:"org.daidai.modules."+id+"."+(id.equals("music")?"MusicActivity":id.equals("messaging")?"MessagingActivity":"ColorVisionActivity");}
     public synchronized void install(InputStream input,String id,String expectedHash)throws Exception{install(input,id,expectedHash,null);}
     private synchronized void install(InputStream input,String id,String expectedHash,DownloadTask task)throws Exception{
         if(!known(id))throw new IOException("Unknown application");boolean changing=false;File stage=new File(directory,id+".pending");if(stage.exists())stage.delete();

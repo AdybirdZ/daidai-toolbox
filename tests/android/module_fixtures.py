@@ -8,6 +8,7 @@ version=ET.parse(root/'app/src/main/AndroidManifest.xml').getroot().attrib['{htt
 store=root/'modules/store'/version
 base=store/'weather.ddapp'
 for p in store.glob('*.ddapp'):shutil.copyfile(p,out/p.name)
+shutil.copyfile(root/'modules/store/3.0.4/astronomy.ddapp',out/'astronomy-3.0.4.ddapp')
 content=bytearray(base.read_bytes());content[len(content)//2]^=15;(out/'corrupt.ddapp').write_bytes(content)
 key=out/'test-only.jks'
 if not key.exists():run([keytool,'-genkeypair','-keystore',key,'-alias','test','-storepass','android','-keypass','android','-keyalg','RSA','-keysize','2048','-validity','30','-dname','CN=Untrusted module fixture','-noprompt'])
