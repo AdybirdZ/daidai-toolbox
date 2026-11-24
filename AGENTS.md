@@ -1,8 +1,8 @@
-当前正式版本为 3.0.8 / 64；上一正式版本为 3.0.7 / 63。发布与远端资产核验状态以 TESTING.md、GitHub Release 和本地 release.json 为准。源码版本以 manifest、Gradle 和 Git 状态为准。
+当前开发版本为 3.0.9 / 65，基于 3.0.8 的更新检查修复正在提测；上一正式版本为 3.0.8 / 64。发布与远端资产核验状态以 TESTING.md、GitHub Release 和本地 release.json 为准。源码版本以 manifest、Gradle 和 Git 状态为准。
 
 # 开发约定
 
-每次更新、提测和发布前完整阅读 [开发者准则](docs/DEVELOPER-RULES.md)。当前正式版本为 3.0.8 / 64，已发布到 main、v3.0.8 标签和正式 Release。当前源码版本以 manifest、Gradle 和 Git 状态为准，验证与发布结果以 TESTING.md、GitHub Release 和本地 release.json 为准。源码在本仓库，历史源码不得当作当前开发入口。
+每次更新、提测和发布前完整阅读 [开发者准则](docs/DEVELOPER-RULES.md)。当前开发版本为 3.0.9 / 65，人工验收尚未完成；3.0.8 已发布到 main、v3.0.8 标签和正式 Release。当前源码版本以 manifest、Gradle 和 Git 状态为准，验证与发布结果以 TESTING.md、GitHub Release 和本地 release.json 为准。源码在本仓库，历史源码不得当作当前开发入口。
 
 音乐、设备通信、色觉模拟器现由 `modules/embedded/` 维护为内部完整应用，不再更新独立 APK。正式 3.0.0 已取消旧独立音乐专用同机迁移入口、迁移 ZIP 导入导出及处理路径；宿主统一备份、恢复和内部音乐单应用资料导入导出继续保留。`test-apps/`、`test-apk/` 保留历史可构建快照及一次性音乐 0.7.1-migration 辅助工具，不作为当前正式迁移入口；视频仍仅本地，计算器不恢复。
 

@@ -10,7 +10,7 @@
     {
       "id": "weather",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -23,17 +23,17 @@
         "en": "Local weather, hourly forecasts and weather details."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 152083,
-      "sha256": "310dd2e65dd6a75bed7f40a0ae158672d9f4705dceea78090b27028636162b32",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/weather.ddapp"
+      "sha256": "8146a67891b17bf03064e9133f6b8821b3bcd6711f94fd0901bfcd7cf58cd8b8",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/weather.ddapp"
     },
     {
       "id": "schedule",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -48,17 +48,17 @@
         "en": "Courses, semester settings and daily class notifications."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 57811,
-      "sha256": "af989cccbd6af12873bb6529ca31df1e2b54ed137410df641f14acde31a60842",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/schedule.ddapp"
+      "sha256": "cca5021abed5d1c294de2b895dcd94f605f5166c523b38e7408c4215ca824f8b",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/schedule.ddapp"
     },
     {
       "id": "status",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -76,17 +76,17 @@
         "en": "Location, satellites, sensors, places and route recording."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 168403,
-      "sha256": "82cbf6716ee809911912a9ce1d300d909adc1b74fbeab49ebef2fe02eb83b55f",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/status.ddapp"
+      "sha256": "59fd17c8c5f9659646b7688a21b1575f113ecbbd67a03a719c5c0c820f3c1113",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/status.ddapp"
     },
     {
       "id": "weather-map",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -99,17 +99,17 @@
         "en": "View official weather maps and radar pages."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 37331,
-      "sha256": "bf214d32d118363b58093cc42400c6caf3eb7e29711746844988845b0cbfdd56",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/weather-map.ddapp"
+      "sha256": "c2990356e750e9c6b15d164d58d303ef336f5c5d655697a4fa6644080087fd7f",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/weather-map.ddapp"
     },
     {
       "id": "astronomy",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -120,17 +120,17 @@
         "en": "Local sky chart, celestial information and device pointing."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 94751,
-      "sha256": "0051d2c120972339be432734d1a8fe2370c52640d6413ecd5c86da7ddad97a11",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/astronomy.ddapp"
+      "sha256": "2bd084b4b6e54222ccb4a48edea37f1864f7edd84ebc202cf226ca212e8056ac",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/astronomy.ddapp"
     },
     {
       "id": "earthquake",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -145,17 +145,17 @@
         "en": "Recent earthquakes, distances and reference intensities."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 119251,
-      "sha256": "d979a14267cbe0598b57b71bc79ad0ed4b3f3caf277d99fced1dac7d2d1aefbb",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/earthquake.ddapp"
+      "sha256": "d05b92db607e764f44d3c81311f986beba131d7788042b3250c500f95ddb52b8",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/earthquake.ddapp"
     },
     {
       "id": "random",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -166,17 +166,17 @@
         "en": "Saved lists, random draws and draw progress."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 41427,
-      "sha256": "4eac5cd32e81a044f60865d2308e2735a1ab6f46486c09a48041dbe9f8481411",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/random.ddapp"
+      "sha256": "2cc17f70a8ec30259d6ccb8d2b87be2b701063fc7edc28c805ab41a3ce0a509e",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/random.ddapp"
     },
     {
       "id": "todo",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -191,17 +191,17 @@
         "en": "Tasks, recurring schedules, reminders and completion history."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 78291,
-      "sha256": "0837b329f03ec328527187b2a1b709968617528dc41cce6da8713a8fd89aa8d8",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/todo.ddapp"
+      "sha256": "6e8b21115f90a7dda438b37f49097574d7c3a6a150125caa5a92ca8bb296e225",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/todo.ddapp"
     },
     {
       "id": "music",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -221,13 +221,13 @@
         "en": "Prevented visible flashing when returning from app settings."
       },
       "bytes": 1335924,
-      "sha256": "acbd1193715ca733ea1771160bcfb93ab2251d4ad40434b9b60473278f39dbed",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/music.ddapp"
+      "sha256": "359ef287a8a8b5ca8c6f4f8566c812cab9b21af413e208069561c5acfd373bc4",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/music.ddapp"
     },
     {
       "id": "messaging",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -246,17 +246,17 @@
         "en": "Communicate with nearby devices over Bluetooth or a local network."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 49689,
-      "sha256": "ca03b32db4f000d7a6b6e9866cb6bcf0fefe7ff12df9ad50983fce0b2424e8d6",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/messaging.ddapp"
+      "sha256": "4dc989c0404b2a99f281f3810ad2e5d1565fdedc97d91fa6512f392b19cd4400",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/messaging.ddapp"
     },
     {
       "id": "colorvision",
       "type": "signed-dex-app",
-      "version": "3.0.8",
+      "version": "3.0.9",
       "versionCode": 13,
       "hostApi": "daidai-toolbox/api-1",
       "minHostVersionCode": 64,
@@ -269,12 +269,12 @@
         "en": "Color vision simulation for images and camera views."
       },
       "releaseNotes": {
-        "zh": "\u66f4\u65b0\u5230 3.0.8 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
-        "en": "Updated the app package for toolbox 3.0.8."
+        "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
+        "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 41577,
-      "sha256": "70ce013903fbe301b0afdb0e2545b0b957f250329e1e8b93b5168f8909234a8f",
-      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.8/colorvision.ddapp"
+      "sha256": "bd45ce0b2695ff1737792d2026a6009f4a09605084f03c67cecac1429de5a949",
+      "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/colorvision.ddapp"
     }
   ]
 }

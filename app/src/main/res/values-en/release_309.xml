@@ -1,0 +1,4 @@
+<resources>
+  <string name="update_309_title">3.0.9 · Toolbox updates and download verification</string>
+  <string name="update_309_detail">Update checks prefer an official public manifest, so releases remain discoverable when the GitHub API is temporarily rate-limited. The manifest includes the signing-certificate fingerprint; the official APK URL, size, SHA-256, package, version code and original signature are verified. A recent valid result can be used during a short network outage; repeated checks are throttled, while a manual check retries immediately. An older remote manifest cannot offer a downgrade. Storage is checked before downloading; after interruption or cancellation, a matching partial file can resume when the server supports it, and the completed APK is still fully verified.</string>
+</resources>

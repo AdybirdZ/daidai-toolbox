@@ -152,10 +152,23 @@
     "public static void settings(org.simpleweather.app.MainActivity, java.lang.String);",
     "public static void earthquakeInfo(org.simpleweather.app.MainActivity, android.widget.LinearLayout, boolean);"
   ],
+  "org.simpleweather.app.HostUpdateManager$CheckState": [
+    "public final class org.simpleweather.app.HostUpdateManager$CheckState extends java.lang.Enum<org.simpleweather.app.HostUpdateManager$CheckState> {",
+    "public static final org.simpleweather.app.HostUpdateManager$CheckState NETWORK;",
+    "public static final org.simpleweather.app.HostUpdateManager$CheckState CACHE;",
+    "public static final org.simpleweather.app.HostUpdateManager$CheckState THROTTLED;",
+    "public static final org.simpleweather.app.HostUpdateManager$CheckState UP_TO_DATE;",
+    "public static final org.simpleweather.app.HostUpdateManager$CheckState STALE;",
+    "public static org.simpleweather.app.HostUpdateManager$CheckState[] values();",
+    "public static org.simpleweather.app.HostUpdateManager$CheckState valueOf(java.lang.String);"
+  ],
   "org.simpleweather.app.HostUpdateManager": [
     "public final class org.simpleweather.app.HostUpdateManager {",
+    "public static org.simpleweather.app.HostUpdateManager$CheckState lastState();",
     "public static org.simpleweather.app.HostUpdateManager$Release latest(android.content.Context) throws java.lang.Exception;",
+    "public static org.simpleweather.app.HostUpdateManager$Release latest(android.content.Context, boolean) throws java.lang.Exception;",
     "public static java.io.File download(android.content.Context, org.simpleweather.app.HostUpdateManager$Release, org.simpleweather.app.HostUpdateManager$DownloadTask) throws java.lang.Exception;",
+    "public static boolean canResume(android.content.Context, org.simpleweather.app.HostUpdateManager$Release);",
     "public static void verify(android.content.Context, java.io.File, java.lang.String) throws java.lang.Exception;",
     "public static boolean hasInstallPermission(android.content.Context);",
     "public static void requestInstallPermission(android.app.Activity);",

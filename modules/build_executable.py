@@ -9,7 +9,7 @@ import json,zipfile,hashlib,shutil,subprocess,os
 IDS=['weather','schedule','status','weather-map','astronomy','earthquake','random','todo','music','messaging','colorvision']
 SCREENS=['WeatherScreen','ScheduleScreen','GpsScreen','MapScreen','AstronomyScreen','EarthquakeScreen','RandomChoiceScreen','TodoScreen','org.daidai.modules.music.MusicActivity','org.daidai.modules.messaging.MessagingActivity','org.daidai.modules.colorvision.ColorVisionActivity']
 API='daidai-toolbox/api-1'
-VERSION='3.0.8'
+VERSION='3.0.9'
 VERSION_CODE=13
 EMBEDDED={'music','messaging','colorvision'}
 GROUPS={'weather':['weather','toolbox'],'status':['toolbox','status_places','status_routes'],'schedule':['toolbox','timetable'],'todo':['toolbox','todos'],'random':['toolbox','random_choice']}
@@ -35,17 +35,17 @@ DESCRIPTIONS={
  'messaging':['通过蓝牙或局域网与附近设备通信。','Communicate with nearby devices over Bluetooth or a local network.'],
  'colorvision':['图片与相机画面的色觉模拟。','Color vision simulation for images and camera views.']}
 RELEASE_NOTES={
- 'weather':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'schedule':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'status':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'weather-map':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'astronomy':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'earthquake':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'random':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'todo':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
+ 'weather':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'schedule':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'status':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'weather-map':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'astronomy':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'earthquake':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'random':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'todo':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
  'music':['修复从设置返回应用时的界面闪屏。','Prevented visible flashing when returning from app settings.'],
- 'messaging':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.'],
- 'colorvision':['更新到 3.0.8 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.8.']}
+ 'messaging':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'colorvision':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.']}
 
 KEY_RULES={'weather':['weather_*'],'weather-map':['radar_region','map_product'],'status':['status_*','location_*','route_interval'],'astronomy':['astro_*'],'earthquake':['quake_*'],'schedule':['course_*'],'random':['random_*'],'todo':['todo_*']}
 BRIDGES={'status':['LocationService'],'todo':['TodoReceiver','TodoScheduler'],'schedule':['TodoReceiver','ScheduleNotifier'],'weather-map':['OfficialPageActivity']}

@@ -234,6 +234,13 @@
     <string name="host_update_check_failed">Could not check for a toolbox update. Try again.</string>
     <string name="host_update_note">Checks stable GitHub releases only. Android confirms the installation.</string>
     <string name="host_update_available">Toolbox version %1$s is available</string>
+    <string name="host_update_available_cached">Toolbox version %1$s is available (last successful check)</string>
+    <string name="host_update_stale">The remote update manifest is older than this toolbox</string>
+    <string name="host_update_resume">Resume toolbox update download</string>
+    <string name="host_update_check_failed_detail_short">Check or download failed: %1$s</string>
+    <string name="host_update_download_failed_detail_short">Download or verification failed: %1$s</string>
+    <string name="host_update_error_network">Network connection failed</string><string name="host_update_error_integrity">File integrity or signature verification failed</string><string name="host_update_error_storage">Insufficient available storage</string><string name="host_update_error_permission">Install permission is not enabled</string><string name="host_update_error_unknown">Unknown error</string>
+    <string name="host_update_error_throttled">A recent check has no usable cache; wait or tap the button to retry now</string>
     <string name="host_update_download">Download toolbox update</string>
     <string name="host_update_downloading_button">Downloading…</string>
     <string name="host_update_cancel">Cancel download</string>

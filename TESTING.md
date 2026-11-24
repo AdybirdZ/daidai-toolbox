@@ -1,3 +1,17 @@
+# 3.0.9 提测记录
+
+日期：2026-11-24。包名 `org.simpleweather.app`，versionCode 65，versionName 3.0.9。
+
+- 修复 GitHub API 暂时限流时无法检查工具箱本体更新：优先读取 `modules/store/host-release.json` 的官方 Raw 清单，失败后回退 Releases API；两条路径都校验正式版本、官方 APK 地址、文件大小和 SHA-256，下载后继续校验包名、版本代码与原签名。
+- 核心 `scripts/test.ps1` 通过，行为测试 3,731 项及资源、双语、音乐导入、课程表、天文、地震、状态、路线、配置、相机、随机抽取、待办和版本检查通过。
+- `scripts/build.ps1` 构建通过；APK 位于 `work/builds/3.0.9/DaidaiToolbox-3.0.9.apk`，大小 1,280,183 字节，SHA-256 `812baab7758037bddd0c918ee6cb7caae5f084ea1788075c207730effe8c3e58`，v2/v3 原签名校验通过。
+- `python scripts/verify-host-update.py` 本地核验通过，核对清单、APK 大小、SHA-256、包名、版本代码、版本名和证书指纹。
+- `tests/android/StoreUpgradeUiTests` 中文和英语各 93 项通过，覆盖公开清单解析、来源边界、哈希/大小/地址拒绝、取消、模块安装与回滚；测试使用仓库内 3.0.9 天气应用包作为隔离夹具。
+
+人工验收：请在 3.0.8 宿主中打开应用商店，点击“检查工具箱更新”，确认显示 3.0.9；再点击下载、安装并完成 Android 系统确认，检查覆盖升级成功且资料保留。GitHub 清单和 3.0.9 Release 尚未上传，故真实限流回退链路尚未验证。
+
+---
+
 # 3.0.8 发布验证记录
 
 日期：2026-11-24。包名 `org.simpleweather.app`，versionCode 64，versionName 3.0.8。

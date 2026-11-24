@@ -32,3 +32,5 @@ for client in ("WeatherApi.java","EarthquakeApi.java"):
 host_updates=(root/'app/src/main/java/org/simpleweather/app/HostUpdateManager.java').read_text(encoding='utf8')
 assert 'DaidaiToolbox/'+name+' Android' in host_updates, 'Host update HTTP client version mismatch'
 assert 'parseLatestRelease' in host_updates and 'expectedUrl.equals(url)' in host_updates, 'Host updates must validate the official versioned release asset URL'
+assert 'parseReleaseManifest' in host_updates and 'RELEASE_MANIFEST' in host_updates, 'Host updates must support the API-independent public manifest'
+assert 'raw.githubusercontent.com' in host_updates, 'Host update manifest must be fetched from the official raw repository origin'
