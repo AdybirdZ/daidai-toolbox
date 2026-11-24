@@ -19,10 +19,13 @@ public abstract class ModulePage extends ContextWrapper {
     protected void onDestroy(){}
     protected void onSaveInstanceState(Bundle state){}
     protected void onActivityResult(int request,int result,Intent data){}
+    /** Stable no-op hook retained for api-1 compatibility. */
+    protected void onActivityReturn(){}
     public void onRequestPermissionsResult(int request,String[] permissions,int[] results){}
     public void onConfigurationChanged(Configuration config){}
     public final void dispatch(String event,Bundle state){switch(event){case "create":onCreate(state);break;case "start":onStart();break;case "resume":onResume();break;case "pause":onPause();break;case "stop":onStop();break;case "destroy":onDestroy();break;case "save":onSaveInstanceState(state);break;}}
     public final void result(int request,int result,Intent data){onActivityResult(request,result,data);}
+    public final void returned(){onActivityReturn();}
     public final void runOnUiThread(Runnable action){activity.runOnUiThread(action);}
     public final boolean isDestroyed(){return activity.isDestroyed();}
     public final boolean isFinishing(){return activity.isFinishing();}

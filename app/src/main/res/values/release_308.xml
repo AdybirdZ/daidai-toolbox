@@ -1,0 +1,4 @@
+<resources>
+  <string name="update_308_title">3.0.8 · 设置返回路径与音乐界面刷新</string>
+  <string name="update_308_detail">应用内打开设置后，返回会回到原应用，不再落到总设置；修复音乐设置返回时界面未及时更新的问题。应用包更新至 3.0.8，并要求宿主版本代码至少为 64。</string>
+</resources>

@@ -872,6 +872,10 @@ string/update_305_detail
 string/update_305_title
 string/update_306_detail
 string/update_306_title
+string/update_307_detail
+string/update_307_title
+string/update_308_detail
+string/update_308_title
 string/update_history_001
 string/update_history_002
 string/update_history_003
@@ -957,6 +961,7 @@ string/weather_sources
 string/weather_store_001
 string/weather_store_002
 style/AppTheme
+style/ChildActivityTheme
 style/FlatAlertDialog
 style/FlatButton
 style/FlatDialogButton

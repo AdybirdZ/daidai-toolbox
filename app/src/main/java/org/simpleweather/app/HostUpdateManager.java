@@ -124,7 +124,7 @@ public final class HostUpdateManager {
     }
     private static HttpURLConnection open(String address)throws IOException{
         URL url=new URL(address);if(!"https".equalsIgnoreCase(url.getProtocol()))throw new IOException("HTTPS required");
-        HttpURLConnection connection=(HttpURLConnection)url.openConnection();connection.setConnectTimeout(12000);connection.setReadTimeout(20000);connection.setInstanceFollowRedirects(true);connection.setRequestProperty("User-Agent","DaidaiToolbox/3.0.7 Android");return connection;
+        HttpURLConnection connection=(HttpURLConnection)url.openConnection();connection.setConnectTimeout(12000);connection.setReadTimeout(20000);connection.setInstanceFollowRedirects(true);connection.setRequestProperty("User-Agent","DaidaiToolbox/3.0.8 Android");return connection;
     }
     private static void checkResponse(HttpURLConnection connection)throws IOException{
         int code=connection.getResponseCode();if(code<200||code>=300){connection.disconnect();throw new IOException("HTTP "+code);}

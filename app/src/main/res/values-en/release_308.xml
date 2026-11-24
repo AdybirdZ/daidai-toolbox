@@ -1,0 +1,4 @@
+<resources>
+  <string name="update_308_title">3.0.8 · App settings return and Music refresh</string>
+  <string name="update_308_detail">App-specific settings now return to the originating app instead of the global settings root. Music refreshes immediately after returning from its settings. Internal app packages are updated to 3.0.8 and require host version code 64 or later.</string>
+</resources>

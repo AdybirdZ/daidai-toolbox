@@ -2070,3 +2070,6 @@ org.simpleweather.app:string/host_update_permission_denied = 0x7f0507fb
 org.simpleweather.app:string/host_update_install_failed_detail = 0x7f0507fa
 org.simpleweather.app:string/update_307_title = 0x7f0507fd
 org.simpleweather.app:string/update_307_detail = 0x7f0507fc
+org.simpleweather.app:string/update_308_detail = 0x7f0507fe
+org.simpleweather.app:string/update_308_title = 0x7f0507ff
+org.simpleweather.app:style/ChildActivityTheme = 0x7f060004

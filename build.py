@@ -246,6 +246,9 @@ def build_ball_race_package(root, sdk, java, tools, platform, keystore, build, r
     if package_build.exists():
         shutil.rmtree(package_build)
     (stage / 'assets').mkdir(parents=True)
+    bundled_levels = module / 'app/assets'
+    if bundled_levels.exists():
+        shutil.copytree(bundled_levels, stage / 'assets', dirs_exist_ok=True)
     classes = build / 'classes'
     jars = build / 'all-classes.jar'
     with zipfile.ZipFile(jars, 'w') as archive:
