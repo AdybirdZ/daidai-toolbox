@@ -324,6 +324,7 @@ string/host_update_download
 string/host_update_download_failed
 string/host_update_download_failed_detail_short
 string/host_update_downloaded
+string/host_update_downloaded_to_downloads
 string/host_update_downloading
 string/host_update_error_integrity
 string/host_update_error_network
@@ -336,12 +337,16 @@ string/host_update_install_complete
 string/host_update_install_failed
 string/host_update_install_failed_detail
 string/host_update_latest
+string/host_update_manual_install_location
 string/host_update_note
 string/host_update_permission_denied
 string/host_update_permission_needed
 string/host_update_permission_unavailable
 string/host_update_resume
+string/host_update_saved
 string/host_update_stale
+string/host_update_storage_permission
+string/host_update_storage_permission_granted
 string/identity_astronomy_001
 string/identity_astronomy_002
 string/identity_astronomy_003

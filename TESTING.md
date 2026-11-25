@@ -1,5 +1,11 @@
 # 3.0.9 发布验证记录
 
+## 3.0.9 / versionCode 66 修订
+
+更新 APK 现在保存至公共 `Download/DaidaiToolbox/`，由用户通过系统文件管理器手动确认安装；工具箱不再请求 `REQUEST_INSTALL_PACKAGES`，不调用 `PackageInstaller`。公开更新清单包含 versionCode，使 3.0.9 / 65 能收到同名 3.0.9 / 66 修订。重复下载会复用哈希正确的现有文件，冲突文件不覆盖。
+
+核心测试及签名构建通过。真实设备上的公共下载目录写入、系统文件管理器手动安装及保留用户资料尚未验证；这些项目仍需设备验收。
+
 日期：2026-11-24。包名 `org.simpleweather.app`，versionCode 65，versionName 3.0.9。
 
 - 修复 GitHub API 暂时限流时无法检查工具箱本体更新：优先读取 `modules/store/host-release.json` 的官方 Raw 清单，失败后回退 Releases API；两条路径都校验正式版本、官方 APK 地址、文件大小和 SHA-256，下载后继续校验包名、版本代码与原签名。

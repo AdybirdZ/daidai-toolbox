@@ -222,14 +222,14 @@
     <string name="host_update_check">检查工具箱更新</string>
     <string name="host_update_latest">工具箱本体已是最新版本</string>
     <string name="host_update_check_failed">暂时无法检查工具箱更新，请重试</string>
-    <string name="host_update_note">仅检查 GitHub 正式版；下载后由 Android 系统确认安装</string>
+    <string name="host_update_note">仅检查 GitHub 正式版；安装包会保存到下载文件夹，请手动安装</string>
     <string name="host_update_available">发现工具箱新版本 %1$s</string>
     <string name="host_update_available_cached">发现工具箱新版本 %1$s（使用上次成功检查结果）</string>
     <string name="host_update_stale">远端更新清单早于当前版本，未提供可用更新</string>
     <string name="host_update_resume">继续下载工具箱更新</string>
     <string name="host_update_check_failed_detail_short">检查或下载失败：%1$s</string>
     <string name="host_update_download_failed_detail_short">下载或校验失败：%1$s</string>
-    <string name="host_update_error_network">网络连接失败</string><string name="host_update_error_integrity">文件完整性或签名校验失败</string><string name="host_update_error_storage">可用存储空间不足</string><string name="host_update_error_permission">未开启安装权限</string><string name="host_update_error_unknown">未知错误</string>
+    <string name="host_update_error_network">网络连接失败</string><string name="host_update_error_integrity">文件完整性或签名校验失败</string><string name="host_update_error_storage">可用存储空间不足</string><string name="host_update_error_permission">无法写入下载文件夹</string><string name="host_update_error_unknown">未知错误</string>
     <string name="host_update_error_throttled">刚检查过更新，暂时没有可用缓存；请稍后或点击按钮立即重试</string>
     <string name="host_update_download">下载工具箱更新</string>
     <string name="host_update_downloading_button">正在下载…</string>
@@ -239,13 +239,18 @@
     <string name="host_update_downloading">正在下载工具箱更新：%1$s / %2$s</string>
     <string name="host_update_download_failed">工具箱更新下载或校验失败，请重试</string>
     <string name="host_update_downloaded">工具箱 %1$s 已下载并验证</string>
-    <string name="host_update_install">安装工具箱更新</string>
-    <string name="host_update_permission_needed">请允许呆呆工具箱安装本次更新</string>
-    <string name="host_update_confirmation">请在系统确认界面完成安装</string>
+    <string name="host_update_downloaded_to_downloads">工具箱 %1$s 已验证并保存到下载文件夹</string>
+    <string name="host_update_saved">查看下载位置</string>
+    <string name="host_update_install">查看下载位置</string>
+    <string name="host_update_manual_install_location">安装包已保存到 Download/DaidaiToolbox，请使用系统文件管理器打开并手动确认安装</string>
+    <string name="host_update_storage_permission">需要存储权限才能把更新包保存到下载文件夹</string>
+    <string name="host_update_storage_permission_granted">已获得存储权限，请再次点击下载</string>
+    <string name="host_update_permission_needed">安装包需由用户在系统中手动确认</string>
+    <string name="host_update_confirmation">请在系统文件管理器中确认安装</string>
     <string name="host_update_install_complete">工具箱更新已完成</string>
-    <string name="host_update_install_failed">工具箱更新安装失败</string>
-    <string name="host_update_install_failed_detail">工具箱更新安装失败（状态 %1$d）：%2$s</string>
-    <string name="host_update_permission_denied">未开启安装权限，工具箱更新未安装</string>
-    <string name="host_update_permission_unavailable">无法打开安装权限设置</string>
+    <string name="host_update_install_failed">工具箱更新未完成</string>
+    <string name="host_update_install_failed_detail">工具箱更新未完成（状态 %1$d）：%2$s</string>
+    <string name="host_update_permission_denied">已改为手动安装，不需要安装权限</string>
+    <string name="host_update_permission_unavailable">已改为手动安装，不需要安装权限</string>
 </resources>
 

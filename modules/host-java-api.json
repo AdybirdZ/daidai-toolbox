@@ -170,10 +170,11 @@
     "public static java.io.File download(android.content.Context, org.simpleweather.app.HostUpdateManager$Release, org.simpleweather.app.HostUpdateManager$DownloadTask) throws java.lang.Exception;",
     "public static boolean canResume(android.content.Context, org.simpleweather.app.HostUpdateManager$Release);",
     "public static void verify(android.content.Context, java.io.File, java.lang.String) throws java.lang.Exception;",
+    "public static java.io.File pendingFile(android.content.Context);",
+    "public static android.net.Uri copyToDownloads(android.content.Context, java.io.File, org.simpleweather.app.HostUpdateManager$Release) throws java.lang.Exception;",
     "public static boolean hasInstallPermission(android.content.Context);",
     "public static void requestInstallPermission(android.app.Activity);",
     "public static int installPermissionRequestCode();",
-    "public static java.io.File pendingFile(android.content.Context);",
     "public static void installPending(android.app.Activity) throws java.lang.Exception;",
     "public static void install(android.app.Activity, java.io.File) throws java.lang.Exception;"
   ],

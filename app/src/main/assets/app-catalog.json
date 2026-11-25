@@ -27,7 +27,7 @@
         "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 152083,
-      "sha256": "8146a67891b17bf03064e9133f6b8821b3bcd6711f94fd0901bfcd7cf58cd8b8",
+      "sha256": "d365fece49a220dc5dcb29c3bddce6b0eec6055acc12d8bd90b89dd6fa903dd9",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/weather.ddapp"
     },
     {
@@ -52,7 +52,7 @@
         "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 57811,
-      "sha256": "cca5021abed5d1c294de2b895dcd94f605f5166c523b38e7408c4215ca824f8b",
+      "sha256": "3e752e6b9f416817cabe1853b70aa9f2d082294d6908efff3465417adf7b2653",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/schedule.ddapp"
     },
     {
@@ -79,8 +79,8 @@
         "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
         "en": "Updated the app package for toolbox 3.0.9."
       },
-      "bytes": 168403,
-      "sha256": "59fd17c8c5f9659646b7688a21b1575f113ecbbd67a03a719c5c0c820f3c1113",
+      "bytes": 164307,
+      "sha256": "3468fd76e2965472fd0668916ef09ba3eb9eb2a4bfbf97c7742db13edda9394c",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/status.ddapp"
     },
     {
@@ -103,7 +103,7 @@
         "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 37331,
-      "sha256": "c2990356e750e9c6b15d164d58d303ef336f5c5d655697a4fa6644080087fd7f",
+      "sha256": "56d98bcd3bed0c3f394b569f474f8a201834eec12180b9c92f8161c099826e85",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/weather-map.ddapp"
     },
     {
@@ -124,7 +124,7 @@
         "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 94751,
-      "sha256": "2bd084b4b6e54222ccb4a48edea37f1864f7edd84ebc202cf226ca212e8056ac",
+      "sha256": "47eb65ccc3a01f2ce873d97532daa4424a6a7d3c39a5bf602563d70cd8e4518f",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/astronomy.ddapp"
     },
     {
@@ -148,8 +148,8 @@
         "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
         "en": "Updated the app package for toolbox 3.0.9."
       },
-      "bytes": 119251,
-      "sha256": "d05b92db607e764f44d3c81311f986beba131d7788042b3250c500f95ddb52b8",
+      "bytes": 115155,
+      "sha256": "b0c8e761c23fb7ba0396183a717fbbb3edf25b86f021fec393e22ca6b78d05d6",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/earthquake.ddapp"
     },
     {
@@ -170,7 +170,7 @@
         "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 41427,
-      "sha256": "2cc17f70a8ec30259d6ccb8d2b87be2b701063fc7edc28c805ab41a3ce0a509e",
+      "sha256": "570f707eca068fe5f08aef1889086c26a787d0566544411ce094fa548b3c27a6",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/random.ddapp"
     },
     {
@@ -195,7 +195,7 @@
         "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 78291,
-      "sha256": "6e8b21115f90a7dda438b37f49097574d7c3a6a150125caa5a92ca8bb296e225",
+      "sha256": "c07d2866d5f2f42b34a064c4ee7f9a2eda784ee98f3c949d7ceb5ba4886fa360",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/todo.ddapp"
     },
     {
@@ -220,8 +220,8 @@
         "zh": "\u4fee\u590d\u4ece\u8bbe\u7f6e\u8fd4\u56de\u5e94\u7528\u65f6\u7684\u754c\u9762\u95ea\u5c4f\u3002",
         "en": "Prevented visible flashing when returning from app settings."
       },
-      "bytes": 1335924,
-      "sha256": "359ef287a8a8b5ca8c6f4f8566c812cab9b21af413e208069561c5acfd373bc4",
+      "bytes": 1331828,
+      "sha256": "705811d1ba761d14e17daa209e93a760b547e402ef77a6245eab097dbc3aa26b",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/music.ddapp"
     },
     {
@@ -249,8 +249,8 @@
         "zh": "\u66f4\u65b0\u5230 3.0.9 \u5bbf\u4e3b\u7248\u672c\u7684\u5e94\u7528\u5305\u683c\u5f0f\u3002",
         "en": "Updated the app package for toolbox 3.0.9."
       },
-      "bytes": 49689,
-      "sha256": "4dc989c0404b2a99f281f3810ad2e5d1565fdedc97d91fa6512f392b19cd4400",
+      "bytes": 45593,
+      "sha256": "39eea5b161c0615d2d8d38aef9d717e342e360eb977eb2f0561812c23389a878",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/messaging.ddapp"
     },
     {
@@ -273,7 +273,7 @@
         "en": "Updated the app package for toolbox 3.0.9."
       },
       "bytes": 41577,
-      "sha256": "bd45ce0b2695ff1737792d2026a6009f4a09605084f03c67cecac1429de5a949",
+      "sha256": "6542f508bbe56fa71add0ecddecf38c5e4c9a126243f5a2d31a516d66eb4a372",
       "url": "https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/3.0.9/colorvision.ddapp"
     }
   ]
