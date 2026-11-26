@@ -23,17 +23,18 @@ public final class BallRoster {
         }
     }
 
-    private static final List<ColorSpec> COLORS = Collections.unmodifiableList(Arrays.asList(
+    private static final ArrayList<ColorSpec> COLORS = new ArrayList<>(Arrays.asList(
         color("red_light", 0xFFFCA5A5), color("red", 0xFFEF4444), color("red_dark", 0xFF991B1B),
-        color("orange_light", 0xFFFDBA74), color("orange", 0xFFF97316), color("orange_dark", 0xFF9A3412),
-        color("yellow_light", 0xFFFDE68A), color("yellow", 0xFFEAB308), color("yellow_dark", 0xFF854D0E),
+        color("orange_light", 0xFFFDBA74), color("orange", 0xFFF97316), color("orange_dark", 0xFFC2410C),
+        color("yellow_light", 0xFFFDE68A), color("yellow", 0xFFEAB308), color("yellow_dark", 0xFFB7791F),
         color("green_light", 0xFF86EFAC), color("green", 0xFF22C55E), color("green_dark", 0xFF166534),
         color("blue_light", 0xFF93C5FD), color("blue", 0xFF3B82F6), color("blue_dark", 0xFF1E3A8A),
         color("purple_light", 0xFFD8B4FE), color("purple", 0xFFA855F7), color("purple_dark", 0xFF6B21A8),
         color("pink_light", 0xFFF9A8D4), color("pink", 0xFFEC4899), color("pink_dark", 0xFF9D174D),
         color("blue_green_light", 0xFF99F6E4), color("blue_green", 0xFF14B8A6), color("blue_green_dark", 0xFF0F766E),
         color("turquoise_light", 0xFF67E8F9), color("turquoise", 0xFF06B6D4), color("turquoise_dark", 0xFF155E75),
-        color("black", 0xFF111827), color("white", 0xFFFFFFFF)
+        color("black", 0xFF111827), color("white", 0xFFFFFFFF),
+        color("gray_light", 0xFFD1D5DB), color("gray_dark", 0xFF4B5563)
     ));
     private static final List<String> DEFAULT_IDS = Collections.unmodifiableList(Arrays.asList(
         "red", "orange", "yellow", "green", "blue", "purple"));
@@ -46,7 +47,13 @@ public final class BallRoster {
         return new ColorSpec(id, "color_" + id, value);
     }
 
-    public static List<ColorSpec> colors() { return COLORS; }
+    public static List<ColorSpec> colors() { return Collections.unmodifiableList(COLORS); }
+
+    public static void registerCustom(String id, String name, int color) {
+        if (id == null || !id.matches("custom-[A-Za-z0-9_-]{1,56}") || name == null || name.trim().isEmpty()) return;
+        for (ColorSpec item : COLORS) if (item.id.equals(id)) return;
+        COLORS.add(new ColorSpec(id, "custom:" + name.trim(), color));
+    }
 
     public static List<String> defaultIds() { return DEFAULT_IDS; }
 
@@ -54,6 +61,41 @@ public final class BallRoster {
         if (id == null) return null;
         for (ColorSpec color : COLORS) if (color.id.equals(id)) return color;
         return null;
+    }
+
+    public static int complementaryContrastColor(int color) {
+        float red = ((color >>> 16) & 255) / 255f;
+        float green = ((color >>> 8) & 255) / 255f;
+        float blue = (color & 255) / 255f;
+        float maximum = Math.max(red, Math.max(green, blue));
+        float minimum = Math.min(red, Math.min(green, blue));
+        float delta = maximum - minimum;
+        float hue;
+        if (delta == 0f) hue = 0f;
+        else if (maximum == red) hue = 60f * (((green - blue) / delta) % 6f);
+        else if (maximum == green) hue = 60f * ((blue - red) / delta + 2f);
+        else hue = 60f * ((red - green) / delta + 4f);
+        if (hue < 0f) hue += 360f;
+        float saturation = maximum == 0f ? 0f : delta / maximum;
+        if (saturation < .12f) {
+            int gray = Math.round((1f - (red * .299f + green * .587f + blue * .114f)) * 255f);
+            return 0xFF000000 | (gray << 16) | (gray << 8) | gray;
+        }
+        float value = Math.max(1f - maximum, .78f);
+        hue = (hue + 180f) % 360f;
+        float chroma = value * saturation;
+        float section = hue / 60f;
+        float secondary = chroma * (1f - Math.abs(section % 2f - 1f));
+        float offset = value - chroma;
+        float outRed, outGreen, outBlue;
+        if (section < 1f) { outRed = chroma; outGreen = secondary; outBlue = 0f; }
+        else if (section < 2f) { outRed = secondary; outGreen = chroma; outBlue = 0f; }
+        else if (section < 3f) { outRed = 0f; outGreen = chroma; outBlue = secondary; }
+        else if (section < 4f) { outRed = 0f; outGreen = secondary; outBlue = chroma; }
+        else if (section < 5f) { outRed = secondary; outGreen = 0f; outBlue = chroma; }
+        else { outRed = chroma; outGreen = 0f; outBlue = secondary; }
+        return 0xFF000000 | (Math.round((outRed + offset) * 255f) << 16)
+            | (Math.round((outGreen + offset) * 255f) << 8) | Math.round((outBlue + offset) * 255f);
     }
 
     public static List<String> normalize(Collection<String> ids) {

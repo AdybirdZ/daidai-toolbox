@@ -141,7 +141,7 @@ public final class RaceCourse {
     }
 
     public static RaceCourse generate(long seed, int levelCount, float obstacleElasticity) {
-        if (levelCount < 2 || levelCount > 12) throw new IllegalArgumentException("Invalid level count");
+        if (levelCount < 1) throw new IllegalArgumentException("Invalid level count");
         List<Template> library = templates(obstacleElasticity);
         Random random = new Random(seed);
         List<Level> levels = new ArrayList<>();
@@ -187,8 +187,12 @@ public final class RaceCourse {
     }
 
     public Level levelAt(float worldY) {
-        int index = Math.max(0, Math.min(levels.size() - 1, (int) (Math.max(0f, worldY) / LEVEL_HEIGHT)));
-        return levels.get(index);
+        Level selected = levels.get(0);
+        for (Level level : levels) {
+            if (worldY < level.originY) break;
+            selected = level;
+        }
+        return selected;
     }
 
     public boolean linksAreValid() {
@@ -203,7 +207,7 @@ public final class RaceCourse {
     }
 
     public static List<Template> templates(float elasticity) {
-        float e = clamp01(elasticity);
+        float e = .7f;
         List<Template> result = new ArrayList<>();
         Port entry = new Port(Port.TOP, WORLD_WIDTH * .5f, "vertical_center");
         Port exit = new Port(Port.BOTTOM, WORLD_WIDTH * .5f, "vertical_center");

@@ -2,6 +2,8 @@
 
 本目录保存小球竞赛原型源码和本地专用测试宿主资料。正式工具箱构建不会读取本目录，也不会将应用加入正式桌面或商店。测试宿主使用独立 Android 包名和本机开发签名，可与正式工具箱并存。
 
-开发及宿主边界见 [`docs/BALL-RACE-DDAPP.md`](../../../docs/BALL-RACE-DDAPP.md)。原型模型位于 `src/`，测试宿主应用源码位于 `app/`，关卡资料位于 `examples/`，模型与应用测试位于 `src/test/`、`app-test/`。主菜单提供开始游戏、编辑器和默认设置，标题居中，主要按钮加大并纵向排列。开始游戏前可管理唯一颜色的参赛球、随机候选关卡和本场比赛设置，参赛人数不设上限。默认设置可选择进入比赛时的跟随方式，默认跟随第一名，并设置障碍弹性 0.62、小球弹性 0.68、球间碰撞开启及重力 0.75g。每场比赛可设置关卡总数、球间碰撞、统一小球弹性、障碍弹性和重力。比赛中右上角显示可切换、可滚动的实时榜单；比赛结束后展开完整排名结果。比赛底部有暂停、跟随设置和宿主桌面入口。颜色目录包含浅色、中间色和深色的九组色系，以及黑白。关卡编辑器可切换并重命名五种内置模板，放置、删除和拖动圆形障碍及斜坡，调整尺寸、厚度与斜坡角度，并在本机保存后试跑。测试宿主继续使用本机 3.0.5 宿主框架，构建文件输出到工作区 `work/builds/3.0.5-test-host/`。
+开发及宿主边界见 [`docs/BALL-RACE-DDAPP.md`](../../../docs/BALL-RACE-DDAPP.md)。主菜单提供开始游戏、编辑器和默认设置。参赛球无固定数量上限，每场比赛的关卡数可自行输入且不设 12 关上限。比赛中的排行榜可切换并收起；结果页始终展开，并提供返回首页按钮。比赛底栏包括暂停、跟随设置、缩放和宿主桌面入口。关卡编辑器先展示六个内置关卡及自定义关卡的缩略预览，支持创建、导入 JSON/ZIP 和多选 ZIP 导出；关卡名按用户原文保留，导出文件名使用稳定 ASCII ID。用户提供的六份关卡 JSON 位于 `app/assets/levels/`，用于替换原有内置模板。
 
-运行模型测试可执行 `python modules/prototypes/ball-race/tests/run.py --json-jar tools/test-libs/json.jar`。测试宿主构建和设备交互检查见根目录的 `scripts/build-ball-race-test.ps1` 与 `scripts/test-ball-race-host.ps1`。可编辑内置模板保存在应用私有偏好中，使用 `ball-race-editable-level` 与独立的 schema 版本，不覆盖 `examples/` 中的 `ball-race-course` 分享格式。Java 包名 `ballrace` 保持为内部稳定标识。
+障碍编辑的数据模型支持圆形、椭圆、斜坡和圆弧，并保存颜色、显隐、弹性、摩擦、碰撞开关、周期移动、绕轴转动、碰撞动作（反弹、附加冲量或指定坐标传送）及冷却时间。关卡可编辑数据格式为 schema 3；旧 schema 1 和 2 数据载入时为新增属性补入默认值。障碍属性在编辑界面和保存数据中的行为可由原型模型测试验证；动态移动、旋转、碰撞动作在完整竞速中的运行表现尚未完成设备验收。文字对象仍是装饰内容，不参与碰撞。测试宿主继续使用本机 3.0.5 宿主框架，构建文件输出到工作区 `work/builds/3.0.5-test-host/`。
+
+从 `source/` 运行模型与编辑数据测试：`python modules/prototypes/ball-race/tests/run.py --json-jar ..\tools\test-libs\json.jar`。测试宿主构建和设备交互检查见工作区根目录的 `scripts/build-ball-race-test.ps1` 与 `scripts/test-ball-race-host.ps1`。可编辑内置模板保存在应用私有偏好中，使用 `ball-race-editable-level` 与独立的 schema 版本，不覆盖 `examples/` 中的 `ball-race-course` 分享格式。Java 包名 `ballrace` 保持为内部稳定标识。

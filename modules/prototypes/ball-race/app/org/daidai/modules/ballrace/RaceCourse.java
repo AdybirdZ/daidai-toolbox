@@ -11,6 +11,7 @@ import java.util.Set;
 public final class RaceCourse {
     public static final float WORLD_WIDTH = 360f;
     public static final float LEVEL_HEIGHT = 480f;
+    public static final float START_AREA_HEIGHT = 400f;
 
     public static final class Port {
         public static final int TOP = 0;
@@ -36,6 +37,11 @@ public final class RaceCourse {
     public static final class Obstacle {
         public static final int SEGMENT = 0;
         public static final int CIRCLE = 1;
+        public static final int ARC = 2;
+        public static final int ELLIPSE = 3;
+        public static final int ACTION_BOUNCE = 0;
+        public static final int ACTION_IMPULSE = 1;
+        public static final int ACTION_TELEPORT = 2;
 
         public final int shape;
         public final String label;
@@ -44,11 +50,39 @@ public final class RaceCourse {
         public final float x2;
         public final float y2;
         public final float radius;
+        public final float radiusY;
         public final float thickness;
         public final float elasticity;
+        public final float friction;
+        public final float arcDegrees;
+        public final float rotationDegrees;
+        public final boolean rounded;
+        public final int color;
+        public final boolean visible;
+        public final boolean collisionEnabled;
+        public final float motionX;
+        public final float motionY;
+        public final float motionPeriodSeconds;
+        public final float motionPhaseRadians;
+        public final float pivotOffsetX;
+        public final float pivotOffsetY;
+        public final float rotationSpeedDegreesPerSecond;
+        public final float collisionImpulseX;
+        public final float collisionImpulseY;
+        public final int collisionAction;
+        public final float teleportX;
+        public final float teleportY;
+        public final float actionCooldownSeconds;
 
         private Obstacle(int shape, String label, float x1, float y1, float x2, float y2,
-                         float radius, float thickness, float elasticity) {
+                         float radius, float radiusY, float thickness, float elasticity, float friction,
+                         float arcDegrees, float rotationDegrees, boolean rounded, int color,
+                         boolean visible, boolean collisionEnabled, float motionX, float motionY,
+                         float motionPeriodSeconds, float motionPhaseRadians, float pivotOffsetX,
+                         float pivotOffsetY, float rotationSpeedDegreesPerSecond,
+                         float collisionImpulseX, float collisionImpulseY,
+                         int collisionAction, float teleportX, float teleportY,
+                         float actionCooldownSeconds) {
             this.shape = shape;
             this.label = label;
             this.x1 = x1;
@@ -56,17 +90,192 @@ public final class RaceCourse {
             this.x2 = x2;
             this.y2 = y2;
             this.radius = radius;
+            this.radiusY = radiusY;
             this.thickness = thickness;
             this.elasticity = clamp01(elasticity);
+            this.friction = clamp01(friction);
+            this.arcDegrees = arcDegrees;
+            this.rotationDegrees = rotationDegrees;
+            this.rounded = rounded;
+            this.color = color;
+            this.visible = visible;
+            this.collisionEnabled = collisionEnabled;
+            this.motionX = motionX;
+            this.motionY = motionY;
+            this.motionPeriodSeconds = motionPeriodSeconds;
+            this.motionPhaseRadians = motionPhaseRadians;
+            this.pivotOffsetX = pivotOffsetX;
+            this.pivotOffsetY = pivotOffsetY;
+            this.rotationSpeedDegreesPerSecond = rotationSpeedDegreesPerSecond;
+            this.collisionImpulseX = collisionImpulseX;
+            this.collisionImpulseY = collisionImpulseY;
+            this.collisionAction = collisionAction;
+            this.teleportX = teleportX;
+            this.teleportY = teleportY;
+            this.actionCooldownSeconds = actionCooldownSeconds;
         }
 
         static Obstacle segment(String label, float x1, float y1, float x2, float y2,
                                 float thickness, float elasticity) {
-            return new Obstacle(SEGMENT, label, x1, y1, x2, y2, 0f, thickness, elasticity);
+            return segment(label, x1, y1, x2, y2, thickness, elasticity, true);
+        }
+
+        static Obstacle segment(String label, float x1, float y1, float x2, float y2,
+                                float thickness, float elasticity, boolean rounded) {
+            return new Obstacle(SEGMENT, label, x1, y1, x2, y2, 0f, 0f, thickness, elasticity,
+                .35f, 0f, 0f, rounded, 0xFF596C83, true, true, 0f, 0f, 1f, 0f,
+                0f, 0f, 0f, 0f, 0f, ACTION_BOUNCE, 0f, 0f, .35f);
         }
 
         static Obstacle circle(String label, float x, float y, float radius, float elasticity) {
-            return new Obstacle(CIRCLE, label, x, y, x, y, radius, 0f, elasticity);
+            return new Obstacle(CIRCLE, label, x, y, x, y, radius, radius, 0f, elasticity,
+                .35f, 0f, 0f, true, 0xFF596C83, true, true, 0f, 0f, 1f, 0f,
+                0f, 0f, 0f, 0f, 0f, ACTION_BOUNCE, 0f, 0f, .35f);
+        }
+
+        static Obstacle ellipse(String label, float x, float y, float radiusX, float radiusY, float elasticity) {
+            return ellipse(label, x, y, radiusX, radiusY, 0f, elasticity);
+        }
+
+        static Obstacle ellipse(String label, float x, float y, float radiusX, float radiusY,
+                                float rotation, float elasticity) {
+            return new Obstacle(ELLIPSE, label, x, y, x, y, radiusX, radiusY, 0f, elasticity,
+                .35f, 0f, rotation, true, 0xFF596C83, true, true, 0f, 0f, 1f, 0f,
+                0f, 0f, 0f, 0f, 0f, ACTION_BOUNCE, 0f, 0f, .35f);
+        }
+
+        static Obstacle arc(String label, float x, float y, float radius, float thickness,
+                            float degrees, float rotation, float elasticity, boolean rounded) {
+            return new Obstacle(ARC, label, x, y, x, y, radius, radius, thickness, elasticity,
+                .35f, degrees, rotation, rounded, 0xFF596C83, true, true, 0f, 0f, 1f, 0f,
+                0f, 0f, 0f, 0f, 0f, ACTION_BOUNCE, 0f, 0f, .35f);
+        }
+
+        Obstacle withProperties(float radiusY, float friction, int color, boolean visible,
+                                boolean collisionEnabled, float motionX, float motionY,
+                                float motionPeriodSeconds, float motionPhaseRadians,
+                                float pivotOffsetX, float pivotOffsetY,
+                                float rotationSpeedDegreesPerSecond,
+                                float collisionImpulseX, float collisionImpulseY) {
+            return withProperties(radiusY, friction, color, visible, collisionEnabled, motionX, motionY,
+                motionPeriodSeconds, motionPhaseRadians, pivotOffsetX, pivotOffsetY,
+                rotationSpeedDegreesPerSecond, collisionImpulseX, collisionImpulseY,
+                ACTION_BOUNCE, 0f, 0f, .35f);
+        }
+
+        Obstacle withProperties(float radiusY, float friction, int color, boolean visible,
+                                boolean collisionEnabled, float motionX, float motionY,
+                                float motionPeriodSeconds, float motionPhaseRadians,
+                                float pivotOffsetX, float pivotOffsetY,
+                                float rotationSpeedDegreesPerSecond,
+                                float collisionImpulseX, float collisionImpulseY,
+                                int collisionAction, float teleportX, float teleportY,
+                                float actionCooldownSeconds) {
+            return new Obstacle(shape, label, x1, y1, x2, y2, radius, radiusY, thickness,
+                elasticity, friction, arcDegrees, rotationDegrees, rounded, color, visible,
+                collisionEnabled, motionX, motionY, motionPeriodSeconds, motionPhaseRadians,
+                pivotOffsetX, pivotOffsetY, rotationSpeedDegreesPerSecond, collisionImpulseX,
+                collisionImpulseY, collisionAction, teleportX, teleportY, actionCooldownSeconds);
+        }
+
+        public State stateAt(float seconds) {
+            float centerX = shape == SEGMENT ? (x1 + x2) * .5f : x1;
+            float centerY = shape == SEGMENT ? (y1 + y2) * .5f : y1;
+            float angularSpeed = (float) Math.toRadians(rotationSpeedDegreesPerSecond);
+            float period = motionPeriodSeconds > 0f ? motionPeriodSeconds : 1f;
+            float phase = motionPhaseRadians + (float) (Math.PI * 2d * seconds / period);
+            float offsetX = motionX * (float) Math.sin(phase);
+            float offsetY = motionY * (float) Math.sin(phase);
+            float moveVx = motionX * (float) Math.cos(phase) * (float) (Math.PI * 2d / period);
+            float moveVy = motionY * (float) Math.cos(phase) * (float) (Math.PI * 2d / period);
+            float angle = angularSpeed * seconds;
+            float pivotX = centerX + pivotOffsetX;
+            float pivotY = centerY + pivotOffsetY;
+            float relativeX = centerX - pivotX;
+            float relativeY = centerY - pivotY;
+            float rotatedCenterX = pivotX + relativeX * (float) Math.cos(angle) - relativeY * (float) Math.sin(angle);
+            float rotatedCenterY = pivotY + relativeX * (float) Math.sin(angle) + relativeY * (float) Math.cos(angle);
+            float velocityX = moveVx - angularSpeed * (rotatedCenterY - pivotY);
+            float velocityY = moveVy + angularSpeed * (rotatedCenterX - pivotX);
+            float firstX = x1;
+            float firstY = y1;
+            float secondX = x2;
+            float secondY = y2;
+            if (shape == SEGMENT) {
+                float[] first = rotate(x1 - pivotX, y1 - pivotY, angle);
+                float[] second = rotate(x2 - pivotX, y2 - pivotY, angle);
+                firstX = pivotX + first[0] + offsetX;
+                firstY = pivotY + first[1] + offsetY;
+                secondX = pivotX + second[0] + offsetX;
+                secondY = pivotY + second[1] + offsetY;
+            }
+            return new State(rotatedCenterX + offsetX, rotatedCenterY + offsetY,
+                firstX, firstY, secondX, secondY,
+                normalizeDegrees(rotationDegrees + rotationSpeedDegreesPerSecond * seconds),
+                velocityX, velocityY, rotationSpeedDegreesPerSecond,
+                pivotX + offsetX, pivotY + offsetY, moveVx, moveVy, offsetX, offsetY);
+        }
+
+        private static float[] rotate(float x, float y, float angle) {
+            float cosine = (float) Math.cos(angle);
+            float sine = (float) Math.sin(angle);
+            return new float[] { x * cosine - y * sine, x * sine + y * cosine };
+        }
+
+        private static float normalizeDegrees(float value) {
+            float result = value % 360f;
+            return result < 0f ? result + 360f : result;
+        }
+
+        public static final class State {
+            public final float x;
+            public final float y;
+            public final float x1;
+            public final float y1;
+            public final float x2;
+            public final float y2;
+            public final float rotationDegrees;
+            public final float velocityX;
+            public final float velocityY;
+            public final float angularVelocityDegreesPerSecond;
+            public final float pivotX;
+            public final float pivotY;
+            public final float pivotVelocityX;
+            public final float pivotVelocityY;
+            public final float offsetX;
+            public final float offsetY;
+
+            private State(float x, float y, float x1, float y1, float x2, float y2,
+                          float rotationDegrees, float velocityX, float velocityY,
+                          float angularVelocityDegreesPerSecond, float pivotX, float pivotY,
+                          float pivotVelocityX, float pivotVelocityY, float offsetX, float offsetY) {
+                this.x = x;
+                this.y = y;
+                this.x1 = x1;
+                this.y1 = y1;
+                this.x2 = x2;
+                this.y2 = y2;
+                this.rotationDegrees = rotationDegrees;
+                this.velocityX = velocityX;
+                this.velocityY = velocityY;
+                this.angularVelocityDegreesPerSecond = angularVelocityDegreesPerSecond;
+                this.pivotX = pivotX;
+                this.pivotY = pivotY;
+                this.pivotVelocityX = pivotVelocityX;
+                this.pivotVelocityY = pivotVelocityY;
+                this.offsetX = offsetX;
+                this.offsetY = offsetY;
+            }
+        }
+    }
+
+    public static final class TextObject {
+        public final String text;
+        public final float x, y, size, rotationDegrees;
+        public final int color;
+        TextObject(String text, float x, float y, float size, float rotationDegrees, int color) {
+            this.text = text; this.x = x; this.y = y; this.size = size;
+            this.rotationDegrees = rotationDegrees; this.color = color;
         }
     }
 
@@ -78,19 +287,30 @@ public final class RaceCourse {
         public final float width;
         public final float height;
         public final List<Obstacle> obstacles;
+        public final List<TextObject> texts;
 
         Template(String id, Port entry, Port exit, List<Obstacle> obstacles) {
-            this(id, id, entry, exit, obstacles);
+            this(id, id, entry, exit, WORLD_WIDTH, LEVEL_HEIGHT, obstacles);
         }
 
         Template(String id, String name, Port entry, Port exit, List<Obstacle> obstacles) {
+            this(id, name, entry, exit, WORLD_WIDTH, LEVEL_HEIGHT, obstacles);
+        }
+
+        Template(String id, String name, Port entry, Port exit, float width, float height, List<Obstacle> obstacles) {
+            this(id, name, entry, exit, width, height, obstacles, Collections.emptyList());
+        }
+
+        Template(String id, String name, Port entry, Port exit, float width, float height,
+                 List<Obstacle> obstacles, List<TextObject> texts) {
             this.id = id;
             this.name = name == null ? id : name;
             this.entry = entry;
             this.exit = exit;
-            this.width = WORLD_WIDTH;
-            this.height = LEVEL_HEIGHT;
+            this.width = width;
+            this.height = height;
             this.obstacles = Collections.unmodifiableList(obstacles);
+            this.texts = Collections.unmodifiableList(texts);
         }
 
         boolean connectsTo(Template next) {
@@ -144,8 +364,14 @@ public final class RaceCourse {
     RaceCourse(List<Level> levels, List<Obstacle> obstacles) {
         this.levels = Collections.unmodifiableList(levels);
         this.obstacles = Collections.unmodifiableList(obstacles);
-        this.width = WORLD_WIDTH;
-        this.height = levels.get(levels.size() - 1).originY + LEVEL_HEIGHT;
+        float widest = WORLD_WIDTH;
+        float bottom = 0f;
+        for (Level level : levels) {
+            widest = Math.max(widest, level.template.width);
+            bottom = Math.max(bottom, level.originY + level.template.height);
+        }
+        this.width = widest;
+        this.height = bottom;
     }
 
     public static RaceCourse generate(long seed, int levelCount, float obstacleElasticity) {
@@ -159,7 +385,7 @@ public final class RaceCourse {
 
     /** 按候选关卡数量决定是否允许在一场比赛内重复抽取。 */
     public static RaceCourse generate(long seed, int levelCount, List<Template> library, boolean allowRepeats) {
-        if (levelCount < 1 || levelCount > 12) throw new IllegalArgumentException("Invalid level count");
+        if (levelCount < 1) throw new IllegalArgumentException("Invalid level count");
         if (library == null || library.isEmpty()) throw new IllegalArgumentException("关卡模板不能为空");
         Set<String> templateIds = new HashSet<>();
         for (Template template : library) {
@@ -176,7 +402,7 @@ public final class RaceCourse {
         Template previous = null;
         Set<String> usedIds = new HashSet<>();
         float originX = 0f;
-        float originY = 0f;
+        float originY = START_AREA_HEIGHT;
 
         for (int index = 0; index < levelCount; index++) {
             List<Template> compatible = new ArrayList<>();
@@ -201,24 +427,28 @@ public final class RaceCourse {
         if (ballCount < 2 || width <= radius * 4f || radius <= 0f) {
             throw new IllegalArgumentException("Invalid starting grid");
         }
-        int columns = Math.min(4, ballCount - 1);
-        float spacing = Math.min(56f, (width - radius * 4f) / Math.max(1, columns - 1));
+        int columns = Math.min(8, Math.max(2, ballCount));
+        float spacing = Math.min(radius * 2.15f, (width - radius * 4f) / Math.max(1, columns - 1));
         float startX = (width - spacing * (columns - 1)) * .5f;
-        float verticalSpacing = radius * 2f + 3f;
+        float verticalSpacing = radius * 2f + 1f;
         List<StartPosition> positions = new ArrayList<>();
         for (int index = 0; index < ballCount; index++) {
             int row = index / columns;
             int column = index % columns;
             float rowOffset = row % 2 == 0 ? 0f : spacing * .5f;
             positions.add(new StartPosition(startX + column * spacing + rowOffset,
-                32f + row * verticalSpacing));
+                24f + row * verticalSpacing));
         }
         return Collections.unmodifiableList(positions);
     }
 
     public Level levelAt(float worldY) {
-        int index = Math.max(0, Math.min(levels.size() - 1, (int) (Math.max(0f, worldY) / LEVEL_HEIGHT)));
-        return levels.get(index);
+        Level selected = levels.get(0);
+        for (Level level : levels) {
+            if (worldY < level.originY) break;
+            selected = level;
+        }
+        return selected;
     }
 
     public boolean linksAreValid() {
@@ -233,7 +463,7 @@ public final class RaceCourse {
     }
 
     public static List<Template> templates(float elasticity) {
-        float e = clamp01(elasticity);
+        float e = .7f;
         List<Template> result = new ArrayList<>();
         Port entry = new Port(Port.TOP, WORLD_WIDTH * .5f, "vertical_center");
         Port exit = new Port(Port.BOTTOM, WORLD_WIDTH * .5f, "vertical_center");
@@ -274,7 +504,14 @@ public final class RaceCourse {
             target.add(new Obstacle(obstacle.shape, level.index + ":" + obstacle.label,
                 obstacle.x1 + level.originX, obstacle.y1 + level.originY,
                 obstacle.x2 + level.originX, obstacle.y2 + level.originY,
-                obstacle.radius, obstacle.thickness, obstacle.elasticity));
+                obstacle.radius, obstacle.radiusY, obstacle.thickness, obstacle.elasticity,
+                obstacle.friction, obstacle.arcDegrees, obstacle.rotationDegrees, obstacle.rounded,
+                obstacle.color, obstacle.visible, obstacle.collisionEnabled, obstacle.motionX,
+                obstacle.motionY, obstacle.motionPeriodSeconds, obstacle.motionPhaseRadians,
+                obstacle.pivotOffsetX, obstacle.pivotOffsetY, obstacle.rotationSpeedDegreesPerSecond,
+                obstacle.collisionImpulseX, obstacle.collisionImpulseY, obstacle.collisionAction,
+                obstacle.teleportX + level.originX, obstacle.teleportY + level.originY,
+                obstacle.actionCooldownSeconds));
         }
     }
 

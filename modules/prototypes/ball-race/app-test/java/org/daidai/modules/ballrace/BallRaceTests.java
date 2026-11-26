@@ -60,6 +60,49 @@ public final class BallRaceTests {
         check(Math.abs(weightless.y - 120f) < .001f && Math.abs(weightless.vy) < .001f,
             "A configurable zero-gravity race keeps balls weightless");
 
+        BallPhysics.World finishWorld = new BallPhysics.World(200f, 980f, 100f, 80f, 120f);
+        BallPhysics.Ball finisher = ball("finisher", 100f, 70f, 0f, .8f, true);
+        finishWorld.balls.add(finisher);
+        finishWorld.balls.add(ball("finish other", 160f, 70f, 0f, .8f, false));
+        finishWorld.start();
+        run(finishWorld, .5f);
+        check(finisher.finished(), "Crossing the finish opening records a finish time");
+        check(Math.abs(finisher.vy) > .01f || finisher.y < finishWorld.finishY,
+            "A finished ball remains in the physical world after crossing");
+
+        BallPhysics.World fastFinishWorld = new BallPhysics.World(200f, 0f, 100f, 80f, 120f);
+        fastFinishWorld.setPhysicsHz(30);
+        BallPhysics.Ball fastFinisher = ball("fast finisher", 100f, 40f, 0f, .8f, false);
+        fastFinisher.vy = 3000f;
+        fastFinishWorld.balls.add(fastFinisher);
+        fastFinishWorld.balls.add(ball("fast finish other", 160f, 40f, 0f, .8f, false));
+        fastFinishWorld.start();
+        fastFinishWorld.advance(1f / 30f);
+        check(fastFinisher.finished(), "Adaptive collision steps detect a high-speed finish crossing at 30 Hz");
+
+        BallPhysics.World fastWallWorld = world(0f);
+        fastWallWorld.setPhysicsHz(30);
+        BallPhysics.Ball fastWallBall = ball("fast wall", 40f, 100f, 3000f, 1f, false);
+        fastWallWorld.balls.add(fastWallBall);
+        fastWallWorld.balls.add(ball("fast wall other", 160f, 300f, 0f, 1f, false));
+        fastWallWorld.segments.add(new BallPhysics.Segment(100f, 0f, 100f, 500f, 2f, 1f, 0f));
+        fastWallWorld.start();
+        fastWallWorld.advance(1f / 30f);
+        check(fastWallBall.x < 100f && fastWallBall.vx < 0f,
+            "Adaptive collision steps stop a high-speed ball tunneling through a thin wall at 30 Hz");
+
+        int darkOutline = BallRoster.complementaryContrastColor(0xFF111827);
+        check(((darkOutline >>> 16) & 255) > 180,
+            "A dark neutral name gets a light outline");
+        check(BallRoster.complementaryContrastColor(0xFFFFFFFF) == 0xFF000000,
+            "A light neutral name gets a dark outline");
+        check((BallRoster.complementaryContrastColor(0xFF1E3A8A) & 0xFFFFFF)
+                != (BallRoster.complementaryContrastColor(0xFF93C5FD) & 0xFFFFFF),
+            "Dark and light chromatic names get distinct contrast outlines");
+        int redOutline = BallRoster.complementaryContrastColor(0xFFEF4444);
+        check(((redOutline >>> 8) & 255) > 120 && (redOutline & 255) > 120,
+            "A red name gets a visible blue-green complementary outline");
+
         BallPhysics.World elasticWorld = world(.001f);
         BallPhysics.Ball elasticBall = ball("elastic", 50f, 100f, 80f, 1f, true);
         elasticWorld.balls.add(elasticBall);
@@ -87,6 +130,108 @@ public final class BallRaceTests {
         run(passThroughWorld, 1f);
         check(passThrough.x < 100f && passThrough.vx < -60f,
             "Disabling ball-to-ball collision keeps obstacle contact enabled");
+
+        EditableLevel ellipseLevel = EditableLevel.createCustom("custom-physics-ellipse", "椭圆碰撞测试");
+        EditableLevel.Obstacle editableEllipse = ellipseLevel.add(EditableLevel.ELLIPSE, 100f, 100f);
+        editableEllipse.size = 20f;
+        editableEllipse.radiusY = 10f;
+        editableEllipse.elasticity = 1f;
+        editableEllipse.friction = 0f;
+        BallPhysics.World ellipseWorld = new BallPhysics.World(360f, 0f, 1000f, 20f, 340f);
+        BallPhysics.Ball ellipseHit = ball("ellipse hit", 50f, 100f, 80f, 1f, false);
+        ellipseWorld.balls.add(ellipseHit);
+        ellipseWorld.balls.add(ball("ellipse idle", 300f, 400f, 0f, 1f, false));
+        ellipseWorld.setCourseObstacles(ellipseLevel.toTemplate(1f).obstacles);
+        ellipseWorld.start();
+        run(ellipseWorld, .8f);
+        check(ellipseHit.x < 100f && ellipseHit.vx < 0f,
+            "椭圆障碍会阻止小球穿透并按椭圆法线反弹");
+
+        BallPhysics.World rotatingEllipseWorld = new BallPhysics.World(360f, 0f, 1000f, 20f, 340f);
+        rotatingEllipseWorld.setPhysicsHz(30);
+        BallPhysics.Ball rotatingEllipseHit = new BallPhysics.Ball("rotating ellipse hit", 0xFFEF4444,
+            85.04f, 170.43f, 2f, 1f, .8f, false);
+        rotatingEllipseWorld.balls.add(rotatingEllipseHit);
+        rotatingEllipseWorld.balls.add(new BallPhysics.Ball("rotating ellipse idle", 0xFF22AA66,
+            300f, 400f, 2f, 1f, .8f, false));
+        RaceCourse.Obstacle rotatingEllipse = RaceCourse.Obstacle.ellipse("rotating-ellipse",
+            100f, 100f, 8f, 72f, 0f, .8f).withProperties(72f, .35f, 0xFF596C83,
+                true, true, 0f, 0f, 1f, 0f, 0f, 0f, 720f,
+                0f, 0f, RaceCourse.Obstacle.ACTION_BOUNCE, 0f, 0f, .35f);
+        rotatingEllipseWorld.setCourseObstacles(Collections.singletonList(rotatingEllipse));
+        rotatingEllipseWorld.start();
+        run(rotatingEllipseWorld, 1f / 30f);
+        check(Math.abs(rotatingEllipseHit.x - 85.04f) > .1f
+                || Math.abs(rotatingEllipseHit.y - 170.43f) > .1f,
+            "旋转椭圆按较长半径估算碰撞子步，避免长轴扫过小球时漏检");
+
+        EditableLevel movingLevel = EditableLevel.createCustom("custom-moving-slope", "移动斜坡测试");
+        EditableLevel.Obstacle movingSlope = movingLevel.add(EditableLevel.SLOPE, 100f, 70f);
+        movingSlope.size = 120f;
+        movingSlope.thickness = 4f;
+        movingSlope.motionY = 30f;
+        movingSlope.motionPeriodSeconds = 2f;
+        movingSlope.motionPhaseRadians = (float) -Math.PI / 2f;
+        BallPhysics.World movingWorld = new BallPhysics.World(360f, 0f, 1000f, 20f, 340f);
+        BallPhysics.Ball pushedBySlope = ball("moving contact", 100f, 85f, 0f, .8f, false);
+        movingWorld.balls.add(pushedBySlope);
+        movingWorld.balls.add(ball("moving idle", 300f, 400f, 0f, .8f, false));
+        movingWorld.setCourseObstacles(movingLevel.toTemplate(1f).obstacles);
+        movingWorld.start();
+        run(movingWorld, .7f);
+        check(pushedBySlope.vy > 1f,
+            "移动斜坡的表面速度会传给接触中的小球");
+
+        EditableLevel rotatingLevel = EditableLevel.createCustom("custom-rotating-slope", "旋转斜坡测试");
+        EditableLevel.Obstacle rotatingSlope = rotatingLevel.add(EditableLevel.SLOPE, 180f, 160f);
+        rotatingSlope.size = 120f;
+        rotatingSlope.thickness = 12f;
+        rotatingSlope.rotationSpeedDegreesPerSecond = 90f;
+        BallPhysics.World rotatingWorld = new BallPhysics.World(360f, 0f, 1000f, 20f, 340f);
+        BallPhysics.Ball rotatingContact = ball("rotating contact", 210f, 170f, 0f, 1f, false);
+        rotatingWorld.balls.add(rotatingContact);
+        rotatingWorld.balls.add(ball("rotating idle", 300f, 400f, 0f, 1f, false));
+        rotatingWorld.setCourseObstacles(rotatingLevel.toTemplate(1f).obstacles);
+        rotatingWorld.start();
+        run(rotatingWorld, .02f);
+        check(Math.abs(rotatingContact.vx) + Math.abs(rotatingContact.vy) > 1f,
+            "绕轴旋转的斜坡会将接触点速度传给小球，实际速度="
+                + rotatingContact.vx + "," + rotatingContact.vy);
+
+        EditableLevel impulseLevel = EditableLevel.createCustom("custom-impulse-obstacle", "冲量测试");
+        EditableLevel.Obstacle impulseObstacle = impulseLevel.add(EditableLevel.CIRCLE, 100f, 100f);
+        impulseObstacle.size = 20f;
+        impulseObstacle.elasticity = 0f;
+        impulseObstacle.friction = 0f;
+        impulseObstacle.collisionAction = RaceCourse.Obstacle.ACTION_IMPULSE;
+        impulseObstacle.collisionImpulseX = -35f;
+        impulseObstacle.actionCooldownSeconds = .8f;
+        BallPhysics.World impulseWorld = new BallPhysics.World(360f, 0f, 1000f, 20f, 340f);
+        BallPhysics.Ball impulseHit = ball("impulse hit", 50f, 100f, 60f, 1f, false);
+        impulseWorld.balls.add(impulseHit);
+        impulseWorld.balls.add(ball("impulse idle", 300f, 400f, 0f, 1f, false));
+        impulseWorld.setCourseObstacles(impulseLevel.toTemplate(1f).obstacles);
+        impulseWorld.start();
+        run(impulseWorld, .6f);
+        check(impulseHit.vx < -20f,
+            "障碍碰撞动作会对小球施加配置的附加冲量，实际 vx=" + impulseHit.vx + " x=" + impulseHit.x);
+
+        EditableLevel teleportLevel = EditableLevel.createCustom("custom-teleport-obstacle", "传送测试");
+        EditableLevel.Obstacle teleportObstacle = teleportLevel.add(EditableLevel.CIRCLE, 100f, 100f);
+        teleportObstacle.size = 20f;
+        teleportObstacle.collisionAction = RaceCourse.Obstacle.ACTION_TELEPORT;
+        teleportObstacle.teleportX = 220f;
+        teleportObstacle.teleportY = 260f;
+        teleportObstacle.actionCooldownSeconds = .8f;
+        BallPhysics.World teleportWorld = new BallPhysics.World(360f, 0f, 1000f, 20f, 340f);
+        BallPhysics.Ball teleported = ball("teleported", 50f, 100f, 80f, .8f, false);
+        teleportWorld.balls.add(teleported);
+        teleportWorld.balls.add(ball("teleport idle", 300f, 400f, 0f, .8f, false));
+        teleportWorld.setCourseObstacles(teleportLevel.toTemplate(1f).obstacles);
+        teleportWorld.start();
+        run(teleportWorld, .35f);
+        check(teleported.teleportCount == 1 && teleported.y > 220f,
+            "传送障碍按目标坐标移动小球且接触冷却避免连续触发");
 
         BallPhysics.World pairWorld = world(.001f);
         BallPhysics.Ball left = ball("left", 70f, 100f, 20f, 1f, true);
@@ -123,7 +268,7 @@ public final class BallRaceTests {
             check(course.levels.size() == 7 && course.linksAreValid(),
                 "Generated levels join matching exit and entry tags for seed " + seed);
             for (RaceCourse.Obstacle obstacle : course.obstacles) {
-                check(obstacle.elasticity == .63f, "Configured elasticity applies to generated obstacles");
+                check(obstacle.elasticity == .7f, "Built-in obstacles use the default object elasticity");
             }
         }
         List<RaceCourse.Template> subset = Arrays.asList(
@@ -156,7 +301,7 @@ public final class BallRaceTests {
             check(true, "No-repeat mode rejects more levels than its candidate pool");
         }
 
-        check(BallRoster.colors().size() == 29, "Palette includes nine three-tone hue families plus black and white");
+        check(BallRoster.colors().size() == 31, "Palette includes nine three-tone hue families plus black, white and gray shades");
         for (String hue : Arrays.asList("red", "orange", "yellow", "green", "blue", "purple",
                 "pink", "blue_green", "turquoise")) {
             check(BallRoster.find(hue + "_light") != null && BallRoster.find(hue) != null
@@ -182,6 +327,9 @@ public final class BallRaceTests {
         check(BallRoster.normalize(Arrays.asList("red_light", "red_light", "unknown")).size() == 1,
             "Roster storage removes duplicate and unknown ball identifiers");
         RaceCourse course = RaceCourse.generate(21, 4, .5f);
+        check(course.levelAt(0f) == course.levels.get(0)
+                && course.levelAt(course.levels.get(1).originY) == course.levels.get(1),
+            "Course lookup follows actual level origins after the launch area");
         RaceCourse.Level firstLevel = course.levels.get(0);
         BallPhysics.Ball ahead = ball("ahead", 180f, 420f, 0f, .5f, true);
         BallPhysics.Ball behind = ball("behind", 180f, 100f, 0f, .5f, true);
@@ -225,8 +373,8 @@ public final class BallRaceTests {
                     check(distance > 22f, "Starting collision circles do not overlap");
                 }
             }
-            check(positions.get(0).y < positions.get(positions.size() - 1).y,
-                "Starting balls occupy staggered vertical positions");
+            check(positions.get(0).y <= positions.get(positions.size() - 1).y,
+                "Starting balls occupy stable launch rows");
         }
 
         System.out.println("Ball race checks passed: " + checks);

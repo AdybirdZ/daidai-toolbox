@@ -51,6 +51,16 @@ public final class BallRaceTests {
         check(Math.abs(falling.y - expectedY) < .12f,
             "Fixed-step gravity integration follows the uniform-acceleration trajectory");
 
+        BallPhysics.World finishWorld = new BallPhysics.World(200f, 980f, 100f, 80f, 120f);
+        BallPhysics.Ball finisher = ball("finisher", 100f, 70f, 0f, .8f, true);
+        finishWorld.balls.add(finisher);
+        finishWorld.balls.add(ball("finish other", 160f, 70f, 0f, .8f, false));
+        finishWorld.start();
+        run(finishWorld, .5f);
+        check(finisher.finished(), "Crossing the finish opening records a finish time");
+        check(Math.abs(finisher.vy) > .01f || finisher.y < finishWorld.finishY,
+            "A finished ball remains in the physical world after crossing");
+
         BallPhysics.World elasticWorld = world(.001f);
         BallPhysics.Ball elasticBall = ball("elastic", 50f, 100f, 80f, 1f, true);
         elasticWorld.balls.add(elasticBall);
@@ -114,10 +124,13 @@ public final class BallRaceTests {
             check(course.levels.size() == 7 && course.linksAreValid(),
                 "Generated levels join matching exit and entry tags for seed " + seed);
             for (RaceCourse.Obstacle obstacle : course.obstacles) {
-                check(obstacle.elasticity == .63f, "Configured elasticity applies to generated obstacles");
+                check(obstacle.elasticity == .7f, "Built-in obstacles use the default object elasticity");
             }
         }
         RaceCourse course = RaceCourse.generate(21, 4, .5f);
+        check(course.levelAt(0f) == course.levels.get(0)
+                && course.levelAt(course.levels.get(1).originY) == course.levels.get(1),
+            "关卡查找使用真实原点并包含上方发车区");
         RaceCourse.Level firstLevel = course.levels.get(0);
         BallPhysics.Ball ahead = ball("ahead", 180f, 420f, 0f, .5f, true);
         BallPhysics.Ball behind = ball("behind", 180f, 100f, 0f, .5f, true);
@@ -154,8 +167,8 @@ public final class BallRaceTests {
                     check(distance > 22f, "Starting collision circles do not overlap");
                 }
             }
-            check(positions.get(0).y < positions.get(positions.size() - 1).y,
-                "Starting balls occupy staggered vertical positions");
+            check(positions.get(0).y <= positions.get(positions.size() - 1).y,
+                "Starting balls occupy stable launch rows");
         }
 
         System.out.println("Ball race checks passed: " + checks);
