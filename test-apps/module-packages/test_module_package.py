@@ -38,7 +38,7 @@ def run():
             ('claimed-formal-host',lambda m:m['requiresHost'].update(implementationStatus='released')),
             ('wrong-config-reference',lambda m:m.update(configurationContract='../configuration.json')),
             ('wrong-activity',lambda m:m['android'].update(launchActivity='org.malicious.MainActivity')),
-            ('wrong-package',lambda m:m['android'].update(packageName='org.simpleweather.app')),
+            ('wrong-package',lambda m:m['android'].update(packageName='org.daidai.toolbox')),
             ('wrong-version',lambda m:m['android'].update(versionCode=99)),
             ('wrong-minsdk',lambda m:m['android'].update(minSdk=1)),
             ('wrong-signing-pin',lambda m:m['payload'].update(signerCertificateSha256='0'*64)),

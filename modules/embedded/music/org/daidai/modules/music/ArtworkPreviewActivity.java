@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /** Module-local artwork viewer. It uses only host resources and the Android platform API. */
-public final class ArtworkPreviewActivity extends org.simpleweather.app.ModulePage {
+public final class ArtworkPreviewActivity extends org.daidai.toolbox.ModulePage {
     public ArtworkPreviewActivity(Activity activity){super(activity);}
 
     private static final int CREATE_IMAGE=710;
@@ -46,7 +46,7 @@ public final class ArtworkPreviewActivity extends org.simpleweather.app.ModulePa
     private volatile boolean destroyed;
 
     public static void open(Activity activity,MusicLibrary.Track track){
-        Intent intent=org.simpleweather.app.ModuleRuntime.pageIntent(activity,"music","artwork");
+        Intent intent=org.daidai.toolbox.ModuleRuntime.pageIntent(activity,"music","artwork");
         if(track!=null)intent.putExtra("cover_path",track.coverPath).putExtra("track_title",track.title);
         activity.startActivity(intent);
     }

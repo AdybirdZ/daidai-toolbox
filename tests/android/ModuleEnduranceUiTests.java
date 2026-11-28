@@ -17,7 +17,7 @@ import org.json.*;
 
 /** About three minutes on an isolated emulator; requires the eight signed fixture packages. */
 public final class ModuleEnduranceUiTests extends Instrumentation {
-    private static final String MAIN="org.simpleweather.app.MainActivity";
+    private static final String MAIN="org.daidai.toolbox.MainActivity";
     private static final String[] IDS={"weather","schedule","status","weather-map","astronomy","earthquake","random","todo"};
     private static final String[] GROUPS={"toolbox","weather","status_places","status_routes","timetable","random_choice","todos","todo_runtime"};
     private Activity activity;private Context context;private ClassLoader host;private Object apps;private Bundle args;private int checks;
@@ -28,7 +28,7 @@ public final class ModuleEnduranceUiTests extends Instrumentation {
     private final Map<File,byte[]> sentinels=new LinkedHashMap<>();
 
     public void onCreate(Bundle value){super.onCreate(value);args=value;start();}
-    private Class<?> type(String name)throws Exception{return Class.forName("org.simpleweather.app."+name,true,host);}
+    private Class<?> type(String name)throws Exception{return Class.forName("org.daidai.toolbox."+name,true,host);}
     private Object field(Object value,String name)throws Exception{Field f=value.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(value);}
     private void set(Object value,String name,Object data)throws Exception{Field f=value.getClass().getField(name);f.set(value,data);}
     private Object call(Object value,String name,Class<?>[] signature,Object...arguments)throws Exception{
@@ -79,7 +79,7 @@ public final class ModuleEnduranceUiTests extends Instrumentation {
     }
     @SuppressWarnings("unchecked") private void satelliteDrawing()throws Exception{
         tab(2);Object target=field(((Map<?,?>)field(activity,"screens")).get(2),"target"),hardware=field(target,"hardware");ClassLoader loader=hardware.getClass().getClassLoader();
-        Class<?> satellite=Class.forName("org.simpleweather.app.StatusHardware$Satellite",true,loader),sky=Class.forName("org.simpleweather.app.StatusViews$Sky",true,loader);
+        Class<?> satellite=Class.forName("org.daidai.toolbox.StatusHardware$Satellite",true,loader),sky=Class.forName("org.daidai.toolbox.StatusViews$Sky",true,loader);
         List<Object> samples=(List<Object>)field(hardware,"satellites"),prior=new ArrayList<>(samples);long previous=(Long)field(hardware,"gnssAt");
         check(type("SkyLabels").getClassLoader()==host,"label placement is shared host geometry");
         ui(()->{try{

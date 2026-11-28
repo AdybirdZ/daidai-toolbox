@@ -1,4 +1,4 @@
-package org.simpleweather.app;
+package org.daidai.toolbox;
 
 import java.nio.file.*;
 import java.nio.charset.StandardCharsets;

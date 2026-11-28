@@ -17,6 +17,7 @@
     <string name="weather_sources">数据来源入口</string>
     <string name="action_settings">设置</string>
     <string name="action_add_course">新增课程</string>
+    <string name="schedule_add_failed">无法打开新增课程编辑器，请重试</string>
     <string name="action_close">关闭</string>
     <string name="updates_title">"版本更新记录"</string>
     <string name="about_title">数据来源与隐私</string>
@@ -252,5 +253,6 @@
     <string name="host_update_install_failed_detail">工具箱更新未完成（状态 %1$d）：%2$s</string>
     <string name="host_update_permission_denied">已改为手动安装，不需要安装权限</string>
     <string name="host_update_permission_unavailable">已改为手动安装，不需要安装权限</string>
+    <string name="test_host_import_ballrace">导入新版小球竞赛</string>
 </resources>
 

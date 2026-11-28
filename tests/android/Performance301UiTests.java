@@ -19,7 +19,7 @@ public final class Performance301UiTests extends Instrumentation {
     private int checks;private long resourceNanos;private Map<String,?> originalPreferences;private Object originalFix;
     private final Map<String,Boolean> installedBefore=new LinkedHashMap<>();
     public void onCreate(Bundle args){super.onCreate(args);arguments=args;start();}
-    private Class<?> type(String name)throws Exception{return Class.forName("org.simpleweather.app."+name,true,host);}
+    private Class<?> type(String name)throws Exception{return Class.forName("org.daidai.toolbox."+name,true,host);}
     private Object field(Object target,String name)throws Exception{Field f=(target instanceof Class?(Class<?>)target:target.getClass()).getDeclaredField(name);f.setAccessible(true);return f.get(target instanceof Class?null:target);}
     private void set(Object target,String name,Object value)throws Exception{Field f=(target instanceof Class?(Class<?>)target:target.getClass()).getDeclaredField(name);f.setAccessible(true);f.set(target instanceof Class?null:target,value);}
     private Object call(Object target,String name,Class<?>[] signature,Object...args)throws Exception{Method m=(target instanceof Class?(Class<?>)target:target.getClass()).getDeclaredMethod(name,signature);m.setAccessible(true);return m.invoke(target instanceof Class?null:target,args);}
@@ -58,7 +58,7 @@ public final class Performance301UiTests extends Instrumentation {
     private void referenceWork()throws Exception{
         tab(5);Object quake=screen(5);ClassLoader module=quake.getClass().getClassLoader();Map<String,Object> live=(Map<String,Object>)field(quake,"data");Map<String,Object> saved=new HashMap<>(live);
         try{ui(()->{try{
-            call(quake,"pause",new Class[]{});set(quake,"visible",true);live.clear();Class<?> entryType=Class.forName("org.simpleweather.app.EarthquakeCache$Entry",true,module),reportType=Class.forName("org.simpleweather.app.EarthquakeData$Report",true,module);
+            call(quake,"pause",new Class[]{});set(quake,"visible",true);live.clear();Class<?> entryType=Class.forName("org.daidai.toolbox.EarthquakeCache$Entry",true,module),reportType=Class.forName("org.daidai.toolbox.EarthquakeData$Report",true,module);
             Object entry=entryType.getConstructor().newInstance();List<Object> reports=new ArrayList<>();set(entry,"reports",reports);long now=System.currentTimeMillis();
             for(int n=0;n<200;n++){Object report=reportType.getConstructor().newInstance();set(report,"source","GEOFON");set(report,"id","performance-"+n);set(report,"time",now-n*60000);set(report,"updated",now);set(report,"latitude",31.0+n*.001);set(report,"longitude",120.0);set(report,"magnitude",3.0);set(report,"depth",10.0);set(report,"region","Fixture");reports.add(report);}live.put("GEOFON",entry);
             Location fix=new Location("gps");fix.setLatitude(31.3);fix.setLongitude(120.6);fix.setTime(now);set(type("LocationService"),"latest",fix);call(quake,"updateList",new Class[]{});
@@ -71,7 +71,7 @@ public final class Performance301UiTests extends Instrumentation {
     }
     public void onStart(){Bundle result=new Bundle();try{
         context=getTargetContext();host=context.getClassLoader();SharedPreferences prefs=context.getSharedPreferences("toolbox",0);originalPreferences=new HashMap<>(prefs.getAll());originalFix=field(type("LocationService"),"latest");prefs.edit().putString("app_language",arguments.getString("language","zh-CN")).putInt("seen_version",Integer.MAX_VALUE).putLong("quake_interval",0).putBoolean("quake_manual_location",false).putBoolean("quake_show_2",true).putBoolean("quake_field_distance",true).putBoolean("quake_source_GEOFON",true).putInt("quake_sort",0).putInt("quake_area",0).putFloat("quake_global_min",1).putFloat("quake_regional_min",1).commit();
-        activity=startActivitySync(new Intent().setClassName(context,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();apps=field(activity,"apps");
+        activity=startActivitySync(new Intent().setClassName(context,"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();apps=field(activity,"apps");
         // The host update intentionally preserves installed application versions.
         // Always update these fixtures so this regression exercises the new code,
         // rather than silently running a retained 3.0.0 signed application package.

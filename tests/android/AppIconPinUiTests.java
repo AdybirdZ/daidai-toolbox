@@ -39,12 +39,12 @@ public final class AppIconPinUiTests extends Instrumentation {
     private final String id="custom-launcher-icon";
     private void check(boolean value,String why){checks++;if(!value)throw new AssertionError(why);}
     private void ui(Runnable work){AtomicReference<Throwable> error=new AtomicReference<>();runOnMainSync(()->{try{work.run();}catch(Throwable e){error.set(e);}});if(error.get()!=null)throw new RuntimeException(error.get());}
-    private Object call(String method,Class<?>[] types,Object...args){try{Class<?> type=activity.getClassLoader().loadClass("org.simpleweather.app.AppIconStore");Method m=type.getDeclaredMethod(method,types);m.setAccessible(true);return m.invoke(null,args);}catch(Exception e){throw new RuntimeException(e);}}
+    private Object call(String method,Class<?>[] types,Object...args){try{Class<?> type=activity.getClassLoader().loadClass("org.daidai.toolbox.AppIconStore");Method m=type.getDeclaredMethod(method,types);m.setAccessible(true);return m.invoke(null,args);}catch(Exception e){throw new RuntimeException(e);}}
     private SharedPreferences prefs(){return getTargetContext().getSharedPreferences("toolbox",0);}
     private File image(){return new File(getTargetContext().getFilesDir(),"launcher-icon.png");}
     private ShortcutManager manager(){return getTargetContext().getSystemService(ShortcutManager.class);}
     private ShortcutInfo pinned(){for(ShortcutInfo shortcut:manager().getPinnedShortcuts())if(id.equals(shortcut.getId()))return shortcut;return null;}
-    private void launch(){activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));waitForIdleSync();}
+    private void launch(){activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP));waitForIdleSync();}
     private void artwork(int color){Bitmap bitmap=Bitmap.createBitmap(512,512,Bitmap.Config.ARGB_8888);bitmap.eraseColor(color);call("save",new Class[]{Context.class,Bitmap.class},activity,bitmap);bitmap.recycle();}
     private String apply(){AtomicReference<String> result=new AtomicReference<>();ui(()->result.set(call("apply",new Class[]{Context.class},activity).toString()));return result.get();}
     private AccessibilityNodeInfo button(AccessibilityNodeInfo root,String...labels){
@@ -97,7 +97,7 @@ public final class AppIconPinUiTests extends Instrumentation {
         }catch(Throwable error){status=Activity.RESULT_CANCELED;result.putString("stream","\nFAIL: "+android.util.Log.getStackTraceString(error));}
         finally{
             if(activity!=null)ui(()->activity.finish());waitForIdleSync();
-            if(cleanupAllowed){try(ParcelFileDescriptor fd=getUiAutomation().executeShellCommand("cmd shortcut clear-shortcuts --user 0 org.simpleweather.app");FileInputStream in=new FileInputStream(fd.getFileDescriptor())){byte[] buffer=new byte[4096];while(in.read(buffer)!=-1){}}catch(Exception ignored){}}
+            if(cleanupAllowed){try(ParcelFileDescriptor fd=getUiAutomation().executeShellCommand("cmd shortcut clear-shortcuts --user 0 org.daidai.toolbox");FileInputStream in=new FileInputStream(fd.getFileDescriptor())){byte[] buffer=new byte[4096];while(in.read(buffer)!=-1){}}catch(Exception ignored){}}
             if(beforePrefs!=null)restore(prefs(),beforePrefs);try{if(beforeImage==null)Files.deleteIfExists(image().toPath());else Files.write(image().toPath(),beforeImage);}catch(Exception ignored){}
         }
         finish(status,result);

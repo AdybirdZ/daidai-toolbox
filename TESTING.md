@@ -1,3 +1,14 @@
+# 3.0.10 发布验证记录
+
+日期：2026-11-28。包名 `org.simpleweather.app`，versionCode 67，versionName 3.0.10。
+
+- 修复课程表空时间段新增闪退和保存后读取旧数据；课程新增、保存、取消模拟器检查 13 项通过。
+- 修复全量配置导入仅识别旧应用的问题，覆盖 11 个内部应用资料和安装状态；内部应用行为回归 137 项通过，启动生命周期 39 项通过。
+- 状态硬件采样、系统资源查询和路线绘制移出界面主线程；状态交互 95 项、性能回归 1,241 项通过。模拟器定位服务启动后保持运行，但没有真实 GPS 坐标更新。
+- 最终测试 APK：`work/builds/repair-2026-11-27/DaidaiToolbox-3.0.10-tested.apk`，大小 3,292,219 字节，SHA-256 `5915648EDC5616B75F6742FC1D263870A81A79099AD528E611900A90F268661D`；v2/v3 签名证书指纹 `b08f1aa17fc9c7a91f755290e1d3edcc68c88661cb93935f34ef811828bc0e95`。
+
+人工验收仍需覆盖卸载重装后导入真实 `DaidaiToolbox-data.zip`、11 个应用逐个打开、新增课程、状态页滑动与真机定位。华为 nova 10、真实 GPS/传感器、厂商后台限制、真实音乐目录和设备通信未验证。
+
 # 3.0.9 发布验证记录
 
 ## 3.0.9 / versionCode 66 修订
@@ -905,4 +916,14 @@ Windows / Microsoft OpenJDK21 / Android API35 / Build Tools35.0.0，通过 build
 
 
 1.2.1 回归：核心检查 464 项；新增状态页方向、卫星排序、传感器设置和电池说明的源码检查。真实多星座接收仍需真机验证。
+
+## 3.0.10 本地提测
+
+本版完成源码命名空间迁移至 `org.daidai.toolbox`，保留 `org.simpleweather.app` 安装身份和原签名；内部应用使用 `daidai-toolbox/api-2`。为旧快捷方式和提醒 PendingIntent 保留了 Manifest 兼容入口。
+
+- `scripts/test.ps1` 通过：资源与语言、音乐导入、桌面布局、行为、课程表/天文、地震、状态、路线、配置、相机、随机抽取、英语、待办和提示测试通过。
+- `scripts/build.ps1` 通过；APK 位于 `work/builds/3.0.10/DaidaiToolbox-3.0.10.apk`，大小 3,181,627 字节，SHA-256 `ec9b0138602f7ca92706cbdc8037bec2b98a91e0ed4f68e8b26977104a432733`，v2/v3 签名校验通过，证书指纹仍为 `b08f1aa17fc9c7a91f755290e1d3edcc68c88661cb93935f34ef811828bc0e95`。APK 内含 11 个一次性 API 迁移包。
+- `tests/release_checks.py` 通过；商店目录含 11 个 `.ddapp`，全部为 `3.0.10 / versionCode 14 / daidai-toolbox/api-2`。
+
+人工验收项目见 `docs/RELEASE-3.0.10.md`；实体设备上的旧快捷方式、旧提醒按钮和厂商后台策略尚未验证。
 

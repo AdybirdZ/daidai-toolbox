@@ -2,7 +2,7 @@
 from pathlib import Path
 import re,xml.etree.ElementTree as ET
 root=Path(__file__).resolve().parent.parent
-java=root/'app/src/main/java/org/simpleweather/app'
+java=root/'app/src/main/java/org/daidai/toolbox'
 values=root/'app/src/main/res/values'
 strings={};arrays={}
 for path in values.glob('*.xml'):
@@ -24,7 +24,7 @@ assert len(arrays['identity_keys'])==len(arrays['identity_label_keys'])
 for raw,label in zip(arrays['identity_keys'],arrays['identity_label_keys']):
  assert raw in strings and label in strings
  assert strings[raw].attrib.get('translatable')=='false'
-assert 'relative?"' not in (root/'modules/apps/status/java/org/simpleweather/app/StatusViews.java').read_text(encoding='utf8')
+assert 'relative?"' not in (root/'modules/apps/status/java/org/daidai/toolbox/StatusViews.java').read_text(encoding='utf8')
 print('XML resource references, stable identifiers and historical UI migration verified')
 
 # A shipped language must fully cover built-in UI text and preserve format contracts.

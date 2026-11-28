@@ -11,11 +11,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /** Real first-launch lifecycle and recovery, using the signed random app fixture. */
 public final class ModuleLaunchUiTests extends Instrumentation {
-    private static final String ID="random",MAIN="org.simpleweather.app.MainActivity";
+    private static final String ID="random",MAIN="org.daidai.toolbox.MainActivity";
     private Activity activity;private Context context;private ClassLoader host;private Object apps;private Bundle args;private int checks;
     private final Map<String,Map<String,?>> preferences=new LinkedHashMap<>();private final Map<File,byte[]> files=new LinkedHashMap<>();
     public void onCreate(Bundle value){super.onCreate(value);args=value;start();}
-    private Class<?> type(String name)throws Exception{return Class.forName("org.simpleweather.app."+name,true,host);}
+    private Class<?> type(String name)throws Exception{return Class.forName("org.daidai.toolbox."+name,true,host);}
     private Object call(Object owner,String name,Class<?>[] signature,Object...values)throws Exception{Class<?> c=owner instanceof Class?(Class<?>)owner:owner.getClass();Method m=c.getDeclaredMethod(name,signature);m.setAccessible(true);return m.invoke(owner instanceof Class?null:owner,values);}
     private Object field(Object owner,String name)throws Exception{Field f=owner.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(owner);}
     private void ui(Runnable action){AtomicReference<Throwable> error=new AtomicReference<>();runOnMainSync(()->{try{action.run();}catch(Throwable e){error.set(e);}});if(error.get()!=null)throw new RuntimeException(error.get());waitForIdleSync();}

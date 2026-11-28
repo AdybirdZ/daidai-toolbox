@@ -10,12 +10,12 @@ import android.provider.Settings;
 import android.text.*;
 import android.widget.*;
 import org.daidai.modules.shared.*;
-import org.simpleweather.app.ModuleRuntime;
+import org.daidai.toolbox.ModuleRuntime;
 import java.net.*;
 import java.util.*;
 
 /** Page binds to the session; leaving the page never disconnects an active session. */
-public final class MessagingActivity extends org.simpleweather.app.ModulePage {
+public final class MessagingActivity extends org.daidai.toolbox.ModulePage {
     public MessagingActivity(Activity activity){super(activity);}
     private static final int BT=201,NOTIFICATIONS=203;
     private MessagingService session;private boolean bound,visible,bluetooth,settingsMode;private String pending;
@@ -28,7 +28,7 @@ public final class MessagingActivity extends org.simpleweather.app.ModulePage {
         public void onServiceDisconnected(ComponentName name){session=null;update();}
     };
     private String t(String key,Object... args){return Texts.get(activity,"msg_"+key,args);}
-    @Override public void onCreate(Bundle state){settingsMode=getIntent().getBooleanExtra("settings_mode",false);if(settingsMode){new org.simpleweather.app.ToolDialog(activity).setTitle(t("settings")).setView(settingsContent(activity)).setNegativeButton(t("close"),null).show();return;}BluetoothManager manager=getSystemService(BluetoothManager.class);adapter=manager==null?null:manager.getAdapter();bluetooth=getSharedPreferences("messaging_module",0).getBoolean("bluetooth",false);render();}
+    @Override public void onCreate(Bundle state){settingsMode=getIntent().getBooleanExtra("settings_mode",false);if(settingsMode){new org.daidai.toolbox.ToolDialog(activity).setTitle(t("settings")).setView(settingsContent(activity)).setNegativeButton(t("close"),null).show();return;}BluetoothManager manager=getSystemService(BluetoothManager.class);adapter=manager==null?null:manager.getAdapter();bluetooth=getSharedPreferences("messaging_module",0).getBoolean("bluetooth",false);render();}
     private void render(){
         LinearLayout page=Ui.page(activity,t("title"),t("subtitle")),body=Ui.scroll(page),mode=Ui.card(body,t("transport"));
         RadioGroup modes=new RadioGroup(activity);modes.setOrientation(0);mode.addView(modes);
@@ -48,7 +48,7 @@ public final class MessagingActivity extends org.simpleweather.app.ModulePage {
         send=Ui.button(conversation,t("send"),()->{if(session==null)return;String value=message.getText().toString();if(value.trim().isEmpty())return;try{session.send(value);message.setText("");}catch(Exception e){Ui.error(activity,e);}});
         Ui.button(body,t("settings"),this::settings);Ui.button(body,t("guide_title"),()->Ui.note(activity,t("guide_title"),t("guide")));update();
     }
-    private void settings(){org.simpleweather.app.SettingsActivity.open(activity,"messaging");}
+    private void settings(){org.daidai.toolbox.SettingsActivity.open(activity,"messaging");}
     public static android.view.View settingsContent(Activity activity){
         LinearLayout box=Ui.settingsForm(activity);CheckBox preview=new CheckBox(activity);
         preview.setText(Texts.get(activity,"msg_notification_preview"));preview.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.BLUE));

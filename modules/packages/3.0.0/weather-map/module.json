@@ -10,7 +10,7 @@
   "packageType": "host-extension-asset",
   "standaloneInstallable": false,
   "requiresHost": {
-    "applicationId": "org.simpleweather.app",
+    "applicationId": "org.daidai.toolbox",
     "api": "daidai-toolbox/3.0.0"
   },
   "sourceSnapshot": "2.1.5",

@@ -1,6 +1,6 @@
 {
   "id": "status",
-  "entry": "org.simpleweather.app.GpsScreen",
+  "entry": "org.daidai.toolbox.GpsScreen",
   "hostApi": "daidai-toolbox/pre-3.0.0-3",
   "defaultInstalled": true
 }

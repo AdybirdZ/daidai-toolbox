@@ -16,6 +16,7 @@
     <string name="weather_sources">"Sources"</string>
     <string name="action_settings">"Settings"</string>
     <string name="action_add_course">"Add course"</string>
+    <string name="schedule_add_failed">"Could not open the course editor. Try again."</string>
     <string name="action_close">"Close"</string>
     <string name="updates_title">"Version history"</string>
     <string name="about_title">"Data sources and privacy"</string>
@@ -262,5 +263,6 @@
     <string name="host_update_install_failed_detail">Toolbox update was not completed (status %1$d): %2$s</string>
     <string name="host_update_permission_denied">Manual installation does not require install permission</string>
     <string name="host_update_permission_unavailable">Manual installation does not require install permission</string>
+    <string name="test_host_import_ballrace">Import updated Ball Race</string>
 </resources>
 

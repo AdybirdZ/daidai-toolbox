@@ -1,4 +1,4 @@
-package org.simpleweather.app;
+package org.daidai.toolbox;
 import org.json.*;
 public final class Release1211Tests {
     private static int checks;

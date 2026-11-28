@@ -8,7 +8,7 @@ WORKSPACE=ROOT.parents[1]
 EXPECTED_SIGNER='0d4d9d87dfb81fa0ea922fc764ff4326d16284ca69ca8715bca247e22973e1f4'
 ALLOWED={'module.json','configuration-contract.json','README.md','payload/music.apk'}
 MAX_APK=128*1024*1024
-HOST={'applicationId':'org.simpleweather.app','api':'daidai-toolbox/3.0.0','implementationStatus':'not-yet-implemented'}
+HOST={'applicationId':'org.daidai.toolbox','api':'daidai-toolbox/3.0.0','implementationStatus':'not-yet-implemented'}
 CONFIG={'format':'daidai-toolbox-module-configuration-contract','schemaVersion':1,'module':'music','hostAdapterApi':'daidai-android-app/1','ownerPackage':'org.daidai.prototype.music','storage':'android-private-application-data','migration':'same-package-same-signer-update','hostCanReadPrivateData':False,'userDataIncluded':False,'crossPackageUriGrantsTransferable':False,'exportImportBridgeImplemented':False}
 
 def music_android_contract():

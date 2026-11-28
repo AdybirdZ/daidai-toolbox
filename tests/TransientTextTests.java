@@ -1,4 +1,4 @@
-package org.simpleweather.app;
+package org.daidai.toolbox;
 
 /** Behavioral checks for notice punctuation without altering detailed diagnostics. */
 public final class TransientTextTests {

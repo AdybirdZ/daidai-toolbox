@@ -15,7 +15,7 @@ import org.json.*;
 public final class StoreUpgradeUiTests extends Instrumentation {
     private Activity activity;private ClassLoader loader;private int checks;private Bundle args;
     public void onCreate(Bundle a){super.onCreate(a);args=a;start();}
-    private Class<?> type(String n)throws Exception{return Class.forName("org.simpleweather.app."+n,true,loader);}
+    private Class<?> type(String n)throws Exception{return Class.forName("org.daidai.toolbox."+n,true,loader);}
     private Object field(Object o,String n)throws Exception{Field f=o.getClass().getDeclaredField(n);f.setAccessible(true);return f.get(o);}
     private Object call(Object o,String n,Class<?>[] types,Object...values)throws Exception{Class<?> c=o instanceof Class?(Class<?>)o:o.getClass();Method m=c.getDeclaredMethod(n,types);m.setAccessible(true);return m.invoke(o instanceof Class?null:o,values);}
     private void ui(Runnable r){AtomicReference<Throwable> e=new AtomicReference<>();runOnMainSync(()->{try{r.run();}catch(Throwable x){e.set(x);}});if(e.get()!=null)throw new RuntimeException(e.get());waitForIdleSync();}
@@ -47,7 +47,7 @@ public final class StoreUpgradeUiTests extends Instrumentation {
     }
     public void onStart(){Bundle result=new Bundle();try{
         Context c=getTargetContext();String language=args.getString("language","zh-CN");c.getSharedPreferences("toolbox",0).edit().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).commit();loader=c.getClassLoader();
-        activity=startActivitySync(new Intent().setClassName(c,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");Class<?> modules=type("AppModules"),compat=type("ModuleCompatibility");String api=(String)modules.getField("API").get(null);check(api.equals("daidai-toolbox/api-1"),"interface independent of release name");
+        activity=startActivitySync(new Intent().setClassName(c,"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");Class<?> modules=type("AppModules"),compat=type("ModuleCompatibility");String api=(String)modules.getField("API").get(null);check(api.equals("daidai-toolbox/api-2"),"new module ABI tracks the renamed host namespace");
         Class<?>[] signature={String.class,String.class,int.class,int.class,int.class,int.class};
         check((Boolean)call(compat,"accepts",signature,api,api,55,56,26,35),"new compatible host accepts an existing app");
         check(!(Boolean)call(compat,"accepts",signature,"future-api",api,0,55,26,35),"new interface rejected");

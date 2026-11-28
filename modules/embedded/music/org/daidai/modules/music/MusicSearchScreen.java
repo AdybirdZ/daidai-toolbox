@@ -69,7 +69,7 @@ public final class MusicSearchScreen {
             Runnable apply=()->{applied=query.getText().toString().trim();state.applied=applied;render();};search.setOnClickListener(v->apply.run());clear.setOnClickListener(v->{query.setText("");applied="";state.applied="";render();});query.setOnEditorActionListener((v,id,event)->{if(id==EditorInfo.IME_ACTION_SEARCH){apply.run();return true;}return false;});updateButtons(categories,category);
             Ui.button(page,text(activity,"music_search_back"),dialog::dismiss);
             state.open=true;state.refresher=this::render;dialog.setOnDismissListener(d->{closed=true;state.open=false;state.refresher=null;generation++;checks.clear();if(returned!=null)returned.run();});
-            FrameLayout backgroundRoot=new FrameLayout(activity);org.simpleweather.app.SettingsActivity.addBackground(activity,backgroundRoot);backgroundRoot.addView(page,new FrameLayout.LayoutParams(-1,-1));
+            FrameLayout backgroundRoot=new FrameLayout(activity);org.daidai.toolbox.SettingsActivity.addBackground(activity,backgroundRoot);backgroundRoot.addView(page,new FrameLayout.LayoutParams(-1,-1));
             dialog.setContentView(backgroundRoot);render();dialog.show();if(dialog.getWindow()!=null){dialog.getWindow().setLayout(-1,-1);dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);}
             return dialog;
         }

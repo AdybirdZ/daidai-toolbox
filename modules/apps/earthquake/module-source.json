@@ -1,6 +1,6 @@
 {
   "id": "earthquake",
-  "entry": "org.simpleweather.app.EarthquakeScreen",
+  "entry": "org.daidai.toolbox.EarthquakeScreen",
   "hostApi": "daidai-toolbox/pre-3.0.0-3",
   "defaultInstalled": false
 }

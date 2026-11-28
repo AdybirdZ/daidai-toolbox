@@ -8,9 +8,9 @@ import json,zipfile,hashlib,shutil,subprocess,os
 
 IDS=['weather','schedule','status','weather-map','astronomy','earthquake','random','todo','music','messaging','colorvision']
 SCREENS=['WeatherScreen','ScheduleScreen','GpsScreen','MapScreen','AstronomyScreen','EarthquakeScreen','RandomChoiceScreen','TodoScreen','org.daidai.modules.music.MusicActivity','org.daidai.modules.messaging.MessagingActivity','org.daidai.modules.colorvision.ColorVisionActivity']
-API='daidai-toolbox/api-1'
-VERSION='3.0.9'
-VERSION_CODE=13
+API='daidai-toolbox/api-2'
+VERSION='3.0.10'
+VERSION_CODE=19
 EMBEDDED={'music','messaging','colorvision'}
 GROUPS={'weather':['weather','toolbox'],'status':['toolbox','status_places','status_routes'],'schedule':['toolbox','timetable'],'todo':['toolbox','todos'],'random':['toolbox','random_choice']}
 PERMISSIONS={
@@ -35,25 +35,26 @@ DESCRIPTIONS={
  'messaging':['通过蓝牙或局域网与附近设备通信。','Communicate with nearby devices over Bluetooth or a local network.'],
  'colorvision':['图片与相机画面的色觉模拟。','Color vision simulation for images and camera views.']}
 RELEASE_NOTES={
- 'weather':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'schedule':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'status':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'weather-map':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'astronomy':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'earthquake':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'random':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'todo':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
+ 'weather':['适配 3.0.10 宿主的新接口。','Updated for the new 3.0.10 host interface.'],
+ 'schedule':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
+ 'status':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
+ 'weather-map':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
+ 'astronomy':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
+ 'earthquake':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
+ 'random':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
+ 'todo':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
  'music':['修复从设置返回应用时的界面闪屏。','Prevented visible flashing when returning from app settings.'],
- 'messaging':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.'],
- 'colorvision':['更新到 3.0.9 宿主版本的应用包格式。','Updated the app package for toolbox 3.0.9.']}
+ 'messaging':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.'],
+ 'colorvision':['适配 3.0.10 宿主的新接口。','Rebuilt the app package for toolbox 3.0.10.']}
 
 KEY_RULES={'weather':['weather_*'],'weather-map':['radar_region','map_product'],'status':['status_*','location_*','route_interval'],'astronomy':['astro_*'],'earthquake':['quake_*'],'schedule':['course_*'],'random':['random_*'],'todo':['todo_*']}
 BRIDGES={'status':['LocationService'],'todo':['TodoReceiver','TodoScheduler'],'schedule':['TodoReceiver','ScheduleNotifier'],'weather-map':['OfficialPageActivity']}
 
-def build(root,sdk,java,run):
-    root=Path(root);build=root/'build';tools=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar';ext='.exe' if os.name=='nt' else ''
+def build(root,sdk,java,run,build_dir=None):
+    root=Path(root);build=Path(build_dir) if build_dir is not None else root/'build';tools=sdk/'build-tools/35.0.0';platform=sdk/'platforms/android-35/android.jar';ext='.exe' if os.name=='nt' else ''
     classes=build/'classes';store=root/'modules/store'/VERSION;store.mkdir(parents=True,exist_ok=True)
     defaults=root/'app/src/main/assets/default-apps';defaults.mkdir(exist_ok=True)
+    migrations=root/'app/src/main/assets/migration-apps';migrations.mkdir(exist_ok=True)
     jars=build/'all-classes.jar'
     with zipfile.ZipFile(jars,'w') as z:
         for p in classes.rglob('*.class'):z.write(p,p.relative_to(classes).as_posix())
@@ -63,11 +64,21 @@ def build(root,sdk,java,run):
             files=list((classes/'org/daidai/modules'/id).rglob('*.class'))+list((classes/'org/daidai/modules/shared').rglob('*.class'))
         else:
             names={p.stem for p in (root/'modules/apps'/id/'java').rglob('*.java')}
-            files=[p for p in (classes/'org/simpleweather/app').glob('*.class') if p.stem.split('$')[0] in names]
+            # Include inner/anonymous classes owned by the module screen. If
+            # one remains in the host DEX, the parent class loader wins and
+            # the host rejects the module entry as embedded code.
+            files=[p for p in (classes/'org/daidai/toolbox').glob('*.class') if p.stem.split('$')[0] in names]
         assert files,(id,'Missing executable classes');excluded.update(files)
         stage=build/'apps'/id;stage.mkdir(parents=True,exist_ok=True);dex=stage/'dex';dex.mkdir(exist_ok=True)
         run([java,'-cp',tools/'lib/d8.jar','com.android.tools.r8.D8','--lib',platform,'--classpath',jars,'--min-api','26','--output',dex,*files])
         manifest=stage/'AndroidManifest.xml'
+        # Non-embedded screens are compiled against the host's generated R
+        # class. Keep their resource package on the host namespace so the
+        # stable IDs resolve when the package is mounted; aapt's manifest
+        # rename below still gives each executable its module package name.
+        # Non-embedded module classes use the host's stable resource IDs. The
+        # resource package must remain the application ID so aapt2 resolves
+        # the same stable table used by the host and generated module code.
         resource_package='org.simpleweather.module.'+id.replace('-','_') if id in EMBEDDED else 'org.simpleweather.app'
         manifest.write_text(f'<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="{resource_package}" android:versionCode="{VERSION_CODE}" android:versionName="{VERSION}"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/><application android:hasCode="true" android:allowBackup="false"/></manifest>','utf8')
         assets=stage/'assets';assets.mkdir(exist_ok=True)
@@ -76,9 +87,12 @@ def build(root,sdk,java,run):
         feature_assets=root/'modules/apps'/id/'assets'
         if feature_assets.is_dir():shutil.copytree(feature_assets,assets,dirs_exist_ok=True)
         if id=='weather':shutil.copyfile(root/'app/src/main/assets/cities.json',assets/'cities.json')
-        descriptor={'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'minHostVersionCode':64,'minSdk':26,'versionCode':VERSION_CODE,'version':VERSION,'standaloneInstallable':False,'resourceProvider':'application' if id in EMBEDDED else 'mounted-stable-ids','dataRetention':'retain-on-uninstall','configurationGroups':[id+'_module'] if id in EMBEDDED else GROUPS.get(id,['toolbox']),'configurationContract':{'format':'daidai-toolbox-module-config','version':1,'toolboxKeyRules':KEY_RULES.get(id,[])},'permissions':['android.permission.'+v for v in PERMISSIONS[id]],'hostComponentBridges':BRIDGES.get(id,[]),'dependencies':['module-page-worker-api'] if id in EMBEDDED else ['host-api-1','shared-data-contracts','stable-resource-ids']}
+        descriptor={'format':'signed-dex-app','schemaVersion':1,'id':id,'entry':screen,'hostApi':API,'minHostVersionCode':67,'minSdk':26,'versionCode':VERSION_CODE,'version':VERSION,'standaloneInstallable':False,'resourceProvider':'application' if id in EMBEDDED else 'mounted-stable-ids','dataRetention':'retain-on-uninstall','configurationGroups':[id+'_module'] if id in EMBEDDED else GROUPS.get(id,['toolbox']),'configurationContract':{'format':'daidai-toolbox-module-config','version':1,'toolboxKeyRules':KEY_RULES.get(id,[])},'permissions':['android.permission.'+v for v in PERMISSIONS[id]],'hostComponentBridges':BRIDGES.get(id,[]),'dependencies':['module-page-worker-api'] if id in EMBEDDED else ['host-api-2','shared-data-contracts','stable-resource-ids']}
+        # Every executable package is launched through ModuleRuntime.page().
+        # Feature packages use the host class namespace, while embedded apps
+        # use their own namespace; both still need an explicit page contract.
+        descriptor['pages']={'main':screen,'settings':screen}
         if id in EMBEDDED:
-            descriptor['pages']={'main':screen,'settings':screen}
             if id=='music':descriptor['pages']['artwork']='org.daidai.modules.music.ArtworkPreviewActivity'
             if id in ['music','messaging']:descriptor['worker']='org.daidai.modules.'+id+('.PlaybackService' if id=='music' else '.MessagingService')
         (assets/'module.json').write_text(json.dumps(descriptor,ensure_ascii=False,indent=2),'utf8')
@@ -98,7 +112,8 @@ def build(root,sdk,java,run):
         run([java,'-jar',tools/'lib/apksigner.jar','sign','--v4-signing-enabled','false','--ks',root/'.signing/development.jks','--ks-key-alias','simpleweather','--ks-pass','pass:android','--key-pass','pass:android','--out',package,aligned])
         run([java,'-jar',tools/'lib/apksigner.jar','verify',package])
         if id in ['weather','status']:shutil.copyfile(package,defaults/package.name)
-        apps.append({'id':id,'type':'signed-dex-app','version':VERSION,'versionCode':VERSION_CODE,'hostApi':API,'minHostVersionCode':64,'minSdk':26,'permissions':descriptor['permissions'],'description':{'zh':DESCRIPTIONS[id][0],'en':DESCRIPTIONS[id][1]},'releaseNotes':{'zh':RELEASE_NOTES[id][0],'en':RELEASE_NOTES[id][1]},'bytes':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/'+VERSION+'/'+package.name})
+        shutil.copyfile(package,migrations/package.name)
+        apps.append({'id':id,'type':'signed-dex-app','version':VERSION,'versionCode':VERSION_CODE,'hostApi':API,'minHostVersionCode':67,'minSdk':26,'permissions':descriptor['permissions'],'description':{'zh':DESCRIPTIONS[id][0],'en':DESCRIPTIONS[id][1]},'releaseNotes':{'zh':RELEASE_NOTES[id][0],'en':RELEASE_NOTES[id][1]},'bytes':package.stat().st_size,'sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'url':'https://raw.githubusercontent.com/AdybirdZ/daidai-toolbox/main/modules/store/'+VERSION+'/'+package.name})
     catalog={'format':'daidai-app-store','schemaVersion':1,'hostApi':API,'defaultInstalled':['weather','status'],'apps':apps}
     for p in [store/'catalog.json',root/'modules/store/catalog.json',root/'app/src/main/assets/app-catalog.json']:p.write_text(json.dumps(catalog,indent=2)+'\n','utf8')
     (store/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(store.iterdir()) if p.suffix in ['.ddapp','.json']),'utf8')

@@ -10,7 +10,7 @@
   "standaloneInstallable": true,
   "hostAdapterApi": "daidai-android-app/1",
   "requiresHost": {
-    "applicationId": "org.simpleweather.app",
+    "applicationId": "org.daidai.toolbox",
     "api": "daidai-toolbox/3.0.0",
     "implementationStatus": "not-yet-implemented"
   },

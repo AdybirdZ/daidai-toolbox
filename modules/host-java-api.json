@@ -1,34 +1,34 @@
 {
-  "org.simpleweather.app.AppIconCropActivity": [
-    "public final class org.simpleweather.app.AppIconCropActivity extends android.app.Activity {",
-    "public org.simpleweather.app.AppIconCropActivity();",
+  "org.daidai.toolbox.AppIconCropActivity": [
+    "public final class org.daidai.toolbox.AppIconCropActivity extends android.app.Activity {",
+    "public org.daidai.toolbox.AppIconCropActivity();",
     "public void onCreate(android.os.Bundle);"
   ],
-  "org.simpleweather.app.AppIcons": [
-    "public final class org.simpleweather.app.AppIcons {",
-    "public org.simpleweather.app.AppIcons();",
+  "org.daidai.toolbox.AppIcons": [
+    "public final class org.daidai.toolbox.AppIcons {",
+    "public org.daidai.toolbox.AppIcons();",
     "public static int resource(java.lang.String);"
   ],
-  "org.simpleweather.app.AppLanguage": [
-    "public final class org.simpleweather.app.AppLanguage {",
-    "public org.simpleweather.app.AppLanguage();",
+  "org.daidai.toolbox.AppLanguage": [
+    "public final class org.daidai.toolbox.AppLanguage {",
+    "public org.daidai.toolbox.AppLanguage();",
     "public static java.lang.String choice(android.content.Context);",
     "public static android.content.Context wrap(android.content.Context);",
     "public static android.content.res.Resources resources(android.content.Context);"
   ],
-  "org.simpleweather.app.AppModules$DownloadTask": [
-    "public final class org.simpleweather.app.AppModules$DownloadTask {",
+  "org.daidai.toolbox.AppModules$DownloadTask": [
+    "public final class org.daidai.toolbox.AppModules$DownloadTask {",
     "public volatile long received;",
     "public volatile long total;",
     "public volatile boolean verifying;",
     "public volatile boolean completed;",
     "public volatile boolean cancelled;",
-    "public org.simpleweather.app.AppModules$DownloadTask();",
+    "public org.daidai.toolbox.AppModules$DownloadTask();",
     "public void cancel();",
     "public void check() throws java.io.InterruptedIOException;"
   ],
-  "org.simpleweather.app.AppModules": [
-    "public final class org.simpleweather.app.AppModules {",
+  "org.daidai.toolbox.AppModules": [
+    "public final class org.daidai.toolbox.AppModules {",
     "public static final java.lang.String API;",
     "public static final java.lang.String CATALOG;",
     "public static final java.lang.String[] IDS;",
@@ -37,7 +37,7 @@
     "public static final int PICK;",
     "public static final long MAX;",
     "public static volatile boolean busy;",
-    "public org.simpleweather.app.AppModules(org.simpleweather.app.MainActivity);",
+    "public org.daidai.toolbox.AppModules(org.daidai.toolbox.MainActivity);",
     "public static boolean known(java.lang.String);",
     "public static boolean present(android.content.Context, java.lang.String);",
     "public java.lang.String title(java.lang.String);",
@@ -51,17 +51,19 @@
     "public void markLaunchSucceeded(java.lang.String);",
     "public static boolean recoverPrevious(android.content.Context, java.lang.String) throws java.lang.Exception;",
     "public boolean recoverPrevious(java.lang.String) throws java.lang.Exception;",
+    "public static boolean recoverOrRestore(android.content.Context, java.lang.String);",
     "public void initialize();",
+    "public void restoreBundledApps(java.util.Collection<java.lang.String>) throws java.lang.Exception;",
     "public static org.json.JSONObject inspect(android.content.Context, java.io.File, java.lang.String) throws java.lang.Exception;",
     "public void install(java.io.InputStream, java.lang.String, java.lang.String) throws java.lang.Exception;",
-    "public org.simpleweather.app.ScreenHandle create(int, org.simpleweather.app.MainActivity, org.simpleweather.app.City, org.simpleweather.app.WeatherData, java.time.Instant, java.util.function.Consumer<java.time.Instant>) throws java.lang.Exception;",
+    "public org.daidai.toolbox.ScreenHandle create(int, org.daidai.toolbox.MainActivity, org.daidai.toolbox.City, org.daidai.toolbox.WeatherData, java.time.Instant, java.util.function.Consumer<java.time.Instant>) throws java.lang.Exception;",
     "public void uninstall(java.lang.String);",
     "public void openInternal(java.lang.String);",
     "public org.json.JSONArray bundledCatalog() throws java.lang.Exception;",
     "public org.json.JSONArray remoteCatalog() throws java.lang.Exception;",
     "public boolean updateAvailable(org.json.JSONObject);",
     "public void download(org.json.JSONObject) throws java.lang.Exception;",
-    "public void download(org.json.JSONObject, org.simpleweather.app.AppModules$DownloadTask) throws java.lang.Exception;",
+    "public void download(org.json.JSONObject, org.daidai.toolbox.AppModules$DownloadTask) throws java.lang.Exception;",
     "public int failureMessage(java.lang.Throwable);",
     "public boolean result(int, int, android.content.Intent);",
     "public void pick();",
@@ -70,25 +72,25 @@
     "public static byte[] read(java.io.InputStream, int) throws java.io.IOException;",
     "public static java.lang.String sha(java.io.File) throws java.lang.Exception;"
   ],
-  "org.simpleweather.app.AppStoreScreen": [
-    "public final class org.simpleweather.app.AppStoreScreen {",
-    "public org.simpleweather.app.AppStoreScreen(org.simpleweather.app.MainActivity);",
+  "org.daidai.toolbox.AppStoreScreen": [
+    "public final class org.daidai.toolbox.AppStoreScreen {",
+    "public org.daidai.toolbox.AppStoreScreen(org.daidai.toolbox.MainActivity);",
     "public void render();",
     "public void installedChanged();"
   ],
-  "org.simpleweather.app.BackgroundCropActivity": [
-    "public final class org.simpleweather.app.BackgroundCropActivity extends android.app.Activity {",
-    "public org.simpleweather.app.BackgroundCropActivity();",
+  "org.daidai.toolbox.BackgroundCropActivity": [
+    "public final class org.daidai.toolbox.BackgroundCropActivity extends android.app.Activity {",
+    "public org.daidai.toolbox.BackgroundCropActivity();",
     "public void onCreate(android.os.Bundle);"
   ],
-  "org.simpleweather.app.ChoiceAdapter": [
-    "public final class org.simpleweather.app.ChoiceAdapter extends android.widget.ArrayAdapter<java.lang.String> {",
-    "public org.simpleweather.app.ChoiceAdapter(android.content.Context, java.lang.String[]);",
+  "org.daidai.toolbox.ChoiceAdapter": [
+    "public final class org.daidai.toolbox.ChoiceAdapter extends android.widget.ArrayAdapter<java.lang.String> {",
+    "public org.daidai.toolbox.ChoiceAdapter(android.content.Context, java.lang.String[]);",
     "public android.view.View getView(int, android.view.View, android.view.ViewGroup);",
     "public android.view.View getDropDownView(int, android.view.View, android.view.ViewGroup);"
   ],
-  "org.simpleweather.app.City": [
-    "public final class org.simpleweather.app.City {",
+  "org.daidai.toolbox.City": [
+    "public final class org.daidai.toolbox.City {",
     "public final java.lang.String name;",
     "public final java.lang.String country;",
     "public final java.lang.String admin;",
@@ -101,91 +103,91 @@
     "public final java.util.Set<java.lang.Long> geonamesIds;",
     "public final double latitude;",
     "public final double longitude;",
-    "public org.simpleweather.app.City(org.json.JSONObject) throws org.json.JSONException;",
+    "public org.daidai.toolbox.City(org.json.JSONObject) throws org.json.JSONException;",
     "public java.lang.String label();",
     "public java.lang.String detail();",
     "public java.lang.String key();",
     "public static java.lang.String nameKey(java.lang.String);",
     "public boolean isChina();",
     "public java.lang.String placeKey();",
-    "public boolean samePlace(org.simpleweather.app.City);",
-    "public static org.simpleweather.app.City resolve(java.util.List<org.simpleweather.app.City>, org.simpleweather.app.City);",
+    "public boolean samePlace(org.daidai.toolbox.City);",
+    "public static org.daidai.toolbox.City resolve(java.util.List<org.daidai.toolbox.City>, org.daidai.toolbox.City);",
     "public boolean excludedAdministrativeArea();",
     "public boolean matches(java.lang.String);",
     "public org.json.JSONObject json();"
   ],
-  "org.simpleweather.app.ColorPicker": [
-    "public final class org.simpleweather.app.ColorPicker {",
-    "public org.simpleweather.app.ColorPicker();",
-    "public static java.lang.String name(org.simpleweather.app.MainActivity, int);",
-    "public static void show(org.simpleweather.app.MainActivity, java.lang.String, int, java.util.function.IntConsumer);",
-    "public static void show(org.simpleweather.app.MainActivity, java.lang.String, int, int, boolean, boolean, java.util.function.IntConsumer);"
+  "org.daidai.toolbox.ColorPicker": [
+    "public final class org.daidai.toolbox.ColorPicker {",
+    "public org.daidai.toolbox.ColorPicker();",
+    "public static java.lang.String name(org.daidai.toolbox.MainActivity, int);",
+    "public static void show(org.daidai.toolbox.MainActivity, java.lang.String, int, java.util.function.IntConsumer);",
+    "public static void show(org.daidai.toolbox.MainActivity, java.lang.String, int, int, boolean, boolean, java.util.function.IntConsumer);"
   ],
-  "org.simpleweather.app.CoordinateFormat": [
-    "public final class org.simpleweather.app.CoordinateFormat {",
-    "public org.simpleweather.app.CoordinateFormat();",
+  "org.daidai.toolbox.CoordinateFormat": [
+    "public final class org.daidai.toolbox.CoordinateFormat {",
+    "public org.daidai.toolbox.CoordinateFormat();",
     "public static java.lang.String longitude(double, int);",
     "public static java.lang.String latitude(double, int);",
     "public static java.lang.String pair(double, double, int);"
   ],
-  "org.simpleweather.app.DisplayOrder": [
-    "public final class org.simpleweather.app.DisplayOrder {",
-    "public org.simpleweather.app.DisplayOrder();",
+  "org.daidai.toolbox.DisplayOrder": [
+    "public final class org.daidai.toolbox.DisplayOrder {",
+    "public org.daidai.toolbox.DisplayOrder();",
     "public static java.util.List<java.lang.Integer> status(java.lang.String);",
     "public static java.util.List<java.lang.Integer> parse(java.lang.String, int);",
     "public static java.lang.String encode(java.util.List<java.lang.Integer>);",
     "public static java.util.List<java.lang.Integer> visible(java.util.List<java.lang.Integer>, java.util.Set<java.lang.Integer>);",
     "public static java.util.List<java.lang.Integer> window(java.util.List<java.lang.Integer>, int);"
   ],
-  "org.simpleweather.app.EarthquakeOptions": [
-    "public final class org.simpleweather.app.EarthquakeOptions {",
-    "public org.simpleweather.app.EarthquakeOptions();",
+  "org.daidai.toolbox.EarthquakeOptions": [
+    "public final class org.daidai.toolbox.EarthquakeOptions {",
+    "public org.daidai.toolbox.EarthquakeOptions();",
     "public static float magnitude(float);",
     "public static int radius(java.lang.String);",
     "public static java.time.ZoneId zone(int);",
     "public static java.lang.String offset(java.time.ZoneId, long);",
     "public static java.lang.String time(long, java.time.ZoneId);"
   ],
-  "org.simpleweather.app.FeatureAccess": [
-    "public final class org.simpleweather.app.FeatureAccess {",
+  "org.daidai.toolbox.FeatureAccess": [
+    "public final class org.daidai.toolbox.FeatureAccess {",
     "public static java.lang.Object call(android.content.Context, java.lang.String, java.lang.String, java.lang.String, java.lang.Class<?>[], java.lang.Object...);",
-    "public static void settings(org.simpleweather.app.MainActivity, java.lang.String);",
-    "public static void earthquakeInfo(org.simpleweather.app.MainActivity, android.widget.LinearLayout, boolean);"
+    "public static void settings(org.daidai.toolbox.MainActivity, java.lang.String);",
+    "public static void earthquakeInfo(org.daidai.toolbox.MainActivity, android.widget.LinearLayout, boolean);"
   ],
-  "org.simpleweather.app.HostUpdateManager$CheckState": [
-    "public final class org.simpleweather.app.HostUpdateManager$CheckState extends java.lang.Enum<org.simpleweather.app.HostUpdateManager$CheckState> {",
-    "public static final org.simpleweather.app.HostUpdateManager$CheckState NETWORK;",
-    "public static final org.simpleweather.app.HostUpdateManager$CheckState CACHE;",
-    "public static final org.simpleweather.app.HostUpdateManager$CheckState THROTTLED;",
-    "public static final org.simpleweather.app.HostUpdateManager$CheckState UP_TO_DATE;",
-    "public static final org.simpleweather.app.HostUpdateManager$CheckState STALE;",
-    "public static org.simpleweather.app.HostUpdateManager$CheckState[] values();",
-    "public static org.simpleweather.app.HostUpdateManager$CheckState valueOf(java.lang.String);"
+  "org.daidai.toolbox.HostUpdateManager$CheckState": [
+    "public final class org.daidai.toolbox.HostUpdateManager$CheckState extends java.lang.Enum<org.daidai.toolbox.HostUpdateManager$CheckState> {",
+    "public static final org.daidai.toolbox.HostUpdateManager$CheckState NETWORK;",
+    "public static final org.daidai.toolbox.HostUpdateManager$CheckState CACHE;",
+    "public static final org.daidai.toolbox.HostUpdateManager$CheckState THROTTLED;",
+    "public static final org.daidai.toolbox.HostUpdateManager$CheckState UP_TO_DATE;",
+    "public static final org.daidai.toolbox.HostUpdateManager$CheckState STALE;",
+    "public static org.daidai.toolbox.HostUpdateManager$CheckState[] values();",
+    "public static org.daidai.toolbox.HostUpdateManager$CheckState valueOf(java.lang.String);"
   ],
-  "org.simpleweather.app.HostUpdateManager": [
-    "public final class org.simpleweather.app.HostUpdateManager {",
-    "public static org.simpleweather.app.HostUpdateManager$CheckState lastState();",
-    "public static org.simpleweather.app.HostUpdateManager$Release latest(android.content.Context) throws java.lang.Exception;",
-    "public static org.simpleweather.app.HostUpdateManager$Release latest(android.content.Context, boolean) throws java.lang.Exception;",
-    "public static java.io.File download(android.content.Context, org.simpleweather.app.HostUpdateManager$Release, org.simpleweather.app.HostUpdateManager$DownloadTask) throws java.lang.Exception;",
-    "public static boolean canResume(android.content.Context, org.simpleweather.app.HostUpdateManager$Release);",
+  "org.daidai.toolbox.HostUpdateManager": [
+    "public final class org.daidai.toolbox.HostUpdateManager {",
+    "public static org.daidai.toolbox.HostUpdateManager$CheckState lastState();",
+    "public static org.daidai.toolbox.HostUpdateManager$Release latest(android.content.Context) throws java.lang.Exception;",
+    "public static org.daidai.toolbox.HostUpdateManager$Release latest(android.content.Context, boolean) throws java.lang.Exception;",
+    "public static java.io.File download(android.content.Context, org.daidai.toolbox.HostUpdateManager$Release, org.daidai.toolbox.HostUpdateManager$DownloadTask) throws java.lang.Exception;",
+    "public static boolean canResume(android.content.Context, org.daidai.toolbox.HostUpdateManager$Release);",
     "public static void verify(android.content.Context, java.io.File, java.lang.String) throws java.lang.Exception;",
     "public static java.io.File pendingFile(android.content.Context);",
-    "public static android.net.Uri copyToDownloads(android.content.Context, java.io.File, org.simpleweather.app.HostUpdateManager$Release) throws java.lang.Exception;",
+    "public static android.net.Uri copyToDownloads(android.content.Context, java.io.File, org.daidai.toolbox.HostUpdateManager$Release) throws java.lang.Exception;",
     "public static boolean hasInstallPermission(android.content.Context);",
     "public static void requestInstallPermission(android.app.Activity);",
     "public static int installPermissionRequestCode();",
     "public static void installPending(android.app.Activity) throws java.lang.Exception;",
     "public static void install(android.app.Activity, java.io.File) throws java.lang.Exception;"
   ],
-  "org.simpleweather.app.HostUpdateReceiver": [
-    "public final class org.simpleweather.app.HostUpdateReceiver extends android.content.BroadcastReceiver {",
-    "public org.simpleweather.app.HostUpdateReceiver();",
+  "org.daidai.toolbox.HostUpdateReceiver": [
+    "public final class org.daidai.toolbox.HostUpdateReceiver extends android.content.BroadcastReceiver {",
+    "public org.daidai.toolbox.HostUpdateReceiver();",
     "public void onReceive(android.content.Context, android.content.Intent);"
   ],
-  "org.simpleweather.app.InternalAppActivity": [
-    "public final class org.simpleweather.app.InternalAppActivity extends android.app.Activity {",
-    "public org.simpleweather.app.InternalAppActivity();",
+  "org.daidai.toolbox.InternalAppActivity": [
+    "public final class org.daidai.toolbox.InternalAppActivity extends android.app.Activity {",
+    "public org.daidai.toolbox.InternalAppActivity();",
     "public void finish();",
     "public android.content.res.Resources getResources();",
     "public android.content.res.AssetManager getAssets();",
@@ -199,14 +201,14 @@
     "public void onRequestPermissionsResult(int, java.lang.String[], int[]);",
     "public void onConfigurationChanged(android.content.res.Configuration);"
   ],
-  "org.simpleweather.app.LauncherLayout$Folder": [
-    "public final class org.simpleweather.app.LauncherLayout$Folder {",
+  "org.daidai.toolbox.LauncherLayout$Folder": [
+    "public final class org.daidai.toolbox.LauncherLayout$Folder {",
     "public final java.lang.String id;",
     "public java.lang.String name;",
     "public final java.util.List<java.lang.String> apps;"
   ],
-  "org.simpleweather.app.LauncherLayout": [
-    "public final class org.simpleweather.app.LauncherLayout {",
+  "org.daidai.toolbox.LauncherLayout": [
+    "public final class org.daidai.toolbox.LauncherLayout {",
     "public static final java.lang.String PHONE_KEY;",
     "public static final java.lang.String TABLET_KEY;",
     "public static final java.util.List<java.lang.String> APPS;",
@@ -214,12 +216,12 @@
     "public int columns;",
     "public int text;",
     "public final java.util.List<java.lang.String> order;",
-    "public final java.util.Map<java.lang.String, org.simpleweather.app.LauncherLayout$Folder> folders;",
-    "public org.simpleweather.app.LauncherLayout(boolean);",
+    "public final java.util.Map<java.lang.String, org.daidai.toolbox.LauncherLayout$Folder> folders;",
+    "public org.daidai.toolbox.LauncherLayout(boolean);",
     "public static boolean application(java.lang.String);",
     "public static java.lang.String key(boolean);",
-    "public static org.simpleweather.app.LauncherLayout legacy(boolean, java.lang.String);",
-    "public static org.simpleweather.app.LauncherLayout parse(java.lang.String, boolean) throws org.json.JSONException;",
+    "public static org.daidai.toolbox.LauncherLayout legacy(boolean, java.lang.String);",
+    "public static org.daidai.toolbox.LauncherLayout parse(java.lang.String, boolean) throws org.json.JSONException;",
     "public static boolean validName(java.lang.String);",
     "public java.lang.String json();",
     "public java.util.List<java.lang.String> visible(java.util.Collection<java.lang.String>);",
@@ -230,13 +232,13 @@
     "public void deleteFolder(java.lang.String);",
     "public void move(java.lang.String, java.lang.String, java.lang.String);"
   ],
-  "org.simpleweather.app.LauncherScreen": [
-    "public final class org.simpleweather.app.LauncherScreen {",
-    "public org.simpleweather.app.LauncherScreen(org.simpleweather.app.MainActivity);",
+  "org.daidai.toolbox.LauncherScreen": [
+    "public final class org.daidai.toolbox.LauncherScreen {",
+    "public org.daidai.toolbox.LauncherScreen(org.daidai.toolbox.MainActivity);",
     "public java.util.List<java.lang.String> ordered();",
     "public void render();",
-    "public static boolean openRequested(org.simpleweather.app.MainActivity, android.content.Intent);",
-    "public static void open(org.simpleweather.app.MainActivity, java.lang.String);",
+    "public static boolean openRequested(org.daidai.toolbox.MainActivity, android.content.Intent);",
+    "public static void open(org.daidai.toolbox.MainActivity, java.lang.String);",
     "public void manage(java.lang.String);",
     "public void restoreFolderEditor(org.json.JSONObject);",
     "public void restoreFolder(org.json.JSONObject);",
@@ -245,17 +247,17 @@
     "public void restoreSort(org.json.JSONObject);",
     "public void order();"
   ],
-  "org.simpleweather.app.LauncherShortcuts": [
-    "public final class org.simpleweather.app.LauncherShortcuts {",
+  "org.daidai.toolbox.LauncherShortcuts": [
+    "public final class org.daidai.toolbox.LauncherShortcuts {",
     "public static final java.lang.String EXTRA;",
     "public static android.content.Intent intent(android.content.Context, java.lang.String);",
-    "public static void pin(org.simpleweather.app.MainActivity, java.lang.String);"
+    "public static void pin(org.daidai.toolbox.MainActivity, java.lang.String);"
   ],
-  "org.simpleweather.app.LocationService": [
-    "public final class org.simpleweather.app.LocationService extends android.app.Service implements android.location.LocationListener {",
+  "org.daidai.toolbox.LocationService": [
+    "public final class org.daidai.toolbox.LocationService extends android.app.Service implements android.location.LocationListener {",
     "public static volatile boolean running;",
     "public static final java.lang.String STOP;",
-    "public org.simpleweather.app.LocationService();",
+    "public org.daidai.toolbox.LocationService();",
     "public static java.lang.String status();",
     "public static void status(java.lang.String);",
     "public static void languageChanged();",
@@ -274,8 +276,8 @@
     "public void onStatusChanged(java.lang.String, int, android.os.Bundle);",
     "public void onDestroy();"
   ],
-  "org.simpleweather.app.MainActivity": [
-    "public class org.simpleweather.app.MainActivity extends android.app.Activity {",
+  "org.daidai.toolbox.MainActivity": [
+    "public class org.daidai.toolbox.MainActivity extends android.app.Activity {",
     "public static final int TITLE;",
     "public static final int BG;",
     "public static final int WHITE;",
@@ -283,12 +285,12 @@
     "public static final int MUTED;",
     "public static final int BLUE;",
     "public static final int PALE;",
-    "public org.simpleweather.app.WeatherStore store;",
-    "public org.simpleweather.app.City city;",
-    "public org.simpleweather.app.WeatherData data;",
+    "public org.daidai.toolbox.WeatherStore store;",
+    "public org.daidai.toolbox.City city;",
+    "public org.daidai.toolbox.WeatherData data;",
     "public android.widget.LinearLayout body;",
     "public int tab;",
-    "public org.simpleweather.app.AppModules apps;",
+    "public org.daidai.toolbox.AppModules apps;",
     "public android.content.SharedPreferences preferences;",
     "public boolean picking;",
     "public boolean loading;",
@@ -297,7 +299,7 @@
     "public int searchVersion;",
     "public static final int[] TAB_NAME_IDS;",
     "public static final int[] WEATHER_NAME_IDS;",
-    "public org.simpleweather.app.MainActivity();",
+    "public org.daidai.toolbox.MainActivity();",
     "public android.content.res.Resources getResources();",
     "public android.content.res.AssetManager getAssets();",
     "public void markChildActivity();",
@@ -384,27 +386,27 @@
     "public void onBackPressed();",
     "public void onRequestPermissionsResult(int, java.lang.String[], int[]);"
   ],
-  "org.simpleweather.app.MessagingServiceBridge": [
-    "public final class org.simpleweather.app.MessagingServiceBridge extends org.simpleweather.app.ModuleServiceBridge {",
-    "public org.simpleweather.app.MessagingServiceBridge();"
+  "org.daidai.toolbox.MessagingServiceBridge": [
+    "public final class org.daidai.toolbox.MessagingServiceBridge extends org.daidai.toolbox.ModuleServiceBridge {",
+    "public org.daidai.toolbox.MessagingServiceBridge();"
   ],
-  "org.simpleweather.app.ModuleAssets": [
-    "public final class org.simpleweather.app.ModuleAssets {",
+  "org.daidai.toolbox.ModuleAssets": [
+    "public final class org.daidai.toolbox.ModuleAssets {",
     "public static void invalidate();",
     "public static long generation();",
     "public static android.content.res.Resources resources(android.content.Context, android.content.res.Resources);",
     "public static android.content.Context wrap(android.content.Context);"
   ],
-  "org.simpleweather.app.ModuleCompatibility": [
-    "public final class org.simpleweather.app.ModuleCompatibility {",
+  "org.daidai.toolbox.ModuleCompatibility": [
+    "public final class org.daidai.toolbox.ModuleCompatibility {",
     "public static boolean accepts(java.lang.String, java.lang.String, int, int, int, int);",
     "public static boolean releaseAllowed(java.lang.String, java.lang.String);",
     "public static boolean validLength(long, long, long);"
   ],
-  "org.simpleweather.app.ModulePage": [
-    "public abstract class org.simpleweather.app.ModulePage extends android.content.ContextWrapper {",
+  "org.daidai.toolbox.ModulePage": [
+    "public abstract class org.daidai.toolbox.ModulePage extends android.content.ContextWrapper {",
     "public static final int RESULT_OK;",
-    "public org.simpleweather.app.ModulePage(android.app.Activity);",
+    "public org.daidai.toolbox.ModulePage(android.app.Activity);",
     "public void onRequestPermissionsResult(int, java.lang.String[], int[]);",
     "public void onConfigurationChanged(android.content.res.Configuration);",
     "public final void dispatch(java.lang.String, android.os.Bundle);",
@@ -421,8 +423,8 @@
     "public final void setContentView(android.view.View);",
     "public final void finish();"
   ],
-  "org.simpleweather.app.ModuleRuntime": [
-    "public final class org.simpleweather.app.ModuleRuntime {",
+  "org.daidai.toolbox.ModuleRuntime": [
+    "public final class org.daidai.toolbox.ModuleRuntime {",
     "public static java.io.File dataDirectory(android.content.Context, java.lang.String);",
     "public static java.io.File packageFile(android.content.Context, java.lang.String);",
     "public static java.lang.ClassLoader loader(android.content.Context, java.lang.String) throws java.lang.Exception;",
@@ -431,18 +433,18 @@
     "public static android.content.Intent serviceIntent(android.content.Context, java.lang.String);",
     "public static void stopService(android.content.Context, java.lang.String);"
   ],
-  "org.simpleweather.app.ModuleServiceBridge": [
-    "public abstract class org.simpleweather.app.ModuleServiceBridge extends android.app.Service {",
-    "public org.simpleweather.app.ModuleServiceBridge();",
+  "org.daidai.toolbox.ModuleServiceBridge": [
+    "public abstract class org.daidai.toolbox.ModuleServiceBridge extends android.app.Service {",
+    "public org.daidai.toolbox.ModuleServiceBridge();",
     "public void onCreate();",
     "public android.os.IBinder onBind(android.content.Intent);",
     "public int onStartCommand(android.content.Intent, int, int);",
     "public void onDestroy();"
   ],
-  "org.simpleweather.app.ModuleWorker": [
-    "public abstract class org.simpleweather.app.ModuleWorker extends android.content.ContextWrapper {",
+  "org.daidai.toolbox.ModuleWorker": [
+    "public abstract class org.daidai.toolbox.ModuleWorker extends android.content.ContextWrapper {",
     "public static final int START_NOT_STICKY;",
-    "public org.simpleweather.app.ModuleWorker(android.app.Service, android.content.Context);",
+    "public org.daidai.toolbox.ModuleWorker(android.app.Service, android.content.Context);",
     "public void onCreate();",
     "public void onDestroy();",
     "public android.os.IBinder onBind(android.content.Intent);",
@@ -451,33 +453,33 @@
     "public final void stopForeground(boolean);",
     "public final void stopSelf();"
   ],
-  "org.simpleweather.app.MusicServiceBridge": [
-    "public final class org.simpleweather.app.MusicServiceBridge extends org.simpleweather.app.ModuleServiceBridge {",
-    "public org.simpleweather.app.MusicServiceBridge();"
+  "org.daidai.toolbox.MusicServiceBridge": [
+    "public final class org.daidai.toolbox.MusicServiceBridge extends org.daidai.toolbox.ModuleServiceBridge {",
+    "public org.daidai.toolbox.MusicServiceBridge();"
   ],
-  "org.simpleweather.app.NumericInputs": [
-    "public final class org.simpleweather.app.NumericInputs {",
-    "public org.simpleweather.app.NumericInputs();",
-    "public static android.widget.EditText number(org.simpleweather.app.MainActivity, android.widget.LinearLayout, java.lang.String, int, int);",
-    "public static void time(org.simpleweather.app.MainActivity, java.time.LocalTime, java.util.function.Consumer<java.time.LocalTime>);",
-    "public static void dateTime(org.simpleweather.app.MainActivity, java.time.ZonedDateTime, java.util.function.Consumer<java.time.Instant>);"
+  "org.daidai.toolbox.NumericInputs": [
+    "public final class org.daidai.toolbox.NumericInputs {",
+    "public org.daidai.toolbox.NumericInputs();",
+    "public static android.widget.EditText number(org.daidai.toolbox.MainActivity, android.widget.LinearLayout, java.lang.String, int, int);",
+    "public static void time(org.daidai.toolbox.MainActivity, java.time.LocalTime, java.util.function.Consumer<java.time.LocalTime>);",
+    "public static void dateTime(org.daidai.toolbox.MainActivity, java.time.ZonedDateTime, java.util.function.Consumer<java.time.Instant>);"
   ],
-  "org.simpleweather.app.OfficialPageActivity": [
-    "public final class org.simpleweather.app.OfficialPageActivity extends android.app.Activity {",
-    "public org.simpleweather.app.OfficialPageActivity();",
+  "org.daidai.toolbox.OfficialPageActivity": [
+    "public final class org.daidai.toolbox.OfficialPageActivity extends android.app.Activity {",
+    "public org.daidai.toolbox.OfficialPageActivity();",
     "public static boolean trusted(java.lang.String);",
     "public void onCreate(android.os.Bundle);",
     "public void onBackPressed();"
   ],
-  "org.simpleweather.app.RandomChoiceModel$Saved": [
-    "public final class org.simpleweather.app.RandomChoiceModel$Saved {",
+  "org.daidai.toolbox.RandomChoiceModel$Saved": [
+    "public final class org.daidai.toolbox.RandomChoiceModel$Saved {",
     "public final java.lang.String id;",
     "public java.lang.String name;",
     "public final java.util.List<java.lang.String> items;",
-    "public org.simpleweather.app.RandomChoiceModel$Saved(java.lang.String, java.lang.String, java.util.List<java.lang.String>);"
+    "public org.daidai.toolbox.RandomChoiceModel$Saved(java.lang.String, java.lang.String, java.util.List<java.lang.String>);"
   ],
-  "org.simpleweather.app.RandomChoiceModel": [
-    "public final class org.simpleweather.app.RandomChoiceModel {",
+  "org.daidai.toolbox.RandomChoiceModel": [
+    "public final class org.daidai.toolbox.RandomChoiceModel {",
     "public static final int MAX_INPUT;",
     "public static final int MAX_ITEMS;",
     "public static final int MAX_ITEM;",
@@ -488,39 +490,39 @@
     "public final java.util.List<java.lang.String> pool;",
     "public final java.util.List<java.lang.String> result;",
     "public final java.util.Set<java.lang.String> used;",
-    "public final java.util.List<org.simpleweather.app.RandomChoiceModel$Saved> lists;",
-    "public org.simpleweather.app.RandomChoiceModel();",
+    "public final java.util.List<org.daidai.toolbox.RandomChoiceModel$Saved> lists;",
+    "public org.daidai.toolbox.RandomChoiceModel();",
     "public static java.util.List<java.lang.String> items(java.lang.String);",
     "public int available(boolean);",
     "public java.util.List<java.lang.String> draw(int, boolean, java.util.Random);",
     "public java.util.List<java.lang.String> draw(int, boolean);",
     "public void reset();",
-    "public org.simpleweather.app.RandomChoiceModel$Saved save(java.lang.String);",
-    "public void rename(org.simpleweather.app.RandomChoiceModel$Saved, java.lang.String);",
-    "public void load(org.simpleweather.app.RandomChoiceModel$Saved);",
+    "public org.daidai.toolbox.RandomChoiceModel$Saved save(java.lang.String);",
+    "public void rename(org.daidai.toolbox.RandomChoiceModel$Saved, java.lang.String);",
+    "public void load(org.daidai.toolbox.RandomChoiceModel$Saved);",
     "public org.json.JSONObject json() throws org.json.JSONException;",
-    "public static org.simpleweather.app.RandomChoiceModel parse(java.lang.String) throws org.json.JSONException;"
+    "public static org.daidai.toolbox.RandomChoiceModel parse(java.lang.String) throws org.json.JSONException;"
   ],
-  "org.simpleweather.app.RoutePoint": [
-    "public final class org.simpleweather.app.RoutePoint {",
+  "org.daidai.toolbox.RoutePoint": [
+    "public final class org.daidai.toolbox.RoutePoint {",
     "public final double lon;",
     "public final double lat;",
     "public final long time;",
     "public final float accuracy;",
-    "public org.simpleweather.app.RoutePoint(double, double, long, float);"
+    "public org.daidai.toolbox.RoutePoint(double, double, long, float);"
   ],
-  "org.simpleweather.app.RouteRecorder": [
-    "public final class org.simpleweather.app.RouteRecorder {",
-    "public org.simpleweather.app.RouteRecorder();",
+  "org.daidai.toolbox.RouteRecorder": [
+    "public final class org.daidai.toolbox.RouteRecorder {",
+    "public org.daidai.toolbox.RouteRecorder();",
     "public static void start(long);",
     "public static boolean active();",
     "public static int size();",
     "public static void stop();",
     "public static void onLocation(android.location.Location);",
-    "public static java.util.ArrayList<org.simpleweather.app.RoutePoint> points();"
+    "public static java.util.ArrayList<org.daidai.toolbox.RoutePoint> points();"
   ],
-  "org.simpleweather.app.ScheduleModel$Course": [
-    "public final class org.simpleweather.app.ScheduleModel$Course {",
+  "org.daidai.toolbox.ScheduleModel$Course": [
+    "public final class org.daidai.toolbox.ScheduleModel$Course {",
     "public java.lang.String id;",
     "public java.lang.String name;",
     "public java.lang.String room;",
@@ -534,53 +536,53 @@
     "public int parity;",
     "public int color;",
     "public final java.util.SortedSet<java.lang.Integer> customWeeks;",
-    "public org.simpleweather.app.ScheduleModel$Course();",
+    "public org.daidai.toolbox.ScheduleModel$Course();",
     "public int seedColor();",
     "public boolean runs(int);",
-    "public org.simpleweather.app.ScheduleModel$Course copy();"
+    "public org.daidai.toolbox.ScheduleModel$Course copy();"
   ],
-  "org.simpleweather.app.ScheduleModel$Slot": [
-    "public final class org.simpleweather.app.ScheduleModel$Slot {",
+  "org.daidai.toolbox.ScheduleModel$Slot": [
+    "public final class org.daidai.toolbox.ScheduleModel$Slot {",
     "public java.lang.String start;",
     "public java.lang.String end;",
-    "public org.simpleweather.app.ScheduleModel$Slot(java.lang.String, java.lang.String);"
+    "public org.daidai.toolbox.ScheduleModel$Slot(java.lang.String, java.lang.String);"
   ],
-  "org.simpleweather.app.ScheduleModel": [
-    "public final class org.simpleweather.app.ScheduleModel {",
+  "org.daidai.toolbox.ScheduleModel": [
+    "public final class org.daidai.toolbox.ScheduleModel {",
     "public static final int DEFAULT_WEEKS;",
     "public java.time.LocalDate semester;",
     "public int weeks;",
-    "public final java.util.List<org.simpleweather.app.ScheduleModel$Slot> slots;",
-    "public final java.util.List<org.simpleweather.app.ScheduleModel$Course> courses;",
-    "public org.simpleweather.app.ScheduleModel();",
+    "public final java.util.List<org.daidai.toolbox.ScheduleModel$Slot> slots;",
+    "public final java.util.List<org.daidai.toolbox.ScheduleModel$Course> courses;",
+    "public org.daidai.toolbox.ScheduleModel();",
     "public void resetSettings();",
     "public int week(java.time.LocalDate);",
     "public static int minute(java.lang.String);",
     "public java.lang.String validateSlot(int, java.lang.String, java.lang.String);",
-    "public java.lang.String validateCourse(org.simpleweather.app.ScheduleModel$Course);",
-    "public void put(org.simpleweather.app.ScheduleModel$Course);",
-    "public java.util.List<org.simpleweather.app.ScheduleModel$Course> todayCourses(int, int);",
-    "public java.lang.String courseTime(org.simpleweather.app.ScheduleModel$Course);",
-    "public java.lang.String weekLabel(org.simpleweather.app.ScheduleModel$Course);",
+    "public java.lang.String validateCourse(org.daidai.toolbox.ScheduleModel$Course);",
+    "public void put(org.daidai.toolbox.ScheduleModel$Course);",
+    "public java.util.List<org.daidai.toolbox.ScheduleModel$Course> todayCourses(int, int);",
+    "public java.lang.String courseTime(org.daidai.toolbox.ScheduleModel$Course);",
+    "public java.lang.String weekLabel(org.daidai.toolbox.ScheduleModel$Course);",
     "public static java.lang.String customLabel(java.util.Collection<java.lang.Integer>);",
     "public org.json.JSONObject json() throws org.json.JSONException;",
-    "public static org.simpleweather.app.ScheduleModel parse(java.lang.String) throws java.lang.Exception;"
+    "public static org.daidai.toolbox.ScheduleModel parse(java.lang.String) throws java.lang.Exception;"
   ],
-  "org.simpleweather.app.ScheduleNotifier": [
-    "public final class org.simpleweather.app.ScheduleNotifier {",
-    "public org.simpleweather.app.ScheduleNotifier();",
+  "org.daidai.toolbox.ScheduleNotifier": [
+    "public final class org.daidai.toolbox.ScheduleNotifier {",
+    "public org.daidai.toolbox.ScheduleNotifier();",
     "public static void receive(android.content.Context, android.content.Intent);",
     "public static void refresh(android.content.Context, boolean);",
     "public static void refreshAt(android.content.Context, long, boolean);"
   ],
-  "org.simpleweather.app.ScreenHandle": [
-    "public final class org.simpleweather.app.ScreenHandle {",
-    "public org.simpleweather.app.ScreenHandle(java.lang.Object);",
+  "org.daidai.toolbox.ScreenHandle": [
+    "public final class org.daidai.toolbox.ScreenHandle {",
+    "public org.daidai.toolbox.ScreenHandle(java.lang.Object);",
     "public java.lang.Object call(java.lang.String, java.lang.Object...);"
   ],
-  "org.simpleweather.app.ScreenLabels": [
-    "public final class org.simpleweather.app.ScreenLabels {",
-    "public org.simpleweather.app.ScreenLabels();",
+  "org.daidai.toolbox.ScreenLabels": [
+    "public final class org.daidai.toolbox.ScreenLabels {",
+    "public org.daidai.toolbox.ScreenLabels();",
     "public static java.lang.String[] GpsScreensectionNames();",
     "public static java.lang.String[] GpsScreenbatteryLabels();",
     "public static java.lang.String[] GpsScreendeviceLabels();",
@@ -588,10 +590,10 @@
     "public static java.lang.String[] EarthquakeScreensectionNames();",
     "public static java.lang.String[] AstronomyScreensectionNames();"
   ],
-  "org.simpleweather.app.SettingsActivity": [
-    "public final class org.simpleweather.app.SettingsActivity extends org.simpleweather.app.MainActivity {",
+  "org.daidai.toolbox.SettingsActivity": [
+    "public final class org.daidai.toolbox.SettingsActivity extends org.daidai.toolbox.MainActivity {",
     "public static final int REQUEST;",
-    "public org.simpleweather.app.SettingsActivity();",
+    "public org.daidai.toolbox.SettingsActivity();",
     "public static void addBackground(android.app.Activity, android.widget.FrameLayout);",
     "public static android.app.Activity owner(android.content.Context);",
     "public static java.lang.String hostText(android.content.Context, int);",
@@ -603,9 +605,9 @@
     "public void switchTab(int);",
     "public void onBackPressed();"
   ],
-  "org.simpleweather.app.SettingsNavigation": [
-    "public final class org.simpleweather.app.SettingsNavigation {",
-    "public org.simpleweather.app.SettingsNavigation(android.app.Activity);",
+  "org.daidai.toolbox.SettingsNavigation": [
+    "public final class org.daidai.toolbox.SettingsNavigation {",
+    "public org.daidai.toolbox.SettingsNavigation(android.app.Activity);",
     "public boolean back();",
     "public boolean empty();",
     "public void refresh();",
@@ -616,10 +618,10 @@
     "public static void layoutDesktopBar(android.widget.LinearLayout, android.view.View);",
     "public static void desktop(android.app.Activity);"
   ],
-  "org.simpleweather.app.SettingsScreen": [
-    "public final class org.simpleweather.app.SettingsScreen {",
+  "org.daidai.toolbox.SettingsScreen": [
+    "public final class org.daidai.toolbox.SettingsScreen {",
     "public static java.lang.String[] colorNames();",
-    "public org.simpleweather.app.SettingsScreen(org.simpleweather.app.MainActivity);",
+    "public org.daidai.toolbox.SettingsScreen(org.daidai.toolbox.MainActivity);",
     "public void show();",
     "public void settingsPath(boolean);",
     "public void singleChoice(java.lang.String, java.lang.String, java.lang.String[], int, java.util.function.IntConsumer);",
@@ -629,17 +631,17 @@
     "public void maps();",
     "public void earthquakeOrder();"
   ],
-  "org.simpleweather.app.SkyLabels$Box": [
-    "public final class org.simpleweather.app.SkyLabels$Box {",
+  "org.daidai.toolbox.SkyLabels$Box": [
+    "public final class org.daidai.toolbox.SkyLabels$Box {",
     "public final float left;",
     "public final float top;",
     "public final float right;",
     "public final float bottom;",
-    "public org.simpleweather.app.SkyLabels$Box(float, float, float, float);",
-    "public boolean intersects(org.simpleweather.app.SkyLabels$Box);"
+    "public org.daidai.toolbox.SkyLabels$Box(float, float, float, float);",
+    "public boolean intersects(org.daidai.toolbox.SkyLabels$Box);"
   ],
-  "org.simpleweather.app.SkyLabels$Candidate": [
-    "public final class org.simpleweather.app.SkyLabels$Candidate {",
+  "org.daidai.toolbox.SkyLabels$Candidate": [
+    "public final class org.daidai.toolbox.SkyLabels$Candidate {",
     "public final java.lang.String id;",
     "public final float x;",
     "public final float y;",
@@ -648,25 +650,25 @@
     "public final float descent;",
     "public final double magnitude;",
     "public final boolean alwaysShow;",
-    "public org.simpleweather.app.SkyLabels$Candidate(java.lang.String, float, float, float, float, float);",
-    "public org.simpleweather.app.SkyLabels$Candidate(java.lang.String, float, float, float, float, float, double, boolean);"
+    "public org.daidai.toolbox.SkyLabels$Candidate(java.lang.String, float, float, float, float, float);",
+    "public org.daidai.toolbox.SkyLabels$Candidate(java.lang.String, float, float, float, float, float, double, boolean);"
   ],
-  "org.simpleweather.app.SkyLabels$Placed": [
-    "public final class org.simpleweather.app.SkyLabels$Placed {",
-    "public final org.simpleweather.app.SkyLabels$Candidate candidate;",
+  "org.daidai.toolbox.SkyLabels$Placed": [
+    "public final class org.daidai.toolbox.SkyLabels$Placed {",
+    "public final org.daidai.toolbox.SkyLabels$Candidate candidate;",
     "public final float baseline;",
-    "public final org.simpleweather.app.SkyLabels$Box box;",
-    "public org.simpleweather.app.SkyLabels$Placed(org.simpleweather.app.SkyLabels$Candidate, float, org.simpleweather.app.SkyLabels$Box);"
+    "public final org.daidai.toolbox.SkyLabels$Box box;",
+    "public org.daidai.toolbox.SkyLabels$Placed(org.daidai.toolbox.SkyLabels$Candidate, float, org.daidai.toolbox.SkyLabels$Box);"
   ],
-  "org.simpleweather.app.SkyLabels": [
-    "public final class org.simpleweather.app.SkyLabels {",
-    "public static java.util.List<org.simpleweather.app.SkyLabels$Placed> place(java.util.List<org.simpleweather.app.SkyLabels$Candidate>, java.util.List<org.simpleweather.app.SkyLabels$Box>, float, float, float, float, float);",
-    "public static java.util.List<org.simpleweather.app.SkyLabels$Placed> placeAdaptive(java.util.List<org.simpleweather.app.SkyLabels$Candidate>, java.util.List<org.simpleweather.app.SkyLabels$Box>, float, float, float, float, float, double);",
-    "public static java.util.List<org.simpleweather.app.SkyLabels$Placed> placeAdaptive(java.util.List<org.simpleweather.app.SkyLabels$Candidate>, java.util.List<org.simpleweather.app.SkyLabels$Box>, float, float, float, float, float, double, float, float, float);"
+  "org.daidai.toolbox.SkyLabels": [
+    "public final class org.daidai.toolbox.SkyLabels {",
+    "public static java.util.List<org.daidai.toolbox.SkyLabels$Placed> place(java.util.List<org.daidai.toolbox.SkyLabels$Candidate>, java.util.List<org.daidai.toolbox.SkyLabels$Box>, float, float, float, float, float);",
+    "public static java.util.List<org.daidai.toolbox.SkyLabels$Placed> placeAdaptive(java.util.List<org.daidai.toolbox.SkyLabels$Candidate>, java.util.List<org.daidai.toolbox.SkyLabels$Box>, float, float, float, float, float, double);",
+    "public static java.util.List<org.daidai.toolbox.SkyLabels$Placed> placeAdaptive(java.util.List<org.daidai.toolbox.SkyLabels$Candidate>, java.util.List<org.daidai.toolbox.SkyLabels$Box>, float, float, float, float, float, double, float, float, float);"
   ],
-  "org.simpleweather.app.StatusMath": [
-    "public final class org.simpleweather.app.StatusMath {",
-    "public org.simpleweather.app.StatusMath();",
+  "org.daidai.toolbox.StatusMath": [
+    "public final class org.daidai.toolbox.StatusMath {",
+    "public org.daidai.toolbox.StatusMath();",
     "public static java.lang.String[] directions();",
     "public static double norm(double);",
     "public static java.lang.String direction(double);",
@@ -683,8 +685,8 @@
     "public static java.lang.String satelliteId(int, int);",
     "public static int constellationRank(int, int[]);"
   ],
-  "org.simpleweather.app.StatusPlace": [
-    "public final class org.simpleweather.app.StatusPlace {",
+  "org.daidai.toolbox.StatusPlace": [
+    "public final class org.daidai.toolbox.StatusPlace {",
     "public static final int DEFAULT_COLOR;",
     "public final java.lang.String id;",
     "public final java.lang.String name;",
@@ -693,26 +695,48 @@
     "public final long created;",
     "public final int color;",
     "public final boolean visible;",
-    "public org.simpleweather.app.StatusPlace(java.lang.String, java.lang.String, double, double, long);",
-    "public org.simpleweather.app.StatusPlace(java.lang.String, java.lang.String, double, double, long, int, boolean);",
-    "public org.simpleweather.app.StatusPlace withVisibility(boolean);",
-    "public static java.util.List<org.simpleweather.app.StatusPlace> decode(java.lang.String);",
-    "public static java.lang.String encode(java.util.List<org.simpleweather.app.StatusPlace>);"
+    "public org.daidai.toolbox.StatusPlace(java.lang.String, java.lang.String, double, double, long);",
+    "public org.daidai.toolbox.StatusPlace(java.lang.String, java.lang.String, double, double, long, int, boolean);",
+    "public org.daidai.toolbox.StatusPlace withVisibility(boolean);",
+    "public static java.util.List<org.daidai.toolbox.StatusPlace> decode(java.lang.String);",
+    "public static java.lang.String encode(java.util.List<org.daidai.toolbox.StatusPlace>);"
   ],
-  "org.simpleweather.app.TextParagraphs": [
-    "public final class org.simpleweather.app.TextParagraphs {",
+  "org.daidai.toolbox.StatusTransferData$Document": [
+    "public final class org.daidai.toolbox.StatusTransferData$Document {",
+    "public final java.lang.String kind;",
+    "public final org.json.JSONArray rows;",
+    "public org.daidai.toolbox.StatusTransferData$Document(java.lang.String, org.json.JSONArray);"
+  ],
+  "org.daidai.toolbox.StatusTransferData$Merge": [
+    "public final class org.daidai.toolbox.StatusTransferData$Merge {",
+    "public final org.json.JSONArray rows;",
+    "public final int added;",
+    "public final int skipped;",
+    "public org.daidai.toolbox.StatusTransferData$Merge(org.json.JSONArray, int, int);"
+  ],
+  "org.daidai.toolbox.StatusTransferData": [
+    "public final class org.daidai.toolbox.StatusTransferData {",
+    "public static final java.lang.String FORMAT;",
+    "public static final int MAX_BYTES;",
+    "public org.daidai.toolbox.StatusTransferData();",
+    "public static java.lang.String encode(java.lang.String, org.json.JSONArray) throws org.json.JSONException;",
+    "public static org.daidai.toolbox.StatusTransferData$Document parse(java.lang.String, java.lang.String) throws org.json.JSONException;",
+    "public static org.daidai.toolbox.StatusTransferData$Merge merge(org.json.JSONArray, org.daidai.toolbox.StatusTransferData$Document) throws org.json.JSONException;"
+  ],
+  "org.daidai.toolbox.TextParagraphs": [
+    "public final class org.daidai.toolbox.TextParagraphs {",
     "public static final int GAP_DP;",
     "public static final int LINE_SPACING_DP;",
-    "public org.simpleweather.app.TextParagraphs();",
-    "public static void append(org.simpleweather.app.MainActivity, android.widget.LinearLayout, java.lang.String, int, int);",
-    "public static android.widget.ScrollView notice(org.simpleweather.app.MainActivity, java.lang.String);"
+    "public org.daidai.toolbox.TextParagraphs();",
+    "public static void append(org.daidai.toolbox.MainActivity, android.widget.LinearLayout, java.lang.String, int, int);",
+    "public static android.widget.ScrollView notice(org.daidai.toolbox.MainActivity, java.lang.String);"
   ],
-  "org.simpleweather.app.ThemeColors": [
-    "public final class org.simpleweather.app.ThemeColors {",
+  "org.daidai.toolbox.ThemeColors": [
+    "public final class org.daidai.toolbox.ThemeColors {",
     "public static final int BLUE;",
     "public static final int[] PRESETS;",
     "public static final int GRAY;",
-    "public org.simpleweather.app.ThemeColors();",
+    "public org.daidai.toolbox.ThemeColors();",
     "public static int roleDefault(java.lang.String);",
     "public static int presetIndex(int);",
     "public static int opaque(int);",
@@ -724,23 +748,23 @@
     "public static int parse(java.lang.String);",
     "public static int legacyCourse(int);"
   ],
-  "org.simpleweather.app.TodoModel$Completion": [
-    "public final class org.simpleweather.app.TodoModel$Completion {",
+  "org.daidai.toolbox.TodoModel$Completion": [
+    "public final class org.daidai.toolbox.TodoModel$Completion {",
     "public java.lang.String day;",
     "public long at;",
-    "public org.simpleweather.app.TodoModel$Completion(java.lang.String, long);"
+    "public org.daidai.toolbox.TodoModel$Completion(java.lang.String, long);"
   ],
-  "org.simpleweather.app.TodoModel$Event": [
-    "public final class org.simpleweather.app.TodoModel$Event {",
-    "public final org.simpleweather.app.TodoModel$Item item;",
+  "org.daidai.toolbox.TodoModel$Event": [
+    "public final class org.daidai.toolbox.TodoModel$Event {",
+    "public final org.daidai.toolbox.TodoModel$Item item;",
     "public final java.time.LocalDate day;",
     "public final long when;",
     "public final boolean end;",
     "public final java.lang.String key;",
-    "public org.simpleweather.app.TodoModel$Event(org.simpleweather.app.TodoModel$Item, java.time.LocalDate, int, long, boolean);"
+    "public org.daidai.toolbox.TodoModel$Event(org.daidai.toolbox.TodoModel$Item, java.time.LocalDate, int, long, boolean);"
   ],
-  "org.simpleweather.app.TodoModel$Item": [
-    "public final class org.simpleweather.app.TodoModel$Item {",
+  "org.daidai.toolbox.TodoModel$Item": [
+    "public final class org.daidai.toolbox.TodoModel$Item {",
     "public java.lang.String id;",
     "public java.lang.String title;",
     "public java.lang.String note;",
@@ -764,70 +788,70 @@
     "public long created;",
     "public long updated;",
     "public long completedAt;",
-    "public final java.util.List<org.simpleweather.app.TodoModel$Slot> slots;",
-    "public final java.util.List<org.simpleweather.app.TodoModel$Part> parts;",
-    "public final java.util.List<org.simpleweather.app.TodoModel$Completion> completions;",
-    "public org.simpleweather.app.TodoModel$Item();"
+    "public final java.util.List<org.daidai.toolbox.TodoModel$Slot> slots;",
+    "public final java.util.List<org.daidai.toolbox.TodoModel$Part> parts;",
+    "public final java.util.List<org.daidai.toolbox.TodoModel$Completion> completions;",
+    "public org.daidai.toolbox.TodoModel$Item();"
   ],
-  "org.simpleweather.app.TodoModel$Occurrence": [
-    "public final class org.simpleweather.app.TodoModel$Occurrence {",
-    "public final org.simpleweather.app.TodoModel$Item item;",
+  "org.daidai.toolbox.TodoModel$Occurrence": [
+    "public final class org.daidai.toolbox.TodoModel$Occurrence {",
+    "public final org.daidai.toolbox.TodoModel$Item item;",
     "public final java.time.LocalDate day;",
     "public final long start;",
     "public final long end;",
-    "public org.simpleweather.app.TodoModel$Occurrence(org.simpleweather.app.TodoModel$Item, java.time.LocalDate, java.time.ZoneId);"
+    "public org.daidai.toolbox.TodoModel$Occurrence(org.daidai.toolbox.TodoModel$Item, java.time.LocalDate, java.time.ZoneId);"
   ],
-  "org.simpleweather.app.TodoModel$Part": [
-    "public final class org.simpleweather.app.TodoModel$Part {",
+  "org.daidai.toolbox.TodoModel$Part": [
+    "public final class org.daidai.toolbox.TodoModel$Part {",
     "public java.lang.String text;",
     "public boolean done;",
-    "public org.simpleweather.app.TodoModel$Part(java.lang.String, boolean);"
+    "public org.daidai.toolbox.TodoModel$Part(java.lang.String, boolean);"
   ],
-  "org.simpleweather.app.TodoModel$Slot": [
-    "public final class org.simpleweather.app.TodoModel$Slot {",
+  "org.daidai.toolbox.TodoModel$Slot": [
+    "public final class org.daidai.toolbox.TodoModel$Slot {",
     "public int from;",
     "public int to;",
-    "public org.simpleweather.app.TodoModel$Slot(int, int);"
+    "public org.daidai.toolbox.TodoModel$Slot(int, int);"
   ],
-  "org.simpleweather.app.TodoModel": [
-    "public final class org.simpleweather.app.TodoModel {",
+  "org.daidai.toolbox.TodoModel": [
+    "public final class org.daidai.toolbox.TodoModel {",
     "public static final int MAX_ITEMS;",
     "public static final long DAY_MS;",
     "public static final long UNDO_MS;",
-    "public final java.util.List<org.simpleweather.app.TodoModel$Item> items;",
-    "public org.simpleweather.app.TodoModel();",
-    "public org.simpleweather.app.TodoModel$Item find(java.lang.String);",
+    "public final java.util.List<org.daidai.toolbox.TodoModel$Item> items;",
+    "public org.daidai.toolbox.TodoModel();",
+    "public org.daidai.toolbox.TodoModel$Item find(java.lang.String);",
     "public static long at(java.time.LocalDate, int, java.time.ZoneId);",
-    "public static boolean scheduled(org.simpleweather.app.TodoModel$Item, java.time.LocalDate);",
-    "public static boolean completedOn(org.simpleweather.app.TodoModel$Item, java.time.LocalDate);",
-    "public static boolean occurs(org.simpleweather.app.TodoModel$Item, java.time.LocalDate);",
-    "public static boolean inToday(org.simpleweather.app.TodoModel$Item, long, java.time.ZoneId);",
-    "public static boolean canUndo(org.simpleweather.app.TodoModel$Item, long);",
-    "public static long deleteAt(org.simpleweather.app.TodoModel$Item);",
+    "public static boolean scheduled(org.daidai.toolbox.TodoModel$Item, java.time.LocalDate);",
+    "public static boolean completedOn(org.daidai.toolbox.TodoModel$Item, java.time.LocalDate);",
+    "public static boolean occurs(org.daidai.toolbox.TodoModel$Item, java.time.LocalDate);",
+    "public static boolean inToday(org.daidai.toolbox.TodoModel$Item, long, java.time.ZoneId);",
+    "public static boolean canUndo(org.daidai.toolbox.TodoModel$Item, long);",
+    "public static long deleteAt(org.daidai.toolbox.TodoModel$Item);",
     "public boolean prune(long);",
-    "public static void undo(org.simpleweather.app.TodoModel$Item, long);",
-    "public static org.simpleweather.app.TodoModel$Occurrence next(org.simpleweather.app.TodoModel$Item, long, java.time.ZoneId);",
-    "public static void complete(org.simpleweather.app.TodoModel$Item, java.time.LocalDate);",
-    "public static void complete(org.simpleweather.app.TodoModel$Item, java.time.LocalDate, long);",
-    "public static java.util.List<org.simpleweather.app.TodoModel$Event> events(org.simpleweather.app.TodoModel$Item, long, java.time.ZoneId, int, long);",
+    "public static void undo(org.daidai.toolbox.TodoModel$Item, long);",
+    "public static org.daidai.toolbox.TodoModel$Occurrence next(org.daidai.toolbox.TodoModel$Item, long, java.time.ZoneId);",
+    "public static void complete(org.daidai.toolbox.TodoModel$Item, java.time.LocalDate);",
+    "public static void complete(org.daidai.toolbox.TodoModel$Item, java.time.LocalDate, long);",
+    "public static java.util.List<org.daidai.toolbox.TodoModel$Event> events(org.daidai.toolbox.TodoModel$Item, long, java.time.ZoneId, int, long);",
     "public static int minute(java.lang.String);",
     "public static java.lang.String clock(int);",
-    "public static void validate(org.simpleweather.app.TodoModel$Item);",
-    "public static void validateSlots(java.util.List<org.simpleweather.app.TodoModel$Slot>);",
+    "public static void validate(org.daidai.toolbox.TodoModel$Item);",
+    "public static void validateSlots(java.util.List<org.daidai.toolbox.TodoModel$Slot>);",
     "public org.json.JSONObject json() throws org.json.JSONException;",
-    "public static org.json.JSONObject encode(org.simpleweather.app.TodoModel$Item) throws org.json.JSONException;",
-    "public static org.simpleweather.app.TodoModel parse(java.lang.String) throws org.json.JSONException;"
+    "public static org.json.JSONObject encode(org.daidai.toolbox.TodoModel$Item) throws org.json.JSONException;",
+    "public static org.daidai.toolbox.TodoModel parse(java.lang.String) throws org.json.JSONException;"
   ],
-  "org.simpleweather.app.TodoReceiver": [
-    "public final class org.simpleweather.app.TodoReceiver extends android.content.BroadcastReceiver {",
-    "public org.simpleweather.app.TodoReceiver();",
+  "org.daidai.toolbox.TodoReceiver": [
+    "public final class org.daidai.toolbox.TodoReceiver extends android.content.BroadcastReceiver {",
+    "public org.daidai.toolbox.TodoReceiver();",
     "public void onReceive(android.content.Context, android.content.Intent);"
   ],
-  "org.simpleweather.app.TodoScheduler": [
-    "public final class org.simpleweather.app.TodoScheduler {",
+  "org.daidai.toolbox.TodoScheduler": [
+    "public final class org.daidai.toolbox.TodoScheduler {",
     "public static final java.lang.String REMIND;",
     "public static final java.lang.String SUMMARY;",
-    "public org.simpleweather.app.TodoScheduler();",
+    "public org.daidai.toolbox.TodoScheduler();",
     "public static boolean allowed(android.content.Context);",
     "public static boolean exact(android.content.Context);",
     "public static void notificationSettings(android.content.Context);",
@@ -838,34 +862,34 @@
     "public static void receive(android.content.Context, android.content.Intent);",
     "public static void refresh(android.content.Context, boolean);"
   ],
-  "org.simpleweather.app.TodoStore": [
-    "public final class org.simpleweather.app.TodoStore {",
-    "public org.simpleweather.app.TodoStore();",
-    "public static org.simpleweather.app.TodoModel load(android.content.Context);",
-    "public static void save(android.content.Context, org.simpleweather.app.TodoModel);"
+  "org.daidai.toolbox.TodoStore": [
+    "public final class org.daidai.toolbox.TodoStore {",
+    "public org.daidai.toolbox.TodoStore();",
+    "public static org.daidai.toolbox.TodoModel load(android.content.Context);",
+    "public static void save(android.content.Context, org.daidai.toolbox.TodoModel);"
   ],
-  "org.simpleweather.app.ToolboxApplication": [
-    "public final class org.simpleweather.app.ToolboxApplication extends android.app.Application {",
-    "public org.simpleweather.app.ToolboxApplication();",
+  "org.daidai.toolbox.ToolboxApplication": [
+    "public final class org.daidai.toolbox.ToolboxApplication extends android.app.Application {",
+    "public org.daidai.toolbox.ToolboxApplication();",
     "public void onCreate();"
   ],
-  "org.simpleweather.app.ToolDialog": [
-    "public final class org.simpleweather.app.ToolDialog extends android.app.AlertDialog$Builder {",
-    "public org.simpleweather.app.ToolDialog(android.content.Context);",
-    "public org.simpleweather.app.ToolDialog setTitle(java.lang.CharSequence);",
-    "public org.simpleweather.app.ToolDialog setTitle(int);",
-    "public org.simpleweather.app.ToolDialog setMessage(java.lang.CharSequence);",
-    "public org.simpleweather.app.ToolDialog setMessage(int);",
-    "public org.simpleweather.app.ToolDialog setView(android.view.View);",
-    "public org.simpleweather.app.ToolDialog setPositiveButton(java.lang.CharSequence, android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setNegativeButton(java.lang.CharSequence, android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setNeutralButton(java.lang.CharSequence, android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setPositiveButton(int, android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setNegativeButton(int, android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setNeutralButton(int, android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setItems(java.lang.CharSequence[], android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setSingleChoiceItems(java.lang.CharSequence[], int, android.content.DialogInterface$OnClickListener);",
-    "public org.simpleweather.app.ToolDialog setMultiChoiceItems(java.lang.CharSequence[], boolean[], android.content.DialogInterface$OnMultiChoiceClickListener);",
+  "org.daidai.toolbox.ToolDialog": [
+    "public final class org.daidai.toolbox.ToolDialog extends android.app.AlertDialog$Builder {",
+    "public org.daidai.toolbox.ToolDialog(android.content.Context);",
+    "public org.daidai.toolbox.ToolDialog setTitle(java.lang.CharSequence);",
+    "public org.daidai.toolbox.ToolDialog setTitle(int);",
+    "public org.daidai.toolbox.ToolDialog setMessage(java.lang.CharSequence);",
+    "public org.daidai.toolbox.ToolDialog setMessage(int);",
+    "public org.daidai.toolbox.ToolDialog setView(android.view.View);",
+    "public org.daidai.toolbox.ToolDialog setPositiveButton(java.lang.CharSequence, android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setNegativeButton(java.lang.CharSequence, android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setNeutralButton(java.lang.CharSequence, android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setPositiveButton(int, android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setNegativeButton(int, android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setNeutralButton(int, android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setItems(java.lang.CharSequence[], android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setSingleChoiceItems(java.lang.CharSequence[], int, android.content.DialogInterface$OnClickListener);",
+    "public org.daidai.toolbox.ToolDialog setMultiChoiceItems(java.lang.CharSequence[], boolean[], android.content.DialogInterface$OnMultiChoiceClickListener);",
     "public android.app.AlertDialog create();",
     "public static <T extends android.app.AlertDialog> T prepare(T);",
     "public android.app.AlertDialog show();",
@@ -886,54 +910,54 @@
     "public android.app.AlertDialog$Builder setTitle(java.lang.CharSequence);",
     "public android.app.AlertDialog$Builder setTitle(int);"
   ],
-  "org.simpleweather.app.UiColors": [
-    "public final class org.simpleweather.app.UiColors {",
+  "org.daidai.toolbox.UiColors": [
+    "public final class org.daidai.toolbox.UiColors {",
     "public static final java.lang.String BUTTON;",
     "public static final java.lang.String LINK;",
     "public static final java.lang.String BODY;",
     "public static final java.lang.String TITLE;",
     "public static final java.lang.String CHOICE;",
     "public static final java.lang.String NOTE;",
-    "public org.simpleweather.app.UiColors();",
+    "public org.daidai.toolbox.UiColors();",
     "public static int seed(android.content.Context, java.lang.String);",
     "public static int ink(android.content.Context, java.lang.String);",
     "public static int pale(android.content.Context, java.lang.String);",
     "public static void mark(android.widget.TextView, java.lang.String);",
     "public static void decorate(android.content.Context, android.view.View);"
   ],
-  "org.simpleweather.app.UiSession": [
-    "public final class org.simpleweather.app.UiSession {",
-    "public static void release(org.simpleweather.app.MainActivity);",
+  "org.daidai.toolbox.UiSession": [
+    "public final class org.daidai.toolbox.UiSession {",
+    "public static void release(org.daidai.toolbox.MainActivity);",
     "public static void todoDraft(android.app.AlertDialog, java.util.function.Supplier<org.json.JSONObject>);",
     "public static void todoSlotDraft(android.app.AlertDialog, int);",
     "public static void bindDraft(android.app.AlertDialog, java.lang.String, java.lang.String, java.util.function.Supplier<org.json.JSONObject>);",
-    "public static void capture(org.simpleweather.app.MainActivity, android.os.Bundle);",
-    "public static void restore(org.simpleweather.app.MainActivity, android.os.Bundle, java.util.function.Function<java.lang.String, org.simpleweather.app.ScreenHandle>);"
+    "public static void capture(org.daidai.toolbox.MainActivity, android.os.Bundle);",
+    "public static void restore(org.daidai.toolbox.MainActivity, android.os.Bundle, java.util.function.Function<java.lang.String, org.daidai.toolbox.ScreenHandle>);"
   ],
-  "org.simpleweather.app.UiText$Provider": [
-    "public interface org.simpleweather.app.UiText$Provider {",
+  "org.daidai.toolbox.UiText$Provider": [
+    "public interface org.daidai.toolbox.UiText$Provider {",
     "public abstract java.lang.String get(java.lang.String);",
     "public abstract java.lang.String label(java.lang.String);"
   ],
-  "org.simpleweather.app.UiText": [
-    "public final class org.simpleweather.app.UiText {",
-    "public static void install(org.simpleweather.app.UiText$Provider);",
+  "org.daidai.toolbox.UiText": [
+    "public final class org.daidai.toolbox.UiText {",
+    "public static void install(org.daidai.toolbox.UiText$Provider);",
     "public static java.lang.String get(java.lang.String);",
     "public static java.lang.String raw(java.lang.String);",
     "public static java.lang.String label(java.lang.String);"
   ],
-  "org.simpleweather.app.WeatherClient$RequestPolicy": [
-    "public interface org.simpleweather.app.WeatherClient$RequestPolicy {",
+  "org.daidai.toolbox.WeatherClient$RequestPolicy": [
+    "public interface org.daidai.toolbox.WeatherClient$RequestPolicy {",
     "public abstract void reserve() throws java.io.IOException;",
     "public abstract void blockUntil(long);"
   ],
-  "org.simpleweather.app.WeatherClient": [
-    "public interface org.simpleweather.app.WeatherClient {",
-    "public abstract org.json.JSONObject forecast(org.simpleweather.app.City) throws java.lang.Exception;",
-    "public abstract java.util.List<org.simpleweather.app.City> search(java.lang.String) throws java.lang.Exception;"
+  "org.daidai.toolbox.WeatherClient": [
+    "public interface org.daidai.toolbox.WeatherClient {",
+    "public abstract org.json.JSONObject forecast(org.daidai.toolbox.City) throws java.lang.Exception;",
+    "public abstract java.util.List<org.daidai.toolbox.City> search(java.lang.String) throws java.lang.Exception;"
   ],
-  "org.simpleweather.app.WeatherData": [
-    "public final class org.simpleweather.app.WeatherData {",
+  "org.daidai.toolbox.WeatherData": [
+    "public final class org.daidai.toolbox.WeatherData {",
     "public final org.json.JSONObject raw;",
     "public final org.json.JSONObject current;",
     "public final org.json.JSONObject daily;",
@@ -943,7 +967,7 @@
     "public final long fetchedAt;",
     "public static int[] supportedCodes();",
     "public static boolean isSupportedCode(int);",
-    "public org.simpleweather.app.WeatherData(org.json.JSONObject, long) throws org.json.JSONException;",
+    "public org.daidai.toolbox.WeatherData(org.json.JSONObject, long) throws org.json.JSONException;",
     "public static double value(org.json.JSONObject, java.lang.String);",
     "public static double at(org.json.JSONObject, java.lang.String, int);",
     "public static java.lang.String textAt(org.json.JSONObject, java.lang.String, int);",
@@ -959,19 +983,19 @@
     "public static java.lang.String clock(java.lang.String);",
     "public static java.lang.String day(java.lang.String, java.time.LocalDate);"
   ],
-  "org.simpleweather.app.WeatherStore": [
-    "public final class org.simpleweather.app.WeatherStore implements org.simpleweather.app.WeatherClient$RequestPolicy {",
-    "public org.simpleweather.app.WeatherStore(android.content.Context);",
+  "org.daidai.toolbox.WeatherStore": [
+    "public final class org.daidai.toolbox.WeatherStore implements org.daidai.toolbox.WeatherClient$RequestPolicy {",
+    "public org.daidai.toolbox.WeatherStore(android.content.Context);",
     "public void reserve() throws java.io.IOException;",
     "public void blockUntil(long);",
-    "public org.simpleweather.app.City selected(org.simpleweather.app.City);",
-    "public void select(org.simpleweather.app.City);",
-    "public java.util.List<org.simpleweather.app.City> saved();",
-    "public boolean isSaved(org.simpleweather.app.City);",
-    "public boolean toggle(org.simpleweather.app.City);",
-    "public org.simpleweather.app.WeatherData cached(org.simpleweather.app.City);",
-    "public void save(org.simpleweather.app.City, org.simpleweather.app.WeatherData);",
+    "public org.daidai.toolbox.City selected(org.daidai.toolbox.City);",
+    "public void select(org.daidai.toolbox.City);",
+    "public java.util.List<org.daidai.toolbox.City> saved();",
+    "public boolean isSaved(org.daidai.toolbox.City);",
+    "public boolean toggle(org.daidai.toolbox.City);",
+    "public org.daidai.toolbox.WeatherData cached(org.daidai.toolbox.City);",
+    "public void save(org.daidai.toolbox.City, org.daidai.toolbox.WeatherData);",
     "public boolean clearCache();",
-    "public java.util.List<org.simpleweather.app.City> catalog();"
+    "public java.util.List<org.daidai.toolbox.City> catalog();"
   ]
 }

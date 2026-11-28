@@ -28,7 +28,7 @@ public final class Release130UiTests extends Instrumentation {
     void tap(View root,String label){TextView t=text(root,label);if(t!=null){check(true,"Button exists: "+label);t.performClick();return;}ListView list=list(root);if(list!=null)for(int i=0;i<list.getAdapter().getCount();i++)if(label.equals(String.valueOf(list.getAdapter().getItem(i)))){check(true,"List option exists: "+label);list.performItemClick(list.getAdapter().getView(i,null,list),i,list.getAdapter().getItemId(i));return;}throw new AssertionError("Missing button or option: "+label);}
     ListView list(View root){if(root instanceof ListView)return (ListView)root;if(root instanceof ViewGroup){ViewGroup g=(ViewGroup)root;for(int i=0;i<g.getChildCount();i++){ListView v=list(g.getChildAt(i));if(v!=null)return v;}}return null;}
     int value(String method){return (Integer)call(a,method,new Class[]{});}
-    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.simpleweather.app."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
+    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.daidai.toolbox."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
     void closeDialogs(){for(View root:WindowInspector.getGlobalWindowViews())if(root!=a.getWindow().getDecorView()&&root.isShown()){root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK));}}
     String label(String key){int id=a.getResources().getIdentifier(key,"string",a.getPackageName());return a.getString(id);}
     View root(){return a.getWindow().getDecorView();}
@@ -49,7 +49,7 @@ public final class Release130UiTests extends Instrumentation {
         try{
             for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().clear().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",6).putLong("quake_interval",0).commit();prefs("random_choice").edit().clear().commit();
-            a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
+            a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
             ui(()->{
                 check(text(root(),label("app_name")+" · "+label("tab_random"))!=null,"Localized header");
                 check(((List<?>)call(a,"visibleTabs",new Class[]{})).equals(Arrays.asList(0,1,2,5,6,7)),"Default tabs include random draw and To-do; map/astronomy remain hidden");

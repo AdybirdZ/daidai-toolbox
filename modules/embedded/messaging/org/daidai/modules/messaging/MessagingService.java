@@ -6,11 +6,11 @@ import android.content.*;
 import android.net.wifi.WifiManager;
 import android.os.*;
 import org.daidai.modules.shared.Texts;
-import org.simpleweather.app.ModuleRuntime;
+import org.daidai.toolbox.ModuleRuntime;
 import java.util.*;
 
 /** Owns sockets independently of the window. Session secrets/history are memory-only. */
-public final class MessagingService extends org.simpleweather.app.ModuleWorker {
+public final class MessagingService extends org.daidai.toolbox.ModuleWorker {
     public MessagingService(Service service,Context context){super(service,context);}
     public final class LocalBinder extends Binder{public MessagingService session(){return MessagingService.this;}}
     public static final class Row{public final boolean mine;public final String text;public final long time;Row(boolean mine,String text){this.mine=mine;this.text=text;time=System.currentTimeMillis();}}

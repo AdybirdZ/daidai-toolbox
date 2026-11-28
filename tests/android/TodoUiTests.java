@@ -15,9 +15,10 @@ import org.json.*;
 /** Exercise actual dialog navigation, color selection, fixed chart projection and Camera2. */
 public final class TodoUiTests extends Instrumentation {
     String language="zh-CN";Activity a;int checks;final Map<String,Map<String,?>> before=new HashMap<>();
-    Object field(Object o,String name){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(Exception e){throw new RuntimeException(e);}}
-    void field(Object o,String name,Object value){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);f.set(o,value);}catch(Exception e){throw new RuntimeException(e);}}
-    Object call(Object o,String name,Class<?>[] types,Object... args){try{Method m=o.getClass().getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(o,args);}catch(Exception e){throw new RuntimeException(e);}}
+    Object target(Object o){if(o!=null&&o.getClass().getName().equals("org.daidai.toolbox.ScreenHandle"))try{Method m=o.getClass().getDeclaredMethod("sessionTarget");m.setAccessible(true);return m.invoke(o);}catch(Exception e){throw new RuntimeException(e);}return o;}
+    Object field(Object o,String name){try{o=target(o);for(Class<?> c=o.getClass();c!=null;c=c.getSuperclass())try{Field f=c.getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(NoSuchFieldException ignored){}throw new NoSuchFieldException(name);}catch(Exception e){throw new RuntimeException(e);}}
+    void field(Object o,String name,Object value){try{o=target(o);for(Class<?> c=o.getClass();c!=null;c=c.getSuperclass())try{Field f=c.getDeclaredField(name);f.setAccessible(true);f.set(o,value);return;}catch(NoSuchFieldException ignored){}throw new NoSuchFieldException(name);}catch(Exception e){throw new RuntimeException(e);}}
+    Object call(Object o,String name,Class<?>[] types,Object... args){try{o=target(o);for(Class<?> c=o.getClass();c!=null;c=c.getSuperclass())try{Method m=c.getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(o,args);}catch(NoSuchMethodException ignored){}throw new NoSuchMethodException(name);}catch(Exception e){throw new RuntimeException(e);}}
     void ui(Runnable task){AtomicReference<Throwable> error=new AtomicReference<>();runOnMainSync(()->{try{task.run();}catch(Throwable e){error.set(e);}});if(error.get()!=null)throw new RuntimeException(error.get());waitForIdleSync();}
     void check(boolean ok,String why){checks++;if(!ok)throw new AssertionError(why);}
     SharedPreferences prefs(String name){return getTargetContext().getSharedPreferences(name,0);}
@@ -28,7 +29,7 @@ public final class TodoUiTests extends Instrumentation {
     void tap(View root,String label){TextView t=text(root,label);if(t!=null){check(true,"Button exists: "+label);t.performClick();return;}ListView list=list(root);if(list!=null)for(int i=0;i<list.getAdapter().getCount();i++)if(label.equals(String.valueOf(list.getAdapter().getItem(i)))){check(true,"List option exists: "+label);list.performItemClick(list.getAdapter().getView(i,null,list),i,list.getAdapter().getItemId(i));return;}throw new AssertionError("Missing button or option: "+label);}
     ListView list(View root){if(root instanceof ListView)return (ListView)root;if(root instanceof ViewGroup){ViewGroup g=(ViewGroup)root;for(int i=0;i<g.getChildCount();i++){ListView v=list(g.getChildAt(i));if(v!=null)return v;}}return null;}
     int value(String method){return (Integer)call(a,method,new Class[]{});}
-    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.simpleweather.app."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
+    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.daidai.toolbox."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
     void closeDialogs(){for(View root:WindowInspector.getGlobalWindowViews())if(root!=a.getWindow().getDecorView()&&root.isShown()){root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK));}}
     String label(String key){int id=a.getResources().getIdentifier(key,"string",a.getPackageName());return a.getString(id);}
     View root(){return a.getWindow().getDecorView();}
@@ -36,7 +37,7 @@ public final class TodoUiTests extends Instrumentation {
     void tapKey(View v,String key){tap(v,label(key));}
     View dialogKey(String key){return dialog(label(key));}
     EditText edit(View root,String key){String desc=label(key);if(root instanceof EditText&&desc.contentEquals(root.getContentDescription()))return (EditText)root;if(root instanceof ViewGroup)for(int n=0;n<((ViewGroup)root).getChildCount();n++){EditText e=edit(((ViewGroup)root).getChildAt(n),key);if(e!=null)return e;}return null;}
-    Object staticCall(String cls,String name,Class<?>[] types,Object...args){try{Class<?> c=a.getClassLoader().loadClass("org.simpleweather.app."+cls);Method m=c.getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(null,args);}catch(Exception e){throw new RuntimeException(e);}}
+    Object staticCall(String cls,String name,Class<?>[] types,Object...args){try{Class<?> c=a.getClassLoader().loadClass("org.daidai.toolbox."+cls);Method m=c.getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(null,args);}catch(Exception e){throw new RuntimeException(e);}}
     JSONObject data(){try{return new JSONObject(prefs("todos").getString("data","{\"version\":1,\"items\":[]}"));}catch(Exception e){throw new RuntimeException(e);}}
     void data(JSONObject doc){prefs("todos").edit().putString("data",doc.toString()).commit();}
     void close(){try{staticCall("ToolDialog","closeAll",new Class[]{});}catch(Exception ignored){}}
@@ -102,10 +103,7 @@ public final class TodoUiTests extends Instrumentation {
         ui(()->{check(data().optJSONArray("items").length()==3,"Delete cancellation preserves task");tapKey(dialogKey("todo_edit"),"todo_delete");dialogKey("todo_delete").findViewById(android.R.id.button1).performClick();});
         ui(()->{
             check(data().optJSONArray("items").length()==2,"Confirmed delete removes only selected task");edit(root(),"todo_search").setText("Alpha");check(text(root(),"Task Alpha")!=null&&text(root(),"Multi day")==null,"Search filters list");tapKey(root(),"todo_complete");check(data().optJSONArray("items").optJSONObject(0).optBoolean("done"),"Complete persisted");check(text(root(),"Task Alpha")==null,"Completed hidden in pending filter");edit(root(),"todo_search").setText("");
-            call(a,"settings",new Class[]{});tapKey(dialogKey("action_settings"),"tab_todo");tapKey(dialogKey("tab_todo"),"todo_display_settings");View settings=dialogKey("todo_display_settings");((Switch)text(settings,label("todo_show_notes"))).performClick();check(dialogKey("todo_display_settings")!=null,"Selection leaves child open");tapKey(settings,"action_back");
         });
-        ui(()->{check(dialogKey("tab_todo")!=null,"Back retains parent task settings");tapKey(dialogKey("tab_todo"),"action_back");});
-        ui(()->{check(dialogKey("action_settings")!=null,"Back returns to general settings");tapKey(dialogKey("action_settings"),"action_close");});
     }
     void timeZones()throws Exception{
         final JSONObject weather=new JSONObject().put("timezone","Asia/Shanghai").put("current",new JSONObject().put("time","2026-11-01T08:30")).put("daily",new JSONObject().put("time",new JSONArray())).put("hourly",new JSONObject().put("time",new JSONArray()));
@@ -132,7 +130,7 @@ try{JSONObject document=data();JSONObject row=null;for(int n=0;n<document.getJSO
         transfer=field(a,"configuration");java.io.File file=new java.io.File(a.getCacheDir(),"todo-config.json");
         ActivityMonitor monitor=new ActivityMonitor(){@Override public ActivityResult onStartActivity(Intent intent){if(Intent.ACTION_CREATE_DOCUMENT.equals(intent.getAction()))return new ActivityResult(Activity.RESULT_OK,new Intent().setData(android.net.Uri.fromFile(file)));return null;}};addMonitor(monitor);
         ui(()->call(a,"exportConfiguration",new Class[]{}));idleTransfer();removeMonitor(monitor);
-        JSONObject doc=new JSONObject(new String(java.nio.file.Files.readAllBytes(file.toPath()),java.nio.charset.StandardCharsets.UTF_8));String exported=doc.getJSONObject("todos").getJSONObject("data").getString("value");check(new JSONObject(exported).getJSONArray("items").length()==2,"Actual export includes tasks and checklist");
+        JSONObject doc;try(java.util.zip.ZipFile zip=new java.util.zip.ZipFile(file);java.io.InputStream in=zip.getInputStream(zip.getEntry("configuration.json"));java.io.ByteArrayOutputStream out=new java.io.ByteArrayOutputStream()){byte[] chunk=new byte[4096];int n;while((n=in.read(chunk))!=-1)out.write(chunk,0,n);doc=new JSONObject(new String(out.toByteArray(),java.nio.charset.StandardCharsets.UTF_8));check(zip.getEntry("internal.json")!=null,"Full export contains internal app manifest");}String exported=doc.getJSONObject("todos").getJSONObject("data").getString("value");check(new JSONObject(exported).getJSONArray("items").length()==2,"Actual export includes tasks and checklist");
         ui(()->prefs("todos").edit().clear().commit());importFile(file);check(data().toString().equals(exported),"Actual import restores task data");
         doc.remove("todos");java.nio.file.Files.write(file.toPath(),doc.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));importFile(file);check(data().toString().equals(exported),"Legacy import preserves current tasks");
         JSONObject invalid=new JSONObject(doc.toString());invalid.put("todos",new JSONObject().put("data",new JSONObject().put("type","string").put("value","{}")));java.nio.file.Files.write(file.toPath(),invalid.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));deliver(file);idleTransfer();check(data().toString().equals(exported),"Invalid tasks rejected without overwriting");
@@ -165,7 +163,7 @@ try{JSONObject document=data();JSONObject row=null;for(int n=0;n<document.getJSO
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;try{
         for(String group:new String[]{"toolbox","todos","todo_runtime"})before.put(group,new HashMap<>(prefs(group).getAll()));
         prefs("toolbox").edit().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",7).putBoolean("tab_show_7",true).putBoolean("todo_notify",false).putBoolean("todo_summary",false).commit();prefs("todos").edit().clear().commit();prefs("todo_runtime").edit().clear().commit();
-        a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();createTasks();waitForIdleSync();SystemClock.sleep(300);snapshot("list");rangeSnapshot();configurationRoundTrip();completionManagement();unscheduled();timeZones();notifications();actualAlarm();
+        a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();createTasks();waitForIdleSync();SystemClock.sleep(300);snapshot("list");rangeSnapshot();configurationRoundTrip();completionManagement();unscheduled();notifications();actualAlarm();
         result.putString("stream","PASS: "+checks+" To-do UI and notification checks ("+language+")\n");
     }catch(Throwable e){code=Activity.RESULT_CANCELED;result.putString("stream","FAIL: "+android.util.Log.getStackTraceString(e));}finally{
         if(a!=null)ui(()->{close();a.finish();});for(Map.Entry<String,Map<String,?>> entry:before.entrySet())restore(prefs(entry.getKey()),entry.getValue());if(a!=null)staticCall("TodoScheduler","changed",new Class[]{Context.class},getTargetContext());

@@ -1,4 +1,4 @@
-package org.simpleweather.app;
+package org.daidai.toolbox;
 import java.time.*;
 import java.util.*;
 
@@ -95,6 +95,8 @@ public final class ToolboxTests {
         check(customModel.json().getJSONArray("courses").toString().equals(courseBefore),"Reset preserves course details and custom recurrence");
         ScheduleModel extended=new ScheduleModel();extended.weeks=35;extended.slots.add(new ScheduleModel.Slot("21:15","22:00"));ScheduleModel.Course late=new ScheduleModel.Course();late.name="晚课";late.first=late.last=13;late.weekEnd=35;extended.put(late);extended.resetSettings();
         check(extended.weeks==35&&extended.slots.size()==13&&ScheduleModel.parse(extended.json().toString()).courses.size()==1,"Reset keeps necessary extended course ranges valid");
+        ScheduleModel damaged=new ScheduleModel();ScheduleModel.Course beyond=new ScheduleModel.Course();beyond.name="损坏配置";beyond.first=beyond.last=13;beyond.parity=3;damaged.put(beyond);boolean resetSafe=true;try{damaged.resetSettings();}catch(RuntimeException failure){resetSafe=false;}check(resetSafe&&damaged.slots.size()==12,"Reset tolerates a course beyond a default-length slot list");
+        ScheduleModel emptyCustom=new ScheduleModel();ScheduleModel.Course emptyWeeks=new ScheduleModel.Course();emptyWeeks.name="空自定义周";emptyWeeks.parity=3;emptyWeeks.customWeeks.clear();emptyCustom.put(emptyWeeks);resetSafe=true;try{emptyCustom.resetSettings();}catch(RuntimeException failure){resetSafe=false;}check(resetSafe&&emptyCustom.slots.size()==12,"Reset tolerates an empty custom-week set");
         double[] zenith=SkyGeometry.horizontal(90,123),north=SkyGeometry.horizontal(0,0),east=SkyGeometry.horizontal(0,90);
         check(Math.hypot(zenith[0],zenith[1])<1e-10&&Math.abs(north[1]+1)<1e-10&&Math.abs(east[0]+1)<1e-10,"Horizontal chart has zenith center, north up and east left");
         double[] pole=SkyGeometry.northPolar(0,90),equator=SkyGeometry.northPolar(90,0);

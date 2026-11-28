@@ -1,12 +1,12 @@
-当前开发版本为 3.0.9 / 66，在 3.0.9 / 65 基础上改为保存更新 APK 后手动安装；同名修订按 versionCode 检查。发布与远端资产核验状态以 TESTING.md、GitHub Release 和本地 release.json 为准。公共下载目录和文件管理器安装仍需实体设备复核。源码版本以 manifest、Gradle 和 Git 状态为准。
+当前开发版本为 3.0.10 / 67。Java 源码命名空间迁移至 `org.daidai.toolbox`；Android applicationId `org.simpleweather.app` 和原签名保留。宿主模块接口升级为 api-2，发布与人工验收状态以 TESTING.md 和本地交付记录为准。
 
 # 开发约定
 
-每次更新、提测和发布前完整阅读 [开发者准则](docs/DEVELOPER-RULES.md)。3.0.9 / 66 发布到 main、v3.0.9 标签和正式 Release；从 3.0.8 应用商店升级、公共 Downloads 写入及系统文件管理器安装仍待实体设备验收。当前源码版本以 manifest、Gradle 和 Git 状态为准，验证与发布结果以 TESTING.md、GitHub Release 和本地 release.json 为准。源码在本仓库，历史源码不得当作当前开发入口。
+每次更新、提测和发布前完整阅读 [开发者准则](docs/DEVELOPER-RULES.md)。3.0.9 / 66 已发布；3.0.10 / 67 已完成本地构建和模拟器定向验证，发布状态以 GitHub Release、TESTING.md 和本地交付记录为准。当前源码版本以 manifest、Gradle 和 Git 状态为准，源码在本仓库，历史源码不得当作当前开发入口。
 
 音乐、设备通信、色觉模拟器现由 `modules/embedded/` 维护为内部完整应用，不再更新独立 APK。正式 3.0.0 已取消旧独立音乐专用同机迁移入口、迁移 ZIP 导入导出及处理路径；宿主统一备份、恢复和内部音乐单应用资料导入导出继续保留。`test-apps/`、`test-apk/` 保留历史可构建快照及一次性音乐 0.7.1-migration 辅助工具，不作为当前正式迁移入口；视频仍仅本地，计算器不恢复。
 
-当前 11 个内部应用使用稳定接口 `daidai-toolbox/api-1`，接口版本与宿主显示版本分离；资源编号只增补、不重排或复用。新安装默认天气和状态且均可卸载，设置与商店固定，应用内底栏仅保留桌面。当前架构、共享依赖及资料边界见 [MODULE-HOST.md](docs/MODULE-HOST.md)。
+当前 11 个内部应用使用 `daidai-toolbox/api-2`，接口版本与宿主显示版本分离；资源编号只增补、不重排或复用。升级到 3.0.10 后，旧 api-1 应用包需从商店更新。新安装默认天气和状态且均可卸载，设置与商店固定，应用内底栏仅保留桌面。当前架构、共享依赖及资料边界见 [MODULE-HOST.md](docs/MODULE-HOST.md)。
 
 中英 XML 同步；应用版本显示读取元数据。签名、凭据、SDK、缓存不得公开。发布默认 main、标签、APK、源码包、应用包、说明和校验文件，预发布不替换稳定 latest；GitHub 连续失败 3 次停止。
 

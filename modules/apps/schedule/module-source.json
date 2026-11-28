@@ -1,6 +1,6 @@
 {
   "id": "schedule",
-  "entry": "org.simpleweather.app.ScheduleScreen",
+  "entry": "org.daidai.toolbox.ScheduleScreen",
   "hostApi": "daidai-toolbox/pre-3.0.0-3",
   "defaultInstalled": false
 }

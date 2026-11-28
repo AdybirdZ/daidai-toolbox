@@ -16,7 +16,7 @@ public final class LauncherUiTests extends Instrumentation {
     private Activity activity;private ClassLoader loader;private int checks;private Bundle args;private SharedPreferences prefs;
     private final Map<String,Object> old=new HashMap<>();
     @Override public void onCreate(Bundle a){super.onCreate(a);args=a;start();}
-    private Class<?> type(String name)throws Exception{return Class.forName("org.simpleweather.app."+name,true,loader);}
+    private Class<?> type(String name)throws Exception{return Class.forName("org.daidai.toolbox."+name,true,loader);}
     private Object call(Object o,String name,Class<?>[] types,Object...v)throws Exception{Method m=o.getClass().getDeclaredMethod(name,types);m.setAccessible(true);return m.invoke(o,v);}
     private void ui(Runnable r){AtomicReference<Throwable> failure=new AtomicReference<>();runOnMainSync(()->{try{r.run();}catch(Throwable t){failure.set(t);}});if(failure.get()!=null)throw new RuntimeException(failure.get());waitForIdleSync();}
     private void check(boolean b,String label){checks++;if(!b)throw new AssertionError(label);}
@@ -34,7 +34,7 @@ public final class LauncherUiTests extends Instrumentation {
     @Override public void onStart(){Bundle result=new Bundle();try{
         prefs=getTargetContext().getSharedPreferences("toolbox",0);for(String key:new String[]{"launcher_layout_phone","launcher_layout_tablet","launcher_order"})old.put(key,prefs.getAll().get(key));
         prefs.edit().putString("app_language",args.getString("language","zh-CN")).putInt("seen_version",getTargetContext().getPackageManager().getPackageInfo(getTargetContext().getPackageName(),0).versionCode).putString("launcher_layout_phone",raw(3)).putString("launcher_layout_tablet",raw(5)).commit();
-        loader=getTargetContext().getClassLoader();activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();desktop();
+        loader=getTargetContext().getClassLoader();activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();desktop();
         boolean tablet=activity.getResources().getConfiguration().smallestScreenWidthDp>=600;String key=tablet?"launcher_layout_tablet":"launcher_layout_phone",other=tablet?"launcher_layout_phone":"launcher_layout_tablet";
         check(contains(activity.getWindow().getDecorView(),text("launcher_edit")),"desktop has edit control");
         click("launcher_edit");check(contains(activity.getWindow().getDecorView(),text("launcher_finish_edit")),"editing toggle updates label");click("launcher_new_folder");
@@ -47,7 +47,7 @@ public final class LauncherUiTests extends Instrumentation {
         click("launcher_customization");AlertDialog settings=null;for(AlertDialog d:dialogs())if(contains(d.getWindow().getDecorView(),text("launcher_profile_phone")))settings=d;check(settings!=null,"desktop settings grouped");final AlertDialog setting=settings;
         ui(()->{List<SeekBar> sliders=new ArrayList<>();for(View view:views(setting.getWindow().getDecorView()))if(view instanceof SeekBar)sliders.add((SeekBar)view);if(sliders.size()!=3)throw new AssertionError("Expected geometry controls");Bundle progress=new Bundle();progress.putFloat(android.view.accessibility.AccessibilityNodeInfo.ACTION_ARGUMENT_PROGRESS_VALUE,38f);if(!sliders.get(0).performAccessibilityAction(android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_PROGRESS.getId(),progress))throw new AssertionError("Slider accessibility progress action failed");});
         check(layout(key).getInt("icon")==86,"icon size saved");check(layout(other).getInt("icon")==72,"icon geometry isolated between profiles");closeDialogs();
-        Intent shortcut=(Intent)type("LauncherShortcuts").getMethod("intent",Context.class,String.class).invoke(null,activity,"weather");check(shortcut.getComponent().getClassName().equals("org.simpleweather.app.MainActivity"),"shortcut targets explicit host activity");check("weather".equals(shortcut.getStringExtra("open_app_id")),"shortcut retains stable app identity");check(shortcut.getData().toString().equals("daidai-toolbox://application/weather"),"shortcut has distinct app URI");
+        Intent shortcut=(Intent)type("LauncherShortcuts").getMethod("intent",Context.class,String.class).invoke(null,activity,"weather");check(shortcut.getComponent().getClassName().equals("org.daidai.toolbox.MainActivity"),"shortcut targets explicit host activity");check("weather".equals(shortcut.getStringExtra("open_app_id")),"shortcut retains stable app identity");check(shortcut.getData().toString().equals("daidai-toolbox://application/weather"),"shortcut has distinct app URI");
         Intent invalid=new Intent().putExtra("open_app_id","calculator");boolean handled=(Boolean)type("LauncherScreen").getMethod("openRequested",type("MainActivity"),Intent.class).invoke(null,activity,invalid);check(!handled&&!invalid.hasExtra("open_app_id"),"unknown shortcut consumed without opening cancelled module");
         desktop(); // Long press outside edit mode opens folder management.
         ui(()->{View label=find("观星 Astro");((View)label.getParent()).performLongClick();});click("launcher_folder_delete");

@@ -28,7 +28,7 @@ public final class Release1213UiTests extends Instrumentation {
     void tap(View root,String label){TextView t=text(root,label);if(t!=null){check(true,"Button exists: "+label);t.performClick();return;}ListView list=list(root);if(list!=null)for(int i=0;i<list.getAdapter().getCount();i++)if(label.equals(String.valueOf(list.getAdapter().getItem(i)))){check(true,"List option exists: "+label);list.performItemClick(list.getAdapter().getView(i,null,list),i,list.getAdapter().getItemId(i));return;}throw new AssertionError("Missing button or option: "+label);}
     ListView list(View root){if(root instanceof ListView)return (ListView)root;if(root instanceof ViewGroup){ViewGroup g=(ViewGroup)root;for(int i=0;i<g.getChildCount();i++){ListView v=list(g.getChildAt(i));if(v!=null)return v;}}return null;}
     int value(String method){return (Integer)call(a,method,new Class[]{});}
-    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.simpleweather.app."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
+    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.daidai.toolbox."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
     void closeDialogs(){for(View root:WindowInspector.getGlobalWindowViews())if(root!=a.getWindow().getDecorView()&&root.isShown()){root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK));}}
     @Override public void onCreate(Bundle b){super.onCreate(b);start();}
     @Override public void onStart(){Bundle result=new Bundle();int code=Activity.RESULT_OK;Object camera=null;
@@ -36,7 +36,7 @@ public final class Release1213UiTests extends Instrumentation {
             for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putBoolean("outline",false).putBoolean("status_camera_background",false).putString("status_light_camera","back").putBoolean("tab_show_4",true).putBoolean("astro_align_sky",true).putString("astro_selected","").putInt("astro_coordinates",0).putLong("quake_interval",0).commit();
             prefs("toolbox").edit().remove("status_camera_iso").remove("status_camera_exposure_ms").commit();
-            a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
+            a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
             ui(()->{
                 prefs("toolbox").edit().remove("ui_button_color").remove("ui_link_color").remove("ui_body_color").remove("ui_title_color").remove("ui_choice_color").remove("ui_note_color").remove("theme_color").remove("text_accent_color").commit();call(a,"refreshScreen",new Class[]{});
                 check(value("primaryTextColor")==Color.BLACK&&value("titleTextColor")==Color.BLACK&&value("linkTextColor")==Color.BLACK,"Body, title and links default to black after upgrade");check(value("buttonPrimaryColor")!=Color.BLACK&&value("secondaryTextColor")!=Color.BLACK,"Button and note defaults are blue and gray");
@@ -75,7 +75,7 @@ public final class Release1213UiTests extends Instrumentation {
         finish(code,result);
     }
     void collectInputs(View v,List<EditText> out){if(v instanceof EditText)out.add((EditText)v);if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)collectInputs(((ViewGroup)v).getChildAt(i),out);}
-    int choiceColor(){try{Class<?> c=a.getClassLoader().loadClass("org.simpleweather.app.UiColors");Method m=c.getDeclaredMethod("ink",Context.class,String.class);m.setAccessible(true);return (Integer)m.invoke(null,a,"ui_choice_color");}catch(Exception e){throw new RuntimeException(e);}}
+    int choiceColor(){try{Class<?> c=a.getClassLoader().loadClass("org.daidai.toolbox.UiColors");Method m=c.getDeclaredMethod("ink",Context.class,String.class);m.setAccessible(true);return (Integer)m.invoke(null,a,"ui_choice_color");}catch(Exception e){throw new RuntimeException(e);}}
     CheckBox firstCheck(View v){if(v instanceof CheckBox)return (CheckBox)v;if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++){CheckBox found=firstCheck(((ViewGroup)v).getChildAt(i));if(found!=null)return found;}return null;}
     Spinner findSpinner(View v){if(v instanceof Spinner)return (Spinner)v;if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++){Spinner found=findSpinner(((ViewGroup)v).getChildAt(i));if(found!=null)return found;}return null;}
     EditText findInput(View v){if(v instanceof EditText)return (EditText)v;if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++){EditText input=findInput(g.getChildAt(i));if(input!=null)return input;}}return null;}

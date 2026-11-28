@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class ModuleHostUiTests extends Instrumentation {
     private Activity activity;private ClassLoader loader;private int checks;private Bundle args;
     @Override public void onCreate(Bundle arguments){super.onCreate(arguments);args=arguments;start();}
-    private Class<?> type(String name)throws Exception{return Class.forName("org.simpleweather.app."+name,true,loader);}
+    private Class<?> type(String name)throws Exception{return Class.forName("org.daidai.toolbox."+name,true,loader);}
     private Object field(Object owner,String name)throws Exception{Field f=owner.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(owner);}
     private Object invoke(Object owner,String name,Class<?>[] signature,Object...values)throws Exception{Method m=owner.getClass().getDeclaredMethod(name,signature);m.setAccessible(true);return m.invoke(owner,values);}
     private void ui(Runnable task){AtomicReference<Throwable> error=new AtomicReference<>();runOnMainSync(()->{try{task.run();}catch(Throwable t){error.set(t);}});if(error.get()!=null)throw new RuntimeException(error.get());waitForIdleSync();}
@@ -28,7 +28,7 @@ public final class ModuleHostUiTests extends Instrumentation {
     private void uninstall(Object apps,String id)throws Exception{if(!present(apps,id))return;ui(()->{try{invoke(apps,"uninstall",new Class[]{String.class},id);}catch(Exception e){throw new RuntimeException(e);}});long until=SystemClock.elapsedRealtime()+10000;while((Boolean)field(apps,"busy")&&SystemClock.elapsedRealtime()<until)Thread.sleep(20);check(!present(apps,id),"fixture removes existing "+id);}
     @Override public void onStart(){Bundle result=new Bundle();try{
         loader=getTargetContext().getClassLoader();String language=args==null?"zh-CN":args.getString("language","zh-CN");getTargetContext().getSharedPreferences("toolbox",0).edit().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).commit();
-        activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");
+        activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");
         check(present(apps,"weather")&&present(apps,"status"),"two default apps installed");
         for(String name:new String[]{"WeatherScreen","GpsScreen","TodoScreen","ScheduleScreen","AstronomyScreen","EarthquakeScreen","RandomChoiceScreen","MapScreen"}){try{type(name);throw new AssertionError("Screen embedded in host "+name);}catch(ClassNotFoundException expected){checks++;}}
         for(String id:new String[]{"weather","status"}){File file=new File(getTargetContext().getFilesDir(),"apps/"+id+".ddapp");check((file.lastModified()>0),"default executable exists");}

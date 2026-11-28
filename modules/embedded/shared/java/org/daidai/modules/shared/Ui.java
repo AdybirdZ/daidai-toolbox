@@ -38,10 +38,10 @@ public final class Ui {
         shell.addView(page,new LinearLayout.LayoutParams(-1,0,1));
         LinearLayout bar=row(shell);
         bar.setLayoutParams(new LinearLayout.LayoutParams(-1,-2));
-        Button home=button(bar,org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.launcher_home),()->org.simpleweather.app.SettingsNavigation.desktop(a));
-        org.simpleweather.app.SettingsNavigation.layoutDesktopBar(bar,home);
+        Button home=button(bar,org.daidai.toolbox.SettingsActivity.hostText(a,org.daidai.toolbox.R.string.launcher_home),()->org.daidai.toolbox.SettingsNavigation.desktop(a));
+        org.daidai.toolbox.SettingsNavigation.layoutDesktopBar(bar,home);
         android.widget.FrameLayout backgroundRoot=new android.widget.FrameLayout(a);
-        org.simpleweather.app.SettingsActivity.addBackground(a,backgroundRoot);
+        org.daidai.toolbox.SettingsActivity.addBackground(a,backgroundRoot);
         backgroundRoot.addView(shell,new android.widget.FrameLayout.LayoutParams(-1,-1));
         a.setContentView(backgroundRoot);
         if(Build.VERSION.SDK_INT>=30) {
@@ -51,9 +51,9 @@ public final class Ui {
                 v.setPadding(bars.left,bars.top,bars.right,bars.bottom); return i;
             });
         } else shell.setFitsSystemWindows(true);
-        String hostTitle=org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.app_name)+" · "+title;
+        String hostTitle=org.daidai.toolbox.SettingsActivity.hostText(a,org.daidai.toolbox.R.string.app_name)+" · "+title;
         TextView heading=text(a,hostTitle,25); heading.setTypeface(null,Typeface.BOLD); page.addView(heading);
-        page.addView(text(a,org.simpleweather.app.SettingsActivity.hostText(a,org.simpleweather.app.R.string.app_footer),13)); return page;
+        page.addView(text(a,org.daidai.toolbox.SettingsActivity.hostText(a,org.daidai.toolbox.R.string.app_footer),13)); return page;
     }
     public static TextView text(android.content.Context c,String s,float size) {
         TextView v=new TextView(c); v.setText(s); v.setTextSize(size); v.setTextColor(INK);
@@ -87,7 +87,7 @@ public final class Ui {
         b.setBackgroundTintList(null);
         b.setStateListAnimator(null);
         b.setElevation(0);
-        org.simpleweather.app.UiColors.decorate(b.getContext(),b);
+        org.daidai.toolbox.UiColors.decorate(b.getContext(),b);
     }
     public static LinearLayout settingsForm(Activity a){
         LinearLayout form=column(a);

@@ -21,7 +21,7 @@ public final class Embedded301UiTests extends Instrumentation {
     private void ui(Runnable action){AtomicReference<Throwable> error=new AtomicReference<>();runOnMainSync(()->{try{action.run();}catch(Throwable failure){error.set(failure);}});if(error.get()!=null)throw new RuntimeException(error.get());waitForIdleSync();}
     private void check(boolean pass,String text){if(!pass)throw new AssertionError(text);checks++;}
     private void await(BooleanSupplier condition,String label)throws Exception{long until=SystemClock.uptimeMillis()+8000;while(SystemClock.uptimeMillis()<until){if(condition.getAsBoolean()){checks++;return;}SystemClock.sleep(30);}throw new AssertionError(label);}
-    private Activity open(String id)throws Exception{Class<?> runtime=Class.forName("org.simpleweather.app.ModuleRuntime",true,context.getClassLoader());Intent intent=(Intent)runtime.getMethod("pageIntent",Context.class,String.class,String.class).invoke(null,context,id,"main");Activity result=startActivitySync(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();return result;}
+    private Activity open(String id)throws Exception{Class<?> runtime=Class.forName("org.daidai.toolbox.ModuleRuntime",true,context.getClassLoader());Intent intent=(Intent)runtime.getMethod("pageIntent",Context.class,String.class,String.class).invoke(null,context,id,"main");Activity result=startActivitySync(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();return result;}
     private void install(String id)throws Exception{try(InputStream in=new FileInputStream("/data/local/tmp/internal-apps/"+id+".ddapp")){call(apps,"install",new Class[]{InputStream.class,String.class,String.class},in,id,null);}}
     private void add(Object service,String text){ui(()->{try{call(service,"add",new Class[]{boolean.class,String.class},false,text);}catch(Exception failure){throw new RuntimeException(failure);}});}
     private void messaging()throws Exception{
@@ -69,7 +69,7 @@ public final class Embedded301UiTests extends Instrumentation {
         check(!(Boolean)field(page,"sourceCamera")&&field(page,"camera")==null,"pause and resume do not restart an explicitly stopped camera");
         FrameLayout frame=(FrameLayout)field(page,"frame");check(frame.getChildCount()==1,"stopped camera leaves only the image-comparison view");
         SharedPreferences preferences=child.getSharedPreferences("colorvision_module",0);boolean initialFront=(Boolean)field(page,"front");boolean hadDirection=preferences.contains("front_camera");boolean savedFront=preferences.getBoolean("front_camera",false);
-        int settingsRequest=Class.forName("org.simpleweather.app.SettingsActivity",true,context.getClassLoader()).getField("REQUEST").getInt(null);
+        int settingsRequest=Class.forName("org.daidai.toolbox.SettingsActivity",true,context.getClassLoader()).getField("REQUEST").getInt(null);
         try{
             String stoppedStatus=((TextView)field(page,"status")).getText().toString();
             ui(()->{preferences.edit().putBoolean("front_camera",!initialFront).apply();try{call(page,"onActivityResult",new Class[]{int.class,int.class,Intent.class},settingsRequest,Activity.RESULT_CANCELED,null);}catch(Exception failure){throw new RuntimeException(failure);}});
@@ -91,6 +91,6 @@ public final class Embedded301UiTests extends Instrumentation {
         ui(()->child.finish());child=null;
     }
     public void onStart(){Bundle result=new Bundle();try{
-        context=getTargetContext();check(Build.HARDWARE.contains("ranchu")||Build.HARDWARE.contains("goldfish"),"isolated emulator required");String lang=args.getString("language","zh-CN");context.getSharedPreferences("toolbox",0).edit().putString("app_language",lang).putInt("seen_version",Integer.MAX_VALUE).commit();host=startActivitySync(new Intent().setClassName(context,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();apps=field(host,"apps");install("messaging");install("colorvision");messaging();camera();result.putString("result","PASS: "+checks+" messaging scroll and camera toggle checks ("+lang+")");
+        context=getTargetContext();check(Build.HARDWARE.contains("ranchu")||Build.HARDWARE.contains("goldfish"),"isolated emulator required");String lang=args.getString("language","zh-CN");context.getSharedPreferences("toolbox",0).edit().putString("app_language",lang).putInt("seen_version",Integer.MAX_VALUE).commit();host=startActivitySync(new Intent().setClassName(context,"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();apps=field(host,"apps");install("messaging");install("colorvision");messaging();camera();result.putString("result","PASS: "+checks+" messaging scroll and camera toggle checks ("+lang+")");
     }catch(Throwable failure){StringWriter text=new StringWriter();failure.printStackTrace(new PrintWriter(text));result.putString("result","FAIL: "+text);}finally{if(child!=null)ui(()->child.finish());if(host!=null)ui(()->host.finish());finish(Activity.RESULT_OK,result);}}
 }

@@ -15,7 +15,7 @@ import org.json.*;
 public final class ModuleStoreOnlineTests extends Instrumentation {
     private Activity activity,child; private ClassLoader loader; private int checks; private Bundle args;
     @Override public void onCreate(Bundle a){super.onCreate(a);args=a;start();}
-    private Class<?> type(String n)throws Exception{return Class.forName("org.simpleweather.app."+n,true,loader);}
+    private Class<?> type(String n)throws Exception{return Class.forName("org.daidai.toolbox."+n,true,loader);}
     private Object field(Object o,String n)throws Exception{Field f=o.getClass().getDeclaredField(n);f.setAccessible(true);return f.get(o);}
     private Object call(Object o,String n,Class<?>[] types,Object...v)throws Exception{Method m=o.getClass().getDeclaredMethod(n,types);m.setAccessible(true);return m.invoke(o,v);}
     private void ui(Runnable r){AtomicReference<Throwable> e=new AtomicReference<>();runOnMainSync(()->{try{r.run();}catch(Throwable t){e.set(t);}});if(e.get()!=null)throw new RuntimeException(e.get());waitForIdleSync();}
@@ -27,7 +27,7 @@ public final class ModuleStoreOnlineTests extends Instrumentation {
     @Override public void onStart(){Bundle result=new Bundle();try{
         String lang=args.getString("language","zh-CN");
         getTargetContext().getSharedPreferences("toolbox",0).edit().putString("app_language",lang).putInt("seen_version",Integer.MAX_VALUE).commit();
-        loader=getTargetContext().getClassLoader();activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");
+        loader=getTargetContext().getClassLoader();activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");
         JSONArray catalog=(JSONArray)call(apps,"remoteCatalog",new Class[]{});check(catalog.length()==11,"public catalog includes eleven apps");
         String[] ids={"weather","schedule","status","weather-map","astronomy","earthquake","random","todo","music","messaging","colorvision"};
         for(int index=0;index<ids.length;index++){

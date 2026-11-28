@@ -10,7 +10,7 @@ import org.daidai.modules.shared.Ui;
 import java.util.*;
 
 /** Reusable playback service; all entry intents are internal to the host app. */
-public final class PlaybackService extends org.simpleweather.app.ModuleWorker {
+public final class PlaybackService extends org.daidai.toolbox.ModuleWorker {
     public PlaybackService(Service service,Context context){super(service,context);}
     public static final String PLAY="play",TOGGLE="toggle",NEXT="next",PREV="previous",STOP="stop",REWIND="rewind_pause";
     private static final int NOTIFICATION=41;
@@ -106,8 +106,8 @@ public final class PlaybackService extends org.simpleweather.app.ModuleWorker {
     public void endPreview(){if(previewEnd>=0){previewEnd=-1;previewSeeking=false;main.removeCallbacks(previewTick);pause();}}
     private void releasePlayer(){playWhenReady=false;rewindSeeking=false;previewEnd=-1;previewSeeking=false;main.removeCallbacks(previewTick);prepared=false;loading=false;if(player!=null){player.release();player=null;}}
     private void ensureForeground(){ensureSession();if(!foreground){startForeground(NOTIFICATION,notification());foreground=true;}}
-    private PendingIntent action(String a){return PendingIntent.getService(this,a.hashCode(),org.simpleweather.app.ModuleRuntime.serviceIntent(this,"music").setAction(a),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);}
-    private Notification notification(){Intent launch=org.simpleweather.app.ModuleRuntime.pageIntent(this,"music","main");PendingIntent open=PendingIntent.getActivity(this,0,launch,PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
+    private PendingIntent action(String a){return PendingIntent.getService(this,a.hashCode(),org.daidai.toolbox.ModuleRuntime.serviceIntent(this,"music").setAction(a),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);}
+    private Notification notification(){Intent launch=org.daidai.toolbox.ModuleRuntime.pageIntent(this,"music","main");PendingIntent open=PendingIntent.getActivity(this,0,launch,PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
         return new Notification.Builder(this,"music_playback").setSmallIcon(android.R.drawable.ic_media_play).setContentTitle(title()).setContentText(loading?org.daidai.modules.shared.Texts.get(this,"music_loading"):org.daidai.modules.shared.Texts.get(this,"music_notification")).setSubText(org.daidai.modules.shared.Texts.get(this,"music_volume_notification",volume,maxVolume)).setContentIntent(open).setVisibility(Notification.VISIBILITY_PUBLIC).setOngoing(isPlaying()||loading).setOnlyAlertOnce(true)
             .addAction(new Notification.Action.Builder(android.R.drawable.ic_media_previous,org.daidai.modules.shared.Texts.get(this,"music_previous"),action(PREV)).build())
             .addAction(new Notification.Action.Builder(isPlaying()?android.R.drawable.ic_media_pause:android.R.drawable.ic_media_play,isPlaying()?org.daidai.modules.shared.Texts.get(this,"music_pause"):org.daidai.modules.shared.Texts.get(this,"music_play"),action(TOGGLE)).build())

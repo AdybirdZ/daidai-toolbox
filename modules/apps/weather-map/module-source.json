@@ -1,6 +1,6 @@
 {
   "id": "weather-map",
-  "entry": "org.simpleweather.app.MapScreen",
+  "entry": "org.daidai.toolbox.MapScreen",
   "hostApi": "daidai-toolbox/pre-3.0.0-3",
   "defaultInstalled": false
 }

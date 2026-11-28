@@ -1,4 +1,4 @@
-package org.simpleweather.app;
+package org.daidai.toolbox;
 
 /** Exercise reordered Camera2 callbacks, discarded frames and distinct exposure profiles. */
 public final class CameraLightTests {

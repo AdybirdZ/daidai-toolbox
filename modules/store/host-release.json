@@ -1,10 +1,10 @@
 {
   "format": "daidai-toolbox-host-update",
-  "version": "3.0.9",
-  "versionCode": 66,
-  "url": "https://github.com/AdybirdZ/daidai-toolbox/releases/download/v3.0.9/DaidaiToolbox-3.0.9.apk",
-  "bytes": 1267895,
-  "sha256": "6c5ad8839fb4bd20a65f9f2cab46a3e885ec710c5f52822f6ba0933bf01d27af",
+  "version": "3.0.10",
+  "versionCode": 67,
+  "url": "https://github.com/AdybirdZ/daidai-toolbox/releases/download/v3.0.10/DaidaiToolbox-3.0.10.apk",
+  "bytes": 3292219,
+  "sha256": "5915648edc5616b75f6742fc1d263870a81a79099ad528e611900a90f268661d",
   "certificateSha256": "b08f1aa17fc9c7a91f755290e1d3edcc68c88661cb93935f34ef811828bc0e95",
-  "notes": "3.0.9 verifies the host update and saves the APK to Download/DaidaiToolbox for manual installation."
+  "notes": "3.0.10 verifies the host update and saves the APK to Download/DaidaiToolbox for manual installation."
 }

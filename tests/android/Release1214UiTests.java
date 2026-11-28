@@ -28,7 +28,7 @@ public final class Release1214UiTests extends Instrumentation {
     void tap(View root,String label){TextView t=text(root,label);if(t!=null){check(true,"Button exists: "+label);t.performClick();return;}ListView list=list(root);if(list!=null)for(int i=0;i<list.getAdapter().getCount();i++)if(label.equals(String.valueOf(list.getAdapter().getItem(i)))){check(true,"List option exists: "+label);list.performItemClick(list.getAdapter().getView(i,null,list),i,list.getAdapter().getItemId(i));return;}throw new AssertionError("Missing button or option: "+label);}
     ListView list(View root){if(root instanceof ListView)return (ListView)root;if(root instanceof ViewGroup){ViewGroup g=(ViewGroup)root;for(int i=0;i<g.getChildCount();i++){ListView v=list(g.getChildAt(i));if(v!=null)return v;}}return null;}
     int value(String method){return (Integer)call(a,method,new Class[]{});}
-    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.simpleweather.app."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
+    Object create(String name,Class<?>[] types,Object... args){try{Class<?> c=a.getClassLoader().loadClass("org.daidai.toolbox."+name);Constructor<?> ctor=c.getDeclaredConstructor(types);ctor.setAccessible(true);return ctor.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
     void closeDialogs(){for(View root:WindowInspector.getGlobalWindowViews())if(root!=a.getWindow().getDecorView()&&root.isShown()){root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK));root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK));}}
     @Override public void onCreate(Bundle b){super.onCreate(b);start();}
 
@@ -37,7 +37,7 @@ public final class Release1214UiTests extends Instrumentation {
         try{
             for(String group:new String[]{"toolbox","weather","timetable","status_places","status_routes","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putBoolean("tab_show_4",true).putBoolean("tab_show_3",true).putBoolean("astro_align_sky",false).putString("astro_selected","织女一").putInt("astro_coordinates",0).putLong("quake_interval",0).putInt("ui_choice_color",0xffb83232).putInt("ui_button_color",0xff287c60).commit();
-            a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
+            a=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
             ui(()->{
                 Object settings=create("SettingsScreen",new Class[]{a.getClass()},a);
                 call(settings,"locationInterval",new Class[]{});View interval=dialog("网络定位间隔");TextView explanation=prefix(interval,"此间隔是向系统请求");RadioButton last=(RadioButton)text(interval,"10 分钟");check(explanation!=null,"Network explanation retained");checkAfter(explanation,last,"Explanation follows all interval options");blue((RadioButton)text(interval,"5 秒（默认）"));tap(interval,"10 秒");check(dialog("网络定位间隔")==interval,"Selection stays on leaf page");blue((RadioButton)text(interval,"10 秒"));tap(interval,"返回");
@@ -54,7 +54,7 @@ public final class Release1214UiTests extends Instrumentation {
                     checkGap(note,12);tap(d,"返回");
                 }
                 call(settings,"statusSensors",new Class[]{});View d=topDialog();check(prefix(d,"默认排序为：陀螺仪")!=null,"Sensor default order documented");tap(d,"返回");
-                Class<?> gps;try{gps=a.getClassLoader().loadClass("org.simpleweather.app.GpsScreen");}catch(Exception e){throw new RuntimeException(e);}
+                Class<?> gps;try{gps=a.getClassLoader().loadClass("org.daidai.toolbox.GpsScreen");}catch(Exception e){throw new RuntimeException(e);}
                 for(String type:new String[]{"battery","device"}){String[] labels=(String[])call(field(a,"gps"),type.equals("battery")?"batteryLabels":"deviceLabels",new Class[]{});call(settings,"statusFieldOrder",new Class[]{String.class,String.class,String[].class},type,"QA fields",labels);d=dialog("QA fields");check(prefix(d,"默认排序为：")!=null,"Field default order at bottom: "+type);tap(d,"返回");}
                 call(settings,"statusSatelliteSorting",new Class[]{});d=topDialog();check(prefix(d,"默认排序为：中国 BDS、美国 GPS、欧洲 Galileo、俄罗斯 GLONASS、日本 QZSS、印度 NavIC")!=null,"Satellite system default order documented");tap(d,"返回");
                 call(settings,"background",new Class[]{});d=dialog("背景");check(prefix(d,"默认亮度为 20")!=null,"Background explanation at bottom");tap(d,"返回");
@@ -83,7 +83,7 @@ public final class Release1214UiTests extends Instrumentation {
     TextView lastText(View root){if(root instanceof ScrollView)return lastText(((ScrollView)root).getChildAt(0));if(root instanceof ViewGroup){ViewGroup g=(ViewGroup)root;for(int i=g.getChildCount()-1;i>=0;i--){TextView v=lastText(g.getChildAt(i));if(v!=null&&!v.getText().toString().equals("返回")&&!v.getText().toString().equals("关闭"))return v;}}return root instanceof TextView?(TextView)root:null;}
     String allText(View v){String s=v instanceof TextView?((TextView)v).getText().toString()+"\n":"";if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)s+=allText(((ViewGroup)v).getChildAt(i));return s;}
     void collectInputs(View v,List<EditText> out){if(v instanceof EditText)out.add((EditText)v);if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++)collectInputs(((ViewGroup)v).getChildAt(i),out);}
-    int choiceColor(){try{Class<?> c=a.getClassLoader().loadClass("org.simpleweather.app.UiColors");Method m=c.getDeclaredMethod("ink",Context.class,String.class);m.setAccessible(true);return (Integer)m.invoke(null,a,"ui_choice_color");}catch(Exception e){throw new RuntimeException(e);}}
+    int choiceColor(){try{Class<?> c=a.getClassLoader().loadClass("org.daidai.toolbox.UiColors");Method m=c.getDeclaredMethod("ink",Context.class,String.class);m.setAccessible(true);return (Integer)m.invoke(null,a,"ui_choice_color");}catch(Exception e){throw new RuntimeException(e);}}
     CheckBox firstCheck(View v){if(v instanceof CheckBox)return (CheckBox)v;if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++){CheckBox found=firstCheck(((ViewGroup)v).getChildAt(i));if(found!=null)return found;}return null;}
     Spinner findSpinner(View v){if(v instanceof Spinner)return (Spinner)v;if(v instanceof ViewGroup)for(int i=0;i<((ViewGroup)v).getChildCount();i++){Spinner found=findSpinner(((ViewGroup)v).getChildAt(i));if(found!=null)return found;}return null;}
     EditText findInput(View v){if(v instanceof EditText)return (EditText)v;if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++){EditText input=findInput(g.getChildAt(i));if(input!=null)return input;}}return null;}

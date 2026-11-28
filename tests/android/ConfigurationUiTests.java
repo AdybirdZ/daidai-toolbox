@@ -15,6 +15,7 @@ import java.nio.file.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.ZipFile;
 
 /** Isolated emulator: real prefs, image bytes, ContentResolver, dialogs and page reload. */
 public final class ConfigurationUiTests extends Instrumentation {
@@ -40,14 +41,15 @@ public final class ConfigurationUiTests extends Instrumentation {
             prefs("status_places").edit().putString("places","[{\"id\":\"config-place\",\"name\":\"配置地点\",\"lon\":120.6,\"lat\":31.3,\"created\":1000,\"color\":-16711936,\"visible\":false}]").putString("selected","config-place").commit();
             prefs("status_routes").edit().putString("routes","[{\"id\":\"config-route\",\"name\":\"配置路线\",\"points\":[{\"lon\":120.6,\"lat\":31.3,\"time\":1000},{\"lon\":120.7,\"lat\":31.4,\"time\":2000}]}]").commit();
             try(FileOutputStream out=new FileOutputStream(image)){Bitmap bitmap=Bitmap.createBitmap(8,12,Bitmap.Config.ARGB_8888);bitmap.eraseColor(Color.BLUE);bitmap.compress(Bitmap.CompressFormat.PNG,100,out);bitmap.recycle();}
-            activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();transfer=field(activity,"configuration");
+            activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();transfer=field(activity,"configuration");
             check(getTargetContext().getPackageManager().getPackageInfo(getTargetContext().getPackageName(),0).versionName.equals(call(activity,"versionName",new Class[]{})),"About version comes from actual installed package");
             searchChecks();
             File exported=new File(getTargetContext().getCacheDir(),"configuration-ui.json");AtomicReference<Intent> picker=new AtomicReference<>();
             ActivityMonitor exportMonitor=new ActivityMonitor(){@Override public ActivityResult onStartActivity(Intent i){if(Intent.ACTION_CREATE_DOCUMENT.equals(i.getAction())){picker.set(i);return new ActivityResult(Activity.RESULT_OK,new Intent().setData(Uri.fromFile(exported)));}return null;}};addMonitor(exportMonitor);
             ui(()->call(transfer,"exportFile",new Class[]{}));idleTransfer();removeMonitor(exportMonitor);
-            check(picker.get()!=null&&"application/json".equals(picker.get().getType())&&picker.get().hasCategory(Intent.CATEGORY_OPENABLE),"Export launches real system document contract");
-            JSONObject document=new JSONObject(new String(Files.readAllBytes(exported.toPath()),StandardCharsets.UTF_8));check(document.getInt("version")==2,"Real export is version 2");
+            check(picker.get()!=null&&"application/zip".equals(picker.get().getType())&&picker.get().hasCategory(Intent.CATEGORY_OPENABLE),"Export launches real system document contract");
+            JSONObject document;try(ZipFile zip=new ZipFile(exported)){check(zip.getEntry("configuration.json")!=null&&zip.getEntry("internal.json")!=null,"Real export contains configuration and internal app data");try(InputStream in=zip.getInputStream(zip.getEntry("configuration.json"));ByteArrayOutputStream bytes=new ByteArrayOutputStream()){byte[] buffer=new byte[4096];int n;while((n=in.read(buffer))!=-1)bytes.write(buffer,0,n);document=new JSONObject(new String(bytes.toByteArray(),StandardCharsets.UTF_8));}}
+            check(document.getInt("version")==2,"Real export is version 2");
             check(Arrays.equals(Base64.getDecoder().decode(document.getString("background")),Files.readAllBytes(image.toPath())),"Export includes exact cropped image bytes");
             check(!document.getJSONObject("weather").has("quota_count_0"),"Export excludes quota counters");
             deliver(exported);View confirm=await("导入全部配置");check(text(confirm,"确认覆盖并导入")!=null,"Import validates and requests explicit overwrite");ui(()->text(confirm,"取消").performClick());idleTransfer();check(prefs("toolbox").getBoolean("outline",false),"Cancel changes no preference");
@@ -55,7 +57,7 @@ public final class ConfigurationUiTests extends Instrumentation {
             JSONObject wrong=new JSONObject(document.toString()).put("background",Base64.getEncoder().encodeToString(new byte[]{1,2,3}));Files.write(bad.toPath(),wrong.toString().getBytes(StandardCharsets.UTF_8));deliver(bad);idleTransfer();check(prefs("toolbox").getInt("background_brightness",0)==41,"Invalid decoded image rejected before confirmation or writes");
             prefs("toolbox").edit().putBoolean("outline",false).putInt("background_brightness",12).putLong("location_interval",5000).putBoolean("quake_source_Wolfx",true).putBoolean("quake_wolfx_ack_112",true).commit();
             prefs("weather").edit().putInt("quota_count_0",13).commit();prefs("status_places").edit().putString("places","[]").commit();prefs("status_routes").edit().putString("routes","[]").commit();Files.delete(image.toPath());
-            ActivityMonitor reload=new ActivityMonitor("org.simpleweather.app.MainActivity",null,false);addMonitor(reload);
+            ActivityMonitor reload=new ActivityMonitor("org.daidai.toolbox.MainActivity",null,false);addMonitor(reload);
             deliver(exported);View okay=await("导入全部配置");ui(()->text(okay,"确认覆盖并导入").performClick());idleTransfer();Activity next=waitForMonitorWithTimeout(reload,8000);removeMonitor(reload);check(next!=null,"Successful import opens a fresh Activity/model graph");if(next!=null)activity=next;
             check(prefs("toolbox").getBoolean("outline",false)&&prefs("toolbox").getInt("background_brightness",0)==41,"Actual imported settings replace changed settings");
             check(prefs("toolbox").getLong("location_interval",0)==10000&&prefs("toolbox").getFloat("quake_ref_lon",0)==120.75f,"JSON restores native long and float preference types");
@@ -63,9 +65,9 @@ public final class ConfigurationUiTests extends Instrumentation {
             check(!prefs("toolbox").getBoolean("location_continuous",true)&&!prefs("toolbox").getBoolean("status_camera_background",true)&&!prefs("toolbox").getBoolean("quake_source_Wolfx",true)&&!prefs("toolbox").getBoolean("quake_wolfx_ack_112",true),"Unsafe runtime and acknowledged source do not resume");
             check(new JSONArray(prefs("status_places").getString("places","[]")).length()==1&&new JSONArray(prefs("status_routes").getString("routes","[]")).length()==1,"Actual saved place and route stores restored");
             check(Arrays.equals(Files.readAllBytes(image.toPath()),Base64.getDecoder().decode(document.getString("background"))),"Background restored before fresh Activity decodes it");
-            Object gps=field(activity,"gps"),places=field(gps,"places"),store=field(gps,"routeStore");
+            Object[] statusModels=new Object[2];ui(()->{call(activity,"switchTab",new Class[]{int.class},2);try{Object status=call(call(activity,"screen",new Class[]{int.class},2),"sessionTarget",new Class[]{});statusModels[0]=field(status,"places");statusModels[1]=field(status,"routeStore");}catch(Exception e){throw new RuntimeException(e);}});Object places=statusModels[0],store=statusModels[1];
             ui(()->{check(((List<?>)call(places,"all",new Class[]{})).size()==1,"Fresh places model reads imported store");check(((List<?>)call(store,"all",new Class[]{})).size()==1,"Fresh route model reads imported store");});
-            String exportedSchedule=document.getJSONObject("timetable").getJSONObject("data").getString("value");Class<?> modelType=activity.getClassLoader().loadClass("org.simpleweather.app.ScheduleModel");Object migrated=modelType.getMethod("parse",String.class).invoke(null,exportedSchedule);check(prefs("timetable").getString("data","").equals(modelType.getMethod("json").invoke(migrated).toString()),"Timetable contents survive color-format migration");
+            String exportedSchedule=document.getJSONObject("timetable").getJSONObject("data").getString("value");ClassLoader scheduleLoader=activity.getClassLoader();Object migrated=scheduleLoader.loadClass("org.daidai.toolbox.ScheduleModel").getMethod("parse",String.class).invoke(null,exportedSchedule);check(prefs("timetable").getString("data","").equals(migrated.getClass().getMethod("json").invoke(migrated).toString()),"Timetable contents survive color-format migration");
             result.putString("stream","\nPASS: "+checks+" configuration/search Android checks.\n");
         }catch(Throwable e){code=Activity.RESULT_CANCELED;result.putString("stream","\nFAIL: "+android.util.Log.getStackTraceString(e));}
         finally{

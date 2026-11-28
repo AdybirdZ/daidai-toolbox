@@ -1,0 +1,4 @@
+<resources>
+  <string name="update_310_title">3.0.10 · Source namespace cleanup</string>
+  <string name="update_310_detail">Moved the source Java package and directories to org.daidai.toolbox while keeping the Android applicationId, signing identity and user data identity unchanged for in-place upgrades.</string>
+</resources>

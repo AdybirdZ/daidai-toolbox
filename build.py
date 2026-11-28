@@ -17,6 +17,7 @@ import re
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent
+BALL_RACE_MODULE_VERSION_CODE = 11
 
 
 def run(args):
@@ -75,13 +76,13 @@ def main():
         for element in manifest_root.iter():
             name = element.get('{http://schemas.android.com/apk/res/android}name')
             if name and name.startswith('.'):
-                element.set('{http://schemas.android.com/apk/res/android}name', 'org.simpleweather.app' + name)
+                element.set('{http://schemas.android.com/apk/res/android}name', 'org.daidai.toolbox' + name)
         ET.ElementTree(manifest_root).write(compiled_manifest, encoding='utf-8', xml_declaration=True)
         resource_manifest = compiled_manifest
-        resource_package = 'org.simpleweather.app'
+        resource_package = 'org.daidai.toolbox'
     else:
         resource_manifest = source / 'AndroidManifest.xml'
-        resource_package = None
+        resource_package = 'org.daidai.toolbox'
     run([tools / ('aapt2' + ext), 'compile', '--dir', source / 'res', '-o', build / 'resources.zip'])
     unsigned = build / 'unsigned.apk'
     stable_ids=ROOT/'modules/stable-resource-ids.txt'
@@ -89,7 +90,7 @@ def main():
     if opts.ball_race_test_host and stable_ids.exists():
         link_stable_ids=build/'test-host-stable-resource-ids.txt'
         value=stable_ids.read_text(encoding='utf-8').replace(
-            'org.simpleweather.app:', 'org.simpleweather.testhost:')
+            'org.daidai.toolbox:', 'org.simpleweather.testhost:')
         link_stable_ids.write_text(value, encoding='utf-8')
     full_ids=build/'full-resource-ids.txt'
     stable_args=['--stable-ids',link_stable_ids] if link_stable_ids.exists() else []
@@ -121,7 +122,7 @@ def main():
         shutil.copyfile(full_ids,stable_ids)
     sys.path.insert(0,str(ROOT/'modules'))
     from resource_partition import partition
-    parts=partition(ROOT)
+    parts=partition(ROOT, build)
     run([tools/('aapt2'+ext),'compile','--dir',parts/'host','-o',build/'host-resources.zip'])
     from build_executable import EMBEDDED, IDS
     app_sources = [path for app_id in IDS if app_id not in EMBEDDED
@@ -134,10 +135,10 @@ def main():
                + list((build / 'generated').rglob('*.java')))
     if opts.ball_race_test_host:
         sources = [path for path in sources if path.name != 'HostBuildProfile.java']
-        profile_source = build / 'generated-profile/org/simpleweather/app/HostBuildProfile.java'
+        profile_source = build / 'generated-profile/org/daidai/toolbox/HostBuildProfile.java'
         profile_source.parent.mkdir(parents=True, exist_ok=True)
         profile_source.write_text(
-            'package org.simpleweather.app;\n'
+            'package org.daidai.toolbox;\n'
             '/** 本机小球竞赛测试宿主的构建配置。 */\n'
             'final class HostBuildProfile {\n'
             '    static final boolean BALL_RACE_TEST_HOST = true;\n'
@@ -148,18 +149,21 @@ def main():
     contract=ROOT/'modules/host-java-api.json'
     exported={}
     javap=java_bin/('javap'+ext)
-    host_names={p.stem for p in (source/'java/org/simpleweather/app').glob('*.java')}
-    for path in sorted((build/'classes/org/simpleweather/app').glob('*.class')):
+    host_names={p.stem for p in (source/'java/org/daidai/toolbox').glob('*.java')}
+    for path in sorted((build/'classes/org/daidai/toolbox').glob('*.class')):
         if path.stem.split('$')[0] not in host_names:continue
         if path.stem=='R' or path.stem.startswith('R$'):continue
-        name='org.simpleweather.app.'+path.stem
+        name='org.daidai.toolbox.'+path.stem
         output=subprocess.check_output([str(javap),'-public','-classpath',str(build/'classes'),name],text=True,encoding='utf8')
         # Synchronization changes method implementation, not its JVM linkage contract.
         lines=[line.strip().replace(' synchronized ',' ') for line in output.splitlines() if line.strip().startswith(('public ','protected '))]
         if lines and any(re.match(r'public .*\b(?:class|interface|enum)\b', line) for line in lines):exported[name]=lines
     previous=json.loads(contract.read_text('utf8')) if contract.exists() else {}
     previous={name:[line.replace(' synchronized ',' ') for line in lines] for name,lines in previous.items()}
-    for name,lines in previous.items():assert set(lines)<=set(exported.get(name,[])), 'Host API 1 signature changed: '+name
+    for name,lines in previous.items():
+        current_name=name.replace('org.simpleweather.app.','org.daidai.toolbox.')
+        current_lines=[line.replace('org.simpleweather.app.','org.daidai.toolbox.') for line in lines]
+        assert set(current_lines)<=set(exported.get(current_name,[])), 'Host API signature changed: '+name
     if not opts.ball_race_test_host:
         contract.write_text(json.dumps(exported,indent=2)+'\n','utf8')
     signing = ROOT / '.signing'
@@ -179,7 +183,7 @@ def main():
     if opts.ball_race_test_host:
         app_classes = build_ball_race_package(ROOT, sdk, java, tools, platform, keystore, build, run)
     else:
-        app_classes = build_apps(ROOT, sdk, java, run)
+        app_classes = build_apps(ROOT, sdk, java, run, build)
     # Refresh packaged assets after the default signed apps and catalog are generated.
     host_assets=build/'host-assets'
     shutil.copytree(source/'assets',host_assets,dirs_exist_ok=True)
@@ -193,10 +197,10 @@ def main():
         shutil.copyfile(build / 'ballrace-module/ballrace.ddapp',
                         host_assets / 'default-apps/ballrace.ddapp')
         catalog = {
-            'format': 'daidai-app-store', 'schemaVersion': 1, 'hostApi': 'daidai-toolbox/api-1',
+            'format': 'daidai-app-store', 'schemaVersion': 1, 'hostApi': 'daidai-toolbox/api-2',
             'defaultInstalled': ['ballrace'],
             'apps': [{'id': 'ballrace', 'type': 'signed-dex-app', 'version': '3.0.5',
-                      'versionCode': 10, 'hostApi': 'daidai-toolbox/api-1', 'minHostVersionCode': 61,
+                      'versionCode': BALL_RACE_MODULE_VERSION_CODE, 'hostApi': 'daidai-toolbox/api-2', 'minHostVersionCode': 67,
                       'minSdk': 26, 'permissions': [],
                       'description': {'zh': '小球竞速本地测试。', 'en': 'Local ball-race testing.'},
                       'releaseNotes': {'zh': '本地测试包。', 'en': 'Local test package.'},
@@ -211,9 +215,15 @@ def main():
          *(['--stable-ids', link_stable_ids] if link_stable_ids.exists() else []), *resource_package_args,
          build / 'host-resources.zip',
          *overlay_args])
+    # Pass one filtered archive to D8. Passing every class path separately
+    # exceeds Windows' command-line limit once all module packages are built.
+    host_classes = build / 'host-classes.jar'
+    with zipfile.ZipFile(host_classes, 'w', zipfile.ZIP_DEFLATED) as archive:
+        for path in (build / 'classes').rglob('*.class'):
+            if path not in app_classes:
+                archive.write(path, path.relative_to(build / 'classes').as_posix())
     run([java, '-cp', tools / 'lib/d8.jar', 'com.android.tools.r8.D8', '--lib', platform,
-         '--classpath', build / 'all-classes.jar', '--min-api', '26', '--output', build / 'dex',
-         *[p for p in (build / 'classes').rglob('*.class') if p not in app_classes]])
+         '--min-api', '26', '--output', build / 'dex', host_classes])
     with zipfile.ZipFile(unsigned, 'a', zipfile.ZIP_DEFLATED) as apk:
         for dex in (build / 'dex').glob('*.dex'):
             apk.write(dex, dex.name)
@@ -263,15 +273,15 @@ def build_ball_race_package(root, sdk, java, tools, platform, keystore, build, r
     manifest = stage / 'AndroidManifest.xml'
     manifest.write_text(
         '<manifest xmlns:android="http://schemas.android.com/apk/res/android" '
-        'package="org.simpleweather.module.ballrace" android:versionCode="10" '
+        f'package="org.simpleweather.module.ballrace" android:versionCode="{BALL_RACE_MODULE_VERSION_CODE}" '
         'android:versionName="3.0.5"><uses-sdk android:minSdkVersion="26" '
         'android:targetSdkVersion="35"/><application android:hasCode="true" '
         'android:allowBackup="false"/></manifest>', encoding='utf-8')
     descriptor = {
         'format': 'signed-dex-app', 'schemaVersion': 1, 'id': 'ballrace',
         'entry': 'org.daidai.modules.ballrace.BallRaceActivity',
-        'hostApi': 'daidai-toolbox/api-1', 'minHostVersionCode': 61, 'minSdk': 26,
-        'versionCode': 10, 'version': '3.0.5', 'standaloneInstallable': False,
+        'hostApi': 'daidai-toolbox/api-2', 'minHostVersionCode': 67, 'minSdk': 26,
+        'versionCode': BALL_RACE_MODULE_VERSION_CODE, 'version': '3.0.5', 'standaloneInstallable': False,
         'resourceProvider': 'application', 'dataRetention': 'retain-on-uninstall',
         'configurationGroups': ['ballrace_module'],
         'configurationContract': {'format': 'daidai-toolbox-module-config', 'version': 1,
@@ -310,7 +320,7 @@ def build_ball_race_package(root, sdk, java, tools, platform, keystore, build, r
         executable_classes.update((classes / 'org/daidai/modules/shared').rglob('*.class'))
     for app_id in ('weather', 'schedule', 'status', 'weather-map', 'astronomy', 'earthquake', 'random', 'todo'):
         java_names = {path.stem for path in (root / 'modules/apps' / app_id / 'java').rglob('*.java')}
-        executable_classes.update(path for path in (classes / 'org/simpleweather/app').glob('*.class')
+        executable_classes.update(path for path in (classes / 'org/daidai/toolbox').glob('*.class')
                                   if path.stem.split('$')[0] in java_names)
     return executable_classes
 

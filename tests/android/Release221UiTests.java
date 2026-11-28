@@ -44,7 +44,7 @@ public final class Release221UiTests extends Instrumentation {
             check(!activity.hasWindowFocus(),"Home actually leaves the app window");
             Object gps=field(activity,"gps"),hardware=field(gps,"hardware");
             check(!(Boolean)field(hardware,"active"),"Foreground sensors are paused while backgrounded");
-            Intent enter=new Intent(Intent.ACTION_MAIN).setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent enter=new Intent(Intent.ACTION_MAIN).setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             // Existing pinned shortcuts lack SINGLE_TOP. Manifest compatibility must retain them too.
             if(legacyShortcut)enter.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);else enter.addCategory(Intent.CATEGORY_LAUNCHER);
             getTargetContext().startActivity(enter);
@@ -57,7 +57,7 @@ public final class Release221UiTests extends Instrumentation {
         try{
             for(String group:new String[]{"toolbox","random_choice"})before.put(group,new HashMap<>(prefs(group).getAll()));
             prefs("toolbox").edit().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",0).putBoolean("location_continuous",false).putBoolean("status_camera_background",false).commit();
-            activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
+            activity=startActivitySync(new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();
             final View[] pages=new View[4];
             ui(()->{
                 call(activity,"settings",new Class[]{});pages[0]=dialog("action_settings");tap(pages[0],"settings_014");pages[1]=dialog("settings_014");
@@ -72,7 +72,7 @@ public final class Release221UiTests extends Instrumentation {
                 check(dialog("permissions_shortcut_settings")==pages[3],"Legacy shortcut retains leaf settings window");tap(pages[3],"action_back");
                 check(dialog("settings_permissions")==pages[2],"Back retains permissions parent");tap(pages[2],"action_back");
                 check(dialog("settings_014")==pages[1],"Back retains global settings parent");tap(pages[1],"action_back");tap(pages[0],"action_close");
-                call(activity,"switchTab",new Class[]{int.class},7);Object todo=field(activity,"todo");Class<?> item;try{item=activity.getClassLoader().loadClass("org.simpleweather.app.TodoModel$Item");}catch(Exception e){throw new RuntimeException(e);}call(todo,"edit",new Class[]{item},new Object[]{null});
+                call(activity,"switchTab",new Class[]{int.class},7);Object todo=field(activity,"todo");Class<?> item;try{item=activity.getClassLoader().loadClass("org.daidai.toolbox.TodoModel$Item");}catch(Exception e){throw new RuntimeException(e);}call(todo,"edit",new Class[]{item},new Object[]{null});
             });
             final View[] editor=new View[1];final EditText[] title=new EditText[1];final int[] offset=new int[1];
             ui(()->{editor[0]=dialog("todo_add");ArrayList<EditText> fields=new ArrayList<>();inputs(editor[0],fields);title[0]=fields.get(0);title[0].setText("unsaved lifecycle draft");title[0].setSelection(7);ScrollView s=scroll(editor[0]);s.scrollTo(0,300);offset[0]=s.getScrollY();});

@@ -1,6 +1,6 @@
 {
   "id": "random",
-  "entry": "org.simpleweather.app.RandomChoiceScreen",
+  "entry": "org.daidai.toolbox.RandomChoiceScreen",
   "hostApi": "daidai-toolbox/pre-3.0.0-3",
   "defaultInstalled": false
 }

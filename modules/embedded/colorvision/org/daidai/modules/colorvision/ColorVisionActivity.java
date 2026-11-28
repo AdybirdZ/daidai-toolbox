@@ -13,7 +13,7 @@ import org.daidai.modules.shared.*;
 import java.io.*;
 import java.util.concurrent.*;
 
-public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
+public class ColorVisionActivity extends org.daidai.toolbox.ModulePage {
     public ColorVisionActivity(Activity activity){super(activity);}
 
  private final ExecutorService worker=Executors.newSingleThreadExecutor();
@@ -30,11 +30,11 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
  private boolean sourceCamera,front,resumed,busy,ready;
 
  private String t(String key,Object... args){return Texts.get(activity,"cv_"+key,args);}
- private String version(){return org.simpleweather.app.ModuleRuntime.appVersion(activity,"colorvision");}
+ private String version(){return org.daidai.toolbox.ModuleRuntime.appVersion(activity,"colorvision");}
  @Override public void onCreate(Bundle saved){
   super.onCreate(saved);
   front=getSharedPreferences("colorvision_module",0).getBoolean("front_camera",false);
-  if(getIntent().getBooleanExtra("settings_mode",false)){new org.simpleweather.app.ToolDialog(activity).setTitle(t("settings")).setView(settingsContent(activity)).setNegativeButton(Texts.get(activity,"shared_3"),null).show();return;}
+  if(getIntent().getBooleanExtra("settings_mode",false)){new org.daidai.toolbox.ToolDialog(activity).setTitle(t("settings")).setView(settingsContent(activity)).setNegativeButton(Texts.get(activity,"shared_3"),null).show();return;}
   selectedMask=getSharedPreferences("colorvision_module",0).getInt("views",15)&15;
   if(selectedMask==0)selectedMask=15;
   LinearLayout page=Ui.page(activity,t("title"),t("subtitle",version()));
@@ -72,7 +72,7 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
   LinearLayout controls=Ui.row(body);
   Ui.cell(controls,t("switch_camera"),()->{front=!front;getSharedPreferences("colorvision_module",0).edit().putBoolean("front_camera",front).apply();if(sourceCamera)activateCamera();});
   Ui.cell(controls,t("export"),this::export);
-  Ui.button(body,t("settings"),()->org.simpleweather.app.SettingsActivity.open(activity,"colorvision"));
+  Ui.button(body,t("settings"),()->org.daidai.toolbox.SettingsActivity.open(activity,"colorvision"));
   Ui.button(body,t("guide_title"),()->Ui.note(activity,t("guide_title"),t("guide")));
  }
  private int stageHeight(){return Math.max(Ui.dp(activity,280),Math.min(Ui.dp(activity,520),(int)(getResources().getDisplayMetrics().heightPixels*.58f)));}
@@ -135,7 +135,7 @@ public class ColorVisionActivity extends org.simpleweather.app.ModulePage {
  }
  @Override protected void onActivityResult(int request,int result,Intent data){
   super.onActivityResult(request,result,data);
-  if(request==org.simpleweather.app.SettingsActivity.REQUEST){
+  if(request==org.daidai.toolbox.SettingsActivity.REQUEST){
    boolean next=getSharedPreferences("colorvision_module",0).getBoolean("front_camera",false);
    if(front!=next){front=next;if(sourceCamera&&frame!=null&&!isDestroyed()&&!isFinishing())activateCamera();}
    return;

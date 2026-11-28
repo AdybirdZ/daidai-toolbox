@@ -1,6 +1,6 @@
 {
   "id": "astronomy",
-  "entry": "org.simpleweather.app.AstronomyScreen",
+  "entry": "org.daidai.toolbox.AstronomyScreen",
   "hostApi": "daidai-toolbox/pre-3.0.0-3",
   "defaultInstalled": false
 }

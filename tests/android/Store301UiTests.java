@@ -15,7 +15,7 @@ import org.json.*;
 public final class Store301UiTests extends Instrumentation {
     private Activity activity;private ClassLoader loader;private int checks;private Bundle args;
     public void onCreate(Bundle b){super.onCreate(b);args=b;start();}
-    private Class<?> type(String n)throws Exception{return Class.forName("org.simpleweather.app."+n,true,loader);}
+    private Class<?> type(String n)throws Exception{return Class.forName("org.daidai.toolbox."+n,true,loader);}
     private Object field(Object o,String n)throws Exception{Field f=o.getClass().getDeclaredField(n);f.setAccessible(true);return f.get(o);}
     private Object call(Object o,String n,Class<?>[] types,Object...values)throws Exception{Class<?> c=o instanceof Class?(Class<?>)o:o.getClass();Method m=c.getDeclaredMethod(n,types);m.setAccessible(true);return m.invoke(o instanceof Class?null:o,values);}
     private void ui(Runnable r){AtomicReference<Throwable> error=new AtomicReference<>();runOnMainSync(()->{try{r.run();}catch(Throwable x){error.set(x);}});if(error.get()!=null)throw new RuntimeException(error.get());waitForIdleSync();}
@@ -30,7 +30,7 @@ public final class Store301UiTests extends Instrumentation {
     private void layout(){ui(()->activity.getWindow().getDecorView().requestLayout());try{Thread.sleep(80);}catch(InterruptedException e){Thread.currentThread().interrupt();}waitForIdleSync();}
     public void onStart(){Bundle result=new Bundle();File legacyFile=null;byte[] original=null;try{
         Context c=getTargetContext();String language=args.getString("language","zh-CN");c.getSharedPreferences("toolbox",0).edit().putString("app_language",language).putInt("seen_version",Integer.MAX_VALUE).commit();loader=c.getClassLoader();
-        activity=startActivitySync(new Intent().setClassName(c,"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");Class<?> modules=type("AppModules");
+        activity=startActivitySync(new Intent().setClassName(c,"org.daidai.toolbox.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));waitForIdleSync();Object apps=field(activity,"apps");Class<?> modules=type("AppModules");
         install(apps,"weather");install(apps,"random");
         JSONObject weather=(JSONObject)call(modules,"inspect",new Class[]{Context.class,File.class,String.class},c,new File(c.getFilesDir(),"apps/weather.ddapp"),"weather");
         JSONObject random=(JSONObject)call(modules,"inspect",new Class[]{Context.class,File.class,String.class},c,new File(c.getFilesDir(),"apps/random.ddapp"),"random");

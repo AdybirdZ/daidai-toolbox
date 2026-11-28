@@ -1,4 +1,4 @@
-package org.simpleweather.app;
+package org.daidai.toolbox;
 
 public final class RoutePlaybackTests {
     private static int checks;

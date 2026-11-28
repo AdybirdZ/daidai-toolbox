@@ -1,0 +1,4 @@
+<resources>
+  <string name="update_310_title">3.0.10 · 源码命名空间整理</string>
+  <string name="update_310_detail">将源码 Java 包名和目录从历史名称迁移到 org.daidai.toolbox；Android applicationId、签名和用户资料身份保持不变，可继续覆盖升级。</string>
+</resources>

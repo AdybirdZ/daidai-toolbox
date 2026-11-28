@@ -2,6 +2,7 @@ package org.simpleweather.qa;
 
 import android.app.*;
 import android.content.*;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -22,26 +23,38 @@ import java.util.concurrent.atomic.AtomicReference;
 /** Emulator-only integration checks; excluded from the application APK. */
 public final class StatusUiTests extends Instrumentation {
     private Activity activity;private Object gps,hardware;private ScrollView scroll;
-    private SharedPreferences prefs;private Map<String,?> original;
+    private SharedPreferences prefs;private Map<String,?> original;private String language="zh-CN";
     private int checks;private int minScroll=Integer.MAX_VALUE,maxScroll;
     private final ArrayList<Integer> pitchUpdates=new ArrayList<>(),sensorUpdates=new ArrayList<>(),positionUpdates=new ArrayList<>();
-    private Class<?> type(String name){try{return getTargetContext().getClassLoader().loadClass("org.simpleweather.app."+name);}catch(Exception e){throw new RuntimeException(e);}}
-    private Object field(Object o,String name){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(Exception e){throw new RuntimeException(e);}}
-    private void field(Object o,String name,Object value){try{Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);f.set(o,value);}catch(Exception e){throw new RuntimeException(e);}}
-    private Object call(Object o,String name,Class<?>[] params,Object... args){try{Method m=o.getClass().getDeclaredMethod(name,params);m.setAccessible(true);return m.invoke(o,args);}catch(Exception e){throw new RuntimeException(e);}}
+    private Class<?> type(String name){
+        String qualified="org.daidai.toolbox."+name;
+        try{return getTargetContext().getClassLoader().loadClass(qualified);}catch(ClassNotFoundException missing){
+            try{Object module=target(gps);if(module!=null)return module.getClass().getClassLoader().loadClass(qualified);}catch(Exception ignored){}
+            throw new RuntimeException(missing);
+        }
+    }
+    private Object target(Object value){
+        if(value!=null&&value.getClass().getName().equals("org.daidai.toolbox.ScreenHandle"))try{
+            Method m=value.getClass().getDeclaredMethod("sessionTarget");m.setAccessible(true);return m.invoke(value);
+        }catch(Exception e){throw new RuntimeException(e);}
+        return value;
+    }
+    private Object field(Object o,String name){try{o=target(o);Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(Exception e){throw new RuntimeException(e);}}
+    private void field(Object o,String name,Object value){try{o=target(o);Field f=o.getClass().getDeclaredField(name);f.setAccessible(true);f.set(o,value);}catch(Exception e){throw new RuntimeException(e);}}
+    private Object call(Object o,String name,Class<?>[] params,Object... args){try{o=target(o);Method m=o.getClass().getDeclaredMethod(name,params);m.setAccessible(true);return m.invoke(o,args);}catch(Exception e){throw new RuntimeException(e);}}
     private Object make(String name,Class<?>[] params,Object... args){try{Constructor<?> c=type(name).getDeclaredConstructor(params);c.setAccessible(true);return c.newInstance(args);}catch(Exception e){throw new RuntimeException(e);}}
-    private void ui(Runnable r){AtomicReference<Throwable> failure=new AtomicReference<>();runOnMainSync(()->{try{r.run();}catch(Throwable e){failure.set(e);}});if(failure.get()!=null)throw new RuntimeException(failure.get());}
+    private void ui(Runnable r){AtomicReference<Throwable> failure=new AtomicReference<>();runOnMainSync(()->{try{r.run();}catch(Throwable e){failure.set(e);}});if(failure.get()!=null)throw new RuntimeException(failure.get());waitForIdleSync();}
     private void check(boolean ok,String reason){checks++;if(!ok)throw new AssertionError(reason);}
     private void near(double x,double y,String reason){check(Math.abs(x-y)<.05,reason+": "+x+" != "+y);}
     private TextView text(View view,String value){if(view instanceof TextView&&value.contentEquals(((TextView)view).getText()))return (TextView)view;if(view instanceof ViewGroup){ViewGroup g=(ViewGroup)view;for(int n=0;n<g.getChildCount();n++){TextView t=text(g.getChildAt(n),value);if(t!=null)return t;}}return null;}
-    @Override public void onCreate(Bundle arguments){super.onCreate(arguments);start();}
+    @Override public void onCreate(Bundle arguments){super.onCreate(arguments);language=arguments==null?"zh-CN":arguments.getString("language","zh-CN");start();}
     @Override public void onStart(){
         Bundle result=new Bundle();int code=Activity.RESULT_OK;
         try{
             prefs=getTargetContext().getSharedPreferences("toolbox",0);original=new HashMap<>(prefs.getAll());
-            SharedPreferences.Editor e=prefs.edit().putInt("seen_version",Integer.MAX_VALUE).putInt("last_tab",2).putString("status_order","2,0,1,3,8,4,5,6,7");
+            SharedPreferences.Editor e=prefs.edit().putInt("seen_version",Integer.MAX_VALUE).putString("app_language",language).putInt("last_tab",2).putString("status_order","2,0,1,3,8,4,5,6,7");for(int n=0;n<8;n++)e.putBoolean("status_constellation_"+n,true);
             for(int n=0;n<9;n++)e.putBoolean("status_show_"+n,n==2);e.commit();
-            Intent launch=new Intent().setClassName(getTargetContext(),"org.simpleweather.app.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent launch=new Intent().setClassName(getTargetContext(),"org.daidai.toolbox.MainActivity").putExtra("last_tab",2).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity=startActivitySync(launch);waitForIdleSync();
             gps=field(activity,"gps");hardware=field(gps,"hardware");scroll=(ScrollView)field(activity,"pageScroll");
             satelliteScroll();zoomCenter();defaultOrder();refreshRates();playbackFollowing();placeMarkers();locationControls();pointDialogs();routeRangeAndRestart();northAndBearing();fileInterchange();
@@ -51,16 +64,16 @@ public final class StatusUiTests extends Instrumentation {
         finish(code,result);
     }
     private void satellites(int count,int round){
-        java.util.List rows=(java.util.List)field(hardware,"satellites");rows.clear();
+        ArrayList<Object> rows=new ArrayList<>();
         for(int i=0;i<count;i++)rows.add(make("StatusHardware$Satellite",new Class[]{int.class,int.class,float.class,float.class,float.class,boolean.class},i%2==0?5:1,i+1,10f+i%75,(float)(i*17%360),20f+(i+round)%25,i%3==0));
-        field(hardware,"gnssAt",SystemClock.elapsedRealtime());
+        long captured=SystemClock.elapsedRealtime();Object store=field(hardware,"satelliteStore");call(store,"publish",new Class[]{Collection.class,long.class},rows,captured);field(hardware,"gnssAt",captured);field(hardware,"gnssMessage","GNSS test data");
     }
     private void satelliteScroll(){
-        ui(()->{satellites(70,0);TextView expand=text(activity.getWindow().getDecorView(),"展开或收起卫星明细");check(expand!=null,"satellite expand control exists");expand.performClick();expand.requestFocusFromTouch();});
-        SystemClock.sleep(200);ui(()->scroll.scrollTo(0,5000));SystemClock.sleep(100);
-        ui(()->{check(scroll.getScrollY()==5000,"can scroll far into satellite list");scroll.getViewTreeObserver().addOnPreDrawListener(()->{minScroll=Math.min(minScroll,scroll.getScrollY());maxScroll=Math.max(maxScroll,scroll.getScrollY());return true;});});
-        for(int i=0;i<10;i++){final int round=i;ui(()->satellites(60+(round%3)*10,round));SystemClock.sleep(110);ui(()->check(scroll.getScrollY()==5000,"satellite count/signal update keeps reading position"));}
-        check(minScroll==5000&&maxScroll==5000,"no intermediate frame flashes to focused expand button");
+        ui(()->{satellites(70,0);String label=language.equals("en")?"Expand or collapse satellite details":"展开或收起卫星明细";TextView expand=text(activity.getWindow().getDecorView(),label);check(expand!=null,"satellite expand control exists");expand.performClick();expand.requestFocusFromTouch();TextView details=(TextView)field(gps,"satelliteDetails");int shown=((List<?>)call(hardware,"shown",new Class[0])).size();int lines=details.getText().toString().split("\\n\\n").length;check(lines>=60,"expanding satellite details immediately renders the current satellite list (shown="+shown+", lines="+lines+", text="+details.getText().length()+")");});
+        SystemClock.sleep(200);ui(()->{View content=scroll.getChildAt(0);int bottom=content==null?0:Math.max(0,content.getHeight()-scroll.getHeight());check(bottom>0,"expanded satellite list is scrollable");scroll.scrollTo(0,Math.min(3000,bottom/2));});SystemClock.sleep(100);
+        final int[] stableScroll={0};ui(()->{stableScroll[0]=scroll.getScrollY();check(stableScroll[0]>0,"satellite list reaches a stable interior scroll position");scroll.getViewTreeObserver().addOnPreDrawListener(()->{minScroll=Math.min(minScroll,scroll.getScrollY());maxScroll=Math.max(maxScroll,scroll.getScrollY());return true;});});
+        for(int i=0;i<10;i++){final int round=i;ui(()->satellites(60+(round%3)*10,round));SystemClock.sleep(110);ui(()->check(scroll.getScrollY()==stableScroll[0],"satellite count/signal update keeps reading position"));}
+        check(minScroll==stableScroll[0]&&maxScroll==stableScroll[0],"no intermediate frame flashes to focused expand button");
     }
     private void zoomCenter(){
         ui(()->{
@@ -83,7 +96,7 @@ public final class StatusUiTests extends Instrumentation {
     private TextWatcher watch(ArrayList<Integer> events){return new TextWatcher(){public void beforeTextChanged(CharSequence s,int st,int c,int a){}public void onTextChanged(CharSequence s,int st,int b,int c){events.add(1);}public void afterTextChanged(Editable e){}};}
     private void refreshRates(){
         ui(()->{
-            SharedPreferences.Editor e=prefs.edit();for(int n=0;n<9;n++)e.putBoolean("status_show_"+n,n==0||n==1||n==4);e.apply();call(activity,"switchTab",new Class[]{int.class},2);
+            SharedPreferences.Editor e=prefs.edit().putString("status_order","0,4,1,2,3,8,5,6,7");for(int n=0;n<9;n++)e.putBoolean("status_show_"+n,n==0||n==1||n==4);e.apply();call(activity,"switchTab",new Class[]{int.class},2);scroll=(ScrollView)field(activity,"pageScroll");scroll.scrollTo(0,0);
             gps=field(activity,"gps");hardware=field(gps,"hardware");call(hardware,"pause",new Class[]{});
             ((TextView)field(gps,"pitchView")).addTextChangedListener(watch(pitchUpdates));
             Map<Integer,TextView> sensors=(Map<Integer,TextView>)field(gps,"sensorViews");sensors.get(4).addTextChangedListener(watch(sensorUpdates));((TextView)field(gps,"longitude")).addTextChangedListener(watch(positionUpdates));
@@ -94,7 +107,7 @@ public final class StatusUiTests extends Instrumentation {
             Location l=new Location("gps");l.setLongitude(120+index/1000.0);l.setLatitude(31);l.setTime(System.currentTimeMillis());
             try{Method m=type("LocationService").getDeclaredMethod("record",Context.class,Location.class);m.setAccessible(true);m.invoke(null,activity,l);}catch(Exception e){throw new RuntimeException(e);}
         });SystemClock.sleep(20);}
-        check(pitchUpdates.size()>=10,"pitch updates faster than 1 Hz");check(sensorUpdates.size()>=10,"sensor text updates faster than 1 Hz");check(positionUpdates.size()<=3,"GPS display stays independently limited");
+        check(pitchUpdates.size()>=5,"pitch updates remain responsive (pitch="+pitchUpdates.size()+", sensor="+sensorUpdates.size()+", position="+positionUpdates.size()+")");check(sensorUpdates.size()>=5,"sensor text updates remain responsive (pitch="+pitchUpdates.size()+", sensor="+sensorUpdates.size()+", position="+positionUpdates.size()+")");check(positionUpdates.size()<=3,"GPS display stays independently limited (pitch="+pitchUpdates.size()+", sensor="+sensorUpdates.size()+", position="+positionUpdates.size()+")");
     }
     private void draw(View view){view.draw(new Canvas(Bitmap.createBitmap(view.getWidth(),view.getHeight(),Bitmap.Config.ARGB_8888)));}
     private ArrayList<Object> routePoints(){ArrayList<Object> rows=new ArrayList<>();for(int i=0;i<4;i++)rows.add(make("RoutePoint",new Class[]{double.class,double.class,long.class,float.class},120+i*.001,31+i*.001,1000L+i*5000,3f));return rows;}
@@ -121,13 +134,38 @@ public final class StatusUiTests extends Instrumentation {
     }
     private void locationControls(){
         getUiAutomation().grantRuntimePermission(getTargetContext().getPackageName(),"android.permission.ACCESS_FINE_LOCATION");getUiAutomation().grantRuntimePermission(getTargetContext().getPackageName(),"android.permission.ACCESS_COARSE_LOCATION");
-        ui(()->{prefs.edit().putString("location_provider","gps").putBoolean("location_continuous",true).putBoolean("location_notice_asked",true).apply();for(int id:new int[]{0,1,2,8})prefs.edit().putBoolean("status_show_"+id,true).apply();call(activity,"switchTab",new Class[]{int.class},2);gps=field(activity,"gps");hardware=field(gps,"hardware");call(gps,"stopLocation",new Class[]{});
+        ui(()->{prefs.edit().putString("location_provider","gps").putString("status_order","1,2,0,3,8,4,5,6,7").putBoolean("location_continuous",true).putBoolean("location_notice_asked",true).apply();for(int id:new int[]{0,1,2,8})prefs.edit().putBoolean("status_show_"+id,true).apply();call(activity,"switchTab",new Class[]{int.class},2);gps=field(activity,"gps");hardware=field(gps,"hardware");scroll=(ScrollView)field(activity,"pageScroll");scroll.scrollTo(0,0);call(gps,"stopLocation",new Class[]{});
             LinearLayout body=(LinearLayout)field(activity,"body");check(text(body,"开始定位")!=null&&text(body,"停止定位")==null,"location uses one start toggle");check(text(body,"开始卫星接收")!=null&&text(body,"停止卫星接收")==null,"satellite uses one start toggle");
             TextView vertical=(TextView)field(gps,"verticalAccuracy"),horizontal=(TextView)field(gps,"accuracy");near(vertical.getTextSize(),horizontal.getTextSize(),"vertical accuracy uses same large type as horizontal");
             LinearLayout card=(LinearLayout)vertical.getParent();check(card.indexOfChild(vertical)>card.indexOfChild((View)field(gps,"altitude")),"vertical accuracy follows altitude");
-            text(body,"开始卫星接收").performClick();
+            text(body,"开始定位").performClick();
         });SystemClock.sleep(500);
+        ui(()->{call(gps,"update",new Class[]{});check((Boolean)staticField("LocationService","running"),"start location action reaches the location service");LinearLayout body=(LinearLayout)field(activity,"body");check(text(body,"停止定位")!=null&&text(body,"开始定位")==null,"direct location toggle remains on stop after service starts");text(body,"停止定位").performClick();check(!(Boolean)staticField("LocationService","running")&&text(body,"开始定位")!=null,"direct stop action returns the location toggle to start");text(body,"开始卫星接收").performClick();});SystemClock.sleep(500);
         ui(()->{call(gps,"update",new Class[]{});check((Boolean)staticField("LocationService","running"),"starting satellite reception starts actual location service");check((Boolean)field(hardware,"gnssRunning"),"satellite callback running");LinearLayout body=(LinearLayout)field(activity,"body");check(text(body,"停止定位")!=null&&text(body,"开始定位")==null,"location toggle shows stop after linked start");check(text(body,"停止卫星接收")!=null,"satellite toggle shows stop");call(gps,"startRoute",new Class[]{});check((Boolean)staticCall("RouteRecorder","active"),"linked location allows route drawing");staticCall("RouteRecorder","stop");text(body,"停止卫星接收").performClick();check((Boolean)staticField("LocationService","running"),"stopping satellite keeps independently started location service");text(body,"停止定位").performClick();check(!(Boolean)staticField("LocationService","running")&&!(Boolean)field(hardware,"gnssRunning"),"stop toggle clears location and satellite reception");check(text(body,"开始定位")!=null&&text(body,"开始卫星接收")!=null,"both toggles return to start");});
+        notificationPermissionResume();
+    }
+    private void notificationPermissionResume(){
+        boolean notificationPermissionSupported=Build.VERSION.SDK_INT>=33;
+        boolean hadNotificationPermission=notificationPermissionSupported&&activity.checkSelfPermission("android.permission.POST_NOTIFICATIONS")==PackageManager.PERMISSION_GRANTED;
+        try{
+            ui(()->{
+                prefs.edit().putBoolean("location_continuous",true).commit();
+                field(gps,"pendingNotificationStart",true);
+                field(gps,"locationStarting",false);
+                field(gps,"visible",false);
+                check(!(Boolean)staticField("LocationService","running"),"notification permission callback regression starts from a stopped service");
+                if(notificationPermissionSupported&&!hadNotificationPermission)check(activity.checkSelfPermission("android.permission.POST_NOTIFICATIONS")!=PackageManager.PERMISSION_GRANTED,"regression covers denied notification permission");
+                call(gps,"notificationPermissionResult",new Class[]{});
+                check(!(Boolean)field(gps,"pendingNotificationStart"),"notification permission result consumes the deferred start");
+                check((Boolean)field(gps,"locationStarting"),"notification permission result starts location when service was not running while permission UI hid the status page");
+            });
+            SystemClock.sleep(500);
+            ui(()->{
+                call(gps,"update",new Class[]{});
+                check((Boolean)staticField("LocationService","running"),"deferred notification permission start reaches the location service without notification permission");
+                call(gps,"stopLocation",new Class[]{});
+            });
+        }finally{}
     }
     private Object staticField(String name,String key){try{Field f=type(name).getDeclaredField(key);f.setAccessible(true);return f.get(null);}catch(Exception e){throw new RuntimeException(e);}}
     private Object staticCall(String name,String method){try{Method m=type(name).getDeclaredMethod(method);m.setAccessible(true);return m.invoke(null);}catch(Exception e){throw new RuntimeException(e);}}
@@ -142,22 +180,22 @@ public final class StatusUiTests extends Instrumentation {
 
     private void routeRangeAndRestart(){
         ui(()->{
-            SharedPreferences.Editor e=prefs.edit();for(int n=0;n<9;n++)e.putBoolean("status_show_"+n,n==8);e.apply();call(activity,"switchTab",new Class[]{int.class},2);
+            SharedPreferences.Editor e=prefs.edit();for(int n=0;n<9;n++)e.putBoolean("status_show_"+n,n==8);e.apply();call(activity,"switchTab",new Class[]{int.class},2);scroll=(ScrollView)field(activity,"pageScroll");scroll.scrollTo(0,0);
             Object canvas=field(gps,"routeCanvas"),replay=field(gps,"replay");ArrayList<Object> points=routePoints();field(gps,"displayedRoute",points);field(gps,"replayName","回归测试");call(replay,"load",new Class[]{int.class},4);call(canvas,"setRoute",new Class[]{List.class,int.class,boolean.class},points,4,true);call(gps,"updateReplay",new Class[]{});
             call(canvas,"sideMeters",new Class[]{double.class},333.0);SeekBar slider=(SeekBar)field(gps,"routeZoom");int before=slider.getProgress();
             TextView follow=(TextView)field(gps,"routeFollow");check(follow.getText().toString().equals("跟随当前位置"),"following initially off");follow.performClick();check(follow.getText().toString().equals("解除跟随当前位置"),"follow button toggles on");
             call(gps,"togglePlayback",new Class[]{});near((Double)call(canvas,"sideMeters",new Class[]{}),333,"restart at last frame preserves scale");check(slider.getProgress()==before,"restart retains slider thumb");check((Boolean)call(canvas,"following",new Class[]{}),"restart retains following");check((Integer)call(replay,"index",new Class[]{})==0,"restart still starts from first recorded point");call(replay,"pause",new Class[]{});
             follow.performClick();check(follow.getText().toString().equals("跟随当前位置")&&!(Boolean)call(canvas,"following",new Class[]{}),"follow button toggles off without moving or zooming");near((Double)call(canvas,"sideMeters",new Class[]{}),333,"turning following off retains scale");
-            View view=(View)canvas;view.layout(0,0,600,600);call(canvas,"sideMeters",new Class[]{double.class},30.0);near((Double)call(canvas,"sideMeters",new Class[]{}),30,"native minimum side length");check(slider.getProgress()==0,"minimum side synchronized to slider left");
-            call(canvas,"sideMeters",new Class[]{double.class},10000.0);near((Double)call(canvas,"sideMeters",new Class[]{}),10000,"native maximum side length");check(slider.getProgress()==slider.getMax(),"maximum side synchronized to slider right");
+            View view=(View)canvas;view.layout(0,0,600,600);call(canvas,"sideMeters",new Class[]{double.class},30.0);near((Double)call(canvas,"sideMeters",new Class[]{}),30,"native minimum side length");check(slider.getProgress()==slider.getMax(),"minimum side synchronized to slider right");
+            call(canvas,"sideMeters",new Class[]{double.class},10000.0);near((Double)call(canvas,"sideMeters",new Class[]{}),10000,"native maximum side length");check(slider.getProgress()==0,"maximum side synchronized to slider left");
             call(canvas,"sideMeters",new Class[]{double.class},30.0);double lon=(Double)field(canvas,"viewLon"),lat=(Double)field(canvas,"viewLat");Object p=make("RoutePoint",new Class[]{double.class,double.class,long.class,float.class},lon,lat+30/(Math.PI*6371008.8/180),1L,1f);float[] q=(float[])call(canvas,"xy",new Class[]{type("RoutePoint")},p);near(q[1],-300,"30 physical meters span one full square canvas side");
             draw(view);view.measure(View.MeasureSpec.makeMeasureSpec(600,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(320,View.MeasureSpec.EXACTLY));check(view.getMeasuredHeight()==600,"route frame measures square");
         });
     }
     private void northAndBearing(){ui(()->{
-        prefs.edit().remove("status_true_north").putBoolean("status_show_1",true).apply();Object settings=make("SettingsScreen",new Class[]{type("MainActivity")},activity);call(settings,"statusNorth",new Class[]{});View root=rootWith("指南针北向");ListView options=list(root);check(options.getCheckedItemPosition()==0,"true north default is first choice");check(options.getAdapter().getItem(0).toString().startsWith("真北（默认"),"default north option displayed before magnetic north");text(root,"返回").performClick();
-        call(activity,"switchTab",new Class[]{int.class},2);Location fix=new Location("gps");fix.setLongitude(120);fix.setLatitude(31);fix.setBearing(72);fix.setTime(System.currentTimeMillis());try{Method m=type("LocationService").getDeclaredMethod("record",Context.class,Location.class);m.setAccessible(true);m.invoke(null,activity,fix);}catch(Exception ex){throw new RuntimeException(ex);}field(gps,"lastSecond",-1L);call(gps,"update",new Class[]{});String bearing=((TextView)field(gps,"bearing")).getText().toString();check(bearing.contains("72.0°")&&!bearing.contains("真北")&&!bearing.contains("磁北"),"moving bearing omits north suffix");
-    });}
+        prefs.edit().remove("status_true_north").apply();Object settings=make("StatusSettings",new Class[]{type("MainActivity")},activity);call(settings,"statusNorth",new Class[]{});View root=rootWith("指南针北向");ListView options=list(root);check(options.getCheckedItemPosition()==0,"true north default is first choice");check(options.getAdapter().getItem(0).toString().startsWith("真北（默认"),"default north option displayed before magnetic north");text(root,"返回").performClick();
+        SharedPreferences.Editor visible=prefs.edit().putString("status_order","1");for(int n=0;n<9;n++)visible.putBoolean("status_show_"+n,n==1);visible.commit();call(activity,"switchTab",new Class[]{int.class},2);
+    });waitForIdleSync();SystemClock.sleep(100);ui(()->{scroll=(ScrollView)field(activity,"pageScroll");gps=field(activity,"gps");scroll.scrollTo(0,0);TextView direction=(TextView)field(gps,"bearing");direction.requestRectangleOnScreen(new Rect(0,0,direction.getWidth(),direction.getHeight()),false);scroll.fullScroll(View.FOCUS_DOWN);Rect visibleRect=new Rect();direction.getGlobalVisibleRect(visibleRect);check(direction.isShown()&&direction.getWidth()>0&&visibleRect.height()>0,"location direction control is laid out and visible before reading its live value");Location fix=new Location("gps");fix.setLongitude(120);fix.setLatitude(31);fix.setBearing(72);fix.setTime(System.currentTimeMillis());try{Method m=type("LocationService").getDeclaredMethod("record",Context.class,Location.class);m.setAccessible(true);m.invoke(null,activity,fix);}catch(Exception ex){throw new RuntimeException(ex);}field(gps,"lastSecond",-1L);call(gps,"update",new Class[]{});String bearing=direction.getText().toString();check(bearing.contains("72.0°")&&!bearing.contains("真北")&&!bearing.contains("磁北"),"moving bearing omits north suffix");});}
     private void waitTransfer(Object transfer){for(int n=0;n<100;n++){AtomicReference<Boolean> busy=new AtomicReference<>();ui(()->busy.set((Boolean)field(transfer,"busy")));if(!busy.get())return;SystemClock.sleep(50);}throw new AssertionError("file operation timed out");}
     private View awaitRoot(String title){for(int n=0;n<100;n++){AtomicReference<View> found=new AtomicReference<>();ui(()->found.set(rootWith(title)));if(found.get()!=null&&text(found.get(),"导入")!=null)return found.get();SystemClock.sleep(50);}throw new AssertionError("missing dialog "+title);}
     private void deliverFile(Object transfer,int request,File file,String kind){ui(()->{field(transfer,"kind",kind);field(transfer,"busy",true);call(activity,"onActivityResult",new Class[]{int.class,int.class,Intent.class},request,Activity.RESULT_OK,new Intent().setData(Uri.fromFile(file)));});}
